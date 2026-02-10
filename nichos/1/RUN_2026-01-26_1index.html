@@ -1,0 +1,1002 @@
+```html
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calendário de Conteúdo (30 dias) — Advocacia</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B132A;
+      --text:#E7ECFF;
+      --muted:#A7B2E3;
+      --muted2:#7F8BC4;
+      --line:rgba(255,255,255,.10);
+      --shadow: 0 10px 26px rgba(0,0,0,.35);
+      --shadow2: 0 6px 16px rgba(0,0,0,.30);
+      --radius: 16px;
+      --radius2: 12px;
+
+      --accent:#7C5CFF;
+      --accent2:#33D6FF;
+      --good:#57F0B2;
+      --warn:#FFC857;
+      --bad:#FF5C7C;
+
+      --reels:#33D6FF;
+      --carrossel:#7C5CFF;
+      --atracao:#57F0B2;
+      --relacionamento:#FFC857;
+      --conversao:#FF5C7C;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(900px 450px at 16% -10%, rgba(124,92,255,.25), transparent 55%),
+        radial-gradient(760px 420px at 88% 6%, rgba(51,214,255,.18), transparent 55%),
+        radial-gradient(720px 420px at 50% 110%, rgba(87,240,178,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{ color:inherit; text-decoration:none; }
+    .container{
+      width:min(1160px, 92vw);
+      margin:0 auto;
+      padding: 28px 0 44px;
+    }
+
+    header{
+      display:grid;
+      grid-template-columns: 1.4fr .9fr;
+      gap: 18px;
+      align-items:stretch;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 920px){
+      header{ grid-template-columns: 1fr; }
+    }
+
+    .hero, .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero{
+      padding: 20px 20px 18px;
+    }
+    .hero:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(600px 260px at 28% 0%, rgba(124,92,255,.22), transparent 64%),
+        radial-gradient(520px 260px at 72% 0%, rgba(51,214,255,.18), transparent 62%);
+      pointer-events:none;
+      filter:saturate(1.1);
+      opacity:.95;
+    }
+    .hero > *{ position:relative; z-index:1; }
+
+    .kicker{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      color:var(--muted);
+      font-size: 13px;
+      letter-spacing:.2px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(15,22,48,.35);
+      padding: 6px 10px;
+      border-radius: 999px;
+      box-shadow: var(--shadow2);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background: linear-gradient(180deg, var(--accent2), var(--accent));
+      box-shadow: 0 0 0 3px rgba(124,92,255,.15);
+    }
+    h1{
+      margin: 10px 0 8px;
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.12;
+      letter-spacing: .2px;
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      max-width: 72ch;
+    }
+
+    .panel{
+      padding: 16px 16px 14px;
+    }
+    .panel h2{
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing:.3px;
+      color: var(--text);
+    }
+    .steps{
+      display:grid;
+      gap:10px;
+      margin: 0;
+      padding: 0;
+      list-style:none;
+    }
+    .step{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(15,22,48,.25);
+      border-radius: 12px;
+      padding: 10px 10px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .step b{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width: 26px;
+      height: 26px;
+      border-radius: 10px;
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(124,92,255,.20), rgba(51,214,255,.12));
+      color: var(--text);
+      font-size: 12px;
+    }
+    .step span{ color: var(--muted); font-size: 13px; line-height:1.35; }
+
+    .grid-wrap{
+      margin-top: 14px;
+    }
+
+    .filters{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin: 14px 0 12px;
+      padding: 12px;
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow2);
+    }
+    .filter-group{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .label{
+      font-size: 12px;
+      color: var(--muted2);
+      margin-right: 6px;
+      letter-spacing:.2px;
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(15,22,48,.35);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); background: rgba(15,22,48,.5); }
+    .btn.active{
+      border-color: rgba(124,92,255,.55);
+      background: linear-gradient(180deg, rgba(124,92,255,.24), rgba(51,214,255,.10));
+      box-shadow: 0 10px 24px rgba(124,92,255,.11);
+    }
+    .meta{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      color: var(--muted);
+      font-size: 12px;
+      flex-wrap:wrap;
+    }
+    .count{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(15,22,48,.25);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 1020px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 620px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      position:relative;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      min-height: 148px;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+    .card a{
+      display:block;
+      height:100%;
+      padding: 14px 14px 12px;
+    }
+    .top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .day{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width: 70px;
+    }
+    .day .n{
+      font-size: 12px;
+      color: var(--muted2);
+      letter-spacing:.2px;
+    }
+    .day .d{
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing:.2px;
+    }
+    .badges{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .badge{
+      font-size: 12px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(15,22,48,.30);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .badge.format.reels{ border-color: rgba(51,214,255,.45); background: rgba(51,214,255,.10); color: #CFF4FF; }
+    .badge.format.carrossel{ border-color: rgba(124,92,255,.45); background: rgba(124,92,255,.12); color: #E7E0FF; }
+
+    .badge.pilar.atracao{ border-color: rgba(87,240,178,.40); background: rgba(87,240,178,.09); color:#D8FFE9; }
+    .badge.pilar.relacionamento{ border-color: rgba(255,200,87,.40); background: rgba(255,200,87,.10); color:#FFF2D1; }
+    .badge.pilar.conversao{ border-color: rgba(255,92,124,.40); background: rgba(255,92,124,.10); color:#FFE0E7; }
+
+    .title{
+      margin: 0 0 8px;
+      font-size: 15px;
+      line-height: 1.25;
+      letter-spacing:.2px;
+    }
+    .inst{
+      margin:0;
+      color:var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+
+      display:-webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow:hidden;
+    }
+    .inst .hint{
+      color: var(--muted2);
+    }
+
+    .framework{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 12px;
+    }
+    @media (max-width: 920px){
+      .framework{ grid-template-columns: 1fr; }
+    }
+    .box{
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow2);
+      padding: 16px;
+      overflow:hidden;
+      position:relative;
+    }
+    .box h2{
+      margin:0 0 10px;
+      font-size: 14px;
+      letter-spacing:.3px;
+    }
+    .box p{
+      margin:0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 560px){
+      .cols{ grid-template-columns: 1fr; }
+    }
+    .mini{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(15,22,48,.25);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .mini h3{
+      margin:0 0 6px;
+      font-size: 13px;
+      color: var(--text);
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .mini ul{
+      margin:0;
+      padding-left: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .tag{
+      font-size: 11px;
+      color: var(--muted);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      padding: 5px 8px;
+      border-radius: 999px;
+      white-space:nowrap;
+    }
+
+    footer{
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      color: var(--muted2);
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      color: #D8E2FF;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <section class="hero">
+        <div class="kicker">
+          <span class="pill"><span class="dot"></span> Calendário de 30 dias</span>
+          <span class="pill">Nicho: <b style="color:var(--text); font-weight:600;">Advocacia</b></span>
+          <span class="pill">Foco: Reels + Carrossel · Atração, Relacionamento, Conversão</span>
+        </div>
+        <h1>Planejamento de Conteúdo para Instagram (30 dias) — Advocacia</h1>
+        <p class="subtitle">
+          Estrutura pronta para educar, gerar confiança e converter com consistência, sem prometer resultados e mantendo postura ética.
+          Cada card é clicável e abre uma URL do dia (fallback local). Use os filtros para organizar a execução.
+        </p>
+      </section>
+
+      <aside class="panel">
+        <h2>Como usar este calendário (5 passos)</h2>
+        <ol class="steps">
+          <li class="step"><b>1</b><span>Escolha o filtro (Formato/Pilar) e separe 7 dias para gravar/diagramar em lote.</span></li>
+          <li class="step"><b>2</b><span>Para cada post, conecte a dúvida do público a uma orientação prática e linguagem acessível.</span></li>
+          <li class="step"><b>3</b><span>Inclua sempre: contexto, o que a lei diz em linhas gerais, cuidados/erros comuns e próximos passos.</span></li>
+          <li class="step"><b>4</b><span>Finalize com CTA ético: “salve”, “compartilhe”, “envie sua dúvida” ou “agende uma triagem”.</span></li>
+          <li class="step"><b>5</b><span>Revise compliance: nada de promessas, casos sensíveis, dados de clientes ou captação indevida.</span></li>
+        </ol>
+      </aside>
+    </header>
+
+    <section class="framework">
+      <div class="box">
+        <h2>Framework do Nicho: o que funciona em Advocacia (com base no ciclo de 30 dias)</h2>
+        <p>
+          O que tende a performar melhor no Instagram para advocacia é conteúdo que reduz incerteza: explicações objetivas, exemplos cotidianos,
+          checklists e “o que fazer agora”. O calendário abaixo equilibra <b>Atração</b> (descoberta via dúvidas comuns),
+          <b>Relacionamento</b> (confiança e bastidores) e <b>Conversão</b> (CTA para consulta/triagem com limites éticos).
+        </p>
+        <div class="cols">
+          <div class="mini">
+            <h3>Estrutura padrão por post <span class="tag">aplicável a Reels e Carrossel</span></h3>
+            <ul>
+              <li><b>Gancho</b>: “Você sabia que…?” / “Se você está passando por isso…”</li>
+              <li><b>Regra geral</b>: explique sem juridiquês (o “como funciona”).</li>
+              <li><b>Riscos/erros</b>: 2 a 3 alertas do que não fazer.</li>
+              <li><b>Checklist</b>: documentos/prazos/quem procurar.</li>
+              <li><b>CTA</b>: salvar/compartilhar + triagem/agenda.</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Ritmo semanal recomendado <span class="tag">consistência > volume</span></h3>
+            <ul>
+              <li><b>3 Atração</b>: dúvidas frequentes + mitos + “passo a passo”.</li>
+              <li><b>2 Relacionamento</b>: bastidores, valores, como funciona o atendimento.</li>
+              <li><b>2 Conversão</b>: sinais de hora de procurar advogado + rota de contato.</li>
+              <li><b>1 Reforço</b>: resumo/FAQ/caixa de perguntas para gerar pauta.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="box">
+        <h2>Checklist rápido de execução</h2>
+        <div class="cols">
+          <div class="mini">
+            <h3>Otimização (Instagram)</h3>
+            <ul>
+              <li>Start forte nos 2 primeiros segundos (Reels).</li>
+              <li>Carrossel com capa clara: problema + promessa de clareza.</li>
+              <li>Legendas com subtítulos, bullets e “próximo passo”.</li>
+              <li>Stories para distribuir: enquete + caixa de perguntas.</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Ética e segurança</h3>
+            <ul>
+              <li>Evite mencionar casos reais identificáveis.</li>
+              <li>Sem promessas de resultado ou “garantias”.</li>
+              <li>Oriente de forma geral; convide para análise do caso.</li>
+              <li>Tenha um aviso padrão: conteúdo informativo.</li>
+            </ul>
+          </div>
+        </div>
+        <p style="margin-top:10px;">
+          Fallback aplicado: como a fonte do calendário veio vazia, foi criado um calendário coerente e pronto para uso no nicho de advocacia.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid-wrap">
+      <div class="filters" role="toolbar" aria-label="Filtros do calendário">
+        <div class="filter-group" aria-label="Filtro por formato">
+          <span class="label">Formato</span>
+          <button class="btn active" data-filter-type="formato" data-filter-value="Todos" type="button">Todos</button>
+          <button class="btn" data-filter-type="formato" data-filter-value="Reels" type="button">Reels</button>
+          <button class="btn" data-filter-type="formato" data-filter-value="Carrossel" type="button">Carrossel</button>
+        </div>
+
+        <div class="filter-group" aria-label="Filtro por pilar">
+          <span class="label">Pilar</span>
+          <button class="btn active" data-filter-type="pilar" data-filter-value="Todos" type="button">Todos</button>
+          <button class="btn" data-filter-type="pilar" data-filter-value="Atração" type="button">Atração</button>
+          <button class="btn" data-filter-type="pilar" data-filter-value="Relacionamento" type="button">Relacionamento</button>
+          <button class="btn" data-filter-type="pilar" data-filter-value="Conversão" type="button">Conversão</button>
+        </div>
+
+        <div class="meta">
+          <span class="count" id="count">Mostrando 30/30</span>
+          <span class="pill"><span class="dot"></span><span>Cards clicáveis</span></span>
+        </div>
+      </div>
+
+      <div class="grid" id="grid">
+        <!-- 30 cards (fallback) -->
+        <article class="card" data-formato="Reels" data-pilar="Atração">
+          <a href="#dia-01" aria-label="Dia 1: A diferença entre advogado e defensor público">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">01</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">A diferença entre advogado e defensor público</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Explique em 3 pontos e diga quando buscar cada um.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Atração">
+          <a href="#dia-02" aria-label="Dia 2: 7 direitos do consumidor que quase ninguém usa">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">02</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">7 direitos do consumidor que quase ninguém usa</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Faça lista + exemplo prático por slide.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Relacionamento">
+          <a href="#dia-03" aria-label="Dia 3: Como funciona uma consulta jurídica (de verdade)">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">03</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar relacionamento">Relacionamento</span>
+              </div>
+            </div>
+            <h3 class="title">Como funciona uma consulta jurídica (de verdade)</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Mostre etapas: triagem, análise, orientação e próximos passos.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Atração">
+          <a href="#dia-04" aria-label="Dia 4: Contrato simples: 10 cláusulas que evitam dor de cabeça">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">04</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Contrato simples: 10 cláusulas que evitam dor de cabeça</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Checklist com linguagem acessível e alerta de personalização.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Atração">
+          <a href="#dia-05" aria-label="Dia 5: Prazos: como não perder um direito por ‘deixar para depois’">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">05</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Prazos: como não perder um direito por ‘deixar para depois’</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Explique prescrição/decadência de forma simples + exemplo.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Relacionamento">
+          <a href="#dia-06" aria-label="Dia 6: Bastidores: como preparo uma petição com segurança">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">06</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar relacionamento">Relacionamento</span>
+              </div>
+            </div>
+            <h3 class="title">Bastidores: como preparo uma petição com segurança</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Mostre método: fatos, provas, tese e pedidos (sem expor casos).</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Conversão">
+          <a href="#dia-07" aria-label="Dia 7: 5 sinais de que você precisa falar com um advogado hoje">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">07</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar conversao">Conversão</span>
+              </div>
+            </div>
+            <h3 class="title">5 sinais de que você precisa falar com um advogado hoje</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Liste sinais + CTA para triagem com documentos básicos.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Atração">
+          <a href="#dia-08" aria-label="Dia 8: B.O. resolve tudo? O que ele faz e o que ele não faz">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">08</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">B.O. resolve tudo? O que ele faz e o que ele não faz</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Separe em “serve para” e “não substitui” + próximos passos.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Atração">
+          <a href="#dia-09" aria-label="Dia 9: Demissão: o que conferir antes de assinar qualquer coisa">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">09</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Demissão: o que conferir antes de assinar qualquer coisa</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Checklist: verbas, prazos, documentos e ressalvas.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Relacionamento">
+          <a href="#dia-10" aria-label="Dia 10: Quem eu ajudo e como eu trabalho (posicionamento)">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">10</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar relacionamento">Relacionamento</span>
+              </div>
+            </div>
+            <h3 class="title">Quem eu ajudo e como eu trabalho (posicionamento)</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Defina público, tipo de casos e expectativas realistas.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Atração">
+          <a href="#dia-11" aria-label="Dia 11: Nome negativado indevidamente: o que fazer em 3 passos">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">11</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Nome negativado indevidamente: o que fazer em 3 passos</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Provas, contato com empresa e quando judicializar.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Conversão">
+          <a href="#dia-12" aria-label="Dia 12: Quanto custa um advogado? Como funciona honorários com transparência">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">12</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar conversao">Conversão</span>
+              </div>
+            </div>
+            <h3 class="title">Quanto custa um advogado? Como funciona honorários com transparência</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Explique formas comuns e o que influencia o valor.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Relacionamento">
+          <a href="#dia-13" aria-label="Dia 13: 3 erros que vejo todo dia e como evitar">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">13</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar relacionamento">Relacionamento</span>
+              </div>
+            </div>
+            <h3 class="title">3 erros que vejo todo dia e como evitar</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Reforce prevenção e convide para tirar dúvidas nos comentários.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Atração">
+          <a href="#dia-14" aria-label="Dia 14: Guarda e pensão: mitos que atrapalham acordos">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">14</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Guarda e pensão: mitos que atrapalham acordos</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Quebre 5 mitos e oriente sobre busca de acordo.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Conversão">
+          <a href="#dia-15" aria-label="Dia 15: Como agendar uma triagem: o que preciso te pedir (sem enrolação)">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">15</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar conversao">Conversão</span>
+              </div>
+            </div>
+            <h3 class="title">Como agendar uma triagem: o que preciso te pedir (sem enrolação)</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Liste 5 itens (fatos, documentos, prazos, objetivo, contato).</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Relacionamento">
+          <a href="#dia-16" aria-label="Dia 16: Linguagem simples: traduzindo 8 termos jurídicos comuns">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">16</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar relacionamento">Relacionamento</span>
+              </div>
+            </div>
+            <h3 class="title">Linguagem simples: traduzindo 8 termos jurídicos comuns</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Defina termos em 1 linha cada e use exemplos cotidianos.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Atração">
+          <a href="#dia-17" aria-label="Dia 17: Cobrança indevida: o que fazer sem perder tempo">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">17</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Cobrança indevida: o que fazer sem perder tempo</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Diga como documentar, contestar e prazos de resposta.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Conversão">
+          <a href="#dia-18" aria-label="Dia 18: Seu caso cabe acordo? Como avaliar sem prometer resultado">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">18</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar conversao">Conversão</span>
+              </div>
+            </div>
+            <h3 class="title">Seu caso cabe acordo? Como avaliar sem prometer resultado</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Critérios: prova, custo, urgência, risco e objetivo.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Relacionamento">
+          <a href="#dia-19" aria-label="Dia 19: Por que eu sempre peço documentos (e como isso te protege)">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">19</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar relacionamento">Relacionamento</span>
+              </div>
+            </div>
+            <h3 class="title">Por que eu sempre peço documentos (e como isso te protege)</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Mostre como prova reduz risco e aumenta clareza na estratégia.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Atração">
+          <a href="#dia-20" aria-label="Dia 20: Pequenas causas: quando vale Juizado Especial">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">20</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Pequenas causas: quando vale Juizado Especial</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Explique critérios gerais e tipos comuns de demandas.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Conversão">
+          <a href="#dia-21" aria-label="Dia 21: Mensagem modelo para iniciar atendimento (ética e objetividade)">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">21</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar conversao">Conversão</span>
+              </div>
+            </div>
+            <h3 class="title">Mensagem modelo para iniciar atendimento (ética e objetividade)</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Entregue um roteiro curto e convide a enviar docs em canal seguro.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Relacionamento">
+          <a href="#dia-22" aria-label="Dia 22: Perguntas frequentes: o que você deve trazer na primeira reunião">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">22</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar relacionamento">Relacionamento</span>
+              </div>
+            </div>
+            <h3 class="title">Perguntas frequentes: o que você deve trazer na primeira reunião</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Liste documentos e informações mínimas para agilizar análise.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Atração">
+          <a href="#dia-23" aria-label="Dia 23: Golpes e fraudes: como agir nas primeiras 24 horas">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">23</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Golpes e fraudes: como agir nas primeiras 24 horas</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Passo a passo: registros, banco, provas e canais oficiais.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Atração">
+          <a href="#dia-24" aria-label="Dia 24: Assinei sem ler: ainda dá para contestar?">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">24</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Assinei sem ler: ainda dá para contestar?</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Explique hipóteses gerais, prazo e importância de prova.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Relacionamento">
+          <a href="#dia-25" aria-label="Dia 25: Meu compromisso com o cliente: transparência e limites">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">25</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar relacionamento">Relacionamento</span>
+              </div>
+            </div>
+            <h3 class="title">Meu compromisso com o cliente: transparência e limites</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Fale de prazos, comunicação, sigilo e o que não prometer.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Conversão">
+          <a href="#dia-26" aria-label="Dia 26: Roteiro de triagem: 6 perguntas que definem a estratégia">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">26</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar conversao">Conversão</span>
+              </div>
+            </div>
+            <h3 class="title">Roteiro de triagem: 6 perguntas que definem a estratégia</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Publique perguntas e convide o seguidor para enviar respostas na consulta.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Atração">
+          <a href="#dia-27" aria-label="Dia 27: Inventário e herança: por onde começar sem pânico">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">27</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Inventário e herança: por onde começar sem pânico</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Mapa rápido: documentos, herdeiros, bens e prazos gerais.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Relacionamento">
+          <a href="#dia-28" aria-label="Dia 28: Caixa de perguntas: envie sua dúvida (e como eu respondo)">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">28</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar relacionamento">Relacionamento</span>
+              </div>
+            </div>
+            <h3 class="title">Caixa de perguntas: envie sua dúvida (e como eu respondo)</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Publique perguntas comuns e convide para Stories/DM com limites.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Reels" data-pilar="Conversão">
+          <a href="#dia-29" aria-label="Dia 29: 3 formas de resolver: acordo, notificação, processo (quando faz sentido)">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">29</div></div>
+              <div class="badges">
+                <span class="badge format reels">Reels</span>
+                <span class="badge pilar conversao">Conversão</span>
+              </div>
+            </div>
+            <h3 class="title">3 formas de resolver: acordo, notificação, processo (quando faz sentido)</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Compare prós/contras e convide para avaliação personalizada.</p>
+          </a>
+        </article>
+
+        <article class="card" data-formato="Carrossel" data-pilar="Atração">
+          <a href="#dia-30" aria-label="Dia 30: Revisão do mês: principais aprendizados + próximos conteúdos">
+            <div class="top">
+              <div class="day"><div class="n">Dia</div><div class="d">30</div></div>
+              <div class="badges">
+                <span class="badge format carrossel">Carrossel</span>
+                <span class="badge pilar atracao">Atração</span>
+              </div>
+            </div>
+            <h3 class="title">Revisão do mês: principais aprendizados + próximos conteúdos</h3>
+            <p class="inst"><span class="hint">Instrução:</span> Faça resumo em bullets e peça temas para o próximo ciclo.</p>
+          </a>
+        </article>
+      </div>
+
+      <footer>
+        <div>Filtro local via JavaScript. Clique no card para abrir a âncora do dia.</div>
+        <div><code>Dica:</code> substitua os <code>href="#dia-xx"</code> por URLs reais (Drive/Notion/landing) quando tiver a fonte.</div>
+      </footer>
+    </section>
+  </div>
+
+  <script>
+    (function(){
+      const state = { formato: "Todos", pilar: "Todos" };
+      const buttons = Array.from(document.querySelectorAll(".btn[data-filter-type]"));
+      const cards = Array.from(document.querySelectorAll(".card"));
+      const countEl = document.getElementById("count");
+
+      function setActive(type, value){
+        buttons
+          .filter(b => b.dataset.filterType === type)
+          .forEach(b => b.classList.toggle("active", b.dataset.filterValue === value));
+      }
+
+      function apply(){
+        let visible = 0;
+        cards.forEach(card => {
+          const f = card.dataset.formato || "Todos";
+          const p = card.dataset.pilar || "Todos";
+          const okFormato = (state.formato === "Todos") || (f === state.formato);
+          const okPilar = (state.pilar === "Todos") || (p === state.pilar);
+          const show = okFormato && okPilar;
+          card.style.display = show ? "" : "none";
+          if(show) visible++;
+        });
+        countEl.textContent = `Mostrando ${visible}/30`;
+      }
+
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const type = btn.dataset.filterType;
+          const value = btn.dataset.filterValue || "Todos";
+          state[type] = value;
+          setActive(type, value);
+          apply();
+        });
+      });
+
+      // init
+      setActive("formato", "Todos");
+      setActive("pilar", "Todos");
+      apply();
+    })();
+  </script>
+</body>
+</html>
+```
