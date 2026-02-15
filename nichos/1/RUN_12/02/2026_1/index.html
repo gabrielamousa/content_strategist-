@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calendário de Conteúdo — Advocacia</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0B1020;
+      --card:#0F1731;
+      --stroke:rgba(255,255,255,.08);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.68);
+      --shadow:0 18px 45px rgba(0,0,0,.45);
+      --r:18px;
+      --pad:18px;
+      --max:1120px;
+      --grad:linear-gradient(90deg,#22C55E 0%,#3B82F6 52%,#F59E0B 100%);
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(59,130,246,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% 0%, rgba(34,197,94,.18), transparent 60%),
+        radial-gradient(900px 650px at 70% 110%, rgba(245,158,11,.16), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:28px 16px 56px}
+    .topbar{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius:calc(var(--r) + 6px);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .hero{
+      padding:22px 18px 18px;
+      position:relative;
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0 0 auto 0;
+      height:6px;
+      background:var(--grad);
+    }
+    .hrow{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; justify-content:space-between}
+    .hleft{min-width:260px}
+    .kicker{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+    .title{margin:6px 0 0; font-size:28px; line-height:1.15}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+    .chip{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:7px 10px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      color:var(--muted);
+    }
+    .nav{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:14px 18px 18px;
+      border-top:1px solid var(--stroke);
+      background:rgba(0,0,0,.16);
+    }
+    .nav a{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+    }
+    .section{
+      margin-top:18px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--stroke);
+      border-radius:calc(var(--r) + 6px);
+      overflow:hidden;
+    }
+    .shead{
+      padding:16px 18px;
+      border-bottom:1px solid var(--stroke);
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .shead h2{margin:0; font-size:16px}
+    .sbody{padding:18px}
+    .grid2{display:grid; grid-template-columns:1.2fr .8fr; gap:14px}
+    @media (max-width: 980px){ .grid2{grid-template-columns:1fr} .title{font-size:24px} }
+    .card{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      padding:var(--pad);
+    }
+    .card h3{margin:0 0 10px; font-size:14px}
+    .card p, .card li{color:var(--muted); line-height:1.55}
+    .list{margin:0; padding-left:18px}
+    .filters{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .group{display:flex; gap:8px; flex-wrap:wrap}
+    .btn{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:9px 11px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      cursor:pointer;
+    }
+    .btn.active{outline:2px solid rgba(59,130,246,.55); background:rgba(59,130,246,.10)}
+    .count{font-family:var(--mono); font-size:12px; color:var(--muted)}
+    .calgrid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width: 980px){ .calgrid{grid-template-columns:repeat(2, minmax(0,1fr))} }
+    @media (max-width: 640px){ .calgrid{grid-template-columns:1fr} }
+    .day{
+      display:block;
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      padding:16px;
+      transition:transform .12s ease, border-color .12s ease;
+    }
+    .day:hover{transform:translateY(-2px); border-color:rgba(255,255,255,.14)}
+    .daytop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .dnum{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--stroke);
+      color:var(--muted);
+    }
+    .dtitle{margin:10px 0 8px; font-size:14px; line-height:1.25}
+    .meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .small{font-size:12px; color:var(--muted); line-height:1.45}
+    .footer{
+      margin-top:18px;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.55);
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="hero">
+        <div class="hrow">
+          <div class="hleft">
+            <div class="kicker">Calendário de conteúdo</div>
+            <h1 class="title">Advocacia</h1>
+            <div class="chips">
+              <span class="chip">Nicho: Advocacia</span>
+              <span class="chip">Run ID: ADV-30D</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Navegação">
+        <a href="#framework">Framework</a>
+        <a href="#calendario">Calendário</a>
+        <a href="#como-usar">Como usar</a>
+      </nav>
+    </header>
+
+    <section class="section" id="framework">
+      <div class="shead">
+        <h2>Framework de Conteúdo (prático)</h2>
+        <div class="count">Objetivo: educação, autoridade e cliente certo</div>
+      </div>
+      <div class="sbody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Pilares (o que publicar)</h3>
+            <ul class="list">
+              <li><strong>Educação Jurídica:</strong> direitos, prazos, passos, documentos e conceitos em linguagem simples.</li>
+              <li><strong>Autoridade e Posicionamento:</strong> visão do advogado, bastidores éticos, rotina, métodos e critérios.</li>
+              <li><strong>Prova Social Ética:</strong> aprendizados, cases anonimizados, números agregados, depoimentos permitidos.</li>
+              <li><strong>Serviço/Conversão:</strong> como funciona o atendimento, triagem, inscrição de dúvidas, próximos passos.</li>
+              <li><strong>Prevenção de Riscos:</strong> orientações gerais para evitar problemas e quando procurar um advogado.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Ganchos (aberturas que prendem)</h3>
+            <ul class="list">
+              <li>“Se você fizer isso, pode perder prazo sem perceber…”</li>
+              <li>“3 sinais de que você precisa de orientação jurídica…”</li>
+              <li>“O que quase ninguém te explica sobre documentos e provas…”</li>
+              <li>“Antes de assinar, confira estes 5 pontos…”</li>
+              <li>“Mito ou verdade: …”</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Estruturas (roteiros rápidos)</h3>
+            <ul class="list">
+              <li><strong>Reels 30–45s:</strong> Problema → Regra geral → Exemplo → Passo a passo → CTA para triagem.</li>
+              <li><strong>Carrossel 7–9 slides:</strong> Promessa → Por que importa → Checklist → Erros comuns → O que fazer agora.</li>
+              <li><strong>FAQ em 3 pontos:</strong> Pergunta → Resposta geral → Exceções → Próximo passo.</li>
+              <li><strong>Comparativo:</strong> “antes/depois”, “certo/errado”, “o que muda se…”</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Checklist + erros a evitar</h3>
+            <ul class="list">
+              <li><strong>Checklist:</strong> linguagem simples, contexto, aviso de generalidade, CTA claro, consistência visual.</li>
+              <li><strong>Evitar:</strong> promessas de resultado, exposição de cliente, sensacionalismo, capturas de processos, “consulta grátis” (sem regras claras), jargão excessivo.</li>
+              <li><strong>CTA ético:</strong> “envie sua dúvida para triagem”, “agende uma avaliação”, “saiba como funciona o atendimento”.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="calendario">
+      <div class="shead">
+        <h2>Calendário (30 dias)</h2>
+        <div class="filters" aria-label="Filtros do calendário">
+          <div class="group" aria-label="Filtro por formato">
+            <button class="btn active" type="button" data-filter-formato="Todos">Formato: Todos</button>
+            <button class="btn" type="button" data-filter-formato="Reels">Reels</button>
+            <button class="btn" type="button" data-filter-formato="Carrossel">Carrossel</button>
+          </div>
+          <div class="group" id="pilarButtons" aria-label="Filtro por pilar"></div>
+          <div class="count" id="count">Exibindo 30 de 30</div>
+        </div>
+      </div>
+      <div class="sbody">
+        <div class="calgrid" id="calgrid">
+          <a class="day" href="./dia-01.html" data-formato="Reels" data-pilar="Educação Jurídica">
+            <div class="daytop">
+              <span class="dnum">Dia 01</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Como saber se seu caso tem urgência (e o que fazer nas primeiras 24h)</div>
+            <div class="small">Oriente sobre sinais de urgência, documentos iniciais e limites do conteúdo geral.</div>
+            <div class="meta">
+              <span class="badge">Educação Jurídica</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-02.html" data-formato="Carrossel" data-pilar="Prevenção de Riscos">
+            <div class="daytop">
+              <span class="dnum">Dia 02</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Checklist: 7 documentos que evitam dor de cabeça em contratos</div>
+            <div class="small">Liste documentos e provas comuns; inclua quando procurar orientação para o seu caso.</div>
+            <div class="meta">
+              <span class="badge">Prevenção de Riscos</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-03.html" data-formato="Reels" data-pilar="Autoridade e Posicionamento">
+            <div class="daytop">
+              <span class="dnum">Dia 03</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">O que eu analiso antes de aceitar um caso (triagem ética)</div>
+            <div class="small">Explique critérios gerais, alinhamento de expectativas e etapas do atendimento.</div>
+            <div class="meta">
+              <span class="badge">Autoridade e Posicionamento</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-04.html" data-formato="Carrossel" data-pilar="Educação Jurídica">
+            <div class="daytop">
+              <span class="dnum">Dia 04</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Prazos: 5 erros que fazem você perder tempo (e como se organizar)</div>
+            <div class="small">Mostre erros comuns de prazo e uma rotina simples de organização documental.</div>
+            <div class="meta">
+              <span class="badge">Educação Jurídica</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-05.html" data-formato="Reels" data-pilar="Prevenção de Riscos">
+            <div class="daytop">
+              <span class="dnum">Dia 05</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Antes de assinar: 3 cláusulas que merecem atenção</div>
+            <div class="small">Explique leitura de cláusulas em nível geral e ressalte que cada contrato exige análise.</div>
+            <div class="meta">
+              <span class="badge">Prevenção de Riscos</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-06.html" data-formato="Carrossel" data-pilar="Serviço/Conversão">
+            <div class="daytop">
+              <span class="dnum">Dia 06</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Como funciona meu atendimento: etapas, prazos e o que você precisa enviar</div>
+            <div class="small">Estruture: triagem, reunião, proposta, execução; deixe claro o que é necessário para começar.</div>
+            <div class="meta">
+              <span class="badge">Serviço/Conversão</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-07.html" data-formato="Reels" data-pilar="Educação Jurídica">
+            <div class="daytop">
+              <span class="dnum">Dia 07</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito ou verdade: “Conversa no WhatsApp não vale como prova”</div>
+            <div class="small">Explique regra geral, cuidados com preservação e quando coletar por meios adequados.</div>
+            <div class="meta">
+              <span class="badge">Educação Jurídica</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-08.html" data-formato="Carrossel" data-pilar="Autoridade e Posicionamento">
+            <div class="daytop">
+              <span class="dnum">Dia 08</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Bastidores éticos: como eu organizo provas e documentos sem expor ninguém</div>
+            <div class="small">Mostre método, pastas, checklist e boas práticas de confidencialidade.</div>
+            <div class="meta">
+              <span class="badge">Autoridade e Posicionamento</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-09.html" data-formato="Reels" data-pilar="Serviço/Conversão">
+            <div class="daytop">
+              <span class="dnum">Dia 09</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">O que enviar na primeira mensagem para agilizar a triagem</div>
+            <div class="small">Liste informações essenciais, documentos e o tipo de dúvida; finalize com CTA para triagem.</div>
+            <div class="meta">
+              <span class="badge">Serviço/Conversão</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-10.html" data-formato="Carrossel" data-pilar="Educação Jurídica">
+            <div class="daytop">
+              <span class="dnum">Dia 10</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Guia rápido: como juntar provas (sem invalidar)</div>
+            <div class="small">Oriente preservação, datas, prints, backups e limites; indique quando buscar orientação.</div>
+            <div class="meta">
+              <span class="badge">Educação Jurídica</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-11.html" data-formato="Reels" data-pilar="Prevenção de Riscos">
+            <div class="daytop">
+              <span class="dnum">Dia 11</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">3 frases que costumam virar problema em acordos informais</div>
+            <div class="small">Mostre exemplos genéricos e recomende formalização por escrito conforme o caso.</div>
+            <div class="meta">
+              <span class="badge">Prevenção de Riscos</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-12.html" data-formato="Carrossel" data-pilar="Prova Social Ética">
+            <div class="daytop">
+              <span class="dnum">Dia 12</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Caso (anonimizado): o que mudou quando o cliente organizou documentos</div>
+            <div class="small">Conte um aprendizado sem detalhes identificáveis; foque no processo e decisões.</div>
+            <div class="meta">
+              <span class="badge">Prova Social Ética</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-13.html" data-formato="Reels" data-pilar="Educação Jurídica">
+            <div class="daytop">
+              <span class="dnum">Dia 13</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">O que é “boa-fé” na prática e por que isso aparece em conflitos</div>
+            <div class="small">Traga definição simples, exemplos cotidianos e como agir para se resguardar.</div>
+            <div class="meta">
+              <span class="badge">Educação Jurídica</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-14.html" data-formato="Carrossel" data-pilar="Serviço/Conversão">
+            <div class="daytop">
+              <span class="dnum">Dia 14</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Quanto custa “não fazer nada”: riscos de adiar uma orientação</div>
+            <div class="small">Explique custos típicos (tempo, prova, prazo) e convide para avaliação do cenário.</div>
+            <div class="meta">
+              <span class="badge">Serviço/Conversão</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-15.html" data-formato="Reels" data-pilar="Autoridade e Posicionamento">
+            <div class="daytop">
+              <span class="dnum">Dia 15</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Como eu explico “estratégia” sem juridiquês</div>
+            <div class="small">Mostre seu método em passos e como você alinha expectativa e próximos marcos.</div>
+            <div class="meta">
+              <span class="badge">Autoridade e Posicionamento</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-16.html" data-formato="Carrossel" data-pilar="Educação Jurídica">
+            <div class="daytop">
+              <span class="dnum">Dia 16</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Notificação extrajudicial: para que serve e quando faz sentido</div>
+            <div class="small">Explique função, objetivos e cuidados com conteúdo e envio conforme o caso.</div>
+            <div class="meta">
+              <span class="badge">Educação Jurídica</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-17.html" data-formato="Reels" data-pilar="Prevenção de Riscos">
+            <div class="daytop">
+              <span class="dnum">Dia 17</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">O erro mais comum ao tentar “resolver sozinho” um conflito</div>
+            <div class="small">Aponte um padrão (mensagens, ameaças, exposição) e oriente postura segura.</div>
+            <div class="meta">
+              <span class="badge">Prevenção de Riscos</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-18.html" data-formato="Carrossel" data-pilar="Autoridade e Posicionamento">
+            <div class="daytop">
+              <span class="dnum">Dia 18</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Como eu monto uma linha do tempo do caso (modelo simples)</div>
+            <div class="small">Mostre um modelo genérico: datas, eventos, documentos, pessoas e pendências.</div>
+            <div class="meta">
+              <span class="badge">Autoridade e Posicionamento</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-19.html" data-formato="Reels" data-pilar="Serviço/Conversão">
+            <div class="daytop">
+              <span class="dnum">Dia 19</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Perguntas que você deve fazer ao contratar um advogado</div>
+            <div class="small">Oriente critérios: escopo, comunicação, documentos, prazos estimados e honorários.</div>
+            <div class="meta">
+              <span class="badge">Serviço/Conversão</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-20.html" data-formato="Carrossel" data-pilar="Prova Social Ética">
+            <div class="daytop">
+              <span class="dnum">Dia 20</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Resultados do mês (sem promessas): o que aprendemos nos atendimentos</div>
+            <div class="small">Compartilhe aprendizados e padrões (agregados), sem identificar casos ou prometer resultado.</div>
+            <div class="meta">
+              <span class="badge">Prova Social Ética</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-21.html" data-formato="Reels" data-pilar="Educação Jurídica">
+            <div class="daytop">
+              <span class="dnum">Dia 21</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">“Cabe indenização?” Como pensar antes de tomar decisão</div>
+            <div class="small">Explique critérios gerais (dano, nexo, prova) e importância de avaliação do caso concreto.</div>
+            <div class="meta">
+              <span class="badge">Educação Jurídica</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-22.html" data-formato="Carrossel" data-pilar="Prevenção de Riscos">
+            <div class="daytop">
+              <span class="dnum">Dia 22</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">5 cuidados com e-mail e WhatsApp para não se prejudicar</div>
+            <div class="small">Oriente linguagem, confirmação, anexos, organização e preservação de conversas.</div>
+            <div class="meta">
+              <span class="badge">Prevenção de Riscos</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-23.html" data-formato="Reels" data-pilar="Autoridade e Posicionamento">
+            <div class="daytop">
+              <span class="dnum">Dia 23</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Como eu preparo o cliente para uma audiência/reunião (sem ansiedade)</div>
+            <div class="small">Mostre passos: alinhamento, documentos, postura, pontualidade, comunicação e expectativas.</div>
+            <div class="meta">
+              <span class="badge">Autoridade e Posicionamento</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-24.html" data-formato="Carrossel" data-pilar="Educação Jurídica">
+            <div class="daytop">
+              <span class="dnum">Dia 24</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Acordo: quando vale a pena e o que não pode faltar no texto</div>
+            <div class="small">Liste itens essenciais, formas de pagamento e como reduzir ambiguidades.</div>
+            <div class="meta">
+              <span class="badge">Educação Jurídica</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-25.html" data-formato="Reels" data-pilar="Prevenção de Riscos">
+            <div class="daytop">
+              <span class="dnum">Dia 25</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">3 sinais de contrato “copiado e colado” que pode te prejudicar</div>
+            <div class="small">Explique incompatibilidades, lacunas e cláusulas desalinhadas com a realidade do negócio.</div>
+            <div class="meta">
+              <span class="badge">Prevenção de Riscos</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-26.html" data-formato="Carrossel" data-pilar="Serviço/Conversão">
+            <div class="daytop">
+              <span class="dnum">Dia 26</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Perguntas frequentes sobre honorários e contrato de prestação de serviços</div>
+            <div class="small">Esclareça componentes, escopo, parcelamento quando aplicável e transparência.</div>
+            <div class="meta">
+              <span class="badge">Serviço/Conversão</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-27.html" data-formato="Reels" data-pilar="Prova Social Ética">
+            <div class="daytop">
+              <span class="dnum">Dia 27</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Antes e depois (sem expor): o impacto de uma orientação no primeiro contato</div>
+            <div class="small">Compare cenários genéricos e mostre o que muda na clareza, organização e riscos.</div>
+            <div class="meta">
+              <span class="badge">Prova Social Ética</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-28.html" data-formato="Carrossel" data-pilar="Autoridade e Posicionamento">
+            <div class="daytop">
+              <span class="dnum">Dia 28</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Minha opinião profissional: o que eu considero “bom acordo”</div>
+            <div class="small">Explique critérios: previsibilidade, execução, garantias, custos e tempo.</div>
+            <div class="meta">
+              <span class="badge">Autoridade e Posicionamento</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-29.html" data-formato="Reels" data-pilar="Educação Jurídica">
+            <div class="daytop">
+              <span class="dnum">Dia 29</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">O que significa “prova” no seu caso: 4 tipos que aparecem no dia a dia</div>
+            <div class="small">Explique categorias em linguagem simples e como guardar cada uma com segurança.</div>
+            <div class="meta">
+              <span class="badge">Educação Jurídica</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-30.html" data-formato="Carrossel" data-pilar="Serviço/Conversão">
+            <div class="daytop">
+              <span class="dnum">Dia 30</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Roteiro de triagem: organize sua dúvida em 5 tópicos</div>
+            <div class="small">Modelo prático: contexto, linha do tempo, documentos, objetivo, restrições; convide para avaliação.</div>
+            <div class="meta">
+              <span class="badge">Serviço/Conversão</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="como-usar">
+      <div class="shead">
+        <h2>Como usar (5 passos)</h2>
+        <div class="count">Ritmo: 30 dias, 1 post por dia</div>
+      </div>
+      <div class="sbody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Passos</h3>
+            <ul class="list">
+              <li>Escolha um card do dia e mantenha o foco no tema (um objetivo por post).</li>
+              <li>Adapte a linguagem para seu público e preserve o caráter geral da orientação.</li>
+              <li>Grave (Reels) ou escreva (Carrossel) usando a estrutura indicada no Framework.</li>
+              <li>Finalize com CTA de triagem/atendimento e organize o retorno (links, mensagens e agenda).</li>
+              <li>Reaproveite: transforme comentários em FAQ e salve os melhores posts para “Destaques”.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Cadência mínima de execução</h3>
+            <ul class="list">
+              <li>2h/semana para roteiros (dias 1–7).</li>
+              <li>2h/semana para gravação/edição em lote (4–6 Reels).</li>
+              <li>1h/semana para carrosséis (modelo fixo + checklist).</li>
+              <li>15min/dia para responder com padrão de triagem.</li>
+              <li>Revisão semanal: veja quais pilares mais convertem em atendimento qualificado.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">© 2026</footer>
+  </div>
+
+  <script>
+    (function(){
+      const days = Array.from(document.querySelectorAll('.day'));
+      const pilarWrap = document.getElementById('pilarButtons');
+      const countEl = document.getElementById('count');
+      const formatoBtns = Array.from(document.querySelectorAll('[data-filter-formato]'));
+
+      const pilares = Array.from(new Set(days.map(d => (d.dataset.pilar || '').trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+      const makeBtn = (label, attr, value, active=false) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn' + (active ? ' active' : '');
+        b.textContent = label;
+        b.setAttribute(attr, value);
+        return b;
+      };
+
+      pilarWrap.innerHTML = '';
+      pilarWrap.appendChild(makeBtn('Pilar: Todos', 'data-filter-pilar', 'Todos', true));
+      pilares.forEach(p => pilarWrap.appendChild(makeBtn(p, 'data-filter-pilar', p, false)));
+
+      let currentFormato = 'Todos';
+      let currentPilar = 'Todos';
+
+      function setActive(btns, predicate){
+        btns.forEach(b => {
+          if(predicate(b)) b.classList.add('active');
+          else b.classList.remove('active');
+        });
+      }
+
+      function applyFilters(){
+        let shown = 0;
+        days.forEach(d => {
+          const f = (d.dataset.formato || '').trim();
+          const p = (d.dataset.pilar || '').trim();
+          const okFormato = (currentFormato === 'Todos') || (f === currentFormato);
+          const okPilar = (currentPilar === 'Todos') || (p === currentPilar);
+          const show = okFormato && okPilar;
+          d.style.display = show ? '' : 'none';
+          if(show) shown++;
+        });
+        countEl.textContent = 'Exibindo ' + shown + ' de ' + days.length;
+      }
+
+      formatoBtns.forEach(b => {
+        b.addEventListener('click', () => {
+          currentFormato = b.getAttribute('data-filter-formato');
+          setActive(formatoBtns, x => x.getAttribute('data-filter-formato') === currentFormato);
+          applyFilters();
+        });
+      });
+
+      const pilarBtns = Array.from(pilarWrap.querySelectorAll('[data-filter-pilar]'));
+      pilarBtns.forEach(b => {
+        b.addEventListener('click', () => {
+          currentPilar = b.getAttribute('data-filter-pilar');
+          setActive(pilarBtns, x => x.getAttribute('data-filter-pilar') === currentPilar);
+          applyFilters();
+        });
+      });
+
+      applyFilters();
+    })();
+  </script>
+</body>
+</html>
