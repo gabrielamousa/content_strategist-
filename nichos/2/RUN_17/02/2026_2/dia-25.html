@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha Reproduzível — Carrossel de Retenção (Arquitetura)</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1220;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --good:#28E07D;
+      --blue:#39B6FF;
+      --orange:#FF8A1F;
+      --shadow:0 12px 40px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(57,182,255,.22), transparent 60%),
+        radial-gradient(1200px 700px at 90% 10%, rgba(40,224,125,.18), transparent 55%),
+        radial-gradient(1000px 650px at 50% 120%, rgba(255,138,31,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px}
+
+    header{
+      position:relative;
+      border:1px solid var(--stroke);
+      border-radius:22px;
+      padding:22px;
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(800px 320px at 15% 20%, rgba(57,182,255,.22), transparent 60%),
+        radial-gradient(700px 340px at 80% 15%, rgba(40,224,125,.18), transparent 60%),
+        radial-gradient(700px 340px at 50% 90%, rgba(255,138,31,.12), transparent 60%);
+      filter:saturate(1.2);
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1}
+
+    .topline{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+    .badges{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+    .badge{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .badge strong{color:var(--text); font-weight:650}
+
+    .hgroup{margin-top:14px; display:grid; gap:8px}
+    h1{margin:0; font-size:22px; line-height:1.2; letter-spacing:-.2px}
+    .sub{margin:0; color:var(--muted); font-size:14px; line-height:1.4}
+
+    .linkRow{margin-top:14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+    .postlink{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      color:var(--muted);
+      font-size:13px;
+      max-width:100%;
+    }
+    .postlink code{font-family:var(--mono); font-size:12px; color:var(--text)}
+
+    .actions{display:flex; flex-wrap:wrap; gap:10px}
+    .btn{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:transform .08s ease, border-color .15s ease, background .15s ease;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.22)}
+    .btn:active{transform:translateY(0)}
+    .btn .dot{
+      width:10px; height:10px; border-radius:999px;
+      background:linear-gradient(90deg, var(--good), var(--blue), var(--orange));
+      box-shadow:0 0 0 3px rgba(255,255,255,.05);
+    }
+
+    .grid{margin-top:18px; display:grid; grid-template-columns:1fr; gap:14px}
+    @media (min-width: 960px){
+      .grid{grid-template-columns: 1.05fr .95fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:0 12px 34px rgba(0,0,0,.40);
+    }
+    .card h2{margin:0 0 10px; font-size:15px; letter-spacing:.2px}
+    .card p{margin:0; color:var(--muted); font-size:13.5px; line-height:1.55}
+
+    .section{margin-top:14px}
+    .sectionHeader{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:26px 0 10px}
+    .sectionHeader h3{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.35px;
+      text-transform:uppercase;
+      color:rgba(234,240,255,.86);
+    }
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.22);
+      color:var(--muted);
+    }
+    .pill .grad{
+      background:linear-gradient(90deg, var(--good), var(--blue), var(--orange));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:750;
+    }
+
+    .twoCol{display:grid; grid-template-columns:1fr; gap:14px}
+    @media (min-width: 860px){
+      .twoCol{grid-template-columns:1fr 1fr}
+    }
+
+    .list{margin:0; padding:0; list-style:none; display:grid; gap:10px}
+    .li{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.20);
+      border-radius:var(--radius2);
+      padding:12px 12px;
+    }
+    .li strong{display:block; font-size:13.5px; margin-bottom:4px}
+    .li span{display:block; color:var(--muted); font-size:13px; line-height:1.45}
+
+    .codebox{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.32);
+      border-radius:var(--radius);
+      overflow:hidden;
+    }
+    .codebox .bar{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:12px;
+    }
+    pre{
+      margin:0;
+      padding:14px 12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color:rgba(234,240,255,.86);
+    }
+
+    .kpi{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
+    .kpi .mini{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.20);
+      padding:8px 10px;
+      border-radius:12px;
+      font-size:12.5px;
+      color:var(--muted);
+    }
+    .kpi .mini b{color:var(--text)}
+
+    .gradText{
+      background:linear-gradient(90deg, var(--good), var(--blue), var(--orange));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:800;
+    }
+
+    footer{
+      margin-top:26px;
+      color:var(--muted2);
+      font-size:12px;
+      line-height:1.5;
+    }
+    .hr{height:1px; background:rgba(255,255,255,.10); margin:20px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badges">
+          <div class="badge"><strong>Nicho:</strong> Arquitetura</div>
+          <div class="badge"><strong>Dia:</strong> 25</div>
+          <div class="badge"><strong>Formato:</strong> Carrossel</div>
+          <div class="badge"><strong>Pilar:</strong> Erro comum</div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="copyBtn" type="button"><span class="dot"></span> Copiar roteiro</button>
+        </div>
+      </div>
+
+      <div class="hgroup">
+        <h1>Parece perfeito… mas tem um erro oculto <span class="gradText">(leia a legenda)</span></h1>
+        <p class="sub">Carrossel de retenção (open loop) com payoff na legenda. Ideal para arquitetura/interiores/obras quando você quer ensinar sem “entregar” tudo no slide.</p>
+      </div>
+
+      <div class="linkRow">
+        <a class="postlink" href="https://www.instagram.com/p/DT3mRIyErjd/" target="_blank" rel="noopener noreferrer">
+          Link do post original: <code>instagram.com/p/DT3mRIyErjd/</code>
+        </a>
+        <div class="kpi">
+          <div class="mini"><b>Objetivo:</b> retenção + leitura da legenda</div>
+          <div class="mini"><b>Mecânica:</b> curiosidade + repetição com variação</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Resumo</h2>
+        <p>
+          Você usa uma foto “aspiracional” (prova visual) e faz o público tentar encontrar um <b>erro/detalhe</b>. Os slides repetem a promessa e empurram o leitor para a <b>legenda</b>, onde você revela o defeito, explica o impacto e dá a solução. Funciona muito bem para: erro em obra, decisão de projeto, escolha de material, layout, iluminação, ventilação, impermeabilização etc.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Onde isso performa melhor</h2>
+        <p>
+          Quando a imagem parece “perfeita” e o defeito não é óbvio (mas é real). Quanto mais comum e caro o erro, maior o potencial de comentários, salvamentos e compartilhamentos.
+        </p>
+        <div class="kpi">
+          <div class="mini"><b>Gatilhos:</b> desafio visual + open loop</div>
+          <div class="mini"><b>Entrega:</b> payoff em 5 linhas na legenda</div>
+          <div class="mini"><b>CTA:</b> comentar + salvar</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <h3>Estrutura</h3>
+        <div class="pill"><span class="grad">4</span> slides + legenda com payoff</div>
+      </div>
+      <div class="twoCol">
+        <div class="card">
+          <h2>Macro (o que acontece)</h2>
+          <ul class="list">
+            <li class="li"><strong>Slide 1 — Hook/Desafio</strong><span>Pergunta curta: “Você percebe [o defeito]?” + micro-CTA para legenda.</span></li>
+            <li class="li"><strong>Slide 2 — Intriga/Contraste</strong><span>“Parece perfeito… até você ler a legenda.”</span></li>
+            <li class="li"><strong>Slide 3 — Reforço do padrão</strong><span>Repetição com variação (“bonito à primeira vista…”) + direção (“espia a legenda”).</span></li>
+            <li class="li"><strong>Slide 4 — Promessa/Impacto</strong><span>“Esse detalhe muda tudo.” + CTA explícito para legenda.</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Regra de ouro</h2>
+          <p>
+            Slide não explica: slide <b>segura</b>. Legenda <b>resume, prova e resolve</b>. Se você explicar demais no slide, a pessoa não tem motivo para abrir/ver a legenda.
+          </p>
+          <div class="hr"></div>
+          <h2>Checklist de consistência (retenção)</h2>
+          <ul class="list">
+            <li class="li"><strong>Texto em 1 segundo</strong><span>Máx. 1 frase por slide.</span></li>
+            <li class="li"><strong>Progressão visível</strong><span>Número do slide + seta de swipe.</span></li>
+            <li class="li"><strong>Repetição com variação</strong><span>Mesma ideia, palavras diferentes.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <h3>Slides sugeridos (1..4)</h3>
+        <div class="pill">Template substituível: <span class="grad">[X]</span>, <span class="grad">[Y]</span>, <span class="grad">[Z]</span></div>
+      </div>
+      <div class="twoCol">
+        <div class="card">
+          <h2>Slide 1 (Hook / desafio)</h2>
+          <p><b>Headline:</b> “Você percebe <span class="gradText">[o erro/detalhe X]</span> aqui?”</p>
+          <p><b>Micro-CTA:</b> “Veja na legenda”</p>
+          <p><b>Foto:</b> imagem bonita, com bastante informação (fachada, sala, cozinha, banheiro, jardim) — algo que dê vontade de “procurar” o defeito.</p>
+        </div>
+        <div class="card">
+          <h2>Slide 2 (Intriga / contradição)</h2>
+          <p><b>Headline:</b> “Parece <span class="gradText">[perfeito/alto padrão]</span>… até você ler a legenda!”</p>
+          <p><b>Foto:</b> mesma linha estética do slide 1 (pode ser a mesma foto com crop diferente para criar variação).</p>
+        </div>
+        <div class="card">
+          <h2>Slide 3 (Reforço / direção)</h2>
+          <p><b>Headline:</b> “Bonito à primeira vista. Agora espia a legenda!”</p>
+          <p><b>Opcional:</b> box pequeno “O detalhe está na legenda”.</p>
+        </div>
+        <div class="card">
+          <h2>Slide 4 (Promessa / impacto)</h2>
+          <p><b>Headline:</b> “Esse detalhe muda tudo. É sério, leia a legenda.”</p>
+          <p><b>Se quiser mais ação:</b> “Quer que eu aponte no seu projeto? Comente <span class="gradText">ANALISAR</span>.”</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <h3>Roteiro</h3>
+        <div class="pill">Inclui legenda (payoff)</div>
+      </div>
+
+      <div class="codebox" id="scriptBox">
+        <div class="bar">
+          <div>Roteiro copiável (slides + legenda)</div>
+          <div style="font-family:var(--mono)">v1.0</div>
+        </div>
+        <pre id="scriptText">SLIDES (4)
+
+[Slide 1 — Hook]
+Você percebe [o erro/detalhe X] aqui?
+(BOX pequeno) Veja na legenda
+
+[Slide 2 — Intriga]
+Parece [perfeito/alto padrão]…
+até você ler a legenda!
+
+[Slide 3 — Reforço]
+Bonito à primeira vista.
+Agora espia a legenda!
+
+[Slide 4 — Virada]
+Esse detalhe muda tudo.
+É sério, leia a legenda.
+
+LEGENDA (payoff em 5 blocos)
+
+1) Revelação em 1 linha
+O problema aqui é: [X].
+
+2) Por que isso importa (consequência real)
+Isso pode gerar: [custo], [manutenção], [conforto], [segurança], [durabilidade] — e costuma aparecer só depois da obra pronta.
+
+3) Como identificar (mini-checklist 3 itens)
+Antes de aprovar, confira:
+(1) [Sinal 1 / regra básica]
+(2) [Sinal 2 / medida / detalhe]
+(3) [Sinal 3 / execução em obra]
+
+4) Como resolver (1 caminho + 1 alternativa)
+Solução mais segura: [Y].
+Alternativa quando há restrição: [Y2], mas com [condição].
+
+5) CTA final
+Se você está [construindo/reformando] e quer que eu aponte 3 riscos do seu caso, comente “ANALISAR”.
+E salva este post para revisar antes de fechar o projeto.</pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <h3>Elementos visuais</h3>
+        <div class="pill">Clean + editorial + high-tech</div>
+      </div>
+      <div class="twoCol">
+        <div class="card">
+          <h2>Composição (reproduzível no Canva/Figma)</h2>
+          <ul class="list">
+            <li class="li"><strong>Tela</strong><span>1080×1080 (1:1). Foto full-bleed ocupando 100%.</span></li>
+            <li class="li"><strong>Faixa superior</strong><span>Retângulo branco com padding confortável (headline).</span></li>
+            <li class="li"><strong>Numeração</strong><span>Círculo branco com número (1–4) sempre no mesmo lugar.</span></li>
+            <li class="li"><strong>Direção</strong><span>Seta simples na base apontando para a direita (swipe).</span></li>
+            <li class="li"><strong>Assinatura</strong><span>Logo/monograma discreto no canto inferior direito.</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Tipografia (hierarquia rápida)</h2>
+          <ul class="list">
+            <li class="li"><strong>Headline</strong><span>Serif editorial (ex.: Playfair Display / Georgia). Alto contraste (preto no branco).</span></li>
+            <li class="li"><strong>Micro-CTA</strong><span>Sans simples (ex.: Inter / Arial) menor, dentro de box “Veja na legenda”.</span></li>
+            <li class="li"><strong>Navegação</strong><span>Número e seta minimalistas; consistência &gt; estilo.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <h3>Copy e ganchos</h3>
+        <div class="pill">Banco de substituições</div>
+      </div>
+      <div class="twoCol">
+        <div class="card">
+          <h2>Ganchos (escolha 1 por carrossel)</h2>
+          <ul class="list">
+            <li class="li"><strong>Desafio visual</strong><span>“Você consegue encontrar [X]?”</span></li>
+            <li class="li"><strong>Quase-perfeito</strong><span>“Parece impecável… mas tem um detalhe perigoso.”</span></li>
+            <li class="li"><strong>Erro caro</strong><span>“Esse erro vira obra cara (e ninguém te avisa).”</span></li>
+            <li class="li"><strong>Antes/depois mental</strong><span>“Você só percebe depois que mora. E aí já era.”</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Substituições que mantêm impacto</h2>
+          <ul class="list">
+            <li class="li"><strong>[erro/detalhe X]</strong><span>troque por: “risco”, “falha”, “armadilha”, “ponto cego”, “detalhe que dá problema”, “o que ninguém repara”.</span></li>
+            <li class="li"><strong>“Leia a legenda”</strong><span>troque por: “abri a legenda”, “eu te explico embaixo”, “tá no texto”, “olha a legenda rapidinho”.</span></li>
+            <li class="li"><strong>“Esse detalhe muda tudo”</strong><span>troque por: “isso define o conforto”, “isso encarece a manutenção”, “isso reduz a vida útil”, “isso estraga a estética”.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <h3>CTA</h3>
+        <div class="pill">1 principal + 1 conversão</div>
+      </div>
+      <div class="twoCol">
+        <div class="card">
+          <h2>CTA principal (durante o carrossel)</h2>
+          <p><b>“Veja/Leia/Espia a legenda.”</b> (repita em 2–3 slides; isso aumenta a taxa de abertura da legenda).</p>
+          <div class="hr"></div>
+          <h2>CTA de conversão (no fim da legenda)</h2>
+          <ul class="list">
+            <li class="li"><strong>Comentários</strong><span>“Comente ‘ANALISAR’ que eu digo 1 risco comum no seu caso.”</span></li>
+            <li class="li"><strong>Salvamento</strong><span>“Salve para revisar antes de fechar o projeto/obra.”</span></li>
+            <li class="li"><strong>Compartilhamento</strong><span>“Envie para quem está construindo/reformando.”</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Quando escolher cada CTA</h2>
+          <ul class="list">
+            <li class="li"><strong>Quer alcance</strong><span>Peça “envie para alguém + marque”.</span></li>
+            <li class="li"><strong>Quer leads</strong><span>Peça “comente palavra-chave” ou “DM com ‘LISTA’”.</span></li>
+            <li class="li"><strong>Quer autoridade</strong><span>Peça “salve” e ofereça checklist.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <h3>Checklist</h3>
+        <div class="pill">Criação + revisão + publicação</div>
+      </div>
+      <div class="twoCol">
+        <div class="card">
+          <h2>Checklist de criação (Canva/Figma)</h2>
+          <ul class="list">
+            <li class="li"><strong>Imagem</strong><span>Foto full-bleed bonita + com detalhes suficientes para “caça ao erro”.</span></li>
+            <li class="li"><strong>Texto</strong><span>1 frase por slide (máx. 10–12 palavras).</span></li>
+            <li class="li"><strong>Consistência</strong><span>Mesma posição da faixa do topo, número, seta e logo em todos os slides.</span></li>
+            <li class="li"><strong>Acessibilidade</strong><span>Contraste alto + tamanho legível em tela pequena.</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Checklist de publicação</h2>
+          <ul class="list">
+            <li class="li"><strong>Legenda com payoff</strong><span>Revelar X em 1 linha + impacto + mini-checklist + solução + CTA.</span></li>
+            <li class="li"><strong>Primeira linha forte</strong><span>Comece a legenda com “O problema aqui é…” para não frustrar quem abriu.</span></li>
+            <li class="li"><strong>Comentários</strong><span>Fixe um comentário com a palavra-chave (ex.: “Comente ANALISAR”).</span></li>
+            <li class="li"><strong>Teste A/B</strong><span>Varie só o slide 1 (hook) em posts futuros; mantenha o resto igual.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <h3>Variações</h3>
+        <div class="pill">Adapte para qualquer tema</div>
+      </div>
+      <div class="twoCol">
+        <div class="card">
+          <h2>Variação 1 — “Mito vs Verdade” (mesma mecânica)</h2>
+          <ul class="list">
+            <li class="li"><strong>Slide 1</strong><span>“Você acredita nesse ‘truque’ de [tema]?”</span></li>
+            <li class="li"><strong>Slide 2</strong><span>“Parece certo… até você ver o motivo.”</span></li>
+            <li class="li"><strong>Slide 3</strong><span>“É aí que muita gente erra. Legenda.”</span></li>
+            <li class="li"><strong>Legenda</strong><span>“Verdade: … / Mito: … / O que fazer no lugar: …”</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Variação 2 — “Passo a passo escondido”</h2>
+          <ul class="list">
+            <li class="li"><strong>Slides</strong><span>Todos empurram para a legenda (“o passo a passo está embaixo”).</span></li>
+            <li class="li"><strong>Legenda</strong><span>3–5 passos curtos, numerados, com um erro comum em cada passo.</span></li>
+            <li class="li"><strong>CTA</strong><span>“Quer o checklist em PDF? Comente ‘CHECKLIST’.”</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="twoCol" style="margin-top:14px">
+        <div class="card">
+          <h2>Variação 3 — “Prova” (antes/depois na legenda)</h2>
+          <p>
+            Use a mesma imagem bonita, mas na legenda mostre: “Como estava / O ajuste / Resultado”. Ideal para iluminação, paginação de piso, marcenaria, fachada.
+          </p>
+        </div>
+        <div class="card">
+          <h2>Exemplos de [X] prontos (Arquitetura)</h2>
+          <ul class="list">
+            <li class="li"><strong>X: tomada mal posicionada</strong><span>Impacto: extensão, estética, uso real.</span></li>
+            <li class="li"><strong>X: iluminação sem camadas</strong><span>Impacto: ambiente “chapado”, desconforto, retrabalho.</span></li>
+            <li class="li"><strong>X: falta de pingadeira/rufo</strong><span>Impacto: infiltração, mofo, manutenção.</span></li>
+            <li class="li"><strong>X: ventilação cruzada ignorada</strong><span>Impacto: calor, gasto com ar-condicionado.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="hr"></div>
+      <div>
+        Dica operacional: mantenha um arquivo “biblioteca de hooks” e só troque <span class="gradText">[X]</span> e a legenda. Assim você cria 10 posts com a mesma estrutura, variando apenas o tema.
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+      function copyToClipboard(str){
+        if (navigator.clipboard && navigator.clipboard.writeText){
+          return navigator.clipboard.writeText(str);
+        }
+        const ta = document.createElement('textarea');
+        ta.value = str;
+        ta.setAttribute('readonly','');
+        ta.style.position = 'absolute';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        return Promise.resolve();
+      }
+      btn.addEventListener('click', async function(){
+        const content = text.innerText.trim();
+        await copyToClipboard(content);
+        const old = btn.innerHTML;
+        btn.innerHTML = '<span class="dot"></span> Copiado!';
+        setTimeout(()=> btn.innerHTML = old, 1300);
+      });
+    })();
+  </script>
+</body>
+</html>
