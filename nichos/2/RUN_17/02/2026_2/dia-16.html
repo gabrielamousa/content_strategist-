@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Roteiro reproduzível — Arquitetura (Dia 16)</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card:#0E1630cc;
+      --card2:#0C1226cc;
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 16px 40px rgba(0,0,0,.55);
+      --radius: 16px;
+      --radius2: 22px;
+      --g1: linear-gradient(135deg, #22C55E 0%, #38BDF8 48%, #FB923C 100%);
+      --g2: linear-gradient(90deg, rgba(34,197,94,.18), rgba(56,189,248,.18), rgba(251,146,60,.18));
+      --green:#22C55E;
+      --blue:#38BDF8;
+      --orange:#FB923C;
+      --code:#0A0F1F;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,.15), transparent 60%),
+        radial-gradient(900px 600px at 85% 20%, rgba(34,197,94,.12), transparent 55%),
+        radial-gradient(900px 700px at 60% 95%, rgba(251,146,60,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    a{color:inherit}
+
+    .wrap{max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px;}
+
+    header{
+      position: relative;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.72), rgba(10,15,31,.52));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius2);
+      padding: 18px 18px 16px;
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(12px);
+      opacity:.9;
+      pointer-events:none;
+    }
+
+    .headTop{position:relative; display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+    .badge{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke2);
+      background: rgba(10,15,31,.58);
+      backdrop-filter: blur(10px);
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .2px;
+      white-space:nowrap;
+    }
+
+    .dot{width:8px; height:8px; border-radius:50%; background: var(--g1); box-shadow: 0 0 0 3px rgba(255,255,255,.05)}
+
+    h1{
+      position:relative;
+      margin: 14px 0 8px;
+      font-size: clamp(20px, 2.4vw, 30px);
+      line-height:1.1;
+      letter-spacing:-.4px;
+    }
+
+    .sub{
+      position:relative;
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height:1.5;
+    }
+
+    .linkRow{position:relative; display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px}
+    .link{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--stroke);
+      background: rgba(10,15,31,.55);
+      color: var(--muted);
+      text-decoration:none;
+      font-size: 13px;
+    }
+
+    .btn{
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      color: var(--text);
+      font-weight: 600;
+      text-decoration:none;
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+      user-select:none;
+    }
+    .btn:hover{border-color: rgba(255,255,255,.24)}
+    .btn:active{transform: translateY(1px) scale(.99)}
+
+    .btnPrimary{
+      background: var(--g1);
+      border: 0;
+      color: #06101A;
+      box-shadow: 0 16px 36px rgba(0,0,0,.45);
+    }
+
+    .grid{display:grid; grid-template-columns: 1.15fr .85fr; gap: 14px; margin-top: 14px;}
+    @media (max-width: 900px){ .grid{grid-template-columns: 1fr;} }
+
+    .card{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.62), rgba(10,15,31,.48));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .inner{padding: 16px 16px 14px;}
+
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing: .2px;
+    }
+
+    .card h2 .hl{
+      background: var(--g1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .p{margin:0; color: var(--muted); font-size: 14px; line-height:1.55;}
+
+    ul{margin: 10px 0 0; padding-left: 18px; color: var(--muted);}
+    li{margin: 8px 0; line-height: 1.45; font-size: 14px;}
+
+    .kpi{display:flex; flex-wrap:wrap; gap:10px; margin-top: 10px}
+    .pill{
+      border: 1px solid var(--stroke);
+      background: rgba(10,15,31,.55);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 12.5px;
+      color: var(--muted);
+      white-space:nowrap;
+    }
+
+    .twoCol{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 700px){ .twoCol{grid-template-columns:1fr;} }
+
+    .callout{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(10,15,31,.65);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .callout b{color: var(--text)}
+
+    .pre{
+      margin: 10px 0 0;
+      background: linear-gradient(180deg, rgba(10,15,31,.9), rgba(10,15,31,.65));
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+      font-family: var(--mono);
+      font-size: 12.8px;
+      line-height: 1.5;
+      color: rgba(234,240,255,.86);
+      white-space: pre-wrap;
+    }
+
+    .divider{height:1px; background: rgba(255,255,255,.08); margin: 12px 0;}
+
+    .slides{counter-reset: slide; display:grid; gap:10px;}
+
+    .slide{
+      border: 1px solid var(--stroke);
+      background: rgba(10,15,31,.55);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .slideTitle{
+      display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+      margin:0 0 6px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .slideTitle:before{
+      counter-increment: slide;
+      content: counter(slide);
+      width: 22px; height: 22px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius: 8px;
+      background: var(--g1);
+      color:#06101A;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .muted{color: var(--muted2)}
+
+    .footerActions{display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px}
+
+    .toast{
+      position: fixed;
+      inset: auto 16px 16px auto;
+      max-width: 360px;
+      background: rgba(10,15,31,.78);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow);
+      display:none;
+      backdrop-filter: blur(10px);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headTop">
+        <div class="badgeRow">
+          <span class="badge"><span class="dot"></span><span><b>Nicho</b>: Arquitetura</span></span>
+          <span class="badge"><span><b>Dia</b>: 16</span></span>
+          <span class="badge"><span><b>Formato</b>: Carrossel</span></span>
+          <span class="badge"><span><b>Pilar</b>: Prova</span></span>
+        </div>
+        <div class="badgeRow">
+          <button class="btn btnPrimary" id="copyBtn" type="button">Copiar roteiro</button>
+          <a class="btn" href="#var">Variações</a>
+        </div>
+      </div>
+
+      <h1>Solução X em 1: o carrossel que educa e vende sem parecer anúncio</h1>
+      <p class="sub">Baseado no post original: carrossel de portfólio + explicação técnica (ritmo visual + prova de projeto + CTA simples).</p>
+      <div class="linkRow">
+        <a class="link" href="https://www.instagram.com/p/DUshYpwEbNY/" target="_blank" rel="noopener noreferrer">Link do post original</a>
+        <span class="link">Identidade: fundo escuro + cards suaves + destaques em degradê (verde/azul/laranja)</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="inner">
+          <h2><span class="hl">Resumo</span></h2>
+          <p class="p"><b>Objetivo do carrossel:</b> apresentar uma solução inteligente para poucos m², com estética + lógica técnica, gerando confiança e levando ao orçamento sem “clima de anúncio”.</p>
+          <div class="kpi">
+            <span class="pill">Hook específico (ex.: “3 em 1”)</span>
+            <span class="pill">Contexto real (metragem + desejos)</span>
+            <span class="pill">Como funciona (infográfico)</span>
+            <span class="pill">Prova (planta + detalhes)</span>
+            <span class="pill">CTA direto (link/direct)</span>
+          </div>
+          <div class="divider"></div>
+          <div class="twoCol">
+            <div class="callout">
+              <p class="p"><b>Quando usar</b><br/><span class="muted">Projetos compactos, marcenaria sob medida, reformas, antes/depois, soluções transformáveis, detalhes construtivos.</span></p>
+            </div>
+            <div class="callout">
+              <p class="p"><b>Promessa replicável</b><br/><span class="muted">“Como resolver <i>muitos usos</i> em <i>poucos m²</i> com design + execução.”</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="inner">
+          <h2><span class="hl">Metas de retenção</span></h2>
+          <ul>
+            <li><b>Troca de ritmo</b>: foto → planta/diagrama → infográfico → foto → moodboard → detalhes → mosaico.</li>
+            <li><b>Pergunta explícita</b> no slide didático (ex.: “Como funciona??”).</li>
+            <li><b>Setas/anotações</b> para guiar o olho (“olha isso aqui”).</li>
+            <li><b>Provas rápidas</b>: metragem + layout + acabamento.</li>
+          </ul>
+          <div class="divider"></div>
+          <h2><span class="hl">Padrão de argumento</span></h2>
+          <ul>
+            <li><b>Atração</b>: solução (benefício).</li>
+            <li><b>Justificativa</b>: limitação real do cliente.</li>
+            <li><b>Demonstração</b>: mecanismo (como resolve).</li>
+            <li><b>Estética</b>: resultado e coerência do conceito.</li>
+            <li><b>Qualidade</b>: detalhes e cuidado.</li>
+            <li><b>Próximo passo</b>: CTA.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px" id="estrutura">
+      <div class="inner">
+        <h2><span class="hl">Estrutura</span> (reproduzível em qualquer tema)</h2>
+        <div class="twoCol">
+          <div class="callout">
+            <p class="p"><b>Fórmula</b></p>
+            <div class="pre">Hook visual + promessa
+→ Contexto (dor real + dados)
+→ Explicação (mecanismo)
+→ Resultado (respiro / beleza)
+→ Conceito (moodboard/paleta)
+→ Detalhes (prova de cuidado)
+→ Fechamento (mosaico/portfólio)
+→ CTA (ação simples)</div>
+          </div>
+          <div class="callout">
+            <p class="p"><b>Parâmetros para adaptar</b></p>
+            <ul>
+              <li><b>[SOLUÇÃO]</b>: elemento transformável / estratégia / detalhe “invisível”.</li>
+              <li><b>[X em 1]</b>: “2 em 1”, “3 em 1” ou “multiuso” (sempre concreto).</li>
+              <li><b>[LIMITAÇÃO]</b>: m², orçamento, prazo, insolação, ruído, storage, pets, criança, home office.</li>
+              <li><b>[PROVA]</b>: planta, diagrama de fluxo, render/antes-depois, detalhe construtivo.</li>
+              <li><b>[PRÓXIMO PASSO]</b>: link, direct com palavra-chave, formulário, briefing.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="roteiro">
+      <div class="inner">
+        <h2><span class="hl">Roteiro</span> (texto pronto + campos de substituição)</h2>
+        <p class="p">Use os colchetes para trocar o tema sem perder o impacto (mantenha: promessa específica + prova + detalhe + CTA simples).</p>
+        <div class="pre" id="roteiroTexto">TÍTULO / IDEIA-MÃE
+- “A flexibilidade da [SOLUÇÃO] [X em 1] no [CÔMODO/USO]”
+
+TOM
+- Seguro, técnico e leve (sem soar como anúncio). Misture: 1 frase emocional + 1 prova objetiva.
+
+SLIDE A SLIDE (8)
+
+SLIDE 1 — CAPA (Hook visual)
+Texto sugerido:
+- Linha 1 (leve): “A flexibilidade da”
+- Linha 2 (forte): “[SOLUÇÃO] [X em 1]”
+- Linha 3 (leve/CAIXA ALTA): “no [CÔMODO/USO]”
+Notas:
+- Foto forte do ambiente. Texto em branco com alto contraste.
+
+SLIDE 2 — CONTEXTO (Dor + cenário real)
+Headline:
+- “[X] m² e muitos desejos!”
+Corpo (2–4 linhas):
+- “Os clientes queriam [LISTA 1: 3 desejos], mas o layout precisava manter [RESTRIÇÃO].”
+Frase emocional (itálico):
+- “Quase como quem tenta encaixar uma casa inteira em um único cômodo.”
+Prova visual:
+- Inserir planta/diagrama simples com 1–2 destaques.
+
+SLIDE 3 — COMO FUNCIONA (mecanismo)
+Título:
+- “COMO FUNCIONA [A SOLUÇÃO]??”
+Estrutura:
+- 3 estados (ou 3 etapas) em coluna/linha.
+Callouts (curtos):
+- “Fechado: [benefício objetivo]”
+- “Intermediário: [benefício objetivo]”
+- “Aberto: [benefício objetivo]”
+Dica:
+- Use linhas pontilhadas + setas para guiar o olhar.
+
+SLIDE 4 — RESULTADO (respiro / lifestyle)
+Texto:
+- (evite texto grande) apenas selo do projeto + @.
+Função:
+- Pausa cognitiva + “uau”.
+
+SLIDE 5 — CONCEITO (moodboard/paleta/materialidade)
+Título pequeno (opcional):
+- “Materiais e atmosfera”
+Conteúdo:
+- Paleta (3–5 cores) + 3–6 referências (textura, pedra, madeira, tecido, cor assinatura).
+
+SLIDE 6 — DETALHE 1 (prova de cuidado)
+Anotação:
+- “[DETALHE] para [benefício: segurança/uso/manutenção]”
+Exemplos de detalhe:
+- cantos curvos, iluminação indireta, frisos, puxador cava, ventilação, rodapé recuado.
+
+SLIDE 7 — DETALHE 2 (acabamento/execução)
+Anotação:
+- “Detalhe que deixa tudo mais [adjetivo: leve/contínuo/aconchegante]”
+Inclua:
+- close + seta + 1 microbenefício.
+
+SLIDE 8 — FECHAMENTO (portfólio) + CTA
+Layout:
+- mosaico 3x3 com imagens do projeto.
+Texto central:
+- “CASA COM CARA DE CASA” (ou sua linha editorial)
+- “Para orçamentos: [AÇÃO]”
+CTAs possíveis:
+- “Link no perfil.”
+- “Me chama no direct com a palavra ‘[PALAVRA]’.”
+- “Quer o briefing? Link no perfil.”</div>
+        <div class="footerActions">
+          <button class="btn" type="button" onclick="copyFrom('roteiroTexto')">Copiar só o texto</button>
+          <a class="btn" href="#slides">Ver slides sugeridos</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="slides">
+      <div class="inner">
+        <h2><span class="hl">Slides sugeridos</span> (1..8)</h2>
+        <div class="slides">
+          <div class="slide">
+            <div class="slideTitle">Capa (Hook visual + promessa)</div>
+            <ul>
+              <li>Foto forte do ambiente/resultado.</li>
+              <li>Texto grande: “A flexibilidade da [SOLUÇÃO] [X em 1] no [CÔMODO]”.</li>
+              <li>Selo do projeto + assinatura no rodapé.</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="slideTitle">Contexto (dor + dados)</div>
+            <ul>
+              <li>Headline: “[X]m² e muitos desejos!”.</li>
+              <li>Mini-história + 1 frase emocional em itálico.</li>
+              <li>Planta/diagrama simples para credibilidade.</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="slideTitle">Como funciona (infográfico)</div>
+            <ul>
+              <li>Fundo sólido (alto contraste).</li>
+              <li>3 estados/etapas com callouts curtos.</li>
+              <li>Setas + linhas pontilhadas (didático).</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="slideTitle">Resultado (respiro)</div>
+            <ul>
+              <li>Foto limpa (pouco texto).</li>
+              <li>Função: pausa + reforço estético.</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="slideTitle">Conceito (moodboard/paleta)</div>
+            <ul>
+              <li>Grid 2x3 ou 3x3 (referências + texturas).</li>
+              <li>Inclua 1 cor “assinatura”.</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="slideTitle">Detalhe 1 (uso/segurança)</div>
+            <ul>
+              <li>Close com anotação e seta.</li>
+              <li>Conecte detalhe → benefício.</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="slideTitle">Detalhe 2 (acabamento/qualidade)</div>
+            <ul>
+              <li>Close + microexplicação.</li>
+              <li>Mostre consistência de execução.</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="slideTitle">Mosaico + CTA</div>
+            <ul>
+              <li>Grid 3x3 com melhores imagens.</li>
+              <li>CTA simples: link no perfil ou direct com palavra-chave.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="visuais">
+      <div class="inner">
+        <h2><span class="hl">Elementos visuais</span> (para bater o mesmo “feel”)</h2>
+        <div class="twoCol">
+          <div class="callout">
+            <p class="p"><b>Direção de arte</b><br/><span class="muted">Clean + residencial + toque high-tech: contraste alto, texto branco, áreas de respiro e um slide infográfico sólido.</span></p>
+            <ul>
+              <li><b>Mix obrigatório</b>: foto do ambiente + planta/diagrama + infográfico + moodboard + detalhes.</li>
+              <li><b>Ritmo</b>: alterne “cheio” (texto/provas) e “vazio” (foto limpa).</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p class="p"><b>Tipografia (hierarquia)</b></p>
+            <ul>
+              <li>H1 (hook): grande, bold, 2–5 palavras-chave.</li>
+              <li>H2 (sub): 35–50% do H1.</li>
+              <li>Corpo: curto (2–4 linhas por slide).</li>
+              <li>Assinatura fixa: discreta e consistente.</li>
+            </ul>
+            <p class="p muted" style="margin-top:10px">Dica: mantenha uma “marca” repetida (selo do projeto + assinatura) para criar série.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="copy">
+      <div class="inner">
+        <h2><span class="hl">Copy e ganchos</span> (com substituições equivalentes)</h2>
+        <div class="twoCol">
+          <div class="callout">
+            <p class="p"><b>Modelos de capa (alta performance)</b></p>
+            <div class="pre">1) “A flexibilidade da [SOLUÇÃO X em 1] no [CÔMODO]”
+2) “Como fiz [FUNÇÃO] caber em [X]m² (sem perder estética)”
+3) “[3 decisões] que transformaram o [CÔMODO] compacto”
+4) “O detalhe ‘invisível’ que resolveu [DOR]”</div>
+          </div>
+          <div class="callout">
+            <p class="p"><b>Ganchos de contexto (dor + prova)</b></p>
+            <div class="pre">- “[X]m² e a lista de desejos era grande: [3 itens].”
+- “O desafio: [RESTRIÇÃO] + [RESTRIÇÃO].”
+- “A solução precisava ser [ADJETIVO] e ainda permitir [USO 2].”
+- “Quando o layout é compacto, cada centímetro precisa ter função.”</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="twoCol">
+          <div class="callout">
+            <p class="p"><b>Ganchos para o slide didático (mecanismo)</b></p>
+            <div class="pre">- “Como funciona na prática??”
+- “3 posições, 3 usos (sem improviso).”
+- “O truque está em [componente/encaixe/dobra/corrediça].”</div>
+          </div>
+          <div class="callout">
+            <p class="p"><b>Prova de autoridade (sem parecer autopromo)</b></p>
+            <div class="pre">- “Planta e marcenaria pensadas para [benefício].”
+- “Detalhes de execução: [1–2 detalhes].”
+- “Materiais escolhidos para [durabilidade/manutenção/luz].”</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="cta">
+      <div class="inner">
+        <h2><span class="hl">CTA</span> (direto, baixa fricção)</h2>
+        <div class="twoCol">
+          <div class="callout">
+            <p class="p"><b>Melhor CTA para portfólio</b></p>
+            <div class="pre">“Quer um projeto assim no seu apê?
+Orçamentos: link no perfil.”</div>
+          </div>
+          <div class="callout">
+            <p class="p"><b>CTAs mensuráveis (com palavra-chave)</b></p>
+            <div class="pre">“Me chama no direct com a palavra ‘[PALAVRA]’
+que eu te mando o briefing e valores iniciais.”
+
+“Comenta ‘[PALAVRA]’ que eu te envio o checklist.”</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <p class="p"><b>Regra:</b> no último slide, uma única ação. Evite múltiplos links/ações competindo.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="checklist">
+      <div class="inner">
+        <h2><span class="hl">Checklist</span> de criação (produção rápida e consistente)</h2>
+        <div class="twoCol">
+          <div class="callout">
+            <p class="p"><b>Conteúdo</b></p>
+            <ul>
+              <li>[ ] Capa com promessa específica (X em 1 / “como funciona” / “o detalhe que resolveu…”)</li>
+              <li>[ ] 1 slide com metragem/limitação + desejos do cliente</li>
+              <li>[ ] 1 prova técnica (planta/diagrama/medidas)</li>
+              <li>[ ] 1 slide infográfico (mecanismo em 3 etapas)</li>
+              <li>[ ] 1 “respiro” (foto limpa)</li>
+              <li>[ ] 1 moodboard/paleta/materialidade</li>
+              <li>[ ] 1–2 detalhes com anotação + benefício</li>
+              <li>[ ] Mosaico final + CTA único</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p class="p"><b>Design/UX</b></p>
+            <ul>
+              <li>[ ] Texto branco com contraste garantido (área escura ou overlay)</li>
+              <li>[ ] 2 fontes no máximo (display bold + manual/leve)</li>
+              <li>[ ] Assinatura e selo do projeto consistentes em todas as telas</li>
+              <li>[ ] Troca de ritmo a cada 1–2 slides (evita monotonia)</li>
+              <li>[ ] Máximo 2–4 linhas por slide (exceto contexto, com cuidado)</li>
+              <li>[ ] Exportar 1080×1350 (prioridade) + checar legibilidade no celular</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="var">
+      <div class="inner">
+        <h2><span class="hl">Variações</span> (mesmo impacto, outros temas)</h2>
+        <div class="twoCol">
+          <div class="callout">
+            <p class="p"><b>Substituições “1:1” (mantém a estrutura)</b></p>
+            <ul>
+              <li><b>“Cama 3 em 1”</b> → “Mesa retrátil 2 em 1” / “Painel com portas ocultas” / “Armário ponte com nichos”</li>
+              <li><b>“40m² e muitos desejos”</b> → “pouca luz + muita função” / “pouco storage + rotina intensa”</li>
+              <li><b>Planta baixa</b> → diagrama de circulação / antes-depois de layout / lista visual de restrições</li>
+              <li><b>Moodboard</b> → paleta + “por que desses materiais” (manutenção, luz, acústica)</li>
+              <li><b>Detalhes com setas</b> → “3 detalhes que evitam erro” (execução/obra)</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p class="p"><b>3 formatos alternativos (se quiser sair do ‘X em 1’)</b></p>
+            <div class="pre">A) “Antes/Depois racional”
+- Hook: “O que mudou nesse [CÔMODO] de [X]m²”
+- Meio: 3 decisões + planta/diagrama
+- Fim: detalhes + CTA
+
+B) “Erro comum + correção”
+- Hook: “O erro que faz [CÔMODO] compacto parecer menor”
+- Meio: por que acontece + como corrigir (3 passos)
+- Fim: prova no seu projeto + CTA
+
+C) “Checklist salvável”
+- Hook: “Checklist do [CÔMODO] compacto”
+- Meio: itens com exemplos visuais
+- Fim: CTA: salvar + pedir briefing</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    function showToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg || 'Copiado.';
+      t.style.display = 'block';
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=>{ t.style.display='none'; }, 1800);
+    }
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Roteiro copiado.');
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Roteiro copiado.');
+      }
+    }
+
+    function copyFrom(id){
+      const el = document.getElementById(id);
+      const text = el ? el.innerText : '';
+      copyText(text);
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', function(){
+      copyFrom('roteiroTexto');
+    });
+  </script>
+</body>
+</html>
