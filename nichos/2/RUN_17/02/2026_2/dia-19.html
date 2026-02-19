@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 19 — Arquitetura — Reel “bye-bye”</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:#AAB6D3;
+      --muted2:#7F8BB1;
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --r: 16px;
+      --g: linear-gradient(90deg, #22c55e 0%, #3b82f6 55%, #f59e0b 100%);
+      --g2: radial-gradient(1200px 800px at 15% -10%, rgba(59,130,246,.35) 0%, rgba(0,0,0,0) 55%),
+            radial-gradient(900px 600px at 85% 0%, rgba(245,158,11,.25) 0%, rgba(0,0,0,0) 55%),
+            radial-gradient(900px 600px at 30% 110%, rgba(34,197,94,.22) 0%, rgba(0,0,0,0) 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    a{color:inherit; text-decoration:none}
+    a:hover{opacity:.92}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 54px}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--r) + 6px);
+      overflow:hidden;
+    }
+
+    .topbar{
+      padding:18px 18px 14px;
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+    .badge{ 
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      padding:8px 10px;
+      border-radius:999px;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--g);}
+
+    .title{
+      padding: 0 18px 18px;
+      display:grid;
+      gap:10px;
+    }
+
+    h1{
+      margin:0;
+      font-size:22px;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.4;
+    }
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      transition: transform .08s ease, background .15s ease;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(255,255,255,.09)}
+    .btn:active{transform: translateY(1px)}
+
+    .btnPrimary{
+      background: rgba(255,255,255,.08);
+      position:relative;
+      overflow:hidden;
+    }
+    .btnPrimary::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g);
+      opacity:.22;
+      filter: blur(12px);
+    }
+    .btnPrimary span{position:relative}
+
+    main{margin-top:16px; display:grid; gap:14px}
+
+    .grid{
+      display:grid;
+      gap:14px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 920px){
+      .grid{grid-template-columns: 1.05fr .95fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius: var(--r);
+      background: rgba(255,255,255,.05);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .cardHead{
+      padding:14px 14px 10px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+
+    .cardHead h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.25px;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    .pill{
+      font-family: var(--mono);
+      font-size:12px;
+      color: rgba(234,240,255,.9);
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+      white-space:nowrap;
+    }
+
+    .cardBody{padding:14px}
+
+    .list{margin:0; padding-left:18px; color:var(--text)}
+    .list li{margin:8px 0; color:rgba(234,240,255,.92)}
+
+    .muted{color:var(--muted); font-size:13px; line-height:1.5}
+
+    .hl{
+      background: var(--g);
+      -webkit-background-clip: text;
+      background-clip:text;
+      color:transparent;
+      font-weight:800;
+    }
+
+    .kbd{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:3px 8px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: rgba(234,240,255,.92);
+      display:inline-block;
+    }
+
+    .script{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.25);
+      border-radius: 14px;
+      padding:12px;
+      font-family: var(--mono);
+      font-size:12.5px;
+      white-space:pre-wrap;
+      line-height:1.5;
+      color: rgba(234,240,255,.92);
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+    @media (min-width: 920px){
+      .twoCol{grid-template-columns: 1fr 1fr}
+    }
+
+    .hr{height:1px; background: rgba(255,255,255,.08); margin:12px 0}
+
+    .tiny{font-size:12px; color:var(--muted2); line-height:1.45}
+
+    .link{
+      color: rgba(234,240,255,.92);
+      border-bottom:1px dashed rgba(234,240,255,.35);
+    }
+
+    .ok{color:#9AE6B4}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div class="badgeRow">
+          <span class="badge"><span class="dot"></span><strong>Nicho:</strong>&nbsp;Arquitetura</span>
+          <span class="badge"><span class="dot"></span><strong>Dia:</strong>&nbsp;19</span>
+          <span class="badge"><span class="dot"></span><strong>Formato:</strong>&nbsp;Reels</span>
+          <span class="badge"><span class="dot"></span><strong>Pilar:</strong>&nbsp;Passo a passo</span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DUsh9wEkVCH/" target="_blank" rel="noreferrer"><span>Ver post original</span></a>
+          <button class="btn btnPrimary" id="copyBtn" type="button"><span>Copiar roteiro</span></button>
+        </div>
+      </div>
+      <div class="title">
+        <h1><span class="hl">Reel “bye-bye”</span> para antes/depois (transição no beat)</h1>
+        <p class="sub">Roteiro reproduzível para Reels de 7–12s: 3 takes + 3 telas de texto + 1 CTA. Ideal para transformação, rebranding, encerramento de ciclo e “deixar algo pra trás”.</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="grid">
+        <article class="card">
+          <div class="cardHead">
+            <h2>Resumo</h2>
+            <span class="pill">Objetivo: retenção + replay</span>
+          </div>
+          <div class="cardBody">
+            <p class="muted">
+              Use um áudio/frase curta que sinaliza virada (“bye-bye”) para criar <strong>curiosidade</strong>, entregar um <strong>contraste visual forte</strong> (ANTES vs DEPOIS) e fechar com <strong>CTA único</strong>.
+              O segredo é sincronizar a transição no beat e tornar o “depois” <em>visualmente óbvio</em>.
+            </p>
+            <div class="hr"></div>
+            <ul class="list">
+              <li><strong>Take 1 (0–2s):</strong> ANTES (problema/tensão) + texto curto.</li>
+              <li><strong>Take 2 (2–5s):</strong> transição no “bye-bye” (mão na lente / whip-pan / virar).</li>
+              <li><strong>Take 3 (5–9s):</strong> DEPOIS (resultado/prova) + benefício.</li>
+              <li><strong>Fecho (9–12s):</strong> CTA: salvar ou comentar palavra-chave.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="cardHead">
+            <h2>Estrutura</h2>
+            <span class="pill">3 atos + loop</span>
+          </div>
+          <div class="cardBody">
+            <div class="twoCol">
+              <div>
+                <p class="muted"><strong>Ato 1 — Setup (0–2s)</strong><br>Mostre o problema sem explicar demais.</p>
+                <p class="muted"><strong>Ato 2 — Virada (2–5s)</strong><br>Transição exatamente no “bye-bye”.</p>
+                <p class="muted"><strong>Ato 3 — Payoff (5–9s)</strong><br>Mostre o resultado de forma visual (não abstrata).</p>
+              </div>
+              <div>
+                <p class="muted"><strong>Regras de ouro</strong></p>
+                <ul class="list">
+                  <li><span class="kbd">1 ideia</span> por Reel (evite explicar).</li>
+                  <li><span class="kbd">3 telas</span> de texto no máximo.</li>
+                  <li><span class="kbd">1 CTA</span> (salvar <em>ou</em> comentar <em>ou</em> seguir).</li>
+                  <li><span class="kbd">Loop</span>: termine com enquadramento parecido com o início.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <article class="card">
+        <div class="cardHead">
+          <h2>Roteiro (reproduzível)</h2>
+          <span class="pill">7–12s</span>
+        </div>
+        <div class="cardBody">
+          <p class="tiny">Edite este texto e use como “texto na tela” + direção de cena. O botão <strong>Copiar roteiro</strong> copia o bloco abaixo.</p>
+          <div class="script" id="scriptText">TÍTULO (interno): Reel “bye-bye” — ANTES vs DEPOIS (7–12s)
+
+DURAÇÃO: 7–12s
+TEMA: Encerramento de ciclo / mudança de padrão / transformação rápida
+
+TAKE 1 — ANTES (0:00–0:02)
+CENA: Mostre o “problema” em 1 imagem (caos, erro, bagunça, expressão cansada, atraso, algo desalinhado).
+TEXTO NA TELA (escolha 1):
+- “Chega de [X].”
+- “Eu finalmente disse adeus pra [X].”
+- “Isso aqui tava me prendendo: [X].”
+DICA: Luz mais fria/opaca + enquadramento mais fechado.
+
+TAKE 2 — VIRADA (0:02–0:05)
+ÁUDIO: entrar/encaixar no “So bye-bye…”
+TRANSIÇÃO (escolha 1):
+- Mão na lente → corta pro depois
+- Whip pan (movimento rápido lateral)
+- Virar de costas → virar de frente já no depois
+TEXTO NA TELA:
+- “bye-bye.”
+
+TAKE 3 — DEPOIS / PROVA (0:05–0:09)
+CENA: Mostre o resultado com prova visual (antes/depois, ambiente, tela, modelo, detalhe, plano aberto).
+TEXTO NA TELA (modelo):
+- “Agora eu faço [Y].”
+- “Troquei [X] por [Y].”
+- “O que mudou: [1 benefício curto].”
+DICA: Luz mais quente/contrastada + postura confiante + plano mais aberto.
+
+FECHO / CTA (0:09–0:12)
+CTA ÚNICO (escolha 1):
+- “Comenta ‘PIE’ que eu te mando o checklist.”
+- “Salva pra lembrar do seu ‘bye-bye’ de hoje.”
+- “Me segue pra ver como eu fiz (parte 2).”
+
+LEGENDA (curta, 2–4 linhas)
+Modelo A: “Eu disse adeus pra [X] e foi aí que [resultado]. Quer o passo a passo? Comenta [palavra].”
+Modelo B: “Se você ainda está em [X], esse é seu sinal. Salva e volta aqui quando for sua vez.”
+
+CHECK DE LOOP
+- Último frame com enquadramento semelhante ao primeiro para estimular replay.</div>
+        </div>
+      </article>
+
+      <section class="grid">
+        <article class="card">
+          <div class="cardHead">
+            <h2>Elementos visuais</h2>
+            <span class="pill">Contraste + clareza</span>
+          </div>
+          <div class="cardBody">
+            <ul class="list">
+              <li><strong>Contraste visível:</strong> antes frio/opaco; depois quente/vivo (ou o inverso, desde que contraste).</li>
+              <li><strong>Prova na cena:</strong> em arquitetura, use planta/3D/render, canteiro, sketch, materialidade, antes/depois de obra.</li>
+              <li><strong>Texto grande queimado:</strong> central e com poucas palavras (legível sem áudio).</li>
+              <li><strong>Transição no beat:</strong> corte exatamente no “bye-bye”.</li>
+              <li><strong>3 takes:</strong> simplifica gravação e aumenta chance de execução.</li>
+            </ul>
+            <div class="hr"></div>
+            <p class="muted"><strong>Templates rápidos (Arquitetura)</strong></p>
+            <ul class="list">
+              <li><strong>Antes:</strong> “projeto travado” (muitos rascunhos/indecisão) → <strong>Depois:</strong> “partido definido” (volumetria clara).</li>
+              <li><strong>Antes:</strong> “obra com retrabalho” → <strong>Depois:</strong> “detalhamento + compatibilização” (prancha/coordenação).</li>
+              <li><strong>Antes:</strong> “cliente confuso” → <strong>Depois:</strong> “apresentação com narrativa” (slides/maquete eletrônica).</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="cardHead">
+            <h2>Copy e ganchos</h2>
+            <span class="pill">1 frase, alto impacto</span>
+          </div>
+          <div class="cardBody">
+            <p class="muted"><strong>Ganchos (substituíveis)</strong> — troque <span class="kbd">[X]</span> e <span class="kbd">[Y]</span> sem perder o efeito.</p>
+            <ul class="list">
+              <li>“Adeus <strong>[X]</strong>. Olá <strong>[Y]</strong>.”</li>
+              <li>“Eu parei de <strong>[X]</strong> quando entendi isso:”</li>
+              <li>“Se você ainda faz <strong>[X]</strong>, isso explica <strong>[dor]</strong>.”</li>
+              <li>“O ‘bye-bye’ que mudou meu <strong>[processo/resultado]</strong>.”</li>
+            </ul>
+            <div class="hr"></div>
+            <p class="muted"><strong>Substituições com o mesmo impacto</strong></p>
+            <ul class="list">
+              <li><strong>[X] (o que você deixa):</strong> hábito ruim, erro técnico, crença limitante, rotina, ferramenta, tipo de cliente, padrão estético.</li>
+              <li><strong>[Y] (o que entra):</strong> método, padrão de qualidade, checklist, template, disciplina, posicionamento, princípio de projeto.</li>
+              <li><strong>Prova visual:</strong> número (antes/depois), tela (timeline), documento (prancha), transformação (ambiente/obra), comparação (render vs executado).</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <article class="card">
+        <div class="cardHead">
+          <h2>CTA</h2>
+          <span class="pill">Escolha 1</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><strong>Para gerar DM:</strong> “Comenta <span class="kbd">PIE</span> que eu te mando o checklist.”</li>
+            <li><strong>Para alcance/SEO:</strong> “Comenta: qual <span class="kbd">[X]</span> você está deixando?”</li>
+            <li><strong>Para retenção:</strong> “Salva pra usar quando bater vontade de voltar pro <span class="kbd">[X]</span>.”</li>
+            <li><strong>Para série:</strong> “Me segue pra parte 2: como eu fiz o <span class="kbd">[Y]</span>.”</li>
+          </ul>
+          <p class="tiny">Regra: não misture 2 CTAs no mesmo Reel. Quer DM? então não peça salvar no mesmo vídeo (deixe salvar para a legenda, se necessário).</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="cardHead">
+          <h2>Checklist de criação</h2>
+          <span class="pill">Execução sem travar</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p class="muted"><strong>Pré-produção (10 min)</strong></p>
+              <ul class="list">
+                <li>Defina <strong>[X]</strong> em até 3 palavras.</li>
+                <li>Defina <strong>[Y]</strong> em 5–7 palavras + 1 benefício.</li>
+                <li>Escolha <strong>prova visual</strong> do depois (o que a câmera vai mostrar).</li>
+                <li>Selecione 1 transição (mão na lente / whip pan / virar).</li>
+                <li>Escreva 3 telas de texto (máx. 6–8 palavras cada).</li>
+              </ul>
+            </div>
+            <div>
+              <p class="muted"><strong>Gravação (15 min)</strong></p>
+              <ul class="list">
+                <li>Take ANTES: 1–2s (close + luz fria).</li>
+                <li>Take TRANSIÇÃO: marque o beat do “bye-bye”.</li>
+                <li>Take DEPOIS: 2–4s (plano aberto + prova).</li>
+                <li>Grave 2 variações do DEPOIS (muda o plano/ângulo).</li>
+              </ul>
+              <div class="hr"></div>
+              <p class="muted"><strong>Edição/Publicação (15–25 min)</strong></p>
+              <ul class="list">
+                <li>Corte no beat exato.</li>
+                <li>Texto grande e central.</li>
+                <li>Color grade com contraste antes/depois.</li>
+                <li>Finalize com loop (frame parecido com o início).</li>
+                <li>Legenda 2–4 linhas + 3–6 hashtags específicas.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="cardHead">
+          <h2>Variações</h2>
+          <span class="pill">Adapta para qualquer tema</span>
+        </div>
+        <div class="cardBody">
+          <p class="muted"><strong>Variação 1 — “Erro comum”</strong><br>Troque o drama pessoal por um erro técnico.</p>
+          <ul class="list">
+            <li>Antes (texto): “Pare de fazer <span class="kbd">[erro]</span>.”</li>
+            <li>Depois (texto): “Faça <span class="kbd">[correção]</span> e ganhe <span class="kbd">[benefício]</span>.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="muted"><strong>Variação 2 — “Mito vs Verdade”</strong><br>Use “bye-bye” para matar um mito.</p>
+          <ul class="list">
+            <li>Antes: “Mito: <span class="kbd">[crença]</span>.”</li>
+            <li>Depois: “Verdade: <span class="kbd">[princípio]</span>.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="muted"><strong>Variação 3 — “Bastidores”</strong><br>Antes = caos; depois = processo.</p>
+          <ul class="list">
+            <li>Antes: “Ninguém vê quando <span class="kbd">[dor]</span>.”</li>
+            <li>Depois: “O que eu faço é: <span class="kbd">[passo 1–2]</span>.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="muted"><strong>Variação 4 — Arquitetura (pronto para usar)</strong></p>
+          <ul class="list">
+            <li><strong>X:</strong> “Detalhe mal resolvido” → <strong>Y:</strong> “Detalhamento + compatibilização”</li>
+            <li><strong>X:</strong> “Apresentação confusa” → <strong>Y:</strong> “Narrativa + comparativos (antes/depois)”</li>
+            <li><strong>X:</strong> “Obra no improviso” → <strong>Y:</strong> “Checklist de obra + fotos padrão”</li>
+          </ul>
+          <p class="tiny">Dica: em arquitetura, o “depois” precisa ser concreto: prancha, detalhe, render, foto de obra, moodboard final, cronograma ou comparação executado vs projeto.</p>
+        </div>
+      </article>
+
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const pre = document.getElementById('scriptText');
+      const originalLabel = btn.innerText;
+
+      async function copyText(){
+        const text = pre.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          btn.innerText = 'Roteiro copiado';
+          setTimeout(()=> btn.innerText = originalLabel, 1400);
+        }catch(e){
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          btn.innerText = 'Roteiro copiado';
+          setTimeout(()=> btn.innerText = originalLabel, 1400);
+        }
+      }
+
+      btn.addEventListener('click', copyText);
+    })();
+  </script>
+</body>
+</html>
