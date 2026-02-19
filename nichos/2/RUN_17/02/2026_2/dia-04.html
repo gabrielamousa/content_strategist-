@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Roteiro — Arquitetura (Dia 4)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.08);
+    --stroke: rgba(255,255,255,.10);
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,.72);
+    --muted2: rgba(234,240,255,.55);
+    --good:#19D37A;
+    --blue:#3BA3FF;
+    --orange:#FF8A3D;
+    --shadow: 0 16px 40px rgba(0,0,0,.55);
+    --radius: 18px;
+    --radius2: 14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background:
+      radial-gradient(1000px 700px at 15% 10%, rgba(59,163,255,.18), transparent 55%),
+      radial-gradient(900px 650px at 85% 15%, rgba(25,211,122,.16), transparent 55%),
+      radial-gradient(1000px 800px at 50% 95%, rgba(255,138,61,.12), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px}
+
+  .header{
+    position:relative;
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+    box-shadow: var(--shadow);
+    border-radius: calc(var(--radius) + 6px);
+    overflow:hidden;
+  }
+  .header::before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: linear-gradient(90deg, rgba(25,211,122,.35), rgba(59,163,255,.35), rgba(255,138,61,.35));
+    filter: blur(18px);
+    opacity:.35;
+    pointer-events:none;
+  }
+  .header-inner{position:relative; padding:20px 20px 18px}
+  .meta{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+  .chip{
+    font-size:12px;
+    letter-spacing:.2px;
+    padding:7px 10px;
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.25);
+    border-radius: 999px;
+    color: var(--muted);
+  }
+  .chip strong{color:var(--text); font-weight:650}
+  .h1{
+    margin:14px 0 10px;
+    font-size: clamp(22px, 3.2vw, 34px);
+    line-height:1.15;
+    letter-spacing: -0.02em;
+  }
+  .sub{
+    margin:0;
+    color: var(--muted);
+    font-size:14px;
+    line-height:1.45;
+  }
+  .linkrow{margin-top:12px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+  .link{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:10px 12px;
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.22);
+    border-radius: 12px;
+    max-width:100%;
+  }
+  .link span{font-family:var(--mono); font-size:12px; color: var(--muted)}
+  .btn{
+    cursor:pointer;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.08);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius: 12px;
+    font-weight:650;
+    letter-spacing:.1px;
+  }
+  .btn:hover{background: rgba(255,255,255,.11)}
+  .btn:active{transform: translateY(1px)}
+
+  .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; margin-top:14px}
+  @media (max-width: 920px){ .grid{grid-template-columns: 1fr} }
+
+  .card{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.05);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 16px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  }
+  .card .hd h2{margin:0; font-size:14px; color: var(--text); letter-spacing:.2px}
+  .badge{
+    font-size:12px;
+    color: var(--muted);
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.20);
+    padding:6px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .card .bd{padding:14px 16px 16px}
+  .card p, .card li{color: var(--muted); font-size:14px; line-height:1.55}
+  .card ul{margin:10px 0 0 18px; padding:0}
+  .card ol{margin:10px 0 0 18px; padding:0}
+
+  .grad{
+    background: linear-gradient(90deg, rgba(25,211,122,.95), rgba(59,163,255,.95), rgba(255,138,61,.95));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+  }
+
+  .scriptbox{
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.25);
+    border-radius: var(--radius2);
+    padding:14px;
+    margin-top:10px;
+  }
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    font-family: var(--mono);
+    font-size:12.5px;
+    line-height:1.55;
+    color: rgba(234,240,255,.86);
+  }
+
+  .kpi{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .pill{
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
+    border-radius:999px;
+    padding:8px 10px;
+    font-size:12px;
+    color: var(--muted);
+  }
+  .pill b{color:var(--text)}
+
+  .footer-note{margin-top:14px; color: var(--muted2); font-size:12px}
+  .toast{
+    position: fixed;
+    left:50%; bottom:18px; transform:translateX(-50%);
+    background: rgba(0,0,0,.65);
+    border:1px solid rgba(255,255,255,.14);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius: 999px;
+    font-size:12px;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .18s ease;
+    backdrop-filter: blur(10px);
+  }
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <section class="header">
+      <div class="header-inner">
+        <div class="meta">
+          <div class="chips">
+            <div class="chip"><strong>Nicho</strong>: Arquitetura</div>
+            <div class="chip"><strong>Dia</strong>: 4</div>
+            <div class="chip"><strong>Formato</strong>: Carrossel 1080×1350</div>
+            <div class="chip"><strong>Pilar</strong>: Mito vs Verdade</div>
+          </div>
+          <button class="btn" id="copyBtn">Copiar roteiro</button>
+        </div>
+
+        <h1 class="h1"><span class="grad">5 regras de decoração</span> que todo mundo segue, mas você não deveria</h1>
+        <p class="sub">Carrossel educativo/contrarian. Estrutura previsível por slide (regra → quebra → princípio → punchline) para retenção e salvamentos.</p>
+
+        <div class="linkrow">
+          <a class="link" href="https://www.instagram.com/p/DUVr3tBEd90/" target="_blank" rel="noreferrer noopener">
+            <span>Post original: https://www.instagram.com/p/DUVr3tBEd90/</span>
+          </a>
+          <div class="kpi">
+            <div class="pill"><b>Objetivo</b>: comentários + salvamentos</div>
+            <div class="pill"><b>Promessa</b>: decorar com mais personalidade</div>
+            <div class="pill"><b>Tom</b>: direto, elegante, provocativo</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="hd"><h2>Resumo</h2><div class="badge">Visão geral</div></div>
+        <div class="bd">
+          <p><b>Ideia central:</b> desafiar “regras” que viram muleta e deixam ambientes genéricos. Cada slide mostra uma crença popular, dá uma quebra curta (contraste) e entrega um princípio de arquitetura/decoração aplicável.</p>
+          <ul>
+            <li><b>Público:</b> pessoas decorando casa/apê, com medo de errar.</li>
+            <li><b>Promessa prática:</b> substituir “regras” por critérios (proporção, contraste, coerência, conforto).</li>
+            <li><b>Resultado esperado:</b> aumentar tempo de leitura, compartilhamentos e comentários com vulnerabilidade (“medo de errar”).</li>
+          </ul>
+        </div>
+      </article>
+
+      <aside class="card">
+        <div class="hd"><h2>Metadados de calendário</h2><div class="badge">Pronto para agendar</div></div>
+        <div class="bd">
+          <ul>
+            <li><b>Título:</b> 5 regras de decoração que parecem certas (mas te limitam)</li>
+            <li><b>Instrução curta:</b> Carrossel 7 slides: capa contrarian + 5 mitos + pergunta final.</li>
+            <li><b>Pilar:</b> Mito vs Verdade</li>
+            <li><b>Formato:</b> carrossel</li>
+          </ul>
+          <p class="footer-note">Dica editorial: mantenha os mitos como frases-curtas entre aspas para reconhecimento imediato.</p>
+        </div>
+      </aside>
+
+      <article class="card">
+        <div class="hd"><h2>Estrutura</h2><div class="badge">7 páginas</div></div>
+        <div class="bd">
+          <ol>
+            <li><b>Capa:</b> hook contrarian + promessa + tensão ("todo mundo faz")</li>
+            <li><b>Slides 2–6:</b> 1 regra por slide (headline em aspas + quebra + princípio + punchline)</li>
+            <li><b>Slide 7:</b> pergunta final + convite para comentar/salvar</li>
+          </ol>
+          <ul>
+            <li><b>Ritmo:</b> texto curto, com 1 frase final destacada.</li>
+            <li><b>Repetição:</b> mesmo molde visual para reduzir esforço cognitivo.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Slides sugeridos (1..7)</h2><div class="badge">Conteúdo base</div></div>
+        <div class="bd">
+          <p>Você pode manter os mesmos 5 temas (ou trocar) — o que importa é a cadência <b>Regra → Quebra → Princípio → Punch</b>.</p>
+          <div class="scriptbox"><pre id="roteiroText">SLIDE 1 (CAPA)
+Título: “5 regras de decoração que todo mundo segue, mas VOCÊ não deveria.”
+Sub (pequeno): “Salve pra consultar quando bater o medo de errar.”
+Imagem: foto editorial de ambiente (quente, minimalista).
+
+SLIDE 2
+Headline (aspas): “Tudo precisa combinar.”
+Quebra: Combinar não é o mesmo que ter identidade.
+Princípio: Busque coerência por paleta + repetição de 1–2 materiais, não por “conjuntinho”.
+Punch (ênfase): Personalidade nasce do contraste controlado.
+
+SLIDE 3
+Headline (aspas): “Madeira tem que ser do mesmo tom.”
+Quebra: Isso não é elegância — é medo.
+Princípio: Misture tons (quente/frio) mantendo um elemento em comum (textura, acabamento ou proporção).
+Punch (ênfase): A natureza não repete o mesmo tronco.
+
+SLIDE 4
+Headline (aspas): “Parede branca é sempre mais ‘chique’.”
+Quebra: Branco sem intenção vira vazio.
+Princípio: Use neutros com profundidade (off-white, areia, greige) e crie luz/sombra com textura.
+Punch (ênfase): Sofisticação é volume, não ausência.
+
+SLIDE 5
+Headline (aspas): “Quadro tem que ficar bem no centro da parede.”
+Quebra: Centro da parede não é centro do seu olhar.
+Princípio: Alinhe pelo uso: eixo do sofá, da mesa, do percurso. Ajuste pela altura dos olhos.
+Punch (ênfase): Composição é sobre relação, não sobre régua.
+
+SLIDE 6
+Headline (aspas): “Tapete pequeno ‘funciona’.”
+Quebra: Tapete pequeno encolhe o ambiente.
+Princípio: Prefira tamanho que abrace o mobiliário (pés dianteiros dentro) para criar “ilha” de conforto.
+Punch (ênfase): Se o tapete não sustenta a cena, ele vira detalhe perdido.
+
+SLIDE 7 (FECHAMENTO/CTA)
+Headline: “Qual dessas ‘regras’ você ainda segue por medo de errar?”
+Linha extra: “Comenta o número + o cômodo (sala, quarto, cozinha).”
+Micro-CTA: “Salve pra usar como checklist na próxima compra.”</pre></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Roteiro (reproduzível)</h2><div class="badge">Template para copiar</div></div>
+        <div class="bd">
+          <ul>
+            <li><b>Fórmula da capa:</b> “<b>[N]</b> regras de <b>[tema]</b> que todo mundo segue, mas <b>VOCÊ</b> não deveria.”</li>
+            <li><b>Fórmula dos slides 2–6:</b>
+              <ul>
+                <li><b>A)</b> Regra (aspas, 4–8 palavras)</li>
+                <li><b>B)</b> Quebra (1 frase curta, direta)</li>
+                <li><b>C)</b> Princípio (1–2 frases: o que fazer no lugar)</li>
+                <li><b>D)</b> Punch (1 frase memorável em itálico/negrito)</li>
+              </ul>
+            </li>
+            <li><b>Fórmula do slide 7:</b> Pergunta + instrução de resposta + “salve”</li>
+          </ul>
+          <p class="footer-note">Para manter o tom “arquitetura premium”, troque proibições por critérios: proporção, escala, hierarquia, luz, materialidade.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Elementos visuais</h2><div class="badge">Identidade & layout</div></div>
+        <div class="bd">
+          <ul>
+            <li><b>Canvas:</b> 1080×1350 (4:5)</li>
+            <li><b>Grid/margens:</b> 80–110 px laterais; 80 px topo/base</li>
+            <li><b>Capa:</b> foto ambiente “lifestyle” + vinheta suave + serif editorial grande</li>
+            <li><b>Internas:</b> fundo sólido desaturado + headline topo central + imagem em card (raio 24–32 px) + texto base à esquerda</li>
+            <li><b>Consistência:</b> repita o molde. Alterne a cor do fundo a cada slide (neutros/terra/verde acinzentado)</li>
+          </ul>
+          <ul>
+            <li><b>Tipografia (sugestão):</b> Serif (capa) + Sans (internas). Corpo 38–48 px com entrelinha generosa.</li>
+            <li><b>Imagens:</b> iluminação natural, composição minimalista, poucos objetos, “cara de revista”.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><div class="badge">Pronto para variar</div></div>
+        <div class="bd">
+          <p><b>Ganchos de capa (alternativas):</b></p>
+          <ul>
+            <li>“Se você segue essas regras, sua casa vai ficar igual a todas.”</li>
+            <li>“5 ‘regras’ que parecem bom gosto… até você olhar de novo.”</li>
+            <li>“O problema não é errar. É decorar com medo.”</li>
+          </ul>
+          <p><b>Quebras curtas (banco de frases):</b></p>
+          <ul>
+            <li>“Isso não é harmonia — é padronização.”</li>
+            <li>“Não é regra. É costume.”</li>
+            <li>“Funciona às vezes. Como regra, te limita.”</li>
+            <li>“O olhar manda mais que a fórmula.”</li>
+          </ul>
+          <p><b>Punchlines (final com efeito memorizável):</b></p>
+          <ul>
+            <li>“Belo não é igual — é bem resolvido.”</li>
+            <li>“Elegância é intenção, não manual.”</li>
+            <li>“A casa certa é a que sustenta a sua rotina.”</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>CTA</h2><div class="badge">Baixa fricção</div></div>
+        <div class="bd">
+          <p><b>CTA principal (slide 7):</b> “Qual dessas regras você ainda segue por medo de errar?”</p>
+          <p><b>Complemento (para guiar comentário):</b> “Comenta o número + o cômodo.”</p>
+          <p><b>CTA secundário (salvamento):</b> “Salve pra consultar antes de comprar/decidir.”</p>
+          <p><b>Variações rápidas:</b></p>
+          <ul>
+            <li>“Qual dessas mais te trava na hora de decorar?”</li>
+            <li>“Quer parte 2 com outras 5? Comenta ‘PARTE 2’.”</li>
+            <li>“Qual você discordou mais? (sem medo)”</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Checklist de criação</h2><div class="badge">Produção</div></div>
+        <div class="bd">
+          <ul>
+            <li><b>Conteúdo</b>
+              <ul>
+                <li>Definir 5 “regras” (mitos) comuns do público</li>
+                <li>Escrever a quebra (1 frase) + princípio (1–2 frases) + punch (1 frase)</li>
+                <li>Revisar: sem jargão; uma ideia por slide; punch realmente curto</li>
+              </ul>
+            </li>
+            <li><b>Design</b>
+              <ul>
+                <li>1080×1350; margens amplas; repetição do layout</li>
+                <li>Foto editorial por slide; cantos arredondados; vinheta leve na capa</li>
+                <li>Contraste forte e legibilidade (teste no celular)</li>
+              </ul>
+            </li>
+            <li><b>Publicação</b>
+              <ul>
+                <li>Legenda: 2–4 linhas reforçando a promessa + CTA de comentário</li>
+                <li>Fixar comentário com pergunta (“Qual cômodo?”) para puxar conversa</li>
+                <li>Responder 10–20 comentários na primeira hora</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Variações</h2><div class="badge">Reutilização</div></div>
+        <div class="bd">
+          <ul>
+            <li><b>Versão “Apartamento pequeno”:</b> 5 regras que fazem o apê parecer menor.</li>
+            <li><b>Versão “Obra/arquitetura”:</b> 5 regras de reforma que dão retrabalho.</li>
+            <li><b>Versão “Iluminação”:</b> 5 crenças sobre luz que deixam a casa fria.</li>
+            <li><b>Versão “Cores”:</b> 5 mitos que te fazem escolher “cor segura” (e se arrepender).</li>
+            <li><b>Parte 2 (mesmo molde):</b> repete design, troca apenas os mitos → acelera produção.</li>
+          </ul>
+          <p class="footer-note">Métrica guia: se a taxa de salvamento estiver alta, faça uma série com numeração (1/5, 2/5...) na capa.</p>
+        </div>
+      </article>
+
+    </section>
+
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const text = document.getElementById('roteiroText');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), 1200);
+    }
+
+    btn.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(text.innerText.trim());
+        showToast('Roteiro copiado.');
+      }catch(e){
+        // fallback
+        const range = document.createRange();
+        range.selectNodeContents(text);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+        showToast('Roteiro copiado (fallback).');
+      }
+    });
+  })();
+</script>
+</body>
+</html>
