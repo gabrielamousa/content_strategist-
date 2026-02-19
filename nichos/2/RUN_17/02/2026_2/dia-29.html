@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 3 — Arquitetura — 5 regras de banheiro bonito</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r: 18px;
+      --r2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --g1: linear-gradient(90deg, #3EF7A4 0%, #39B7FF 45%, #FF8A2A 100%);
+      --g2: radial-gradient(1200px 600px at 15% -10%, rgba(57,183,255,.18), transparent 60%),
+            radial-gradient(900px 500px at 88% 10%, rgba(62,247,164,.14), transparent 55%),
+            radial-gradient(900px 700px at 50% 110%, rgba(255,138,42,.12), transparent 55%);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+    .top{
+      display:flex; gap:14px; align-items:stretch; justify-content:space-between; flex-wrap:wrap;
+      padding:18px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:10px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      padding:10px 12px;
+      border-radius: 999px;
+      width:fit-content;
+    }
+    .dot{width:10px; height:10px; border-radius:999px; background: var(--g1)}
+    .meta{display:flex; flex-direction:column; gap:8px; min-width:280px; flex:1}
+    .k{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted2)}
+    .h1{font-size:22px; line-height:1.15; margin:0}
+    .sub{color:var(--muted); margin:0; font-size:14px; line-height:1.5}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
+    .btn{
+      appearance:none; border:none; cursor:pointer;
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      border:1px solid var(--stroke);
+      transition: transform .08s ease, background .15s ease;
+      font-weight:600;
+    }
+    .btn:hover{background: rgba(255,255,255,.11)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{background: linear-gradient(135deg, rgba(62,247,164,.18), rgba(57,183,255,.16), rgba(255,138,42,.14)); border-color: rgba(255,255,255,.16)}
+    .btn.link{background: transparent}
+    .grid{display:grid; grid-template-columns: 1.05fr .95fr; gap:14px; margin-top:14px}
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      background: rgba(0,0,0,.14);
+    }
+    .card .hd h2{font-size:14px; margin:0; letter-spacing:.10em; text-transform:uppercase; color:rgba(234,240,255,.86)}
+    .chip{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: rgba(234,240,255,.78);
+      white-space:nowrap;
+    }
+    .card .bd{padding:16px}
+    .list{margin:0; padding-left:18px; color:var(--muted); line-height:1.6}
+    .list li{margin:8px 0}
+    .hr{height:1px; background: rgba(255,255,255,.10); margin:14px 0}
+    .callout{
+      padding:12px 12px;
+      border-radius: var(--r2);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(90deg, rgba(62,247,164,.10), rgba(57,183,255,.08), rgba(255,138,42,.07));
+      color: rgba(234,240,255,.86);
+      line-height:1.55;
+      font-size:14px;
+    }
+    .two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .box{
+      padding:12px;
+      border-radius: var(--r2);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+    .box h3{margin:0 0 6px; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:rgba(234,240,255,.82)}
+    .box p{margin:0; color:var(--muted); font-size:14px; line-height:1.55}
+    pre{
+      margin:0;
+      padding:14px;
+      border-radius: var(--r2);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.28);
+      color: rgba(234,240,255,.88);
+      overflow:auto;
+      line-height:1.55;
+      font-family: var(--mono);
+      font-size:12.8px;
+      white-space:pre-wrap;
+    }
+    .foot{
+      margin-top:14px;
+      padding:14px 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--r);
+      color: var(--muted2);
+      font-size:13px;
+      display:flex; gap:10px; justify-content:space-between; flex-wrap:wrap;
+    }
+    .mono{font-family:var(--mono)}
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr}
+      .actions{justify-content:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="meta">
+        <div class="badge">
+          <span class="dot"></span>
+          <span class="k">Nicho</span>
+          <span class="mono">Arquitetura</span>
+          <span class="k">Dia</span>
+          <span class="mono">3</span>
+        </div>
+        <h1 class="h1">5 regras de banheiro bonito (e o erro da cuba de apoio)</h1>
+        <p class="sub">Formato: <span class="mono">Reels</span> • Pilar: <span class="mono">Passo a passo</span> • Baseado no post: <a href="https://www.instagram.com/p/DUajPXoDJFG/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DUajPXoDJFG/</a></p>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <a class="btn link" href="https://www.instagram.com/p/DUajPXoDJFG/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="chip">30–60s • lista 5/5</span>
+        </div>
+        <div class="bd">
+          <div class="callout">
+            Ideia central: entregar <b>5 decisões rápidas</b> que deixam o banheiro mais <b>prático, limpo e elegante</b>, abrindo com uma <b>proibição forte</b> (cuba de apoio) e trocando por alternativas profissionais.
+          </div>
+          <div class="hr"></div>
+          <div class="two">
+            <div class="box">
+              <h3>Promessa</h3>
+              <p>Você evita erros comuns e escolhe soluções que parecem “de arquiteto”, sem complicar a obra.</p>
+            </div>
+            <div class="box">
+              <h3>Ângulo</h3>
+              <p><span class="mono">Anti-tendência funcional</span>: o que é bonito no Pinterest, mas ruim no uso diário — e o que fazer no lugar.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="chip">hook → 5 dicas → CTAs</span>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><b>Hook (0–5s)</b>: proibição/erro + promessa (“vou te explicar e dar a alternativa”).</li>
+            <li><b>Contexto curto (1 frase)</b>: “isso parece lindo, mas no dia a dia…”</li>
+            <li><b>Dica 1</b> (polêmica): NÃO X + 2–3 dores + SIM Y.</li>
+            <li><b>Dicas 2–5</b>: regra objetiva + exemplo visual + 1 exceção inteligente.</li>
+            <li><b>Pergunta</b>: puxe comentário (“qual você discorda / qual seu maior problema no banheiro?”).</li>
+            <li><b>CTAs</b>: salvar + compartilhar + seguir + oferta (curadoria/serviço).</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Roteiro (reproduzível)</h2>
+          <span class="chip">texto falado + texto na tela</span>
+        </div>
+        <div class="bd">
+          <pre id="roteiro">DURAÇÃO ALVO: 35–55s (pode compactar para 30–40s)
+
+CENA 1 — HOOK (0–4s)
+TEXTO NA TELA: “ERRO no banheiro: CUBA DE APOIO”
+FALA: “Se você vai reformar banheiro: eu evitaria cuba de apoio. Parece linda, mas no uso diário ela te irrita.”
+
+CENA 2 — CREDENCIAL + PROMESSA (4–7s)
+TEXTO NA TELA: “5 regras práticas (sem gastar mais)”
+FALA: “Eu vou te passar 5 regras rápidas pra deixar o banheiro mais bonito e mais funcional.”
+
+DICA 1/5 — (7–18s) PROIBIÇÃO + TROCA
+TEXTO NA TELA: “1/5 — Evite cuba de apoio” (destaque em “EVITE”)
+FALA: “Cuba de apoio costuma espirrar água, molhar bancada e vira uma manutenção chata. Se puder, troca por cuba embutida ou semi-encaixe: fica mais prático e com cara mais limpa.”
+INSERT (se tiver): close de cuba alta / água espirrando / alternativa embutida.
+
+DICA 2/5 — (18–26s) SENSAÇÃO DE LIMPEZA
+TEXTO NA TELA: “2/5 — Tons claros = mais ‘limpo’”
+FALA: “Quer sensação de limpeza? Prioriza tons claros. E não é ‘tudo branco’: pode ter textura, rajado ou um off-white pra dar profundidade.”
+
+DICA 3/5 — (26–34s) VOLUME + ORGANIZAÇÃO
+TEXTO NA TELA: “3/5 — Armário suspenso e fechado”
+FALA: “Armário suspenso e fechado deixa o piso mais leve e esconde a bagunça. Banheiro bonito é banheiro sem muita coisa aparecendo.”
+
+DICA 4/5 — (34–43s) ACABAMENTO QUE MUDA TUDO
+TEXTO NA TELA: “4/5 — Espelho com moldura”
+FALA: “Espelho colado na parede, pra mim, empobrece. Uma moldura fina ou um armário com espelho dá acabamento de projeto.”
+
+DICA 5/5 — (43–52s) DETALHE ‘PREMIUM’
+TEXTO NA TELA: “5/5 — Pedra fina = mais elegante”
+FALA: “E detalhe que muda o visual: borda de pedra mais fina deixa tudo mais elegante e leve.”
+
+FECHAMENTO — PERGUNTA + CTA (52–60s)
+TEXTO NA TELA: “Qual você discorda?” + “Salve” + “Compartilhe”
+FALA: “Qual dessas regras você discorda? Comenta aqui. Salva pra usar na reforma e manda pra quem tá fazendo banheiro. E se quiser minha curadoria de referências/produtos, link na bio.”</pre>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="chip">edição high-retention</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Texto na tela</b>: “Dica 1/5… 5/5” + palavras-chave em destaque: <span class="mono">NÃO</span>, <span class="mono">EVITE</span>, <span class="mono">TROQUE POR</span>, <span class="mono">REGRA</span>.</li>
+            <li><b>Pattern interrupt</b> a cada dica: jump cut, zoom leve, troca de enquadramento ou imagem de referência ocupando 1/3 da tela.</li>
+            <li><b>B-roll sugerido</b>: cuba de apoio (respingo), cuba embutida, paleta clara/textura, armário suspenso, espelho com moldura, pedra fina vs grossa.</li>
+            <li><b>Legendagem</b>: dinâmica e grande; grifar 1 termo por frase.</li>
+            <li><b>Som</b>: marcador sutil (click) na virada de “1/5 → 2/5…”.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="chip">3 opções de abertura</span>
+        </div>
+        <div class="bd">
+          <div class="box">
+            <h3>Hook A (polêmico)</h3>
+            <p>“Vai reformar banheiro? Eu evitaria <b>cuba de apoio</b>. Vou te explicar e te dar a alternativa.”</p>
+          </div>
+          <div style="height:10px"></div>
+          <div class="box">
+            <h3>Hook B (erro comum)</h3>
+            <p>“3 escolhas que deixam o banheiro com cara de ‘errado’ — e como resolver em 1 minuto.”</p>
+          </div>
+          <div style="height:10px"></div>
+          <div class="box">
+            <h3>Hook C (checklist)</h3>
+            <p>“Minhas 5 regras pra banheiro ficar <b>bonito e prático</b> (sem gastar mais).”</p>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            Fórmula de frase (reproduzível): <span class="mono">“NÃO faça X porque (dor 1) e (dor 2). Faz Y que resolve (benefício).”</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="chip">ordem recomendada</span>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><b>Comentário</b>: “Qual dessas você discorda / qual seu maior problema no banheiro?”</li>
+            <li><b>Salvar</b>: “Salva pra ver de novo antes de comprar louça e bancada.”</li>
+            <li><b>Compartilhar</b>: “Manda pra alguém que tá reformando.”</li>
+            <li><b>Conversão</b>: “Quer referências/itens aprovados? Link na bio (curadoria/ebook/consultoria).”</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Checklist (criação rápida)</h2>
+          <span class="chip">pré → roteiro → edição → publicação</span>
+        </div>
+        <div class="bd">
+          <div class="two">
+            <div class="box">
+              <h3>Pré-roteiro</h3>
+              <ul class="list">
+                <li>Escolher 1 cômodo + 1 tema: “erros + soluções”.</li>
+                <li>Listar 5 decisões: <b>1 polêmica</b> + 4 técnicas.</li>
+                <li>Para cada decisão: <span class="mono">NÃO X</span> + 2 dores + <span class="mono">SIM Y</span>.</li>
+                <li>Separar 5 imagens/B-roll (ou prints) correspondentes.</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h3>Roteiro</h3>
+              <ul class="list">
+                <li>Hook em até 5s (proibição/erro).</li>
+                <li>Formato fixo: <span class="mono">Dica 1/5… 5/5</span>.</li>
+                <li>Incluir 2 cenas de dor do cotidiano (respingo, molha tudo, manutenção).</li>
+                <li>Adicionar “regra + exceção” (ex.: tons claros, mas com textura).</li>
+                <li>Fechar com pergunta + 3 CTAs + oferta.</li>
+              </ul>
+            </div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="two">
+            <div class="box">
+              <h3>Edição</h3>
+              <ul class="list">
+                <li>Jump cuts (tirar toda pausa).</li>
+                <li>Texto grande por dica (1 palavra destacada).</li>
+                <li>Pattern interrupt a cada 4–8s.</li>
+                <li>Legendas com contraste alto.</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h3>Publicação</h3>
+              <ul class="list">
+                <li>Legenda curta recapitulando as 5 dicas.</li>
+                <li>Fixar comentário: “Qual sua maior dúvida no banheiro?”</li>
+                <li>Hashtags enxutas: 3–6 (arquitetura + reforma + banheiro).</li>
+                <li>Responder comentários com “mini consultoria” (vira ideia de novo Reel).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="chip">mesmo molde, outro foco</span>
+        </div>
+        <div class="bd">
+          <div class="two">
+            <div class="box">
+              <h3>Versão 30–40s (agressiva)</h3>
+              <p>Cortar justificativas: 1 dor por dica. Manter só “NÃO X → SIM Y”. Terminar com 2 CTAs (salvar + comentar).</p>
+            </div>
+            <div class="box">
+              <h3>Versão 60–75s (completa)</h3>
+              <p>Adicionar: medidas/boas práticas (altura de bancada, espelho até onde, iluminação) + 1 exemplo de “quando pode” cuba de apoio.</p>
+            </div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="two">
+            <div class="box">
+              <h3>Troca de cômodo</h3>
+              <p>Aplicar o mesmo formato em: cozinha (bancada/cuba), quarto (guarda-roupa), sala (iluminação), lavanderia (armários).</p>
+            </div>
+            <div class="box">
+              <h3>Polarização leve (mais comentários)</h3>
+              <p>Abrir com: “Vou falar uma coisa que ninguém gosta: X é bonito, mas é ruim.” + convidar: “discorda de mim?”</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div>Identidade visual: fundo escuro, cards suaves, destaques em degradê (verde/azul/laranja), layout limpo high-tech.</div>
+      <div class="mono">Roteiro pronto para replicar: 5 dicas + dor real + regra/exceção + CTA completo.</div>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const roteiro = document.getElementById('roteiro');
+      function copyText(text){
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          return navigator.clipboard.writeText(text);
+        }
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        return Promise.resolve();
+      }
+      btn.addEventListener('click', async function(){
+        const text = roteiro.innerText;
+        await copyText(text);
+        const old = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=> btn.textContent = old, 1200);
+      });
+    })();
+  </script>
+</body>
+</html>
