@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dia 22 — Arquitetura — Antes e depois: cabe uma horta nesse corredor?</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.56);
+      --shadow:0 18px 50px rgba(0,0,0,.55);
+      --r:18px;
+      --r2:14px;
+      --g1:linear-gradient(90deg,#2EE59D 0%, #4BA3FF 45%, #FF8A3D 100%);
+      --g2:linear-gradient(135deg, rgba(46,229,157,.24), rgba(75,163,255,.22), rgba(255,138,61,.18));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(75,163,255,.18), transparent 60%),
+        radial-gradient(900px 600px at 92% 18%, rgba(46,229,157,.16), transparent 55%),
+        radial-gradient(900px 600px at 70% 92%, rgba(255,138,61,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{
+      max-width:1080px;
+      margin:0 auto;
+      padding:28px 18px 56px;
+    }
+
+    header{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:var(--shadow);
+      border-radius:24px;
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g2);
+      filter:blur(18px);
+      opacity:.65;
+      pointer-events:none;
+    }
+
+    .head-grid{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:14px;
+      position:relative;
+    }
+
+    @media (max-width:820px){
+      .head-grid{grid-template-columns:1fr}
+    }
+
+    .kicker{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .pill{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      border-radius:999px;
+      padding:6px 10px;
+    }
+
+    h1{
+      margin:10px 0 6px;
+      font-size:22px;
+      line-height:1.2;
+      letter-spacing:-.02em;
+    }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+    }
+
+    .link{
+      display:flex;
+      gap:10px;
+      align-items:start;
+      justify-content:flex-end;
+    }
+
+    @media (max-width:820px){
+      .link{justify-content:flex-start}
+    }
+
+    a{
+      color:var(--text);
+      text-decoration:none;
+      border-bottom:1px solid rgba(255,255,255,.2);
+    }
+    a:hover{border-bottom-color:rgba(255,255,255,.55)}
+
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius:999px;
+      padding:10px 12px;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      transition:transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.18)}
+
+    .btn .dot{
+      width:10px;height:10px;border-radius:10px;background:var(--g1);
+      box-shadow:0 0 0 4px rgba(255,255,255,.06);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+      margin-top:16px;
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:var(--r);
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+
+    .card h2{
+      margin:0 0 10px;
+      font-size:15px;
+      letter-spacing:-.01em;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .badge{
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      padding:5px 8px;
+      border-radius:999px;
+      color:var(--muted);
+    }
+
+    .accent{
+      height:2px;
+      background:var(--g1);
+      border-radius:999px;
+      margin:10px 0 12px;
+      opacity:.95;
+    }
+
+    .two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    @media (max-width:900px){
+      .two{grid-template-columns:1fr}
+    }
+
+    ul{margin:8px 0 0 18px; padding:0}
+    li{margin:6px 0; color:var(--muted)}
+
+    .callout{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.18);
+      border-radius:var(--r2);
+      padding:12px;
+    }
+
+    .callout strong{color:var(--text)}
+
+    .mono{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.55;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    textarea{
+      width:100%;
+      min-height:240px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      padding:14px;
+      resize:vertical;
+      outline:none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.55;
+    }
+
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    .hint{color:var(--muted2); font-size:12px}
+
+    .ok{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(46,229,157,.95);
+      display:none;
+    }
+
+    .footer{
+      margin-top:16px;
+      color:var(--muted2);
+      font-size:12px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-grid">
+        <div>
+          <div class="kicker">
+            <span class="pill">Nicho: <strong>Arquitetura</strong></span>
+            <span class="pill">Dia: <strong>22</strong></span>
+            <span class="pill">Formato: <strong>Carrossel (2 slides)</strong></span>
+            <span class="pill">Pilar: <strong>Prova</strong></span>
+          </div>
+          <h1>Antes e depois: cabe uma horta nesse corredor?</h1>
+          <p class="sub">Roteiro reproduzível para carrossel mínimo (antes → depois) com curiosidade + payoff visual. Ideal para mostrar transformação em espaços pequenos.</p>
+        </div>
+        <div class="link">
+          <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end; width:100%">
+            <div class="callout" style="width:100%">
+              <div class="mono"><strong>Post original:</strong> <a href="https://www.instagram.com/p/DURVi9QkqWp/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DURVi9QkqWp/</a></div>
+            </div>
+            <button class="btn" id="copyBtn" type="button" aria-label="Copiar roteiro">
+              <span class="dot" aria-hidden="true"></span>
+              Copiar roteiro
+            </button>
+            <div class="ok" id="copyOk">COPIADO ✓</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="badge">Resumo</span> O que este post faz</h2>
+        <div class="accent"></div>
+        <div class="two">
+          <div class="callout">
+            <div class="mono"><strong>Objetivo:</strong> gerar retenção (swipe) e engajamento (comentário), provando uma solução com imagem (show, don’t tell).</div>
+          </div>
+          <div class="callout">
+            <div class="mono"><strong>Mecânica:</strong> Slide 1 abre um “loop” com pergunta + limitação; Slide 2 fecha com a transformação (antes/depois) + pergunta de opinião.</div>
+          </div>
+        </div>
+        <ul>
+          <li><strong>Funciona porque:</strong> curiosidade → comparação → recompensa visual.</li>
+          <li><strong>Quando usar:</strong> qualquer transformação clara (layout, iluminação, paisagismo, marcenaria, fachada, banheiros, cozinhas, home office).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="badge">Estrutura</span> Fórmula fixa (reproduzível)</h2>
+        <div class="accent"></div>
+        <div class="two">
+          <div class="callout">
+            <div class="mono"><strong>Slide 1 (Antes + Hook):</strong>
+1) Foto real do espaço (com “limite” visível)
+2) Texto em pergunta (6–10 palavras)
+3) Seta/indicação de swipe
+4) Branding discreto</div>
+          </div>
+          <div class="callout">
+            <div class="mono"><strong>Slide 2 (Depois + Payoff):</strong>
+1) Foto/render do depois (transformação óbvia)
+2) Pergunta curta de opinião
+3) Branding discreto</div>
+          </div>
+        </div>
+        <ul>
+          <li><strong>Regra de ouro:</strong> a imagem é o argumento; o texto só guia o olhar.</li>
+          <li><strong>Ritmo:</strong> 1 pergunta abre, 1 pergunta fecha.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="badge">Roteiro</span> Texto pronto + campos para trocar</h2>
+        <div class="accent"></div>
+        <div class="row">
+          <div class="hint">Use este roteiro como base e substitua o que está entre [colchetes].</div>
+        </div>
+        <textarea id="script" spellcheck="false">CARROSSEL 2 SLIDES — ANTES/DEPOIS (PROVA VISUAL)
+
+SLIDE 1 (ANTES | HOOK EM PERGUNTA)
+Imagem: foto do espaço como está (mostrar a “limitação”: estreito, escuro, sem uso, etc.)
+Texto (escolha 1):
+- “Será que cabe uma [SOLUÇÃO] aqui?”
+- “Dá pra transformar esse [ESPAÇO]?”
+- “O que fazer com esse [CANTO]?”
+Micro-elemento: seta “→” + “arrasta” (discreto)
+Branding: logo pequeno no canto inferior direito
+
+SLIDE 2 (DEPOIS | PAYOFF + ENGAGEMENT)
+Imagem: o mesmo enquadramento com a solução pronta (antes/depois muito evidente)
+Texto (escolha 1):
+- “O que você achou?”
+- “Ficou melhor assim?”
+- “Você teria isso na sua casa?”
+Branding: logo pequeno no canto inferior direito
+
+LEGENDA (OPCIONAL, ALTA PERFORMANCE)
+Linha 1 (repete o hook): “Será que cabe uma [SOLUÇÃO] aqui?”
+Contexto (2–4 linhas):
+- “Esse [ESPAÇO] tinha [LIMITAÇÃO 1] e [LIMITAÇÃO 2]. A ideia foi [DECISÃO DE PROJETO] pra ganhar [BENEFÍCIO].”
+CTA (escolha 1):
+- “Comenta ‘[PALAVRA]’ que eu te mando [CHECKLIST/IDEIAS].”
+- “Me manda uma foto do seu [ESPAÇO] no direct que eu sugiro 2 soluções.”
+- “Salva pra referência e envia pra quem precisa aproveitar um espaço pequeno.”
+
+HASHTAGS (opcional, 3–8): #[nicho] #[tipoDeProjeto] #[antesedepois #[cidade] #[reforma] #[arquitetura] #[interiores]</textarea>
+      </section>
+
+      <section class="card">
+        <h2><span class="badge">Slides sugeridos (1..2)</span> Direção criativa por slide</h2>
+        <div class="accent"></div>
+        <div class="two">
+          <div class="callout">
+            <div class="mono"><strong>Slide 1 — Antes</strong>
+Enquadramento: o mais parecido possível com o slide 2
+Luz: natural/real, sem “embelezar” demais
+Overlay: caixa branca com respiro (padding 24–40px)
+Posição do texto: centro
+Elemento de retenção: seta de swipe no rodapé</div>
+          </div>
+          <div class="callout">
+            <div class="mono"><strong>Slide 2 — Depois</strong>
+Manter enquadramento para comparação
+Evitar cobrir a transformação com texto
+Posição do texto: topo-centro (ou topo-esquerda)
+Fechar com pergunta curta (comentário)
+Branding: discreto e consistente</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="badge">Elementos visuais</span> Design system rápido (Canva/Figma)</h2>
+        <div class="accent"></div>
+        <div class="two">
+          <div>
+            <ul>
+              <li><strong>Formato:</strong> 1080×1080 (feed). (Opcional: 1080×1350 para mais área.)</li>
+              <li><strong>Tipografia:</strong> serif editorial (Playfair Display / Libre Baskerville / Cormorant) para headline.</li>
+              <li><strong>Texto:</strong> #111111 (ou quase preto).</li>
+              <li><strong>Caixa:</strong> #FFFFFF com borda 0 e sombra mínima (se precisar destacar).</li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><strong>Regras:</strong> 6–10 palavras por slide; 1 ideia por slide.</li>
+              <li><strong>Consistência:</strong> logo no mesmo canto; caixa com mesma proporção.</li>
+              <li><strong>Seta:</strong> traço simples, pequena, sem “sticker”.</li>
+              <li><strong>Imagem:</strong> o “depois” precisa ser recompensa visual clara.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="badge">Copy e ganchos</span> Substituições com o mesmo impacto</h2>
+        <div class="accent"></div>
+        <div class="two">
+          <div class="callout">
+            <div class="mono"><strong>Modelos de hook (Slide 1)</strong>
+- “Será que cabe uma [SOLUÇÃO] aqui?”
+- “Dá pra fazer [RESULTADO] nesse [ESPAÇO]?”
+- “Como aproveitar um [ESPAÇO] de [MEDIDA]?”
+- “Isso aqui tem solução?”
+- “Você teria coragem de mexer nisso?” (mais provocativo)</div>
+          </div>
+          <div class="callout">
+            <div class="mono"><strong>Modelos de payoff (Slide 2)</strong>
+- “O que você achou?”
+- “Qual nota você dá: 0–10?”
+- “Você faria diferente? O quê?”
+- “Time A ou Time B? (com duas opções no visual)”</div>
+          </div>
+        </div>
+        <div class="two" style="margin-top:12px">
+          <div class="callout">
+            <div class="mono"><strong>Se quiser mais salvamentos (sem aumentar slides)</strong>
+Legenda com micro-checklist:
+- “Checklist pra funcionar: [luz], [irrigação], [drenagem] + [manutenção].”</div>
+          </div>
+          <div class="callout">
+            <div class="mono"><strong>Se quiser mais directs/orçamentos</strong>
+CTA de diagnóstico:
+- “Me manda foto + medidas do seu [ESPAÇO] que eu te digo se cabe [SOLUÇÃO].”</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="badge">CTA</span> Chamadas para ação (por objetivo)</h2>
+        <div class="accent"></div>
+        <div class="two">
+          <div>
+            <ul>
+              <li><strong>Comentários:</strong> “O que você achou?” / “Você faria o quê diferente?”</li>
+              <li><strong>Salvamentos:</strong> “Salva pra usar como referência no seu projeto.”</li>
+              <li><strong>Compartilhamentos:</strong> “Envia pra alguém que tem um corredor sem uso.”</li>
+              <li><strong>Leads:</strong> “Comenta ‘[PALAVRA]’ que eu te mando [lista/guia] no direct.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <div class="mono"><strong>Regra prática:</strong>
+1 CTA principal no Slide 2 (comentário)
++ 1 CTA complementar na legenda (salvar ou direct)
+Sem pedir tudo ao mesmo tempo.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="badge">Checklist</span> Produção sem erro (antes de postar)</h2>
+        <div class="accent"></div>
+        <div class="two">
+          <div>
+            <ul>
+              <li>Enquadramento do antes e depois está praticamente igual (comparação imediata).</li>
+              <li>Texto tem no máximo 10 palavras por slide.</li>
+              <li>Contraste ok (caixa branca não estoura; texto legível).</li>
+              <li>Seta de swipe visível, pequena e discreta.</li>
+              <li>Logo no mesmo lugar nos 2 slides (discreto).</li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li>O “depois” é claramente melhor/mais útil (payoff forte).</li>
+              <li>Slide 2 não cobre a principal mudança do projeto.</li>
+              <li>Legenda tem 1 contexto + 1 CTA (sem excesso).</li>
+              <li>Alt text (acessibilidade): descreve antes/depois.</li>
+              <li>Revisão final: ortografia e alinhamentos consistentes.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="badge">Variações</span> Mesma estrutura para outros temas</h2>
+        <div class="accent"></div>
+        <div class="two">
+          <div class="callout">
+            <div class="mono"><strong>Arquitetura/Interiores (troca de [SOLUÇÃO])</strong>
+- “Será que cabe um home office aqui?” (canto da sala)
+- “Será que cabe uma lavanderia aqui?” (varanda)
+- “Será que cabe um roupeiro aqui?” (corredor)
+- “Será que dá pra virar suíte?” (quarto + banheiro)
+- “Dá pra melhorar a luz natural aqui?” (janela/claraboia)</div>
+          </div>
+          <div class="callout">
+            <div class="mono"><strong>Outros nichos (mesmo impacto)</strong>
+- Beleza: “Será que esse cabelo tem solução?” → antes/depois
+- Fitness: “Dá pra treinar com isso em casa?” → setup/resultado
+- Design/Branding: “Será que essa marca funciona?” → antes/depois
+- Educação: “Dá pra aprender [tema] em 7 dias?” → antes/depois (evidência)
+- Organização: “Dá pra caber tudo aqui?” → antes/depois (arrumação)</div>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:12px">
+          <div class="mono"><strong>Upgrade opcional (sem perder a simplicidade):</strong>
+Adicionar um micro-dado na legenda (medida, orçamento estimado, tempo de obra) para aumentar autoridade — mas mantenha o carrossel “limpo”.</div>
+        </div>
+      </section>
+
+      <div class="footer">Identidade: fundo escuro + cards suaves + destaques em degradê (verde/azul/laranja) • Layout limpo/high-tech • Pronto para replicar</div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ok = document.getElementById('copyOk');
+      const ta = document.getElementById('script');
+
+      async function copy(){
+        const text = ta.value;
+        try{
+          await navigator.clipboard.writeText(text);
+        }catch(e){
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+        }
+        ok.style.display = 'block';
+        setTimeout(()=>{ ok.style.display = 'none'; }, 1400);
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
