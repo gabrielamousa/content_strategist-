@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dia 1 — Arquitetura — Não escolha esse piso</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#E9EEFF;
+      --muted:rgba(233,238,255,.72);
+      --muted2:rgba(233,238,255,.58);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r12: 14px;
+      --r16: 18px;
+      --grad: linear-gradient(90deg, #22c55e 0%, #38bdf8 45%, #fb923c 100%);
+      --grad2: radial-gradient(900px 400px at 15% 15%, rgba(56,189,248,.22), transparent 60%),
+               radial-gradient(650px 350px at 85% 25%, rgba(251,146,60,.15), transparent 55%),
+               radial-gradient(700px 420px at 55% 95%, rgba(34,197,94,.13), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:var(--sans);
+      background:
+        var(--grad2),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:#9bdcff; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px;}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:var(--r16);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .headTop{
+      padding:18px 18px 12px;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .badge{
+      padding:7px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(10px);
+    }
+    .badge strong{color:var(--text); font-weight:650}
+    .title{
+      padding:0 18px 18px;
+    }
+    h1{
+      margin:6px 0 8px;
+      font-size:22px;
+      line-height:1.15;
+      letter-spacing:-.02em;
+    }
+    .subtitle{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      max-width:70ch;
+    }
+    .linkRow{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px}
+    .pillLink{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: var(--grad);
+      box-shadow:0 0 0 4px rgba(56,189,248,.08);
+    }
+
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(10,16,35,.55);
+      border-radius:var(--r16);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.07);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+    }
+    .card h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:rgba(233,238,255,.82);
+    }
+    .tag{
+      font-size:12px;
+      color:rgba(233,238,255,.68);
+      border:1px solid var(--stroke);
+      padding:6px 8px;
+      border-radius:999px;
+      background: rgba(0,0,0,.18);
+    }
+    .bd{padding:14px;}
+
+    .kpi{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+    @media (max-width: 520px){
+      .kpi{grid-template-columns:1fr}
+    }
+    .k{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      border-radius:14px;
+      padding:10px;
+    }
+    .k .l{font-size:12px; color:var(--muted2); margin-bottom:6px}
+    .k .v{font-size:13px; color:var(--text); line-height:1.35}
+    .hl{
+      display:inline-block;
+      background: var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:750;
+    }
+
+    ul{margin:10px 0 0 18px; padding:0; color:var(--muted);}
+    li{margin:7px 0; line-height:1.45;}
+    .note{color:var(--muted2); font-size:13px; line-height:1.55}
+
+    .script{
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.6;
+      color:rgba(233,238,255,.86);
+      background: rgba(0,0,0,.26);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      padding:12px;
+      white-space:pre-wrap;
+    }
+
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.22);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:650;
+      letter-spacing:.01em;
+    }
+    button:hover{border-color:rgba(255,255,255,.26)}
+    .primary{
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      position:relative;
+    }
+    .primary:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius:12px;
+      padding:1px;
+      background: var(--grad);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events:none;
+      opacity:.85;
+    }
+    .toast{
+      display:none;
+      margin-top:10px;
+      font-size:13px;
+      color:rgba(233,238,255,.78);
+    }
+    .toast.show{display:block;}
+
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 920px){.cols{grid-template-columns:1fr}}
+    .miniCard{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      border-radius:14px;
+      padding:12px;
+    }
+    .miniCard h3{margin:0 0 8px; font-size:13px; color:rgba(233,238,255,.88)}
+    .miniCard p{margin:0; font-size:13px; color:var(--muted); line-height:1.55}
+
+    .footer{
+      margin-top:14px;
+      color:rgba(233,238,255,.52);
+      font-size:12px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headTop">
+        <div class="badgeRow">
+          <div class="badge"><strong>Nicho</strong>: Arquitetura</div>
+          <div class="badge"><strong>Dia</strong>: 1</div>
+          <div class="badge"><strong>Formato</strong>: Reels</div>
+          <div class="badge"><strong>Pilar</strong>: Erro comum</div>
+        </div>
+        <div class="badgeRow">
+          <div class="badge"><span class="hl">verde</span>•<span class="hl">azul</span>•<span class="hl">laranja</span></div>
+        </div>
+      </div>
+      <div class="title">
+        <h1>Não escolha esse piso se quer uma casa elegante por anos</h1>
+        <div class="subtitle">Roteiro reproduzível para um reel contrarian (alto padrão real): proibir um item popular, validar a crença, quebrar com autoridade e entregar 5 motivos rápidos + princípio + CTA de salvar.</div>
+        <div class="linkRow">
+          <span class="pillLink"><span class="dot"></span> Post original: <a href="https://www.instagram.com/p/DUF824pgETd/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DUF824pgETd/</a></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd"><h2>Resumo</h2><span class="tag">O que é + por que funciona</span></div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="k"><div class="l">Promessa</div><div class="v">Evitar um erro <span class="hl">caro e difícil</span> de desfazer para manter a casa atemporal.</div></div>
+            <div class="k"><div class="l">Gatilho</div><div class="v">Proibição + futuro (“daqui a X anos”) = urgência e medo de arrependimento.</div></div>
+            <div class="k"><div class="l">Formato de retenção</div><div class="v">Lista <span class="hl">1/5…5/5</span> + metáforas visuais + frase-martelo.</div></div>
+          </div>
+          <ul>
+            <li><strong>Vilão:</strong> um item popular (ex.: porcelanato polido) que parece “alto padrão”, mas atrapalha base neutra, conforto e manutenção.</li>
+            <li><strong>Ângulo:</strong> contrarian com autoridade (“alto padrão de verdade…”) + regra profissional (“base da casa deve ser neutra”).</li>
+            <li><strong>Fecho:</strong> princípio + CTA de referência (salvar/compartilhar).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Estrutura</h2><span class="tag">Sequência pronta</span></div>
+        <div class="bd">
+          <ul>
+            <li><strong>0–2s:</strong> Hook futuro + proibição.</li>
+            <li><strong>2–4s:</strong> Revela o item (sem enrolar).</li>
+            <li><strong>4–7s:</strong> Valida a crença (“te venderam como chique”).</li>
+            <li><strong>7–12s:</strong> Quebra com autoridade/status (“alto padrão real”).</li>
+            <li><strong>12–28s:</strong> Motivos 1 a 5 (1 ideia por frase, com “1/5, 2/5…” na tela).</li>
+            <li><strong>28–33s:</strong> Princípio geral (base neutra) + alternativa rápida.</li>
+            <li><strong>33–37s:</strong> Frase-martelo (resumo forte).</li>
+            <li><strong>37–42s:</strong> CTA (salvar → compartilhar → seguir).</li>
+          </ul>
+          <p class="note">Dica de ritmo: cortes secos a cada 1–2 frases; pausa curta antes das frases polêmicas.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Roteiro</h2>
+          <div class="btnRow">
+            <button class="primary" onclick="copyScript()">Copiar roteiro</button>
+            <button onclick="selectScript()">Selecionar texto</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div id="script" class="script">[CENA: você em plano médio + B-roll do piso ao longo do vídeo]
+
+0–2s (HOOK — texto grande)
+“Se você quer uma casa elegante daqui a 10 anos, NÃO escolha esse tipo de piso.”
+
+2–4s (REVELAÇÃO)
+“Tô falando do porcelanato POLIDO, bem brilhante.”
+
+4–7s (VALIDA A CRENÇA)
+“Eu sei: te fizeram acreditar que isso é ‘chique’ e ‘alto padrão’.”
+
+7–12s (QUEBRA + AUTORIDADE)
+“Mas alto padrão de verdade costuma fugir do excesso de brilho na base da casa.”
+
+12–28s (LISTA 1–5 — 1 ideia por frase, com 1/5 na tela)
+“1/5: vira espelho e cria confusão visual com luz e janela.”
+“2/5: compete com a decoração — a base precisa ser neutra e discreta.”
+“3/5: passa sensação mais fria, às vezes com ‘cara de clínica’.”
+“4/5: cansa mais rápido — não é a escolha mais atemporal.”
+“5/5 (um dos mais chatos no dia a dia): mostra tudo e risca com mais facilidade.”
+
+28–33s (PRINCÍPIO + ALTERNATIVA)
+“Regra de ouro: base da casa = acabamento mais neutro.”
+“Se quiser um visual sofisticado, olha opções acetinadas/matte.”
+
+33–37s (FRASE-MARTELO)
+“Não é sobre ‘brilhar’. É sobre ficar bom por anos e facilitar sua vida.”
+
+37–42s (CTA)
+“Salva esse vídeo pra consultar na hora de escolher piso.”
+“E envia pra alguém que tá construindo ou reformando.”
+“Me segue pra mais escolhas atemporais de arquitetura.”
+
+[OBS: adapte o prazo (5/10 anos) e o ‘vilão’ conforme o público e a região.]</div>
+          <div id="toast" class="toast">Roteiro copiado.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Elementos visuais</h2><span class="tag">B-roll + texto + edição</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div class="miniCard">
+              <h3>Captação (B-roll)</h3>
+              <ul>
+                <li>Piso polido refletindo janela/luminária (efeito “espelho”).</li>
+                <li>Close em marca de pé/poeira aparecendo no brilho.</li>
+                <li>Close em risco/arranhão com luz lateral.</li>
+                <li>Comparativo rápido: polido vs acetinado/matte (split screen).</li>
+              </ul>
+            </div>
+            <div class="miniCard">
+              <h3>Texto na tela</h3>
+              <ul>
+                <li>Hook: “Quer elegância em 10 anos? NÃO escolha isso”</li>
+                <li>Revelação: “Porcelanato POLIDO”</li>
+                <li>Quebra: “Não é alto padrão de verdade”</li>
+                <li>Lista: “1/5…5/5” com 3–6 palavras por item</li>
+                <li>Princípio: “Base = neutra e discreta”</li>
+              </ul>
+            </div>
+          </div>
+          <p class="note">Edição: cortes secos; zoom-in leve nas frases polêmicas; whoosh sutil nas trocas de 1/5 para 2/5; pausa de 0,3–0,5s antes de “alto padrão de verdade…”.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><span class="tag">Modelos reproduzíveis</span></div>
+        <div class="bd">
+          <div class="miniCard" style="margin-bottom:12px;">
+            <h3>Template de Hook (preencha)</h3>
+            <p class="note"><span class="hl">“Se você quer</span> [resultado desejado] <span class="hl">daqui a</span> [prazo] <span class="hl">sem</span> [dor], <span class="hl">não escolha</span> [item popular].”</p>
+          </div>
+          <div class="cols">
+            <div class="miniCard">
+              <h3>Variações de abertura</h3>
+              <ul>
+                <li>“Pare de chamar isso de ‘alto padrão’.”</li>
+                <li>“O erro #1 de quem quer casa sofisticada (e nem percebe).”</li>
+                <li>“Se você vai investir em piso, escuta isso antes.”</li>
+                <li>“Isso parece luxo… até você morar.”</li>
+              </ul>
+            </div>
+            <div class="miniCard">
+              <h3>Metáforas/imagética (use 2)</h3>
+              <ul>
+                <li>“Parece um espelho no chão.”</li>
+                <li>“Cria ruído/competição visual.”</li>
+                <li>“Fica com cara de clínica.”</li>
+                <li>“Você vê ‘tudo’ o tempo todo.”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>CTA</h2><span class="tag">Ordem que converte</span></div>
+        <div class="bd">
+          <ul>
+            <li><strong>Primário:</strong> “Salve pra consultar quando for escolher o piso.”</li>
+            <li><strong>Secundário:</strong> “Compartilha com alguém que tá construindo/reformando.”</li>
+            <li><strong>Terciário:</strong> “Me segue pra mais escolhas atemporais de obra e decoração.”</li>
+          </ul>
+          <p class="note">Dica: CTA combine com “conteúdo de referência”. Se o vídeo tem lista/guia, salvar tende a performar melhor.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd"><h2>Checklist</h2><span class="tag">Criação rápida (copiável)</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div class="miniCard">
+              <h3>Antes de gravar</h3>
+              <ul>
+                <li>Escolher 1 “vilão” <strong>popular e caro de mudar</strong> (piso/bancada/revestimento/iluminação).</li>
+                <li>Definir prazo do futuro (5 ou 10 anos) + resultado (elegância/atemporalidade).</li>
+                <li>Separar 3–5 motivos (estética → funcional → emoção → manutenção).</li>
+                <li>Preparar 2 metáforas visuais e 1 princípio profissional.</li>
+              </ul>
+            </div>
+            <div class="miniCard">
+              <h3>Gravação & edição</h3>
+              <ul>
+                <li>Revelar o item até <strong>4s</strong>.</li>
+                <li>Texto grande na tela + “1/5…5/5”.</li>
+                <li>Cortes a cada 1–2 frases (sem respiros longos).</li>
+                <li>B-roll comparativo (polido vs acetinado/matte).</li>
+                <li>Últimos 5s: princípio + CTA (salvar → compartilhar → seguir).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd"><h2>Variações</h2><span class="tag">Mesmo molde, outros “vilões”</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div class="miniCard">
+              <h3>Variação A — Bancada preta</h3>
+              <p>“Se você quer cozinha bonita em 10 anos sem estresse, não escolha bancada preta polida.” Motivos: marca tudo, risco, mancha de água, exige rotina, pesa no ambiente. Princípio: superfícies de uso diário = manutenção previsível.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Variação B — LED mal posicionado</h3>
+              <p>“Se você quer uma casa sofisticada à noite, não coloque fita de LED aparecendo.” Motivos: ofuscamento, ‘efeito boate’, ruído visual, tonalidade errada, falta de camadas de luz. Princípio: iluminação = camadas + indireta bem escondida.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Variação C — Revestimento muito estampado</h3>
+              <p>“Se você quer banheiro atemporal, evite revestimento com muita informação.” Motivos: enjoa, compete com metais/espelho, reduz sensação de amplitude, limita decoração, dificulta combinar reposição. Princípio: base neutra + textura discreta.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Variação D — Nicho de banheiro mal dimensionado</h3>
+              <p>“Se você quer um banheiro funcional, não faça nicho sem pensar no uso.” Motivos: altura errada, entra água, junta suja, fica torto, não cabe frascos. Princípio: detalhe de obra = ergonomia + vedação + caimento.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">Identidade: fundo escuro, cards com borda suave e destaques em degradê (verde/azul/laranja). HTML pronto para documentação interna do seu calendário.</div>
+  </div>
+
+  <script>
+    function getScriptText(){
+      return document.getElementById('script').innerText;
+    }
+    function copyScript(){
+      const text = getScriptText();
+      navigator.clipboard.writeText(text).then(() => {
+        const t = document.getElementById('toast');
+        t.classList.add('show');
+        setTimeout(()=>t.classList.remove('show'), 1600);
+      }).catch(() => {
+        // fallback
+        selectScript();
+        document.execCommand('copy');
+        const t = document.getElementById('toast');
+        t.textContent = 'Roteiro selecionado (copie manualmente).';
+        t.classList.add('show');
+        setTimeout(()=>t.classList.remove('show'), 2000);
+      });
+    }
+    function selectScript(){
+      const el = document.getElementById('script');
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  </script>
+</body>
+</html>
