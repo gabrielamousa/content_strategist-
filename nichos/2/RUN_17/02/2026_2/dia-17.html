@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 17 — Arquitetura | Use coisas grandes</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0C1222;
+      --panel2:#0A1020;
+      --text:#EAF0FF;
+      --muted:#A8B3D6;
+      --line:rgba(255,255,255,.10);
+      --soft:rgba(255,255,255,.06);
+      --shadow: 0 16px 40px rgba(0,0,0,.50);
+      --r:18px;
+      --g: linear-gradient(90deg,#19ffa6 0%, #3b82f6 45%, #ff7a18 100%);
+      --g2: linear-gradient(135deg, rgba(25,255,166,.25), rgba(59,130,246,.18), rgba(255,122,24,.20));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+    }
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(59,130,246,.22), transparent 55%),
+        radial-gradient(900px 500px at 90% 10%, rgba(25,255,166,.18), transparent 55%),
+        radial-gradient(900px 500px at 60% 115%, rgba(255,122,24,.16), transparent 50%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    a{ color: #9ad7ff; text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+    .wrap{ max-width: 1100px; margin: 0 auto; padding: 28px 18px 60px; }
+
+    header{
+      padding: 18px 18px 16px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g2);
+      filter: blur(18px);
+      opacity:.55;
+      pointer-events:none;
+    }
+    header > *{ position: relative; }
+    .topline{
+      display:flex; flex-wrap: wrap; gap:10px 12px;
+      align-items:center; justify-content: space-between;
+    }
+    .badges{ display:flex; flex-wrap: wrap; gap:10px; align-items:center; }
+    .badge{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      backdrop-filter: blur(6px);
+    }
+    .title{
+      margin: 14px 0 8px;
+      font-size: 22px;
+      letter-spacing: .2px;
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 85ch;
+    }
+    .header-actions{
+      display:flex; gap:10px; flex-wrap: wrap; align-items:center;
+      margin-top: 14px;
+    }
+    .btn{
+      cursor:pointer;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      letter-spacing: .2px;
+      display: inline-flex;
+      gap: 10px;
+      align-items:center;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.18); }
+    .btn-primary{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.20);
+      position: relative;
+      overflow:hidden;
+    }
+    .btn-primary:before{
+      content:"";
+      position:absolute; inset:0;
+      background: var(--g);
+      opacity:.18;
+      pointer-events:none;
+    }
+    .btn small{ font-weight: 700; font-family: var(--mono); color: var(--muted); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (min-width: 900px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .span2{ grid-column: 1 / -1; }
+    }
+
+    .card{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.02));
+      border-radius: var(--r);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    .card:after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      background: radial-gradient(500px 160px at 20% 0%, rgba(25,255,166,.10), transparent 60%),
+                  radial-gradient(430px 180px at 90% 20%, rgba(59,130,246,.12), transparent 60%),
+                  radial-gradient(430px 180px at 60% 120%, rgba(255,122,24,.10), transparent 55%);
+      opacity: .9;
+      pointer-events:none;
+    }
+    .card > *{ position: relative; }
+    .h{
+      display:flex; align-items:center; justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .h h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      color: rgba(234,240,255,.92);
+    }
+    .pill{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(0,0,0,.12);
+    }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .kpi .box{
+      border: 1px solid var(--soft);
+      background: rgba(0,0,0,.14);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .kpi .label{ font-size: 12px; color: var(--muted); }
+    .kpi .value{ font-size: 13px; margin-top: 4px; font-weight: 700; }
+
+    ul,ol{ margin: 10px 0 0 18px; padding: 0; }
+    li{ margin: 7px 0; color: rgba(234,240,255,.92); }
+    .muted{ color: var(--muted); }
+
+    .script{
+      border: 1px solid var(--soft);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 14px;
+      font-family: var(--mono);
+      font-size: 12.75px;
+      white-space: pre-wrap;
+      line-height: 1.55;
+    }
+    .hl{
+      background: var(--g);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+    }
+    .two{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 900px){
+      .two{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .copygrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 900px){
+      .copygrid{ grid-template-columns: 1fr 1fr; }
+    }
+    .mini{
+      border: 1px solid var(--soft);
+      background: rgba(0,0,0,.14);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .mini h3{ margin:0 0 8px; font-size: 13px; }
+    .mini p{ margin:0; color: var(--muted); font-size: 13px; }
+
+    .checklist{ columns: 1; column-gap: 18px; }
+    @media (min-width: 900px){ .checklist{ columns: 2; } }
+    .checklist label{
+      display:flex; gap:10px; align-items:flex-start;
+      break-inside: avoid;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.10);
+      border-radius: 12px;
+      margin: 8px 0;
+      color: rgba(234,240,255,.90);
+    }
+    input[type="checkbox"]{
+      width: 16px; height: 16px;
+      margin-top: 2px;
+      accent-color: #3b82f6;
+    }
+
+    footer{
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badges">
+          <span class="badge">Nicho: <strong>Arquitetura</strong></span>
+          <span class="badge">Dia: <strong>17</strong></span>
+          <span class="badge">Formato: <strong>Reels</strong></span>
+          <span class="badge">Pilar: <strong>Passo a passo</strong></span>
+        </div>
+        <div class="badges">
+          <span class="badge">Original: <a href="https://www.instagram.com/p/DUvNGcukSgR/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DUvNGcukSgR/</a></span>
+        </div>
+      </div>
+      <h1 class="title"><span class="hl">Use coisas grandes</span>: a regra ignorada que amplia a casa</h1>
+      <p class="subtitle">Roteiro reproduzível: hook contraintuitivo + explicação curta + 3 exemplos com contraste (errado vs certo) + princípio + FOMO/autoridade + CTA de salvar. Adaptável para qualquer tema trocando “regra” e “3 exemplos”.</p>
+      <div class="header-actions">
+        <button class="btn btn-primary" id="copyBtn" type="button">Copiar roteiro <small id="copyState">CTRL/CMD+C</small></button>
+        <a class="btn" href="#variacoes">Ver variações</a>
+        <a class="btn" href="#checklist">Ir para checklist</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card span2" id="resumo">
+        <div class="h">
+          <h2>Resumo</h2>
+          <span class="pill">Objetivo: retenção + salvamentos</span>
+        </div>
+        <div class="two">
+          <div>
+            <ul>
+              <li><strong>Ideia central:</strong> poucos elementos <strong>maiores</strong> organizam a leitura do ambiente e aumentam a sensação de amplitude.</li>
+              <li><strong>Motor de performance:</strong> <em>contraintuitivo</em> + exemplos visuais imediatos + estrutura repetitiva (“nada de X… use Y”).</li>
+              <li><strong>Entrega:</strong> regra simples que vira <strong>checklist mental</strong> → CTA “salva” faz sentido.</li>
+            </ul>
+          </div>
+          <div class="kpi">
+            <div class="box">
+              <div class="label">Hook</div>
+              <div class="value">Contrarian + específico</div>
+            </div>
+            <div class="box">
+              <div class="label">Meio</div>
+              <div class="value">3 exemplos (errado × certo)</div>
+            </div>
+            <div class="box">
+              <div class="label">Final</div>
+              <div class="value">Princípio + “salva”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="estrutura">
+        <div class="h">
+          <h2>Estrutura (template reproduzível)</h2>
+          <span class="pill">Reutilizável</span>
+        </div>
+        <ol>
+          <li><strong>Hook (0–2s):</strong> regra direta e contraintuitiva.</li>
+          <li><strong>Micro-pausa:</strong> “Pera/rapidinho” + promessa de clareza.</li>
+          <li><strong>Bloco 1:</strong> Exemplo 1 (cenário → erro → correção → resultado).</li>
+          <li><strong>Bloco 2:</strong> Exemplo 2 (mesma fórmula).</li>
+          <li><strong>Bloco 3:</strong> Exemplo 3 (mesma fórmula).</li>
+          <li><strong>Princípio:</strong> “isso cria hierarquia/organização/clareza”.</li>
+          <li><strong>Autoridade/FOMO:</strong> “regra mais ignorada”.</li>
+          <li><strong>CTA:</strong> salvar / comentar palavra-chave / pedir diagnóstico.</li>
+        </ol>
+        <p class="muted">Dica de adaptação rápida: mantenha a mesma <strong>cadência</strong> e troque apenas <strong>(Regra)</strong> e os <strong>3 exemplos</strong>.</p>
+      </section>
+
+      <section class="card" id="elementos-visuais">
+        <div class="h">
+          <h2>Elementos visuais</h2>
+          <span class="pill">Edição high-retention</span>
+        </div>
+        <ul>
+          <li><strong>Ritmo:</strong> cortes rápidos por bloco (1, 2, 3).</li>
+          <li><strong>Planos:</strong> close no “erro” → plano aberto no “acerto”.</li>
+          <li><strong>Texto na tela:</strong> 1–4 palavras por frase (GRANDE / NADA DE PEQUENO / HIERARQUIA).</li>
+          <li><strong>Guias visuais:</strong> setas/contornos mostrando proporção, “entrar embaixo”, preenchimento de canto.</li>
+          <li><strong>Antes/depois:</strong> 1s errado + 2s certo (se tiver).</li>
+          <li><strong>Progressão:</strong> parede → chão → volume (variedade de enquadramento).</li>
+        </ul>
+      </section>
+
+      <section class="card span2" id="roteiro">
+        <div class="h">
+          <h2>Roteiro (copiável)</h2>
+          <span class="pill">30–45s</span>
+        </div>
+        <div class="script" id="scriptText">[0–2s | Hook]
+“Use coisas GRANDES na sua casa.”
+
+[2–4s | Padrão + promessa]
+“Pera… deixa eu te explicar rapidinho.”
+
+[4–14s | Exemplo 1 — PAREDE]
+“Quadro: nada de quadros pequenos perdidos na parede.
+Em vez disso, usa 1 quadro GRANDE que preenche e ancora o ambiente.”
+
+[14–24s | Exemplo 2 — CHÃO]
+“Tapete: se ele é pequeno, a sala parece recortada.
+O tapete certo é o que entra embaixo do sofá (ou pelo menos das pernas da frente).”
+
+[24–34s | Exemplo 3 — VOLUME]
+“Planta/arranjo: volume no canto cria presença.
+Em vez de várias coisinhas espalhadas, coloca um elemento GRANDE e pronto.”
+
+[34–41s | Princípio]
+“Isso cria hierarquia e organização visual. O olho entende o espaço mais rápido.”
+
+[41–45s | Autoridade + CTA]
+“Escala é uma das regras mais ignoradas.
+Salva esse vídeo pra lembrar na próxima compra.”</div>
+        <div class="header-actions" style="margin-top:12px;">
+          <button class="btn btn-primary" type="button" onclick="copyScript()">Copiar roteiro <small id="copyState2">OK</small></button>
+          <button class="btn" type="button" onclick="toggleMarks()">Mostrar versão com marcações</button>
+        </div>
+      </section>
+
+      <section class="card" id="copy-ganchos">
+        <div class="h">
+          <h2>Copy e ganchos</h2>
+          <span class="pill">Substituíveis</span>
+        </div>
+        <div class="copygrid">
+          <div class="mini">
+            <h3>Hooks (0–2s)</h3>
+            <p>
+              • “Use coisas GRANDES na sua casa.”<br/>
+              • “Quer parecer maior? Pare de usar coisa pequena.”<br/>
+              • “O erro que deixa sua sala com cara de bagunça: escala.”<br/>
+              • “Se você faz isso, seu ambiente sempre parece menor.”
+            </p>
+          </div>
+          <div class="mini">
+            <h3>Frases de retenção (micro-pauses)</h3>
+            <p>
+              • “Pera… rapidinho.”<br/>
+              • “Olha isso aqui.”<br/>
+              • “É contraintuitivo, mas funciona.”<br/>
+              • “Em 10 segundos você entende.”
+            </p>
+          </div>
+          <div class="mini">
+            <h3>Fórmula do exemplo (certo vs errado)</h3>
+            <p>
+              “Nada de <strong>[pequeno/perdido]</strong> → use <strong>[um grande que ancora]</strong> → resultado: <strong>[benefício]</strong>.”
+            </p>
+          </div>
+          <div class="mini">
+            <h3>Fechamentos (princípio + autoridade)</h3>
+            <p>
+              • “Isso cria hierarquia e organização visual.”<br/>
+              • “O olho lê o espaço mais rápido.”<br/>
+              • “É a regra mais ignorada por quem decora sozinho.”
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="cta">
+        <div class="h">
+          <h2>CTA</h2>
+          <span class="pill">Escolha 1 primário</span>
+        </div>
+        <ul>
+          <li><strong>Primário (recomendado):</strong> “Salva esse vídeo pra não esquecer.”</li>
+          <li><strong>Secundário (comentário):</strong> “Comenta ‘ESCALA’ que eu te mando uma lista de tamanhos.”</li>
+          <li><strong>Secundário (diagnóstico):</strong> “Me diz: sala pequena ou grande? Que eu adapto os exemplos.”</li>
+          <li><strong>DM/Isco:</strong> “Quer um guia rápido? Me chama no direct com ‘GUIA’.”</li>
+        </ul>
+        <p class="muted">Regra prática: se o conteúdo é “regra de referência”, o CTA mais natural é <strong>salvar</strong>.</p>
+      </section>
+
+      <section class="card span2" id="checklist">
+        <div class="h">
+          <h2>Checklist de criação</h2>
+          <span class="pill">Gravar → editar → publicar</span>
+        </div>
+        <div class="checklist">
+          <label><input type="checkbox" />Defina <strong>1 regra</strong> em uma frase imperativa (ex.: “Use coisas grandes”).</label>
+          <label><input type="checkbox" />Garanta que a regra seja <strong>ligeiramente contraintuitiva</strong> (quebra uma crença comum).</label>
+          <label><input type="checkbox" />Liste <strong>3 exemplos</strong> fáceis de mostrar (ideal: parede/chão/volume).</label>
+          <label><input type="checkbox" />Para cada exemplo, escreva: <strong>erro → correção → benefício</strong>.</label>
+          <label><input type="checkbox" />Grave <strong>takes curtos</strong> (1–2 frases por take) para facilitar jump cuts.</label>
+          <label><input type="checkbox" />Faça <strong>close</strong> no erro + <strong>plano aberto</strong> no acerto.</label>
+          <label><input type="checkbox" />Use texto na tela com <strong>palavra-chave grande</strong> (GRANDE / ESCALA).</label>
+          <label><input type="checkbox" />Inclua 1 frase de <strong>princípio</strong> (hierarquia/clareza/organização).</label>
+          <label><input type="checkbox" />Inclua 1 gatilho de <strong>autoridade/FOMO</strong> (“regra ignorada”).</label>
+          <label><input type="checkbox" />Encerramento com <strong>CTA único</strong> (preferência: salvar).</label>
+          <label><input type="checkbox" />Último frame com “<strong>SALVA</strong>” por 0,8–1,2s.</label>
+          <label><input type="checkbox" />Legenda curta com 1 promessa + 3 bullets + CTA.</label>
+        </div>
+      </section>
+
+      <section class="card span2" id="variacoes">
+        <div class="h">
+          <h2>Variações (adaptações com o mesmo impacto)</h2>
+          <span class="pill">Troca de tema sem perder estrutura</span>
+        </div>
+        <div class="two">
+          <div>
+            <h3 style="margin:0 0 8px; font-size: 14px;">Como adaptar para outro tema (template)</h3>
+            <ul>
+              <li><strong>Regra (hook):</strong> “Faça <strong>[A]</strong>, não <strong>[B]</strong>.” (contraintuitivo e simples)</li>
+              <li><strong>3 exemplos:</strong> escolha 3 situações recorrentes do seu público (Ex.: iniciante/intermediário/avançado; antes/durante/depois; ferramenta 1/2/3).</li>
+              <li><strong>Princípio:</strong> explique em 1 linha o “porquê” (clareza, hierarquia, consistência, segurança, eficiência).</li>
+              <li><strong>CTA natural:</strong> se for regra → “salva”; se for opinião → “comenta”; se for diagnóstico → “me conta seu caso”.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size: 14px;">5 variações prontas (Arquitetura/Interiores)</h3>
+            <ul>
+              <li><strong>Iluminação:</strong> “Pare de depender só da luz central.” (3 exemplos: abajur, arandela, fita LED → princípio: camadas de luz)</li>
+              <li><strong>Cortina:</strong> “Cortina curta deixa o pé-direito menor.” (3 exemplos: altura, largura, trilho → princípio: linhas verticais)</li>
+              <li><strong>Cores:</strong> “Menos cores, mais intenção.” (3 exemplos: parede, marcenaria, objetos → princípio: unidade visual)</li>
+              <li><strong>Layout:</strong> “Não encoste tudo na parede.” (3 exemplos: sofá, tapete, mesa lateral → princípio: fluxo e respiro)</li>
+              <li><strong>Quadros:</strong> “Uma composição grande é mais ‘projeto’.” (3 exemplos: eixo, proporção, espaçamento → princípio: escala e ritmo)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;" class="mini">
+          <h3 style="margin:0 0 8px; font-size: 13px;">Substituições que preservam a força do Reel</h3>
+          <p>
+            • Troque “<strong>Use coisas grandes</strong>” por “<strong>Use menos peças, mas mais fortes</strong>” (mesmo efeito: hierarquia).<br/>
+            • Troque “<strong>regra mais ignorada</strong>” por “<strong>o detalhe que separa casa comum de casa com cara de projeto</strong>”.<br/>
+            • Troque “<strong>3 exemplos</strong>” por “<strong>2 exemplos + 1 erro que quase todo mundo comete</strong>” se seu tema exigir mais tempo de explicação.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <div>Documento de roteiro — fundo escuro, cards suaves, destaques em degradê (verde/azul/laranja). Pronto para copiar e reutilizar.</div>
+    </footer>
+  </div>
+
+  <script>
+    const plainScript = `[0–2s | Hook]\n“Use coisas GRANDES na sua casa.”\n\n[2–4s | Padrão + promessa]\n“Pera… deixa eu te explicar rapidinho.”\n\n[4–14s | Exemplo 1 — PAREDE]\n“Quadro: nada de quadros pequenos perdidos na parede.\nEm vez disso, usa 1 quadro GRANDE que preenche e ancora o ambiente.”\n\n[14–24s | Exemplo 2 — CHÃO]\n“Tapete: se ele é pequeno, a sala parece recortada.\nO tapete certo é o que entra embaixo do sofá (ou pelo menos das pernas da frente).”\n\n[24–34s | Exemplo 3 — VOLUME]\n“Planta/arranjo: volume no canto cria presença.\nEm vez de várias coisinhas espalhadas, coloca um elemento GRANDE e pronto.”\n\n[34–41s | Princípio]\n“Isso cria hierarquia e organização visual. O olho entende o espaço mais rápido.”\n\n[41–45s | Autoridade + CTA]\n“Escala é uma das regras mais ignoradas.\nSalva esse vídeo pra lembrar na próxima compra.”`;
+
+    const markedScript = `HOOK (0–2s)\n→ Use coisas GRANDES na sua casa.\n\nPATTERN BREAK (2–4s)\n→ Pera… deixa eu te explicar rapidinho.\n\nEXEMPLO 1 (PAREDE)\nErro: quadros pequenos perdidos\nCerto: 1 quadro GRANDE\nBenefício: ancora e dá presença\n\nEXEMPLO 2 (CHÃO)\nErro: tapete pequeno recorta o espaço\nCerto: tapete que entra sob o sofá\nBenefício: amplia a leitura\n\nEXEMPLO 3 (VOLUME)\nErro: várias coisinhas espalhadas\nCerto: 1 planta/arranjo com volume\nBenefício: preenche e organiza\n\nPRINCÍPIO\n→ Hierarquia + organização visual\n\nAUTORIDADE/FOMO\n→ Uma das regras mais ignoradas\n\nCTA\n→ Salva pra lembrar`;
+
+    let showingMarked = false;
+
+    function copyToClipboard(text){
+      if (navigator.clipboard && window.isSecureContext){
+        return navigator.clipboard.writeText(text);
+      }
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.top = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try{ document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+
+    function setCopyState(elId, msg){
+      const el = document.getElementById(elId);
+      if(!el) return;
+      el.textContent = msg;
+      setTimeout(()=>{ el.textContent = 'CTRL/CMD+C'; }, 1200);
+    }
+
+    function copyScript(){
+      const text = showingMarked ? markedScript : plainScript;
+      copyToClipboard(text).then(()=>{
+        setCopyState('copyState','Copiado');
+        const el2 = document.getElementById('copyState2');
+        if(el2){ el2.textContent = 'Copiado'; setTimeout(()=>{ el2.textContent = 'OK'; }, 1200); }
+      });
+    }
+
+    function toggleMarks(){
+      showingMarked = !showingMarked;
+      const box = document.getElementById('scriptText');
+      if(!box) return;
+      box.textContent = showingMarked ? markedScript : plainScript;
+    }
+
+    document.getElementById('copyBtn')?.addEventListener('click', copyScript);
+  </script>
+</body>
+</html>
