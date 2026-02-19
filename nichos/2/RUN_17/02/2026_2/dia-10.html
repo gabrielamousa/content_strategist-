@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 10 — Arquitetura — Por que as casas estão ficando todas iguais?</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630CC;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg, #22c55e 0%, #38bdf8 45%, #fb923c 100%);
+      --g2: radial-gradient(1200px 600px at 20% 10%, rgba(56,189,248,.22), transparent 60%),
+            radial-gradient(900px 500px at 85% 20%, rgba(251,146,60,.18), transparent 55%),
+            radial-gradient(900px 600px at 55% 85%, rgba(34,197,94,.16), transparent 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+    }
+    a{color:#9AE6FF; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 54px}
+
+    header{
+      position:relative;
+      padding:22px 22px 18px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.86), rgba(14,22,48,.55));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.10;
+      filter: blur(14px);
+      pointer-events:none;
+    }
+
+    .topline{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+    .chips{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+    .chip{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      padding:8px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .chip strong{color:var(--text); font-weight:650}
+
+    h1{
+      margin:14px 0 8px;
+      font-size: clamp(22px, 3vw, 34px);
+      line-height:1.12;
+      letter-spacing:-.4px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.5;
+      max-width: 78ch;
+    }
+
+    .actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px}
+    .btn{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size:13px;
+      transition: transform .08s ease, background .18s ease, border-color .18s ease;
+    }
+    .btn:hover{background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.20)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      border:0;
+      background: var(--g1);
+      color:#06101C;
+      font-weight:750;
+    }
+    .btn.primary:hover{filter:saturate(1.05) brightness(1.02)}
+
+    .grid{display:grid; grid-template-columns: 1.15fr .85fr; gap:16px; margin-top:16px}
+    @media (max-width: 940px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.72), rgba(14,22,48,.52));
+      border-radius: var(--radius);
+      box-shadow: 0 14px 44px rgba(0,0,0,.45);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid var(--stroke);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background: rgba(0,0,0,.10);
+    }
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:.2px}
+    .badge{
+      font-family: var(--mono);
+      font-size: 11px;
+      padding:6px 10px;
+      border-radius:999px;
+      border: 1px solid rgba(255,255,255,.16);
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .card .bd{padding:16px}
+
+    .kpi{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px}
+    @media (max-width: 540px){ .kpi{grid-template-columns:1fr} }
+    .k{
+      padding:12px;
+      border-radius: var(--radius2);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+    }
+    .k .t{font-size:12px; color:var(--muted2)}
+    .k .v{margin-top:6px; font-weight:800; letter-spacing:.2px}
+
+    ul{margin:10px 0 0 16px; color:var(--muted)}
+    li{margin:6px 0}
+
+    .sec{margin-top:16px}
+    .hr{height:1px; background: rgba(255,255,255,.10); margin:12px 0 0}
+
+    .script{
+      white-space: pre-wrap;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: rgba(234,240,255,.86);
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 14px;
+      overflow:auto;
+    }
+
+    .highlight{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius: 999px;
+      background: var(--g1);
+      color:#07111D;
+      font-weight:850;
+      letter-spacing:.2px;
+    }
+
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 760px){ .cols{grid-template-columns:1fr} }
+
+    .note{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(8,12,24,.9);
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(234,240,255,.86);
+      font-size: 13px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.on{opacity:1; transform: translateX(-50%) translateY(-4px)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <div class="chip"><strong>Nicho:</strong> Arquitetura</div>
+          <div class="chip"><strong>Dia:</strong> 10</div>
+          <div class="chip"><strong>Formato:</strong> Carrossel</div>
+          <div class="chip"><strong>Pilar:</strong> Mito vs Verdade</div>
+        </div>
+        <div class="chip"><strong>Original:</strong> <a href="https://www.instagram.com/p/DN-nR7wDHWS/" target="_blank" rel="noopener noreferrer">instagram.com/p/DN-nR7wDHWS</a></div>
+      </div>
+      <h1>Por que as casas estão ficando todas iguais?</h1>
+      <p class="sub">Carrossel editorial com storytelling: gancho → fenômeno → tese → prova → virada → manifesto → CTA. Use estética high-tech minimalista com destaques em degradê (verde/azul/laranja).</p>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <button class="btn" id="copyHooksBtn">Copiar ganchos</button>
+        <a class="btn" href="https://www.instagram.com/p/DN-nR7wDHWS/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge">Objetivo: gerar reflexão + salvar/compartilhar</span>
+        </div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="k"><div class="t">Quantidade sugerida</div><div class="v">9 slides</div></div>
+            <div class="k"><div class="t">Promessa</div><div class="v">Explicar a padronização</div></div>
+            <div class="k"><div class="t">Tom</div><div class="v">Editorial + provocativo</div></div>
+          </div>
+          <div class="sec">
+            <div class="note">
+              Enquadramento (Mito vs Verdade): <span class="highlight">“Não é só tendência estética”</span> — existe pressão de pertencimento, algoritmos de referência e mercado replicando a mesma solução. O carrossel entrega nome para o fenômeno + uma virada (“mas isso tem custo”) + uma saída prática.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="badge">Ritmo: denso → respiro → denso</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Slide 1:</strong> Hook visual + pergunta central + micro-CTA</li>
+            <li><strong>Slide 2:</strong> Contextualiza o fenômeno (identificação)</li>
+            <li><strong>Slide 3:</strong> Recorte em arquitetura/moradia (tese)</li>
+            <li><strong>Slide 4:</strong> Respiro imagético (quebra de densidade)</li>
+            <li><strong>Slide 5:</strong> Conceito + prova (dado/estudo + fonte)</li>
+            <li><strong>Slide 6:</strong> Virada: “Mas…” (custo do pertencimento)</li>
+            <li><strong>Slide 7:</strong> Manifesto/citação autoral (compartilhável)</li>
+            <li><strong>Slide 8:</strong> Fecho + CTA social (comentar/salvar)</li>
+            <li><strong>Slide 9:</strong> CTA comercial (serviço, ebook, consultoria, curso)</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="sec cols">
+            <div class="note"><strong>Regra de ouro:</strong> Slide 1 precisa ser entendido em 1 segundo: pergunta + contraste + “deslize”.</div>
+            <div class="note"><strong>Prova:</strong> 1 slide com fonte explícita (link curto/rodapé) para aumentar credibilidade.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Slides sugeridos (1..9)</h2>
+          <span class="badge">1080×1350 · mobile-first</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="note"><strong>Slide 1 — Hook</strong><br>Imagem: colagem “casas muito parecidas” (2–3 referências).<br><strong>Título:</strong> “Por que as casas estão ficando todas iguais?”<br><strong>Sub:</strong> “O esforço coletivo para se padronizar.”<br><strong>Micro-CTA:</strong> “Deslize >>>”</div>
+              <div class="note"><strong>Slide 2 — Fenômeno</strong><br>Texto: “Você também percebeu? Mesmas fachadas, mesma paleta, mesmas ‘soluções instagramáveis’…”</div>
+              <div class="note"><strong>Slide 3 — Recorte (arquitetura)</strong><br><strong>Palavra âncora:</strong> “pertencimento”.<br>Texto: “Na moradia, o ‘parecer certo’ virou requisito: referência + aprovação + revenda.”</div>
+              <div class="note"><strong>Slide 4 — Respiro</strong><br>Imagem conceitual (ambiente neutro, repetição, corredores, padrão).<br>1 frase opcional: “E isso muda mais do que parece.”</div>
+              <div class="note"><strong>Slide 5 — Prova</strong><br><strong>Palavra:</strong> “homogeneidade”.<br>Texto com estudo/dado + destaque: “Pode aumentar coesão/satisfação — mas…”<br>Rodapé: fonte (autor, ano, link curto).</div>
+            </div>
+            <div>
+              <div class="note"><strong>Slide 6 — Virada</strong><br><strong>Headline:</strong> “Mas pertencer tem um preço.”<br>Corpo: “Quando todo mundo escolhe igual, a casa vira ‘capa’: parece perfeita — mas não responde à sua rotina.”</div>
+              <div class="note"><strong>Slide 7 — Manifesto</strong><br>Aspas grandes + texto autoral: “A casa não precisa performar. Precisa acolher. Pluralidade é saúde urbana.”<br>Assinatura/brand.</div>
+              <div class="note"><strong>Slide 8 — Fecho + CTA social</strong><br>Frase final: “Não falta bom gosto. Falta coragem de decidir por você.”<br>CTA: “Qual padrão você mais vê? Comente e salve.”</div>
+              <div class="note"><strong>Slide 9 — Oferta</strong><br>Produto: consultoria/diagnóstico de layout / projeto autoral / ebook.<br>Texto: “Quer uma casa com identidade (e funcional)? Me chama no direct / link na bio.”</div>
+              <div class="note"><strong>Observação</strong><br>Se não tiver oferta, troque o Slide 9 por: “Checklist de identidade do seu projeto” + CTA “salve”.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Roteiro (texto para copiar e adaptar)</h2>
+          <span class="badge">Template reproduzível</span>
+        </div>
+        <div class="bd">
+          <div class="script" id="scriptText">CARROSSEL (9 SLIDES) — ARQUITETURA
+
+SLIDE 1 (HOOK)
+Título: Por que as casas estão ficando todas iguais?
+Sub: O esforço coletivo para se padronizar.
+Micro-CTA: Deslize >>>
+
+SLIDE 2 (FENÔMENO)
+Você também percebeu?
+Mesmas fachadas, mesmas paletas “seguras”, os mesmos interiores com cara de catálogo.
+E não é só impressão — é um padrão.
+
+SLIDE 3 (RECORTE + TESE)
+Na moradia, a estética virou uma forma de pertencimento.
+Quando a referência vira regra, a casa começa a ser escolhida para “parecer certa”, não para funcionar bem.
+Palavra-chave (grande): PERTENCIMENTO
+
+SLIDE 4 (RESPIRO)
+(Imagem conceitual, sem texto)
+Ou, se precisar: “E isso muda mais do que parece.”
+
+SLIDE 5 (PROVA)
+Palavra-âncora (grande): HOMOGENEIDADE
+Traga um dado/estudo/autor:
+“Pesquisas mostram que similaridade pode aumentar sensação de coesão/aceitação no grupo.”
+Destaque (marca-texto): “Pertencer alivia a ansiedade de escolher.”
+Fonte no rodapé: Autor, ano + link curto.
+
+SLIDE 6 (VIRADA)
+Headline: Mas pertencer tem um preço.
+Quando todo mundo copia a mesma solução:
+• a casa ignora a rotina real
+• o layout vira ‘vitrine’
+• você perde singularidade e conforto
+
+SLIDE 7 (MANIFESTO)
+“Uma casa não é uma performance.
+É um sistema de vida.
+Identidade não é excesso — é coerência.
+E coerência nasce de escolhas suas (não do feed).”
+Assinatura/brand
+
+SLIDE 8 (FECHO + CTA SOCIAL)
+Frase final: Não falta bom gosto. Falta coragem de decidir por você.
+CTA: Qual padrão você mais vê por aí? Comente e salve este post.
+
+SLIDE 9 (CTA COMERCIAL)
+Quer uma casa com identidade (e funcionalidade de verdade)?
+Oferta: [consultoria/projeto completo/auditoria de planta]
+Chamada: Me chama no direct / link na bio.
+
+ANOTAÇÕES DE PRODUÇÃO
+• 1 respiro visual a cada 2–3 slides
+• 1 slide com prova + fonte explícita
+• Texto em blocos curtos (3–6 linhas) para mobile</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="badge">High-tech editorial</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Fundo:</strong> fotos desaturadas (fachadas repetidas, interiores “neutros”, corredores/padrões).</li>
+            <li><strong>Texto:</strong> branco com sombra suave ou overlay escuro 15–35% para legibilidade.</li>
+            <li><strong>Destaques:</strong> usar o degradê (verde→azul→laranja) para “marca-texto”, linhas e bullets.</li>
+            <li><strong>Tipografia:</strong> Inter/Montserrat (H1 bem grande; body forte para leitura).</li>
+            <li><strong>Composição:</strong> alinhado à esquerda; 40–70% do frame para texto; margem segura 80–120px.</li>
+            <li><strong>Elementos recorrentes:</strong> seta “>>>”, aspas grandes no manifesto, fonte/URL discreta no rodapé.</li>
+          </ul>
+          <div class="sec cols">
+            <div class="note"><strong>Componentes fixos (design system)</strong><br>1) Hook (colagem + pergunta + seta)<br>2) Texto sobre foto (full bleed)<br>3) Tese (palavra-chave grande)<br>4) Respiro (quase sem texto)<br>5) Prova (dado + highlight + fonte)<br>6) Fecho/CTA (frase forte + ação)</div>
+            <div class="note"><strong>Specs rápidas (Canva/Figma)</strong><br>Formato: 1080×1350 (4:5)<br>H1: 90–130 pt<br>Body: 44–60 pt<br>Sombra: blur 8–16 / 20–35% opacidade</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">Para testar no Slide 1</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="note" id="hooksText"><strong>Ganchos (variações)</strong>
+              <ul>
+                <li>“Por que toda casa nova parece a mesma casa?”</li>
+                <li>“A estética ‘neutra’ virou obrigação?”</li>
+                <li>“Quando a referência vira regra, você perde a casa.”</li>
+                <li>“O mito da casa ‘atemporal’: o que está por trás.”</li>
+                <li>“Você escolheu sua casa… ou o feed escolheu por você?”</li>
+              </ul>
+            </div>
+            <div class="note"><strong>Frases de retenção (meio do carrossel)</strong>
+              <ul>
+                <li>“Parece sofisticado — mas pode estar só… padronizado.”</li>
+                <li>“O conforto some quando a casa vira vitrine.”</li>
+                <li>“Pertencer reduz ansiedade. E esse é o truque.”</li>
+                <li>“A pergunta certa não é ‘está bonito?’ — é ‘me serve?’”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="badge">3 níveis</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Continuação (Slide 1):</strong> “Deslize >>> / Vem ver >>>”</li>
+            <li><strong>Engajamento (Slide 8):</strong> “Qual padrão você mais percebe? Comente + salve.”</li>
+            <li><strong>Conversão (Slide 9):</strong> “Quer um diagnóstico do seu layout/estilo? Direct / link na bio.”</li>
+          </ul>
+          <div class="sec note"><strong>Dica:</strong> mantenha 1 CTA principal por slide. No final, escolha <em>ou</em> link <em>ou</em> direct (não os dois com o mesmo destaque).</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <span class="badge">Antes de publicar</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li>[ ] Slide 1 entende em 1 segundo (pergunta + contraste + “>>>”).</li>
+            <li>[ ] Fenômeno bem concreto (3 exemplos: fachada, interiores, paleta, materiais).</li>
+            <li>[ ] Tese nomeada com 1 palavra forte (ex.: “pertencimento”).</li>
+            <li>[ ] 1 respiro visual (slide quase sem texto).</li>
+            <li>[ ] 1 prova com <strong>fonte</strong> (autor/ano/link curto no rodapé).</li>
+            <li>[ ] 1 virada clara escrita com “Mas…”.</li>
+            <li>[ ] 1 frase-manifesto compartilhável (slides 7–8).</li>
+            <li>[ ] Último slide com CTA único e óbvio (direct/link).</li>
+            <li>[ ] Revisão mobile: body em blocos curtos, sem “paredão” de texto.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="badge">Mesma estrutura, outros ângulos</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="note"><strong>Variação 1 — “Erro comum” disfarçado</strong><br>
+              Slide 1: “Sua casa está bonita… mas genérica?”<br>
+              Slide 5 prova: “tendências reduzem risco percebido” (fonte)<br>
+              Slide 6 virada: “risco baixo hoje = arrependimento amanhã”<br>
+              Final: checklist de identidade.
+            </div>
+            <div class="note"><strong>Variação 2 — “Passo a passo” (sem perder o editorial)</strong><br>
+              Slide 7 vira método: “3 perguntas para fugir do padrão”<br>
+              1) O que sua rotina exige?<br>
+              2) O que você ama (não o que ‘combina’)?<br>
+              3) O que é inegociável no conforto?<br>
+              CTA: “Salve para usar no próximo projeto.”
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copiado.</div>
+
+  <script>
+    function showToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg || 'Copiado.';
+      t.classList.add('on');
+      setTimeout(()=>t.classList.remove('on'), 1200);
+    }
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Roteiro copiado para a área de transferência.');
+      } catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Roteiro copiado.');
+      }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', ()=>{
+      const txt = document.getElementById('scriptText').innerText;
+      copyText(txt);
+    });
+
+    document.getElementById('copyHooksBtn').addEventListener('click', ()=>{
+      const hookBox = document.getElementById('hooksText');
+      const txt = hookBox.innerText.replace(/\n{3,}/g,'\n\n');
+      copyText(txt);
+    });
+  </script>
+</body>
+</html>
