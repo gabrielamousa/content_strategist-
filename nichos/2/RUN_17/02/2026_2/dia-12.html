@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 12 — Arquitetura — 5 jeitos que sua casa afeta sua saúde mental</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.56);
+      --shadow: 0 16px 45px rgba(0,0,0,.55);
+      --r16:16px;
+      --r22:22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --g1: linear-gradient(135deg, #2EE59D 0%, #2D9CDB 45%, #FFB703 100%);
+      --g2: linear-gradient(135deg, rgba(46,229,157,.35) 0%, rgba(45,156,219,.25) 45%, rgba(255,183,3,.2) 100%);
+      --ok:#2EE59D;
+      --warn:#FFB703;
+      --link:#7FDBFF;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1100px 600px at 18% 10%, rgba(45,156,219,.16), transparent 55%),
+        radial-gradient(900px 520px at 78% 18%, rgba(46,229,157,.14), transparent 55%),
+        radial-gradient(950px 600px at 55% 95%, rgba(255,183,3,.11), transparent 60%),
+        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+      line-height:1.35;
+    }
+
+    a{ color: var(--link); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .wrap{ max-width: 1060px; margin: 0 auto; padding: 28px 18px 48px; }
+
+    header{
+      display:flex; gap:16px; align-items:stretch; justify-content:space-between;
+      padding: 18px;
+      border: 1px solid var(--stroke);
+      border-radius: var(--r22);
+      background: linear-gradient(180deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,.04) 100%);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(18px);
+      opacity:.55;
+      z-index:0;
+    }
+
+    .h-left, .h-right{ position:relative; z-index:1; }
+
+    .kicker{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .02em;
+      color: var(--muted);
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      white-space:nowrap;
+    }
+
+    .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: var(--g1);
+    }
+
+    h1{
+      margin: 10px 0 6px;
+      font-size: clamp(20px, 3.2vw, 30px);
+      letter-spacing: -0.02em;
+      line-height:1.15;
+    }
+
+    .sub{
+      color: var(--muted);
+      margin:0;
+      max-width: 68ch;
+    }
+
+    .h-right{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:flex-end;
+      min-width: 240px;
+    }
+
+    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+
+    .btn{
+      cursor:pointer;
+      border: 1px solid var(--stroke);
+      border-radius: 12px;
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      font-weight: 650;
+      letter-spacing:.01em;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.085); border-color: rgba(255,255,255,.18); }
+
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(46,229,157,.18) 0%, rgba(45,156,219,.16) 45%, rgba(255,183,3,.14) 100%);
+      border-color: rgba(255,255,255,.18);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    @media (min-width: 920px){
+      .grid{ grid-template-columns: 1.05fr .95fr; }
+    }
+
+    .card{
+      border: 1px solid var(--stroke);
+      border-radius: var(--r22);
+      background: rgba(255,255,255,.05);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.03) 100%);
+    }
+
+    .tag{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+      padding: 6px 10px;
+      border-radius: 999px;
+      white-space:nowrap;
+    }
+
+    .card .bd{ padding: 14px 16px 16px; }
+
+    h2{
+      margin:0;
+      font-size: 15px;
+      letter-spacing:.01em;
+      text-transform: none;
+    }
+
+    .bd p{ margin: 0 0 10px; color: var(--muted); }
+
+    .list{
+      margin: 10px 0 0;
+      padding:0;
+      list-style:none;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .li{
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+    }
+
+    .li strong{ color: var(--text); }
+    .li .muted{ color: var(--muted2); }
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 920px){
+      .split{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .code{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: rgba(234,240,255,.86);
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 12px;
+      overflow:auto;
+      white-space:pre-wrap;
+      line-height:1.35;
+    }
+
+    .accent{
+      display:inline-block;
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight: 800;
+    }
+
+    .check{ color: var(--ok); font-weight:800; }
+
+    .footer-note{
+      margin-top: 14px;
+      color: var(--muted2);
+      font-size: 12.5px;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.72);
+      border: 1px solid rgba(255,255,255,.16);
+      padding: 10px 12px;
+      border-radius: 999px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 999;
+    }
+    .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-2px); }
+
+    .mini{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+
+    .mini .pill{ background: rgba(255,255,255,.05); }
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.08);
+      margin: 12px 0;
+      border:0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="h-left">
+        <div class="kicker">
+          <span class="pill"><span class="dot"></span> Nicho: <b>Arquitetura</b></span>
+          <span class="pill">Dia: <b>12</b></span>
+          <span class="pill">Formato: <b>Carrossel (7 telas)</b></span>
+          <span class="pill">Pilar: <b>Prova</b></span>
+        </div>
+        <h1><span class="accent">5 jeitos</span> que sua casa afeta sua saúde mental</h1>
+        <p class="sub">Carrossel editorial “foto + texto em camadas” para mostrar como ambiente físico influencia humor, sono, estresse e relações — com pontos práticos e CTA de compartilhamento.</p>
+        <div class="mini">
+          <span class="pill">1080×1350 (4:5)</span>
+          <span class="pill">Números 1–5</span>
+          <span class="pill">Hook com box branco</span>
+        </div>
+      </div>
+      <div class="h-right">
+        <div class="tag">Post original: <a href="https://www.instagram.com/p/DT5NJe2jFLb/" target="_blank" rel="noreferrer">abrir link</a></div>
+        <div class="btnrow">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="copySlidesBtn">Copiar slides sugeridos</button>
+        </div>
+        <div class="tag">Vibe: editorial • minimal • acolhedor</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo: retenção + compartilhamento</span>
+        </div>
+        <div class="bd">
+          <p><b>Tese:</b> autocuidado não é só rotina; o <b>espaço</b> pode te colocar em alerta ou te ajudar a regular.</p>
+          <p><b>Promessa:</b> em 7 telas, provar com exemplos do dia a dia como pequenas decisões de layout/luz/organização influenciam saúde mental — e gerar “envio” para amigos/família.</p>
+          <hr class="hr" />
+          <ul class="list">
+            <li class="li"><strong>1ª tela</strong> quebra padrão com <b>box branco</b> + frase-placa.</li>
+            <li class="li"><strong>2–6</strong> entregam <b>5 pilares</b> (número grande + headline + explicação curta).</li>
+            <li class="li"><strong>7ª</strong> fecha com síntese emocional + <b>CTA simples</b> (compartilhar/salvar).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="tag">Sequência fixa (reproduzível)</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><strong>T1 — Hook (2 camadas)</strong><div class="muted">Foto + overlay • box branco com tese • texto grande embaixo ampliando impacto.</div></li>
+            <li class="li"><strong>T2–T6 — Lista numerada</strong><div class="muted">Número grande • headline-placa (1 frase) • corpo 2–4 linhas com causa→efeito→consequência.</div></li>
+            <li class="li"><strong>T7 — Fechamento + CTA</strong><div class="muted">Texto mais reflexivo • enquadramento “casa = desgaste ou reparo” • CTA.</div></li>
+          </ul>
+          <p class="footer-note">Regra de ouro: mesma grade/estilo do 2 ao 6 para reduzir esforço cognitivo e aumentar o consumo até o final.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Slides sugeridos (1..7)</h2>
+          <span class="tag">Texto pronto + sugestões de foto</span>
+        </div>
+        <div class="bd">
+          <div class="code" id="slidesText">SLIDE 1 (HOOK)
+Box branco (tese):
+“A gente fala muito de autocuidado…
+mas quase nunca olha pra casa.”
+Texto grande embaixo:
+“O seu espaço influencia humor, sono, estresse e relações.”
+Foto sugerida: sala/quarto com luz suave, pessoa parcial no quadro, fundo levemente desfocado.
+
+SLIDE 2 (1)
+Headline:
+“Desordem mantém o corpo em alerta”
+Body:
+“Quando o ambiente tem ‘ruído visual’, o cérebro segue escaneando.
+Isso aumenta sensação de urgência e cansaço mental.
+Resultado: você descansa menos, mesmo em casa.”
+Foto sugerida: mesa com objetos, composição calma (sem poluição extrema).
+
+SLIDE 3 (2)
+Headline:
+“Luz natural regula humor e sono”
+Body:
+“Mais luz de dia ajuda seu relógio biológico.
+À noite, menos claridade = mais facilidade pra desacelerar.
+Resultado: sono melhor e mais energia no dia.”
+Foto sugerida: janela com cortina, feixe de luz no piso/parede.
+
+SLIDE 4 (3)
+Headline:
+“Privacidade é autorregulação”
+Body:
+“Refúgio não é luxo: é necessidade.
+Porta, canto de leitura, ou uma poltrona bem posicionada já criam pausa.
+Resultado: menos irritação, mais estabilidade emocional.”
+Foto sugerida: canto com poltrona/luminária, sensação de silêncio.
+
+SLIDE 5 (4)
+Headline:
+“Materiais e textura mudam a sensação”
+Body:
+“Superfícies frias e espaços ‘duros’ podem soar impessoais.
+Texturas, madeira, tecido e tapetes trazem acolhimento.
+Resultado: casa mais convidativa e menos estressante.”
+Foto sugerida: detalhe de tecido + madeira + iluminação quente.
+
+SLIDE 6 (5)
+Headline:
+“Objetos contam quem você é”
+Body:
+“Não é ‘bagunça’: é significado.
+Memórias visíveis (com intenção) reforçam identidade e pertencimento.
+Resultado: mais sensação de vida — e não só de função.”
+Foto sugerida: prateleira com livros/arte/plantas, sem excesso.
+
+SLIDE 7 (FECHAMENTO + CTA)
+Texto:
+“A casa pode ser fonte de esgotamento…
+ou um lugar de reparo.
+Talvez autocuidado também seja ajustar o espaço
+pra ele aprender a cuidar de você.”
+CTA (rodapé):
+“Compartilhe com alguém que precisa ler isso.”</div>
+          <p class="footer-note">Ajuste tom: mais técnico (arquitetura) ou mais emocional (bem-estar) sem mudar a estrutura.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Roteiro (reproduzível)</h2>
+          <span class="tag">Template para qualquer tema</span>
+        </div>
+        <div class="bd">
+          <div class="split">
+            <div class="code" id="scriptText">T1 — Hook em 2 camadas
+Box branco:
+“A gente fala muito de [tema A]… mas quase nunca olha pra [causa escondida].”
+Texto grande embaixo:
+“[Causa escondida] influencia [impacto 1], [impacto 2], [impacto 3].”
+
+T2–T6 — Estrutura fixa
+NÚMERO: [1..5]
+HEADLINE (frase-placa):
+“[Elemento do ambiente] muda [função mental/emocional]”
+BODY (2–4 linhas):
+“Quando [condição], o corpo/cérebro [efeito].
+Resultado: [consequência prática].”
+
+T7 — Fechamento + CTA
+“[Ambiente] pode ser [problema] ou [solução].
+Se isso fez sentido, [CTA: compartilhe/salve/envie].”</div>
+            <div>
+              <ul class="list">
+                <li class="li"><strong>Copy rules</strong><div class="muted">Headline sempre curta e memorável; body ≤ 4 linhas; evitar jargão; 1 ideia por tela.</div></li>
+                <li class="li"><strong>Ritmo</strong><div class="muted">Mesma estrutura do 2 ao 6 = mais velocidade de leitura e maior taxa de conclusão.</div></li>
+                <li class="li"><strong>Prova sem “paper”</strong><div class="muted">Dê causalidade do cotidiano (condição → efeito → resultado). Se citar estudos, use 1 linha no máximo.</div></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="tag">Foto editorial + contraste</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><strong>Fundo</strong><div class="muted">Interiores neutros (bege/marrom/cinza), baixa saturação, leve blur (2–6) + overlay preto 20–35%.</div></li>
+            <li class="li"><strong>Hook (T1)</strong><div class="muted">Box branco (#FFF) com texto preto (#111), padding 40–60px, alinhamento à esquerda para parecer “cartaz”.</div></li>
+            <li class="li"><strong>Slides 2–6</strong><div class="muted">Número grande (110–150pt) acima da headline. Headline condensada (Bebas/Oswald/Anton). Body em Inter/Helvetica.</div></li>
+            <li class="li"><strong>Margens</strong><div class="muted">80–110px. Texto concentrado entre 35% e 75% da altura (centro óptico).</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">Gatilhos de retenção</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><strong>Ganchos (T1) — escolha 1</strong><div class="muted">1) “Você está tentando se cuidar… num lugar que te drena.”
+<br/>2) “Seu humor pode estar sendo desenhado pela sua casa.”
+<br/>3) “Nem sempre é falta de disciplina. Às vezes é o ambiente.”</div></li>
+            <li class="li"><strong>Frases-placa (T2–T6)</strong><div class="muted">“Desordem é estímulo.” • “Luz é regulador.” • “Refúgio é necessidade.” • “Textura acolhe.” • “Memória dá pertencimento.”</div></li>
+            <li class="li"><strong>Micro-promessas</strong><div class="muted">Finalize cada body com “Resultado:” para dar payoff e incentivar o próximo swipe.</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="tag">Baixo atrito</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><strong>Principal</strong><div class="muted">“Compartilhe com alguém que precisa ler isso.”</div></li>
+            <li class="li"><strong>Variações (mesma vibe)</strong><div class="muted">“Salve pra rever quando for organizar a casa.”
+<br/>“Envie pra quem anda no modo ‘sobrevivência’.”
+<br/>“Quer um checklist prático? Comenta ‘CASA’.”</div></li>
+            <li class="li"><strong>Regra</strong><div class="muted">Escolha 1 CTA só (não empilhar).</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <span class="tag">Antes de publicar</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><span class="check">✓</span> T1 tem quebra de padrão (box branco + tese clara em 2 linhas).</li>
+            <li class="li"><span class="check">✓</span> T2–T6 repetem exatamente a grade: número → headline → body (≤ 4 linhas).</li>
+            <li class="li"><span class="check">✓</span> Headline é “frase-placa” (curta, forte, sem rodeios).</li>
+            <li class="li"><span class="check">✓</span> Fotos neutras/baixa saturação, texto sempre legível (overlay se precisar).</li>
+            <li class="li"><span class="check">✓</span> Última tela fecha com síntese emocional + 1 CTA (compartilhar/salvar/enviar).</li>
+            <li class="li"><span class="check">✓</span> Revisão de leitura em celular: a 1 metro de distância, dá pra entender a headline?</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="tag">Mesma estrutura, novos temas</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><strong>Variação 1 (dor)</strong><div class="muted">“5 sinais de que sua casa está te deixando mais ansioso (sem você notar)”</div></li>
+            <li class="li"><strong>Variação 2 (passo a passo)</strong><div class="muted">“5 ajustes em 30 minutos pra sua casa ficar mais calma (sem reforma)”</div></li>
+            <li class="li"><strong>Variação 3 (mito vs verdade)</strong><div class="muted">“Mito: ‘casa bonita resolve’. Verdade: conforto mental vem de luz, refúgio e estímulos.”</div></li>
+            <li class="li"><strong>Variação 4 (autoridade)</strong><div class="muted">Inclua um slide extra opcional (T6b): “Como eu observo isso em projetos” com 2 exemplos rápidos (cliente/briefing) — mantendo a estética minimalista.</div></li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast">Copiado para a área de transferência</div>
+  </div>
+
+  <script>
+    function toast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      window.clearTimeout(window.__toastTimer);
+      window.__toastTimer = window.setTimeout(()=>t.classList.remove('show'), 1400);
+    }
+
+    async function copyTextFrom(elId, label){
+      const el = document.getElementById(elId);
+      const txt = el ? el.innerText : '';
+      if(!txt){ toast('Nada para copiar'); return; }
+      try{
+        await navigator.clipboard.writeText(txt);
+        toast(label || 'Copiado');
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        toast(label || 'Copiado');
+      }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', ()=>copyTextFrom('scriptText', 'Roteiro copiado'));
+    document.getElementById('copySlidesBtn').addEventListener('click', ()=>copyTextFrom('slidesText', 'Slides copiados'));
+  </script>
+</body>
+</html>
