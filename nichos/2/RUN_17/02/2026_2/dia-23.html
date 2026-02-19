@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 23 — Arquitetura — Antes e Depois</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --stroke: rgba(255,255,255,.12);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r12: 12px;
+      --r16: 16px;
+      --r20: 20px;
+      --g1: linear-gradient(90deg,#22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.22), rgba(56,189,248,.18), rgba(251,146,60,.18));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Helvetica Neue", "Noto Sans", "Liberation Sans", sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1000px 700px at 10% -10%, rgba(56,189,248,.20), transparent 55%),
+        radial-gradient(900px 600px at 110% 10%, rgba(251,146,60,.18), transparent 55%),
+        radial-gradient(850px 550px at 40% 120%, rgba(34,197,94,.16), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      line-height:1.55;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+    .header{
+      display:flex;gap:14px;align-items:stretch;justify-content:space-between;flex-wrap:wrap;
+      padding:18px;border:1px solid var(--stroke);border-radius:var(--r20);
+      background: var(--g2);
+      box-shadow: var(--shadow);
+    }
+    .h-left{min-width:280px;flex:1}
+    .kpis{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 10px}
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:7px 10px;border-radius:999px;border:1px solid var(--stroke);
+      background: rgba(0,0,0,.20);
+      font-size:12px;color:var(--muted);
+    }
+    .dot{width:8px;height:8px;border-radius:99px;background:var(--g1)}
+    h1{
+      margin:0 0 6px;
+      font-size:22px;letter-spacing:-.02em;line-height:1.2;
+    }
+    .sub{margin:0;color:var(--muted);max-width:70ch}
+    .h-right{display:flex;gap:10px;align-items:flex-start;justify-content:flex-end;flex-wrap:wrap}
+    .btn{
+      cursor:pointer;
+      padding:10px 12px;border-radius:12px;border:1px solid var(--stroke);
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      font-weight:600;font-size:13px;
+      transition: transform .08s ease, background .18s ease, border-color .18s ease;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(255,255,255,.12);border-color: rgba(255,255,255,.18)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{background: linear-gradient(135deg, rgba(34,197,94,.22), rgba(56,189,248,.20), rgba(251,146,60,.18));}
+    .btn small{display:block;font-weight:500;color:var(--muted);margin-top:2px}
+    .grid{display:grid;grid-template-columns: 1.1fr .9fr;gap:14px;margin-top:14px}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+    .card{
+      border:1px solid var(--stroke);
+      border-radius: var(--r16);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.05));
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .card .hd h2{margin:0;font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:rgba(234,240,255,.86)}
+    .tag{
+      font-family: var(--mono);
+      font-size:12px;color:rgba(234,240,255,.70);
+      padding:6px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      white-space:nowrap;
+    }
+    .card .bd{padding:14px}
+    .list{margin:0;padding:0 0 0 18px;color:var(--muted)}
+    .list li{margin:8px 0}
+    .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
+    .callout{
+      padding:12px 12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      position:relative;overflow:hidden;
+    }
+    .callout:before{
+      content:"";position:absolute;inset:-2px;
+      background: var(--g1);
+      opacity:.18;filter: blur(18px);
+    }
+    .callout > *{position:relative}
+    .code{
+      white-space:pre-wrap;
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color: rgba(234,240,255,.82);
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding:12px;
+      overflow:auto;
+    }
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 720px){.cols{grid-template-columns:1fr}}
+    .mini h3{margin:0 0 6px;font-size:13px;color:rgba(234,240,255,.88)}
+    .mini p{margin:0;color:var(--muted);font-size:13px}
+    .footerNote{margin-top:14px;color:var(--muted2);font-size:12.5px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="h-left">
+        <div class="kpis">
+          <span class="pill"><span class="dot"></span><strong>Nicho</strong>: Arquitetura</span>
+          <span class="pill"><span class="dot"></span><strong>Dia</strong>: 23</span>
+          <span class="pill"><span class="dot"></span><strong>Formato</strong>: Carrossel</span>
+          <span class="pill"><span class="dot"></span><strong>Pilar</strong>: Prova</span>
+        </div>
+        <h1>Antes e Depois: revitalizar sem apagar a história</h1>
+        <p class="sub">Transformação visual + tese curta + pergunta binária no final para comentários. Link do post original: <a href="https://www.instagram.com/p/DUB5gJGEv2N/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DUB5gJGEv2N/</a></p>
+      </div>
+      <div class="h-right">
+        <button class="btn primary" id="copyBtn">Copiar roteiro<small>Slides + legenda + CTA</small></button>
+        <a class="btn" href="https://www.instagram.com/p/DUB5gJGEv2N/" target="_blank" rel="noreferrer">Abrir post</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd"><h2>Resumo</h2><span class="tag">Objetivo: prova visual + emoção</span></div>
+        <div class="bd">
+          <div class="callout">
+            <div class="cols">
+              <div class="mini">
+                <h3>Ideia central</h3>
+                <p>Mostrar um <strong>antes/depois</strong> que prova que dá para <strong>revitalizar sem “apagar” a identidade</strong>.</p>
+              </div>
+              <div class="mini">
+                <h3>O que performa</h3>
+                <p>Contraste imediato + narrativa curta (“sem jeito” → “só precisava de cuidado”) + CTA de escolha.</p>
+              </div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Mensagem</strong>: Reforma ≠ descaracterizar. Pode ser cuidado e revelação de potencial.</li>
+            <li><strong>Promessa</strong>: você vai enxergar como pequenas decisões mudam a leitura do imóvel.</li>
+            <li><strong>Ação desejada</strong>: comentários (escolha A/B), salvamentos (referência) e compartilhamentos (inspiração).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Estrutura</h2><span class="tag">Use como template</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div class="mini">
+              <h3>Fórmula (reproduzível)</h3>
+              <p><strong>Prova visual</strong> → <strong>Dor</strong> → <strong>Virada</strong> → <strong>O que manteve</strong> → <strong>O que melhorou</strong> → <strong>Princípio</strong> → <strong>CTA binário</strong>.</p>
+            </div>
+            <div class="mini">
+              <h3>Dois tamanhos prontos</h3>
+              <p><strong>Minimalista</strong> (5 slides) para impacto rápido.<br><strong>Completo</strong> (7 slides) para retenção + salvamento.</p>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Regra de ouro</strong>: a imagem é o argumento. Texto só ancora a interpretação.</li>
+            <li><strong>Tom</strong>: emocional contido (sem dramatizar) + técnico leve (2–4 itens do que foi feito).</li>
+            <li><strong>Fechamento</strong>: pergunta de escolha/posição (gera comentário fácil).</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Slides sugeridos (1..7)</h2><span class="tag">Carrossel completo</span></div>
+      <div class="bd">
+        <div class="code" id="roteiroText">SLIDE 1 — CAPA (Antes/Depois)
+Texto (curto): “ANTES / DEPOIS”
+Título: “A mesma casa — só que cuidada”
+Sub (opcional): “Revitalizar sem apagar a história”
+Visual: imagem comparativa 50/50 (topo = antes, base = depois) + separador fino.
+
+SLIDE 2 — DOR (1 frase)
+Texto: “Parecia que não tinha mais jeito.”
+Visual: recorte do ‘antes’ com marcas reais (sem ‘embelezar’).
+
+SLIDE 3 — VIRADA (reframe)
+Texto: “Não era falta de potencial. Era falta de cuidado.”
+Visual: transição para o ‘depois’ (ou meio-a-meio enquanto o texto muda).
+
+SLIDE 4 — DECISÃO (identidade x troca total)
+Texto: “Manter a identidade. Corrigir o que estava comprometido.”
+Visual: setas discretas apontando 2–3 elementos (telhado, vãos, volumetria/varanda).
+
+SLIDE 5 — O QUE FOI PRESERVADO (3 bullets)
+Título: “O que ficou (e por quê)”
+Bullets: “volumetria • proporções • elementos originais”
+Observação (micro): “Isso segura a ‘memória’ da fachada.”
+
+SLIDE 6 — O QUE FOI MELHORADO (3–5 bullets)
+Título: “O que mudou (pra valer)”
+Bullets (exemplos): “pintura • esquadrias • piso/varanda • iluminação • jardim”
+Micro: “Pequenas decisões, grande leitura.”
+
+SLIDE 7 — PRINCÍPIO + CTA (comentário + salvar)
+Texto: “Reformar não precisa apagar o passado. Pode revelar o potencial.”
+CTA: “Você é time ‘MESMA CARA’ ou ‘MUDARIA TUDO’?”
+Extra: “Salva pra usar como referência.”</div>
+        <p class="footerNote">Dica: se você só tiver 3–5 imagens, compacte: (1) capa, (2) dor, (3) virada/resultado, (4) tese, (5) CTA.</p>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:14px">
+      <section class="card">
+        <div class="hd"><h2>Roteiro</h2><span class="tag">Legenda + falas (se virar Reels)</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Legenda (template copiável)</h3>
+              <div class="code">Antes, parecia que <span style="opacity:.9">[não tinha mais jeito / já era / não valia o investimento]</span>.
+
+Depois, era a mesma <span style="opacity:.9">[casa/prédio/apartamento/loja]</span> — só que cuidada.
+
+<span style="opacity:.9">[Sua tese]</span>: <strong><span style="background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent">reformar não precisa apagar a história</span></strong>.
+Pode <span style="opacity:.95">[revelar potencial / valorizar / trazer conforto / melhorar a leitura]</span>.
+
+👉 Você prefere <strong>[Opção A]</strong> ou <strong>[Opção B]</strong>?
+Comenta: “A” ou “B”.
+
+Se quiser, eu analiso sua fachada e te digo 3 melhorias com mais impacto (comenta “ANALISAR”).
+
+#antesedepois #reforma #revitalizacao #fachada #arquitetura #casas</div>
+            </div>
+            <div>
+              <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Versão Reels (30–45s)</h3>
+              <div class="code">Cena 1 (0–2s): Antes/Depois na tela
+Texto na tela: “ANTES / DEPOIS”
+Voz: “Parece outra casa, né?”
+
+Cena 2 (2–8s): Close no ‘antes’
+Voz: “Mas ela não precisava ser ‘apagada’. Só estava desgastada.”
+
+Cena 3 (8–20s): Close no ‘depois’ + detalhes
+Voz: “A estratégia foi: manter a identidade e investir no que muda a leitura: pintura, esquadrias, piso/varanda e jardim/iluminação.”
+
+Cena 4 (20–35s): Comparativo lado a lado
+Voz: “O resultado é uma fachada mais viva, sem perder a história.”
+
+Cena 5 (35–45s): Tela final
+Voz + texto: “Você manteria a mesma cara ou mudaria tudo?”
+CTA: “Comenta A/B e salva pra referência.”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Elementos visuais</h2><span class="tag">Direção de arte</span></div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Composição</strong>: 1:1, antes em cima e depois embaixo (50/50 ou 55/45). Separador fino opcional.</li>
+            <li><strong>Texto na imagem</strong>: ideal só “ANTES” e “DEPOIS”. Se precisar, use 1 frase por slide (máx. 10–12 palavras).</li>
+            <li><strong>Tratamento</strong>: “Antes” sem maquiar (só ajuste de exposição). “Depois” com leve contraste/saturação + nitidez (sem estourar brancos).</li>
+            <li><strong>Tipografia</strong>: Inter/Poppins/Montserrat. Alto contraste e sombra leve. Título em bold.</li>
+            <li><strong>Assinatura</strong>: logo/marca d’água discreta e consistente (mesmo canto no depois).</li>
+            <li><strong>Detalhes que vendem</strong>: 2–3 close-ups do que foi melhorado (esquadria, iluminação, textura, jardim).</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong style="display:block;margin-bottom:6px">Checklist rápido de layout (por slide)</strong>
+            <div style="color:var(--muted)">Margem segura 7–9% • Texto no terço superior • Evitar caixas grandes • 1 ideia por slide • Último slide com CTA + instrução de comentário</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid" style="margin-top:14px">
+      <section class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><span class="tag">Substituíveis por tema</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Ganchos de capa (escolha 1)</h3>
+              <ul class="list">
+                <li>“A mesma casa. Uma nova leitura.”</li>
+                <li>“Não era o fim. Era falta de cuidado.”</li>
+                <li>“Reforma sem apagar a história.”</li>
+                <li>“Antes parecia perdido. Depois: potencial.”</li>
+                <li>“Você teria coragem de manter a ‘mesma cara’?”</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Frases-curinga (troca fácil)</h3>
+              <div class="code">“Não é <span style="opacity:.95">[problema definitivo]</span>. É <span style="opacity:.95">[desgaste/acúmulo/decisão errada]</span>.”
+“<span style="opacity:.95">[Preservar]</span> dá identidade. <span style="opacity:.95">[Melhorar]</span> dá conforto.”
+“Arquitetura é <span style="opacity:.95">[cuidado]</span>, não <span style="opacity:.95">[apagamento]</span>.”</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Tom recomendado</strong>: manifesto curto (1 tese) + prova (imagem) + concreto (3 itens do que fez).</li>
+            <li><strong>Evite</strong>: “milagre”, “transformação impossível”, promessas sem lastro.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>CTA</h2><span class="tag">Comentários + salvar</span></div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Principal (binário)</strong>: “Você manteria a mesma cara (melhorada) ou mudaria tudo? Comenta A/B.”</li>
+            <li><strong>Variações</strong>: “Time revitalizar ou time demolir/refazer?” • “O que você preservaria aqui?”</li>
+            <li><strong>CTA de salvamento</strong>: “Salva pra referência de fachada.”</li>
+            <li><strong>CTA de DM</strong> (opcional): “Quer uma análise rápida? Envia ‘FACHADA’.”</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong style="display:block;margin-bottom:6px">Modelo de pergunta que gera resposta fácil</strong>
+            <div style="color:var(--muted)">Duas opções claras + instrução de como responder (A/B ou palavra-chave) + promessa pequena (ex.: “eu respondo com 1 sugestão”).</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Checklist</h2><span class="tag">Criação → Publicação</span></div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Pré-produção</h3>
+            <ul class="list">
+              <li>Escolher 1 história: <strong>“revitalizar sem apagar”</strong> (1 tese apenas).</li>
+              <li>Separar imagens: (a) antes, (b) depois, (c) 2–3 detalhes do depois (opcional).</li>
+              <li>Listar 3–5 mudanças reais (ex.: pintura, esquadria, iluminação, paisagismo).</li>
+              <li>Definir CTA binário (A/B) + palavra-chave (opcional) para análise.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Design e revisão</h3>
+            <ul class="list">
+              <li>Grid 1:1; margens seguras; texto curto; consistência de fonte.</li>
+              <li>Logo/assinatura no mesmo lugar (especialmente no “depois”).</li>
+              <li>Contraste: texto legível sobre a foto (sombra leve, nunca caixa pesada).</li>
+              <li>Exportar em 1080×1080 (ou 1350×1350) mantendo nitidez.</li>
+              <li>Revisar: ortografia, promessa, CTA explícito e fácil.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="cols">
+          <div>
+            <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Publicação</h3>
+            <ul class="list">
+              <li>Primeira linha da legenda: “Parecia que não tinha mais jeito…” (gancho).</li>
+              <li>Fixar comentário: “A ou B? + por quê?”</li>
+              <li>Hashtags: 5–10 específicas + localização (se fizer sentido).</li>
+              <li>Responder comentários com pergunta de volta (aumenta thread).</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Métricas para avaliar</h3>
+            <ul class="list">
+              <li><strong>Salvamentos</strong>: indica “referência”.</li>
+              <li><strong>Compartilhamentos</strong>: indica “inspiração”.</li>
+              <li><strong>Comentários A/B</strong>: indica CTA claro.</li>
+              <li><strong>Queda por slide</strong>: se cair no slide 4–5, encurte texto.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Variações</h2><span class="tag">Adaptações com mesmo impacto</span></div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Trocas de tema (mesma estrutura)</h3>
+            <ul class="list">
+              <li><strong>Interiores</strong>: “antes/depois da sala/cozinha” + “preservar luz/fluxo”.</li>
+              <li><strong>Comercial</strong>: “fachada de loja” + “mesma marca, leitura mais premium”.</li>
+              <li><strong>Urbanismo</strong>: “praça degradada → ativa” + “cuidado público muda uso”.</li>
+              <li><strong>Engenharia/obra</strong>: “patologia → solução” + “não é demolir, é corrigir causa”.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Substituições de tese (1 por post)</h3>
+            <div class="code">Opção 1: “Bom projeto é decisão, não excesso.”
+Opção 2: “Valor não está em ‘mudar tudo’, e sim em mudar o que importa.”
+Opção 3: “Identidade + manutenção = estética que dura.”
+Opção 4: “Preservar é um jeito de modernizar com respeito.”</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="cols">
+          <div>
+            <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Variação de CTA (para perfil de serviços)</h3>
+            <ul class="list">
+              <li>“Quer 3 ideias de alto impacto pra sua fachada? Comenta ‘3 IDEIAS’.”</li>
+              <li>“Você quer mais posts de antes/depois com o que foi feito? Comenta ‘QUERO’.”</li>
+              <li>“Qual elemento você mudaria primeiro: pintura, esquadria ou jardim?”</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.88)">Variação de formato (se virar carrossel educativo)</h3>
+            <ul class="list">
+              <li>Slide 1: antes/depois</li>
+              <li>Slides 2–4: “3 decisões que mudam a leitura da fachada”</li>
+              <li>Slide 5: “erros comuns ao tentar modernizar”</li>
+              <li>Slide 6: “checklist do que olhar”</li>
+              <li>Slide 7: CTA A/B</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const el = document.getElementById('roteiroText');
+      const getText = () => {
+        const slides = el ? el.textContent.trim() : '';
+        const legenda = `LEGENDA (TEMPLATE)\nAntes, parecia que [não tinha mais jeito / já era / não valia o investimento].\n\nDepois, era a mesma [casa/prédio/apartamento/loja] — só que cuidada.\n\nReformar não precisa apagar a história. Pode revelar o potencial.\n\nCTA: Você prefere [Opção A] ou [Opção B]? Comenta A/B.\nExtra: Salva pra referência.`;
+        return slides + "\n\n" + legenda;
+      };
+      btn.addEventListener('click', async () => {
+        const text = getText();
+        try{
+          await navigator.clipboard.writeText(text);
+          const original = btn.innerHTML;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>{ btn.innerHTML = original; }, 1400);
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          const original = btn.innerHTML;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>{ btn.innerHTML = original; }, 1400);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
