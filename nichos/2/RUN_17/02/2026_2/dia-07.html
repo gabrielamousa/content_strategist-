@@ -1,0 +1,452 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Dia 7 — Arquitetura — Casa “brega” virou tendência?</title><style>
+  :root{
+    --bg0:#070A0F;
+    --bg1:#0B1020;
+    --card:#0D1428;
+    --card2:#0B1226;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.14);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.74);
+    --muted2:rgba(234,240,255,.60);
+    --shadow: 0 14px 40px rgba(0,0,0,.55);
+    --r12:16px;
+    --r10:14px;
+    --g1: linear-gradient(135deg,#33D17A 0%, #2C7BE5 55%, #FF8A00 100%);
+    --g2: linear-gradient(135deg,rgba(51,209,122,.22) 0%, rgba(44,123,229,.20) 55%, rgba(255,138,0,.18) 100%);
+    --g3: radial-gradient(900px 420px at 15% 10%, rgba(44,123,229,.22), transparent 60%),
+          radial-gradient(780px 360px at 85% 20%, rgba(255,138,0,.18), transparent 62%),
+          radial-gradient(820px 420px at 45% 95%, rgba(51,209,122,.18), transparent 60%);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background: var(--g3), linear-gradient(180deg,var(--bg0),var(--bg1));
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
+  header{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius:20px;
+    padding:18px 18px 16px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: var(--g2);
+    filter: blur(18px);
+    opacity:.9;
+    z-index:0;
+  }
+  header > *{position:relative; z-index:1}
+  .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .chip{
+    border:1px solid var(--stroke);
+    background: rgba(13,20,40,.55);
+    padding:8px 10px;
+    border-radius:999px;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .chip b{color:var(--text); font-weight:700}
+  .title{
+    margin:10px 0 6px;
+    font-size: clamp(20px, 3.1vw, 34px);
+    line-height:1.12;
+    letter-spacing:-.02em;
+  }
+  .subtitle{margin:0; color:var(--muted); line-height:1.5}
+  .actions{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--stroke2);
+    background: rgba(10,16,33,.55);
+    color:var(--text);
+    cursor:pointer;
+    user-select:none;
+    transition:.18s ease;
+    font-size:14px;
+  }
+  .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.22)}
+  .btn.primary{
+    border-color: transparent;
+    background: var(--g1);
+    color:#071016;
+    font-weight:700;
+  }
+  .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:16px}
+  @media (min-width: 980px){
+    .grid{grid-template-columns: 1.05fr .95fr}
+  }
+  .card{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border-radius:var(--r12);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 14px 10px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+  }
+  .card h2{margin:0; font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:rgba(234,240,255,.82)}
+  .card .hint{font-family:var(--mono); font-size:12px; color:rgba(234,240,255,.60)}
+  .card .bd{padding:14px}
+  ul{margin:10px 0 0 18px; padding:0}
+  li{margin:7px 0; color:var(--muted); line-height:1.45}
+  .k{color:var(--text); font-weight:650}
+  .note{
+    margin-top:12px;
+    padding:12px;
+    border-radius:14px;
+    border:1px dashed rgba(255,255,255,.16);
+    background: rgba(13,20,40,.35);
+    color:var(--muted);
+  }
+  .pill{
+    display:inline-block;
+    padding:2px 8px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.25);
+    font-size:12px;
+    color:rgba(234,240,255,.76);
+  }
+  .twoCol{display:grid; grid-template-columns:1fr; gap:12px}
+  @media (min-width:720px){.twoCol{grid-template-columns:1fr 1fr}}
+  .script{
+    font-family:var(--mono);
+    font-size:13px;
+    line-height:1.55;
+    color:rgba(234,240,255,.86);
+    background: rgba(8,12,24,.55);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:16px;
+    padding:14px;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+  }
+  .divider{height:1px; background: rgba(255,255,255,.08); margin:14px 0}
+  .badge{
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    color:rgba(234,240,255,.72);
+    background: rgba(255,255,255,.04);
+  }
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  footer{margin-top:16px; color:rgba(234,240,255,.55); font-size:12px; text-align:center}
+</style></head><body><div class="wrap">
+  <header>
+    <div class="topline">
+      <div class="chips">
+        <span class="chip"><b>Nicho</b>: Arquitetura</span>
+        <span class="chip"><b>Dia</b>: 7</span>
+        <span class="chip"><b>Formato</b>: Carrossel</span>
+        <span class="chip"><b>Pilar</b>: Mito vs Verdade</span>
+      </div>
+      <a class="chip" href="https://www.instagram.com/p/DQRsMa_kfTZ/" target="_blank" rel="noreferrer">Post original ↗</a>
+    </div>
+    <h1 class="title">Casa “brega” virou tendência? O retorno do maximalismo</h1>
+    <p class="subtitle">Um ensaio visual em 10 slides para explicar (com contraste e prova cultural) por que o minimalismo “cansou” e o vintage/maximalismo voltou — sem chamar o seguidor de errado.</p>
+    <div class="actions">
+      <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+      <button class="btn" id="copySlidesBtn">Copiar slides sugeridos</button>
+      <span class="badge">1080×1350 • 4:5 • cadência foto/editorial/manifesto</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <div class="hd"><h2>Resumo</h2><span class="hint">Objetivo + promessa</span></div>
+      <div class="bd">
+        <ul>
+          <li><span class="k">Tema:</span> “casa brega” como rótulo provocativo para falar de <span class="k">maximalismo/vintage/lar com história</span>.</li>
+          <li><span class="k">Mito vs Verdade:</span> mito = “bom gosto é clean e vazio”; verdade = “identidade e afeto também são sofisticação”.</li>
+          <li><span class="k">Promessa:</span> ajudar o seguidor a <span class="k">entender a virada estética</span> e <span class="k">se posicionar</span> (sem medo de misturar).</li>
+          <li><span class="k">Resultado esperado:</span> comentários (time minimalismo vs time casa com alma) + salvamentos (referências + frases de tese).</li>
+        </ul>
+        <div class="note"><span class="pill">Regra de ouro</span> Cada slide = 1 ideia. Texto curto. Visual faz metade do argumento.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="hd"><h2>Estrutura</h2><span class="hint">Ritmo + blocos</span></div>
+      <div class="bd">
+        <ul>
+          <li><span class="k">Slides:</span> 10 (alternar <span class="k">foto cheia</span> + <span class="k">editorial</span> + <span class="k">manifesto</span>).</li>
+          <li><span class="k">Cadência:</span> Hook → crítica ao paradigma antigo → pausa → contexto → prova/sinais → tese → motivo emocional → nova definição de luxo → síntese → pergunta final.</li>
+          <li><span class="k">Tom:</span> provocativo, mas elegante (evitar humilhar “minimalistas”).</li>
+          <li><span class="k">Legibilidade:</span> em foto, usar degradê escuro 20–40% + texto branco.</li>
+        </ul>
+        <div class="divider"></div>
+        <div class="twoCol">
+          <div>
+            <div class="row"><span class="pill">Visual</span><span class="muted">editorial high-end</span></div>
+            <ul>
+              <li>Foto quente/cozy (madeira, tecidos, plantas, objetos, luz amarela).</li>
+              <li>Blocos de texto alinhados à esquerda no “editorial”.</li>
+              <li>Slide de impacto com fundo escuro (pausa dramática).</li>
+            </ul>
+          </div>
+          <div>
+            <div class="row"><span class="pill">Copy</span><span class="muted">contraste + tese</span></div>
+            <ul>
+              <li>Frases-curtas memoráveis (máx. 12 palavras).</li>
+              <li>Contraste binário: “frio/cópia” vs “vida/história”.</li>
+              <li>Encerrar com pergunta que divide opiniões (sem ofensiva).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="grid-column: 1 / -1;">
+      <div class="hd"><h2>Slides sugeridos (1..10)</h2><span class="hint">Conteúdo pronto por slide</span></div>
+      <div class="bd">
+        <div class="script" id="slidesText">SLIDE 1 (FOTO CHEIA • HOOK)
+Título grande: “Ter uma casa ‘brega’ é a nova tendência?”
+Linha pequena: “Ou a gente só cansou do mesmo minimalismo?”
+Visual: sala vintage/maximalista + tipografia serif.
+
+SLIDE 2 (EDITORIAL • PROBLEMA)
+Headline: “O minimalismo prometeu elegância.”
+Body: “Mas em muitos lares virou: cópia + frieza + ausência de memória.”
+Nota: evite atacar pessoas — ataque o ‘padrão’.
+
+SLIDE 3 (FUNDO ESCURO • MANIFESTO)
+Frase: “Vazio visual nem sempre é paz. Às vezes é vazio emocional.”
+
+SLIDE 4 (EDITORIAL • CONTEXTO CULTURAL)
+Headline: “Por anos, o mantra foi: ‘menos é mais’.”
+Lista (3–5): “casas • marcas • cafés • feeds • lançamentos imobiliários”.
+Fecho: “Tudo apontava para o mesmo ‘clean’.”
+
+SLIDE 5 (FOTO CHEIA • VIRADA / PROVA)
+Texto sobreposto: “Agora o movimento é o oposto.”
+Sub: “Cor, textura, objetos, quadros, heranças, garimpo.”
+Visual: composição com camadas (arte na parede, luminária, mesa posta).
+
+SLIDE 6 (FUNDO NEUTRO/EDITORIAL • TESE)
+Frase forte: “O ‘menos é mais’ cansou. O excesso virou charme.”
+Linha de apoio: “Quando tem intenção, não é bagunça — é identidade.”
+
+SLIDE 7 (EDITORIAL • POR QUE ISSO ACONTECE)
+Headline: “Isso não é só estética. É cansaço.”
+Body: “Depois de tanta pressa e tela, a casa virou refúgio sensorial.”
+Palavras-âncora: “afeto • lembrança • presença • calor”.
+
+SLIDE 8 (FOTO CHEIA • NOVO ‘LUXO’)
+Texto: “O novo luxo é o toque pessoal.”
+Sub: “Vintage = antídoto para o descartável.”
+Visual: detalhe de objeto com história (poltrona, louça, tapete, madeira marcada).
+
+SLIDE 9 (EDITORIAL • SÍNTESE)
+Headline: “Lar com alma > casa de catálogo.”
+Body: “Imperfeições + mix de referências = assinatura.”
+Microdica: “Comece por 1 peça ‘com história’ e construa em volta.”
+
+SLIDE 10 (FOTO CHEIA • CTA)
+Pergunta: “Veio para ficar ou é tendência passageira?”
+Variação pequena: “Qual elemento ‘brega’ você teria sem medo?”</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="hd"><h2>Roteiro</h2><span class="hint">Template reproduzível</span></div>
+      <div class="bd">
+        <div class="script" id="scriptText">ROTEIRO (TEMPLATE REPRODUZÍVEL • 10 SLIDES)
+
+1) HOOK (pergunta polêmica)
+“{Tema ‘errado’/controverso} é a nova tendência?”
+
+2) QUEBRA DO PARADIGMA ANTIGO
+“{Tendência antiga} prometeu {benefício}, mas virou {problema 1} + {problema 2}.”
+
+3) PAUSA / MANIFESTO
+“O mundo percebeu. E a reação foi {virada}.”
+
+4) CONTEXTO (onde isso dominou)
+“Antes, em {3–5 lugares}, a regra era: {mantra antigo}.”
+
+5) AGORA (sinais da virada)
+“Hoje, vemos {3–5 sinais concretos}.”
+
+6) ONE-LINER (tese memorável)
+“{Mantra antigo} cansou. Agora, {novo mantra}.”
+
+7) MOTIVO EMOCIONAL/SOCIAL
+“No fundo, isso é sobre {necessidade humana}: {frase forte}.”
+
+8) NOVA DEFINIÇÃO DE VALOR
+“O novo ‘luxo’ é {atributo}. {Elemento} vira antídoto para {dor}.”
+
+9) CONCLUSÃO / IMAGEM-SÍNTESE
+“{Conclusão}: {história/imperfeição/identidade}.”
+
+10) CTA
+“Você acha que {tendência} veio pra ficar ou é passageira?”</div>
+        <div class="note"><span class="pill">Dica</span> Para nicho Arquitetura, ancore em “sensação do espaço” (luz, textura, memória) e em “intenção de projeto” (não é excesso aleatório).</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="hd"><h2>Elementos visuais</h2><span class="hint">Direção de arte</span></div>
+      <div class="bd">
+        <ul>
+          <li><span class="k">Canvas:</span> 1080×1350 (4:5).</li>
+          <li><span class="k">Alternância:</span> foto cheia (prova/emoção) → editorial (contexto) → manifesto (pausa) → repetir.</li>
+          <li><span class="k">Paleta:</span> base escura (impacto) + neutro quente (areia/bege) + fotos com tons terracota/madeira/verde planta.</li>
+          <li><span class="k">Tipografia:</span> Serif display para tese + Sans para explicação. Máx. 1–3 palavras em negrito/itálico por slide.</li>
+          <li><span class="k">Composição:</span> margens amplas (80–120px), respiro, blocos curtos, alinhamento à esquerda no editorial.</li>
+          <li><span class="k">Legibilidade:</span> degradê preto 20–40% no rodapé/topo da foto + sombra suave.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="grid-column: 1 / -1;">
+      <div class="hd"><h2>Copy e ganchos</h2><span class="hint">Opções prontas</span></div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <div class="row"><span class="pill">Hooks (Slide 1)</span></div>
+            <ul>
+              <li>“Casa ‘brega’ é a nova tendência?”</li>
+              <li>“O fim do minimalismo?”</li>
+              <li>“Por que todo mundo voltou pro vintage?”</li>
+              <li>“Casa com ‘coisa demais’ virou chique?”</li>
+            </ul>
+          </div>
+          <div>
+            <div class="row"><span class="pill">Frases de tese</span></div>
+            <ul>
+              <li>“Casa de catálogo é bonita. Casa com história é inesquecível.”</li>
+              <li>“Quando tem intenção, o ‘excesso’ vira assinatura.”</li>
+              <li>“O oposto do clean não é bagunça. É presença.”</li>
+              <li>“Textura é o novo status.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="twoCol">
+          <div>
+            <div class="row"><span class="pill">Vocabulário (arquitetura)</span></div>
+            <ul>
+              <li>“camadas”, “materiais”, “pátina”, “memória”, “luz quente”, “escala”, “curadoria”</li>
+              <li>Evitar: “cafona” como ataque. Usar como <span class="k">rótulo do debate</span>.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="row"><span class="pill">Microdicas (valor)</span></div>
+            <ul>
+              <li>“Escolha 1 peça-chave (tapete/arte/sofá) e repita 2 cores dela no resto.”</li>
+              <li>“Misture novo + garimpo para evitar ‘cenário’.”</li>
+              <li>“Use iluminação (abajures) para deixar o maximalismo aconchegante.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="hd"><h2>CTA</h2><span class="hint">Engajamento e salvamento</span></div>
+      <div class="bd">
+        <ul>
+          <li><span class="k">CTA principal (Slide 10):</span> “Você acha que esse movimento veio pra ficar ou é passageiro?”</li>
+          <li><span class="k">CTA alternativo:</span> “Qual elemento ‘brega’ você teria sem medo?”</li>
+          <li><span class="k">CTA de salvamento:</span> “Salva pra testar a regra: 1 peça com história + 2 cores repetidas.”</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="hd"><h2>Checklist</h2><span class="hint">Criação + revisão</span></div>
+      <div class="bd">
+        <ul>
+          <li><span class="k">Roteiro:</span> 1 ideia por slide; tensão (slide 1–3) antes de explicar (4–8).</li>
+          <li><span class="k">Imagens:</span> separar 5 fotos quentes/cozy + 1 foto “clean/fria” (contraste) + 1 close de objeto vintage.</li>
+          <li><span class="k">Design:</span> manter 2 fontes (serif+s sans); margens consistentes; contraste AA.</li>
+          <li><span class="k">Manifesto:</span> 1 slide com fundo escuro para “pausa dramática”.</li>
+          <li><span class="k">Revisão de linguagem:</span> trocar julgamento por curadoria (“intenção”, “camadas”, “memória”).</li>
+          <li><span class="k">Publicação:</span> legenda curta com pergunta + 3 hashtags específicas (ex.: #arquiteturadeinteriores #interiores #maximalismo).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="grid-column: 1 / -1;">
+      <div class="hd"><h2>Variações</h2><span class="hint">Mesma estrutura, outros ângulos</span></div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <div class="row"><span class="pill">Variação A (mais técnica)</span></div>
+            <ul>
+              <li>Trocar “brega” por “maximalismo bem projetado”.</li>
+              <li>Inserir 1 slide com regra prática: “repetição de cor • escala • respiro • iluminação”.</li>
+              <li>CTA: “Qual regra você mais quebra em casa?”</li>
+            </ul>
+          </div>
+          <div>
+            <div class="row"><span class="pill">Variação B (mais emocional)</span></div>
+            <ul>
+              <li>Foco em memória/afetos: objetos herdados, viagem, garimpo.</li>
+              <li>Frase-manifesto: “Casa bonita é a que te reconhece.”</li>
+              <li>CTA: “Qual objeto com história você nunca jogaria fora?”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="twoCol">
+          <div>
+            <div class="row"><span class="pill">Variação C (prova/portfólio)</span></div>
+            <ul>
+              <li>Substituir exemplos culturais por 3–4 projetos/ambientes (antes/depois).</li>
+              <li>Fechar com “Quer parte 2 com referências de materiais?”</li>
+            </ul>
+          </div>
+          <div>
+            <div class="row"><span class="pill">Variação D (anti-polarização)</span></div>
+            <ul>
+              <li>Tese: “Minimal também pode ter alma: textura + luz + imperfeição.”</li>
+              <li>CTA: “Você é do mix ou do essencial com textura?”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>Guia interno — pronto para replicar no Canva/Figma mantendo cadência editorial.</footer>
+</div>
+
+<script>
+  function copyTextFrom(elId){
+    const el = document.getElementById(elId);
+    const text = (el && el.innerText) ? el.innerText.trim() : "";
+    if(!text) return;
+    navigator.clipboard.writeText(text);
+  }
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    copyTextFrom('scriptText');
+    this.innerText = 'Roteiro copiado';
+    setTimeout(()=> this.innerText = 'Copiar roteiro', 1200);
+  });
+  document.getElementById('copySlidesBtn').addEventListener('click', function(){
+    copyTextFrom('slidesText');
+    this.innerText = 'Slides copiados';
+    setTimeout(()=> this.innerText = 'Copiar slides sugeridos', 1200);
+  });
+</script>
+</body></html>
