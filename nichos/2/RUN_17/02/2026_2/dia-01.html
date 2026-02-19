@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 1 — Arquitetura | 4 erros que deixam a casa datada</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1624;
+      --panel2:#0c1320;
+      --text:#e7eefc;
+      --muted:#a9b4cc;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.14);
+      --shadow: 0 18px 40px rgba(0,0,0,.45);
+      --radius:16px;
+      --radius2:12px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --g1: linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.14), rgba(251,146,60,.12));
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(900px 500px at 95% 0%, rgba(251,146,60,.14), transparent 55%),
+        radial-gradient(900px 600px at 40% 110%, rgba(34,197,94,.14), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family:var(--sans);
+      line-height:1.4;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 56px}
+
+    header{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+      padding:18px 18px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g2);
+      opacity:.9;
+      filter: blur(18px);
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1}
+
+    .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-bottom:10px}
+    .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .chip{
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(0,0,0,.10);
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .chip strong{color:var(--text); font-weight:650}
+
+    .title{
+      font-size:20px;
+      margin:0;
+      letter-spacing:.2px;
+    }
+    .subtitle{margin:8px 0 0; color:var(--muted); font-size:13px}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:14px}
+    .btn{
+      display:inline-flex; gap:10px; align-items:center; justify-content:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line2);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      cursor:pointer;
+      transition:transform .08s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+      font-size:13px;
+    }
+    .btn:hover{background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.20)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{
+      background:rgba(255,255,255,.06);
+      border-color:rgba(255,255,255,.22);
+      position:relative;
+      overflow:hidden;
+    }
+    .btn.primary:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:var(--g1);
+      opacity:.14;
+      pointer-events:none;
+    }
+    .btn .hint{color:var(--muted); font-size:12px}
+
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+      color:#d8e4ff;
+      display:flex; align-items:center; gap:10px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background:var(--g1);
+      box-shadow:0 0 0 3px rgba(255,255,255,.05);
+      flex:0 0 auto;
+    }
+
+    .muted{color:var(--muted)}
+    .list{margin:0; padding-left:18px; color:var(--text)}
+    .list li{margin:8px 0}
+
+    .hr{
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      margin:12px 0;
+      border:0;
+    }
+
+    .code{
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:var(--radius2);
+      padding:12px;
+      font-family:var(--mono);
+      font-size:12.5px;
+      color:#dbe7ff;
+      overflow:auto;
+      white-space:pre-wrap;
+    }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .kpi .mini{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.16);
+      border-radius:14px;
+      padding:10px;
+    }
+    .mini .label{color:var(--muted); font-size:12px}
+    .mini .value{margin-top:4px; font-weight:650; font-size:13px}
+
+    .badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .badge{
+      font-size:12px;
+      padding:7px 9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+    .badge strong{color:var(--text); font-weight:650}
+
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 720px){.twoCol{grid-template-columns:1fr}}
+
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .callout:before{
+      content:"";
+      position:absolute;
+      left:-40px; top:-40px;
+      width:160px; height:160px;
+      background:var(--g1);
+      opacity:.12;
+      filter: blur(6px);
+      transform: rotate(12deg);
+    }
+    .callout > *{position:relative; z-index:1}
+
+    .checklist{display:grid; gap:8px}
+    .check{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+    }
+    .box{
+      width:16px; height:16px; border-radius:4px;
+      border:1px solid rgba(255,255,255,.20);
+      margin-top:2px;
+      background:rgba(255,255,255,.02);
+      flex:0 0 auto;
+    }
+    .check .txt{font-size:13px}
+
+    footer{margin-top:14px; color:var(--muted); font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <div class="chip"><strong>Nicho</strong>: Arquitetura</div>
+          <div class="chip"><strong>Dia</strong>: 1</div>
+          <div class="chip"><strong>Pilar</strong>: Erro comum</div>
+          <div class="chip"><strong>Formato</strong>: Reels</div>
+        </div>
+        <a class="btn" href="https://www.instagram.com/p/DULGemGFe7O/" target="_blank" rel="noreferrer">Abrir post original <span class="hint">↗</span></a>
+      </div>
+      <h1 class="title">4 erros de decoração que deixam sua casa datada (e como corrigir)</h1>
+      <p class="subtitle">Roteiro reproduzível: hook com dor social + 4 itens específicos + alternativa + correção rápida + CTA de curadoria/guia.</p>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        <button class="btn" id="copyCaptionBtn" type="button">Copiar copy (legenda)</button>
+        <span class="muted" id="copyStatus" aria-live="polite"></span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="dot"></span>Resumo</h2>
+        <div class="callout">
+          <p style="margin:0; color:var(--text); font-size:13.5px;">
+            Conteúdo de alta retenção por combinar <strong>medo de “estar errando”</strong> com uma <strong>lista progressiva</strong> e soluções fáceis.
+            O segredo é: <strong>criticar a escolha</strong> (não a pessoa), mostrar <strong>alternativas</strong> e dar uma <strong>saída rápida</strong> para quem já comprou.
+          </p>
+          <div class="badges">
+            <span class="badge"><strong>Hook</strong>: dor + julgamento social</span>
+            <span class="badge"><strong>Retenção</strong>: 1/4 → 4/4</span>
+            <span class="badge"><strong>Salvamentos</strong>: alternativa + correção</span>
+            <span class="badge"><strong>Debate</strong>: opinião firme</span>
+          </div>
+        </div>
+
+        <div class="kpi">
+          <div class="mini">
+            <div class="label">Duração alvo</div>
+            <div class="value">25–40s</div>
+          </div>
+          <div class="mini">
+            <div class="label">Cadência</div>
+            <div class="value">troca a cada 6–10s</div>
+          </div>
+          <div class="mini">
+            <div class="label">Estrutura</div>
+            <div class="value">Erro → por quê → alternativa → correção</div>
+          </div>
+          <div class="mini">
+            <div class="label">Entrega</div>
+            <div class="value">frases curtas + veredito</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Estrutura</h2>
+        <ol class="list">
+          <li><strong>0–2s | Hook</strong>: “4 erros de X que deixam Y.”</li>
+          <li><strong>2–8s | Erro 1/4</strong>: item específico + veredito + alternativa + correção rápida.</li>
+          <li><strong>8–14s | Erro 2/4</strong>: repete o padrão.</li>
+          <li><strong>14–20s | Erro 3/4</strong>: repete o padrão.</li>
+          <li><strong>20–28s | Erro 4/4</strong>: repete o padrão.</li>
+          <li><strong>28–34s | Regra geral (opcional)</strong>: 1 frase memorável.</li>
+          <li><strong>34–40s | CTA</strong>: “Quer escolher sem medo? [recurso] no link / comenta palavra.”</li>
+        </ol>
+        <hr class="hr" />
+        <div class="twoCol">
+          <div>
+            <div class="muted" style="font-size:12px; margin-bottom:6px;">Texto na tela (padrão)</div>
+            <div class="code" id="onScreenText">TELA 1 (Hook)
+4 ERROS que deixam sua casa DATADA
+
+TELA ERRO
+1/4 [Erro curto] = [veredito]
+Prefira: [alt 1] / [alt 2]
+Já tem? [correção rápida]
+
+...
+
+TELA FINAL
+Quer acertar nas compras?
+[Curadoria/Guia] no link da bio</div>
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px; margin-bottom:6px;">Frases de veredito (biblioteca)</div>
+            <div class="code">“Já deu.”
+“Isso deixa tudo pesado.”
+“Não funciona nesse contexto.”
+“Se você quer um visual atual, evita isso aqui.”
+“Dá pra salvar sem gastar muito: …”</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Roteiro</h2>
+      <div class="muted" style="font-size:12px; margin-bottom:8px;">Falas prontas (modelo replicável + exemplo preenchido). Ajuste os itens para o seu estilo/portfólio.</div>
+      <div class="code" id="scriptText">[CENA 1 — 0–2s | câmera frontal]
+FALA: “4 erros de decoração que deixam a sua casa com cara de datada. Anota porque é fácil de cair.”
+TEXTO NA TELA: “4 ERROS que deixam sua casa DATADA”
+
+[CENA 2 — 2–8s | ERRO 1/4]
+FALA: “Erro 1: puxador perfil metálico. Fica pesado e visualmente poluído.”
+FALA: “Troca por puxador bolinha, cava ou um sobreposto mais delicado.”
+FALA: “E se você já tem, dá pra salvar pintando na cor da marcenaria.”
+TEXTO NA TELA: “1/4 Puxador perfil metálico = pesado | Prefira: bolinha/cava/sobreposto | Já tem? Pinte”
+
+[CENA 3 — 8–14s | ERRO 2/4]
+FALA: “Erro 2: porcelanato que imita madeira. Ele não aquece o ambiente do mesmo jeito.”
+FALA: “Se você quer aconchego, vai de madeira de verdade ou vinílico bom.”
+FALA: “Já colocou? Compensa aquecer com tapete grande e iluminação quente.”
+TEXTO NA TELA: “2/4 ‘Madeira’ de porcelanato | Prefira: madeira/vinílico | Correção: tapete + luz quente”
+
+[CENA 4 — 14–20s | ERRO 3/4]
+FALA: “Erro 3: proporção errada. Hack pequeno com sofá gigante deixa tudo desequilibrado.”
+FALA: “Regra rápida: o hack precisa conversar com a largura da parede, não só com a TV.”
+FALA: “Já tem? Alongue com painel, prateleira longa ou composição lateral.”
+TEXTO NA TELA: “3/4 Proporção errada | Regra: hack ~ largura da parede | Correção: alongar composição”
+
+[CENA 5 — 20–28s | ERRO 4/4]
+FALA: “Erro 4: comprar o ‘conjunto’ mesa + buffet combinandinho.”
+FALA: “Isso deixa o espaço monótono. Mistura materiais e volumes.”
+FALA: “Já comprou? Quebra o conjunto com luminária, cadeiras diferentes ou um tapete marcante.”
+TEXTO NA TELA: “4/4 ‘Conjuntinho’ = monótono | Prefira: peças soltas | Correção: quebra com cadeiras/luz/tapete”
+
+[CENA 6 — 28–34s | REGRA GERAL]
+FALA: “Regra geral: menos ‘catálogo pronto’ e mais escolhas com intenção e proporção.”
+TEXTO NA TELA: “Regra: intenção + proporção > combinandinhas”
+
+[CENA 7 — 34–40s | CTA]
+FALA: “Quer escolher sem medo de errar? Eu tenho uma curadoria/guia com links pra você comprar com segurança. Tá no link da bio.”
+TEXTO NA TELA: “Quer acertar? Curadoria/Guia no link da bio”</div>
+    </section>
+
+    <div class="grid" style="margin-top:14px;">
+      <section class="card">
+        <h2><span class="dot"></span>Elementos visuais</h2>
+        <ul class="list">
+          <li><strong>Overlay fixo</strong>: “ERRO 1/4…4/4” no topo (cria progressão).</li>
+          <li><strong>Cortes secos</strong> na mudança de item (energia e ritmo).</li>
+          <li><strong>Zoom leve</strong> nas frases de veredito (“já deu”, “evita isso”).</li>
+          <li><strong>B-roll rápido</strong> (opcional): puxadores, piso, sala com proporção, mesa/buffet.</li>
+          <li><strong>SFX sutil</strong> (pop/tick) na troca do erro.</li>
+          <li><strong>Paleta</strong>: fundo neutro + destaque no texto com 1 cor (verde/azul/laranja).</li>
+        </ul>
+        <hr class="hr" />
+        <div class="muted" style="font-size:12px; margin-bottom:6px;">Config sugerida</div>
+        <div class="code">Formato: 9:16
+Fonte on-screen: sem serifa, bold
+Tamanho: grande (legível sem som)
+Legenda: curta por cena (1–2 linhas)
+Abertura: 0,5s já com hook na tela</div>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Copy e ganchos</h2>
+        <div class="twoCol">
+          <div>
+            <div class="muted" style="font-size:12px; margin-bottom:6px;">Ganchos (escolha 1)</div>
+            <div class="code">1) “4 erros que deixam sua casa datada (mesmo sendo nova)”
+2) “Se você quer uma casa com cara de projeto, evita isso aqui”
+3) “4 escolhas que barateiam o ambiente sem você perceber”
+4) “Coisas ‘chiques’ que na prática deixam tudo pesado”</div>
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px; margin-bottom:6px;">Legenda pronta (modelo)</div>
+            <div class="code" id="captionText">“A sua casa não precisa estar ‘na moda’ — mas precisa evitar escolhas que envelhecem o ambiente rápido.
+
+✅ Salva pra revisar antes de comprar.
+
+Se você quiser, eu te mando minha curadoria/guia com opções atuais (com links). Comenta: CURADORIA.”</div>
+          </div>
+        </div>
+        <hr class="hr" />
+        <div class="muted" style="font-size:12px; margin-bottom:6px;">Frases que geram comentários (sem atacar pessoas)</div>
+        <div class="code">“Isso não é ‘proibido’, mas se você quer um visual atual, eu evitaria.”
+“Funciona em casos específicos, mas no geral pesa o ambiente.”
+“Se você ama, tudo bem — só saiba o efeito visual que isso cria.”</div>
+      </section>
+    </div>
+
+    <div class="grid" style="margin-top:14px;">
+      <section class="card">
+        <h2><span class="dot"></span>CTA</h2>
+        <ul class="list">
+          <li><strong>Primário (conversão)</strong>: “Quer escolher sem medo? Curadoria/guia no link da bio.”</li>
+          <li><strong>Alternativa (comentários)</strong>: “Comenta <strong>CURADORIA</strong> que eu te mando.”</li>
+          <li><strong>Alternativa (salvamento)</strong>: “Salva pra revisar antes de comprar.”</li>
+          <li><strong>Alternativa (compartilhamento)</strong>: “Envia pra quem tá fazendo planejados agora.”</li>
+        </ul>
+        <hr class="hr" />
+        <div class="callout">
+          <div class="muted" style="font-size:12px; margin-bottom:6px;">Regra de ouro</div>
+          <div style="font-size:13.5px;">O CTA precisa ser <strong>continuação natural da dor</strong>: “medo de errar” → “guia/curadoria/lista para decidir com segurança”.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Checklist</h2>
+        <div class="checklist">
+          <div class="check"><div class="box"></div><div class="txt"><strong>Definir a dor social</strong>: datada / brega / cara de barato / bagunçada.</div></div>
+          <div class="check"><div class="box"></div><div class="txt"><strong>Escolher 4 erros</strong> com nome de produto/material (bem reconhecível).</div></div>
+          <div class="check"><div class="box"></div><div class="txt">Para cada erro: <strong>veredito</strong> (1 frase) + <strong>motivo</strong> (1 frase).</div></div>
+          <div class="check"><div class="box"></div><div class="txt">Para cada erro: <strong>2 alternativas</strong> + <strong>1 correção rápida</strong> (pra quem já tem).</div></div>
+          <div class="check"><div class="box"></div><div class="txt"><strong>Texto na tela</strong> com “1/4…4/4” e frases curtíssimas.</div></div>
+          <div class="check"><div class="box"></div><div class="txt"><strong>Edição</strong>: cortes secos, sem pausas, zoom nas frases fortes.</div></div>
+          <div class="check"><div class="box"></div><div class="txt"><strong>CTA alinhado</strong>: guia/curadoria/checklist + link ou palavra-chave no comentário.</div></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Variações</h2>
+      <div class="twoCol">
+        <div>
+          <div class="muted" style="font-size:12px; margin-bottom:6px;">Variações de tema (mesmo molde)</div>
+          <ul class="list">
+            <li>“4 erros na <strong>cozinha planejada</strong> que deixam tudo pesado”</li>
+            <li>“4 escolhas que deixam a <strong>sala pequena</strong> ainda menor”</li>
+            <li>“4 erros de <strong>iluminação</strong> que acabam com o projeto”</li>
+            <li>“4 erros em <strong>banheiro</strong> que envelhecem rápido”</li>
+            <li>“4 detalhes que deixam o <strong>quarto</strong> com cara de improviso”</li>
+          </ul>
+        </div>
+        <div>
+          <div class="muted" style="font-size:12px; margin-bottom:6px;">Variações de CTA (produto/serviço)</div>
+          <ul class="list">
+            <li>Checklist gratuito: “Comenta <strong>CHECKLIST</strong> que eu mando.”</li>
+            <li>Mentoria/consultoria: “Quer que eu ajuste o seu ambiente? Link na bio.”</li>
+            <li>PDF de medidas/proporção: “Guia de proporção pra sala — link.”</li>
+            <li>Curadoria por ambiente: “Curadoria de sala/cozinha/quarto.”</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="hr" />
+      <div class="muted" style="font-size:12px; margin-bottom:6px;">Como manter o conteúdo “firme” sem virar hate</div>
+      <div class="code">• Ataque a escolha, não a pessoa.
+• Use “se você quer X, evita Y” (condicional).
+• Sempre entregue alternativa + correção.
+• Evite palavras que ridicularizem o público; mantenha o veredito na estética/efeito visual.</div>
+    </section>
+
+    <footer>
+      <div>Identidade: fundo escuro + cards suaves + destaques em degradê (verde/azul/laranja) + layout limpo high-tech.</div>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const copyBtn = document.getElementById('copyBtn');
+      const copyCaptionBtn = document.getElementById('copyCaptionBtn');
+      const status = document.getElementById('copyStatus');
+      const script = document.getElementById('scriptText');
+      const caption = document.getElementById('captionText');
+
+      function setStatus(msg){
+        status.textContent = msg;
+        setTimeout(()=>{ if(status.textContent===msg) status.textContent=''; }, 1800);
+      }
+
+      async function copyText(text){
+        try{
+          await navigator.clipboard.writeText(text);
+          setStatus('Copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          setStatus('Copiado.');
+        }
+      }
+
+      copyBtn.addEventListener('click', ()=> copyText(script.innerText.trim()));
+      copyCaptionBtn.addEventListener('click', ()=> copyText(caption.innerText.trim()));
+    })();
+  </script>
+</body>
+</html>
