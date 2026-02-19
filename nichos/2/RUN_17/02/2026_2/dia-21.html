@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dia 21 | Arquitetura | Antes x Depois</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --card:#0E1633cc;
+      --card2:#0C122Acc;
+      --text:#EAF0FF;
+      --muted:#A7B1D6;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.14);
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg, #33D6A6 0%, #3BA3FF 45%, #FF9A3B 100%);
+      --g2: linear-gradient(135deg, rgba(51,214,166,.22), rgba(59,163,255,.18) 55%, rgba(255,154,59,.16));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(59,163,255,.18), transparent 55%),
+        radial-gradient(900px 560px at 80% 15%, rgba(51,214,166,.16), transparent 60%),
+        radial-gradient(900px 650px at 60% 90%, rgba(255,154,59,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1100px; margin:0 auto; padding:28px 16px 56px; }
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding:18px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(18px);
+      opacity:.9;
+      z-index:0;
+    }
+    header > *{ position:relative; z-index:1; }
+
+    .toprow{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .badges{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .badge{
+      border:1px solid var(--line2);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(10px);
+      padding:8px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      color:var(--muted);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: var(--g1);
+      box-shadow: 0 0 18px rgba(59,163,255,.35);
+    }
+
+    h1{
+      font-size:22px;
+      line-height:1.2;
+      margin:10px 0 8px;
+      letter-spacing:-0.02em;
+    }
+    .subtitle{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .subtitle a{
+      border-bottom:1px solid rgba(255,255,255,.22);
+      padding-bottom:2px;
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media (min-width: 960px){
+      .grid{ grid-template-columns: 1.1fr .9fr; align-items:start; }
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: radial-gradient(1200px 420px at 10% 0%, rgba(255,255,255,.06), transparent 60%),
+                  linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding:16px 16px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,0));
+    }
+    .kicker{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .kicker .bar{
+      width:34px;
+      height:10px;
+      border-radius:999px;
+      background: var(--g1);
+      opacity:.9;
+    }
+    .card h2{ margin:6px 0 0; font-size:16px; letter-spacing:-.01em; }
+
+    .card .bd{ padding:14px 16px 16px; }
+
+    .prose{ color:var(--text); font-size:14px; line-height:1.55; }
+    .prose p{ margin:0 0 10px; color:rgba(234,240,255,.92); }
+    .prose .muted{ color:var(--muted); }
+
+    .list{
+      display:grid;
+      gap:10px;
+      margin:10px 0 0;
+    }
+    .item{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      border-radius: var(--radius2);
+      padding:12px 12px;
+    }
+    .item b{ display:block; font-size:13px; margin-bottom:6px; }
+    .item .small{ font-size:12.5px; color:var(--muted); }
+
+    .two{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    @media (min-width: 720px){
+      .two{ grid-template-columns:1fr 1fr; }
+    }
+
+    .codebox{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.35);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+    .codebox .toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    }
+    .toolbar .left{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .pill{
+      border:1px solid var(--line2);
+      background: rgba(0,0,0,.18);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    button{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      color:var(--text);
+      border-radius: 12px;
+      padding:10px 12px;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .08s ease, border-color .2s ease;
+    }
+    button:hover{ border-color: rgba(255,255,255,.34); }
+    button:active{ transform: translateY(1px); }
+
+    .copyNote{
+      font-size:12px;
+      color:var(--muted);
+      padding-left:8px;
+    }
+
+    pre{
+      margin:0;
+      padding:12px 12px 14px;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color:rgba(234,240,255,.92);
+    }
+
+    .sectionTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin: 14px 0 10px;
+    }
+    .sectionTitle h3{
+      margin:0;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.10em;
+      color:var(--muted);
+    }
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, rgba(51,214,166,.5), rgba(59,163,255,.25), rgba(255,154,59,.5));
+      opacity:.65;
+      flex:1;
+      border-radius:99px;
+    }
+
+    .footer{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+    .kbd{ font-family:var(--mono); font-size:12px; padding:2px 6px; border:1px solid var(--line); border-radius:8px; background:rgba(0,0,0,.22); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="badges">
+          <span class="badge"><span class="dot"></span> Nicho: <b style="color:var(--text); font-weight:600;">Arquitetura</b></span>
+          <span class="badge">Dia: <b style="color:var(--text); font-weight:600;">21</b></span>
+          <span class="badge">Formato: <b style="color:var(--text); font-weight:600;">Carrossel</b></span>
+          <span class="badge">Pilar: <b style="color:var(--text); font-weight:600;">Prova</b></span>
+        </div>
+        <div class="badges">
+          <span class="badge">Original: <a href="https://www.instagram.com/p/DUvobjyEnQG/" target="_blank" rel="noopener">instagram.com/p/DUvobjyEnQG</a></span>
+        </div>
+      </div>
+      <h1>Antes x Depois: ficou mais agradável? Sim ou não?</h1>
+      <div class="subtitle">
+        <span>Objetivo: parar o scroll com contraste + pergunta binária e provar que o resultado vem de decisões de projeto.</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div class="kicker"><span class="bar"></span> Resumo</div>
+            <h2>O “sistema” do post (reproduzível em qualquer tema)</h2>
+          </div>
+          <span class="pill">Antes/Depois + Decisões</span>
+        </div>
+        <div class="bd prose">
+          <p><b>Promessa:</b> a transformação não é “milagre”; é <b>projeto bem definido</b> + escolhas inteligentes.</p>
+          <p><b>Por que funciona:</b> contraste visual imediato + pergunta simples (Sim/Não) + curiosidade (“o que mudou?”) + emoção (“agora dá vontade de ficar”).</p>
+          <p class="muted"><b>Onde adaptar:</b> arquitetura, interiores, paisagismo, marcenaria, iluminação, reforma rápida, até serviços fora de obra (branding, consultoria, social media): sempre que houver “estado A” vs “estado B”.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div class="kicker"><span class="bar"></span> Estrutura</div>
+            <h2>Sequência recomendada (8 slides)</h2>
+          </div>
+          <span class="pill">7–12 min de produção</span>
+        </div>
+        <div class="bd">
+          <div class="list">
+            <div class="item">
+              <b>1) Gancho (split Before/After + enquete)</b>
+              <div class="small">Pergunta binária curta: “Ficou mais agradável? Sim ou não?”</div>
+            </div>
+            <div class="item">
+              <b>2) Antes (dor/atrito)</b>
+              <div class="small">2–3 bullets do incômodo (sensação + função + estética).</div>
+            </div>
+            <div class="item">
+              <b>3) Depois (resultado)</b>
+              <div class="small">2–3 bullets de benefício (uso + conforto + identidade).</div>
+            </div>
+            <div class="item">
+              <b>4–6) Decisões de projeto (1 por slide)</b>
+              <div class="small">Regra: <span class="kbd">Decisão → Porque → Benefício</span>.</div>
+            </div>
+            <div class="item">
+              <b>7) Síntese (sem milagre)</b>
+              <div class="small">Uma frase-manchete + 2 alavancas (ex.: “sombra + materialidade”).</div>
+            </div>
+            <div class="item">
+              <b>8) CTA (comentário + salvar + direct)</b>
+              <div class="small">Uma ação principal + uma secundária (sem poluir).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div class="kicker"><span class="bar"></span> Slides sugeridos</div>
+            <h2>Texto pronto para copiar (1..8)</h2>
+          </div>
+          <span class="pill">Arte 1080×1350</span>
+        </div>
+        <div class="bd">
+          <div class="two">
+            <div class="item">
+              <b>Slide 1 — Gancho</b>
+              <div class="small"><b>Faixa:</b> “Ficou mais agradável? Sim ou não?”<br/><b>Opcional pequeno:</b> “Antes x Depois”</div>
+            </div>
+            <div class="item">
+              <b>Slide 2 — ANTES</b>
+              <div class="small">• Incômodo: ____<br/>• Faltava: ____<br/>• Sensação: ____</div>
+            </div>
+            <div class="item">
+              <b>Slide 3 — DEPOIS</b>
+              <div class="small">• Agora tem: ____<br/>• Melhorou: ____<br/>• Sensação: ____</div>
+            </div>
+            <div class="item">
+              <b>Slide 4 — Decisão #1</b>
+              <div class="small"><b>Decisão:</b> ____<br/><b>Porque:</b> ____<br/><b>Benefício:</b> ____</div>
+            </div>
+            <div class="item">
+              <b>Slide 5 — Decisão #2</b>
+              <div class="small"><b>Decisão:</b> ____<br/><b>Porque:</b> ____<br/><b>Benefício:</b> ____</div>
+            </div>
+            <div class="item">
+              <b>Slide 6 — Decisão #3</b>
+              <div class="small"><b>Decisão:</b> ____<br/><b>Porque:</b> ____<br/><b>Benefício:</b> ____</div>
+            </div>
+            <div class="item">
+              <b>Slide 7 — Resumo</b>
+              <div class="small"><b>Manchete:</b> “Sem milagre. Só projeto bem pensado.”<br/><b>Apoio:</b> “O que mudou foi ____ + ____.”</div>
+            </div>
+            <div class="item">
+              <b>Slide 8 — CTA</b>
+              <div class="small">“Quer um depois assim?”<br/>• Comenta: “SIM” ou “QUERO”<br/>• Salva pra referência<br/>• Direct com palavra-chave: ____</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div class="kicker"><span class="bar"></span> Roteiro</div>
+            <h2>Legenda (fórmula + versão pronta)</h2>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button id="copyBtn" type="button">Copiar roteiro</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="codebox">
+            <div class="toolbar">
+              <div class="left">
+                <span class="pill">Legenda</span>
+                <span>+ sequência lógica</span>
+              </div>
+              <span class="copyNote" id="copyNote">Pronto para copiar</span>
+            </div>
+            <pre id="roteiro">FÓRMULA (copiar e adaptar)
+Antes eu tava ______ (dor + humor leve/verdadeiro).
+Agora ______ (sensação de conforto + imagem mental).
+Melhor ainda quando ______ (detalhe sensorial do dia a dia: café, brisa, luz, silêncio, reunião da família).
+
+Sem milagre — só ______ (a decisão #1 que mais explica a transformação).
+
+Se eu tivesse que resumir em 3 escolhas:
+1) ______ (decisão) → ______ (benefício direto)
+2) ______ (decisão) → ______ (benefício direto)
+3) ______ (decisão) → ______ (benefício direto)
+
+Pergunta rápida: ficou mais agradável? SIM ou NÃO?
+
+CTA:
+• Comenta “SIM” se você moraria no depois.
+• Salva este post pra usar de referência.
+• Quer ajuda pra aplicar isso no seu caso? Me chama no direct com “VARANDA” (ou sua palavra-chave).
+
+VERSÃO PRONTA (exemplo arquitetura)
+Antes a fachada estava “ok”… mas a gente só passava por ela.
+Agora dá vontade de sentar na varanda e ficar mais um pouco.
+Melhor ainda no fim da tarde, com sombra e aquela luz mais quente.
+
+Sem milagre — só uma boa decisão de projeto: criar permanência (sombra + escala + materialidade).
+
+3 escolhas que mudaram tudo:
+1) Varanda + beiral generoso → sombra e conforto térmico
+2) Madeira aparente → sensação imediata de acolhimento
+3) Piso com textura/padrão → identidade sem obra gigante
+
+Ficou mais agradável? SIM ou NÃO?
+Comenta aqui e me diz o que mais te chamou atenção.</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div class="kicker"><span class="bar"></span> Elementos visuais</div>
+            <h2>Direção de arte para manter o “impacto”</h2>
+          </div>
+          <span class="pill">Minimal + high-contrast</span>
+        </div>
+        <div class="bd">
+          <div class="list">
+            <div class="item">
+              <b>Composição</b>
+              <div class="small">Split 50/50 (Antes em cima, Depois embaixo) + faixa central com a pergunta. Evite poluição visual.</div>
+            </div>
+            <div class="item">
+              <b>Texto na arte</b>
+              <div class="small">1 frase no Slide 1. Nos demais, no máximo 3 bullets curtos. Priorize legibilidade em mobile.</div>
+            </div>
+            <div class="item">
+              <b>Cor/edição</b>
+              <div class="small">Deixe o “Depois” levemente mais quente e luminoso (sem estourar). Mantenha consistência entre slides.</div>
+            </div>
+            <div class="item">
+              <b>Marca</b>
+              <div class="small">Logo discreto (canto). Se usar monograma grande, mantenha opacidade baixa para não competir com a imagem.</div>
+            </div>
+            <div class="item">
+              <b>Detalhe de retenção</b>
+              <div class="small">No Slide 4–6, use setas/labels simples (ex.: “+ sombra”, “+ aconchego”) para guiar o olhar sem virar “aula”.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div class="kicker"><span class="bar"></span> Copy e ganchos</div>
+            <h2>Variações de headline + frases de apoio</h2>
+          </div>
+          <span class="pill">Pergunta + julgamento visual</span>
+        </div>
+        <div class="bd">
+          <div class="two">
+            <div class="item">
+              <b>Headlines (faixa do Slide 1)</b>
+              <div class="small">• “Ficou mais agradável? Sim ou não?”<br/>• “Dá vontade de ficar? Sim ou não?”<br/>• “Antes ou depois: qual você escolheria?”<br/>• “Percebe o que mudou aqui?”<br/>• “Isso mudou a casa inteira (sem obra gigante).”</div>
+            </div>
+            <div class="item">
+              <b>Frases-ponte (legenda)</b>
+              <div class="small">• “A mudança não é estética — é uso.”<br/>• “Conforto é consequência de escolhas.”<br/>• “Sem milagre. Só projeto + prioridade.”<br/>• “O detalhe que ninguém vê… mas todo mundo sente.”</div>
+            </div>
+            <div class="item">
+              <b>Ganchos sensoriais (para humanizar)</b>
+              <div class="small">• “café na varanda” • “brisa e sombra” • “luz do fim da tarde” • “silêncio” • “cheiro de madeira” • “jardim mais perto”</div>
+            </div>
+            <div class="item">
+              <b>Prova rápida (sem exagero)</b>
+              <div class="small">• “A casa ficou mais ‘de ficar’.”<br/>• “A fachada passou a convidar.”<br/>• “Mudou rotina: agora a gente usa esse espaço.”</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div class="kicker"><span class="bar"></span> CTA</div>
+            <h2>Chamadas para ação (1 principal + 1 secundária)</h2>
+          </div>
+          <span class="pill">Comentários + Direct</span>
+        </div>
+        <div class="bd">
+          <div class="list">
+            <div class="item">
+              <b>CTA principal (comentário binário)</b>
+              <div class="small">“Comenta <b>SIM</b> se você moraria no depois (e <b>NÃO</b> se você prefere o antes).”</div>
+            </div>
+            <div class="item">
+              <b>CTA secundária (salvar)</b>
+              <div class="small">“Salva este post pra usar como referência quando pensar na sua fachada/varanda.”</div>
+            </div>
+            <div class="item">
+              <b>CTA de intenção (direct com palavra-chave)</b>
+              <div class="small">“Quer aplicar isso no seu caso? Me chama no direct com <b>‘VARANDA’</b> (ou: ‘FACHADA’, ‘SOMBRA’, ‘CONFORTO’).”</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div class="kicker"><span class="bar"></span> Checklist</div>
+            <h2>Checklist de criação (para reproduzir sem travar)</h2>
+          </div>
+          <span class="pill">Pré → Design → Publicação</span>
+        </div>
+        <div class="bd">
+          <div class="list">
+            <div class="item">
+              <b>1) Pré (conteúdo)</b>
+              <div class="small">☐ Escolha um caso com contraste claro (Before/After)<br/>☐ Defina 1 promessa: “mais agradável / mais funcional / mais iluminado”<br/>☐ Liste 3 decisões que explicam o resultado (não mais que 3)</div>
+            </div>
+            <div class="item">
+              <b>2) Seleção de imagens</b>
+              <div class="small">☐ Antes e Depois com enquadramento parecido (se possível)<br/>☐ Recorte para destacar a diferença (linha do horizonte consistente)<br/>☐ Ajuste temperatura: “Depois” ligeiramente mais quente</div>
+            </div>
+            <div class="item">
+              <b>3) Design dos slides</b>
+              <div class="small">☐ 1080×1350, split 50/50 no Slide 1<br/>☐ Faixa central 10–16% da altura com 1 frase<br/>☐ Bullets curtos (máx. 3 por slide), sem parágrafos</div>
+            </div>
+            <div class="item">
+              <b>4) Copy e publicação</b>
+              <div class="small">☐ Legenda: Dor → Sensação → Cena cotidiana → Decisão → CTA<br/>☐ Primeira linha com contraste emocional (“Antes… Agora…”)<br/>☐ CTA principal: “SIM/NÃO” nos comentários<br/>☐ Inclua “Salvar” como reforço de alcance</div>
+            </div>
+            <div class="item">
+              <b>5) Pós (otimização)</b>
+              <div class="small">☐ Responda comentários com perguntas (“o que você mudaria?”)<br/>☐ Fixe um comentário com a palavra-chave do direct<br/>☐ Reposte nos Stories com enquete “Antes/Depois”</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div>
+            <div class="kicker"><span class="bar"></span> Variações</div>
+            <h2>Adaptações e substituições (mesmo impacto, outro tema)</h2>
+          </div>
+          <span class="pill">Troque o “objeto”, mantenha a lógica</span>
+        </div>
+        <div class="bd prose">
+          <div class="sectionTitle"><h3>Mantenha</h3><div class="hr"></div></div>
+          <p>• <b>Contraste</b> (estado A vs estado B) + <b>pergunta binária</b>.<br/>• <b>3 decisões</b> (explicação causal) em vez de “lista infinita”.<br/>• <b>Cena sensorial</b> (rotina) para transformar técnica em desejo.</p>
+
+          <div class="sectionTitle"><h3>Substituições rápidas</h3><div class="hr"></div></div>
+          <div class="list">
+            <div class="item">
+              <b>Se não tiver “Antes” fotográfico</b>
+              <div class="small">Use “Antes = planta/croqui/render” vs “Depois = foto/3D final”. Ou “Antes = problema” em texto curto + “Depois = mockup/solução”.</div>
+            </div>
+            <div class="item">
+              <b>Se o tema for outro (fora de arquitetura)</b>
+              <div class="small">Troque “decisão de projeto” por “decisão estratégica”, “ajuste de processo” ou “configuração”. Ex.: marketing: “Oferta, Criativo, Página”.</div>
+            </div>
+            <div class="item">
+              <b>Se a audiência for mais técnica</b>
+              <div class="small">No Slide 4–6 inclua 1 métrica por decisão (ex.: “+ sombra”, “+ ventilação”, “+ manutenção fácil”), sem virar aula longa.</div>
+            </div>
+            <div class="item">
+              <b>Se quiser gerar leads (sem perder leveza)</b>
+              <div class="small">Direct com palavra-chave + promessa de retorno: “Me manda ‘FACHADA’ que eu te envio 3 ideias para o seu caso (com base em uma foto).”</div>
+            </div>
+          </div>
+
+          <div class="sectionTitle"><h3>Ganchos alternativos (mesma função do SIM/NÃO)</h3><div class="hr"></div></div>
+          <p class="muted">• “Nota de 0 a 10: quanto isso te dá vontade de ficar?”<br/>• “O que mais mudou: sombra, materiais ou proporção?”<br/>• “Você faria isso na sua casa: sim ou não?”</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Use este template como um “sistema”: contraste → prova → decisões → CTA. Ajuste apenas o objeto (fachada, sala, cozinha, jardim) e mantenha a estrutura.</p>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const note = document.getElementById('copyNote');
+      const textEl = document.getElementById('roteiro');
+      function setNote(msg){
+        if(!note) return;
+        note.textContent = msg;
+        window.clearTimeout(window.__copyTimer);
+        window.__copyTimer = window.setTimeout(()=>note.textContent='Pronto para copiar', 1800);
+      }
+      async function copy(){
+        const text = textEl ? textEl.innerText : '';
+        try{
+          await navigator.clipboard.writeText(text);
+          setNote('Copiado!');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); setNote('Copiado!'); }
+          catch(err){ setNote('Não foi possível copiar.'); }
+          document.body.removeChild(ta);
+        }
+      }
+      if(btn) btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
