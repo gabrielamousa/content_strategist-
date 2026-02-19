@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dia 4 — Arquitetura — 4 erros que deixam sua casa datada</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --r12:14px;
+      --r16:18px;
+      --grad: linear-gradient(90deg, #22C55E 0%, #3B82F6 45%, #F97316 100%);
+      --grad2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(59,130,246,.16), rgba(249,115,22,.16));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 12% 8%, rgba(59,130,246,.20), transparent 55%),
+        radial-gradient(900px 600px at 88% 18%, rgba(34,197,94,.18), transparent 52%),
+        radial-gradient(980px 620px at 52% 92%, rgba(249,115,22,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 56px}
+
+    header{
+      border:1px solid var(--stroke);
+      border-radius:22px;
+      padding:18px 18px 16px;
+      background: linear-gradient(180deg, rgba(14,22,48,.78), rgba(14,22,48,.55));
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--grad2);
+      filter: blur(18px);
+      opacity:.65;
+      pointer-events:none;
+    }
+    .headgrid{position:relative;display:grid;grid-template-columns:1.2fr .8fr;gap:14px;align-items:start}
+    .kicker{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      color:var(--muted);
+      backdrop-filter: blur(10px);
+    }
+    h1{margin:10px 0 6px;font-size:22px;line-height:1.15;letter-spacing:.2px}
+    .sub{margin:0;color:var(--muted);font-size:14px;line-height:1.35}
+
+    .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+      font-size:13px;
+      transition:transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px);background: rgba(255,255,255,.07);border-color: rgba(255,255,255,.22)}
+    .btn.primary{
+      border: none;
+      background: var(--grad);
+      color:#081019;
+    }
+    .btn.link{display:inline-flex;gap:8px;align-items:center;text-decoration:none}
+    .btn small{opacity:.9;font-weight:700}
+
+    main{margin-top:16px;display:grid;grid-template-columns:1fr;gap:14px}
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media (max-width: 900px){
+      .headgrid{grid-template-columns:1fr}
+      .actions{justify-content:flex-start}
+      .grid2{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(14,22,48,.58);
+      border-radius:var(--r16);
+      padding:16px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card:after{
+      content:"";
+      position:absolute;
+      left:-120px; top:-120px;
+      width:300px; height:300px;
+      background: conic-gradient(from 180deg, rgba(34,197,94,.22), rgba(59,130,246,.18), rgba(249,115,22,.18), rgba(34,197,94,.22));
+      filter: blur(26px);
+      opacity:.20;
+      pointer-events:none;
+      transform: rotate(18deg);
+    }
+    .card > *{position:relative}
+
+    .titleRow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    h2{margin:0;font-size:15px;letter-spacing:.2px}
+    .tag{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.75);
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+
+    .txt{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.55}
+    .txt b{color:rgba(234,240,255,.92)}
+    .hr{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+
+    ul{margin:10px 0 0;padding-left:18px;color:var(--muted);line-height:1.6}
+    li{margin:6px 0}
+
+    .script{
+      font-family:var(--mono);
+      font-size:12.8px;
+      line-height:1.55;
+      color:rgba(234,240,255,.84);
+      background: rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:14px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .mini{
+      font-size:12px;
+      color:var(--muted2);
+      margin-top:8px;
+    }
+
+    .cols{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 740px){
+      .cols{grid-template-columns:1fr}
+    }
+
+    .hook{
+      border-left:3px solid transparent;
+      border-image: var(--grad) 1;
+      padding-left:12px;
+      margin-top:10px;
+    }
+    .badge{
+      display:inline-block;
+      font-family:var(--mono);
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color:rgba(234,240,255,.78);
+      margin-right:6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headgrid">
+        <div>
+          <div class="kicker">
+            <span class="pill">Nicho: Arquitetura</span>
+            <span class="pill">Dia: 4</span>
+            <span class="pill">Pilar: Erro comum</span>
+            <span class="pill">Formato: Reels</span>
+          </div>
+          <h1><span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">4 erros que deixam sua casa datada</span> (e como corrigir)</h1>
+          <p class="sub">Roteiro replicável com veredito forte + alternativa prática + correção rápida (para gerar retenção, salvamentos e comentários).</p>
+        </div>
+        <div class="actions">
+          <a class="btn link" href="https://www.instagram.com/p/DULGemGFe7O/" target="_blank" rel="noreferrer">
+            Abrir post original <small>↗</small>
+          </a>
+          <button class="btn" id="copyBtn" type="button">Copiar roteiro</button>
+          <button class="btn primary" id="copyAllBtn" type="button">Copiar tudo (roteiro + tela)</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="titleRow">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo: “evitar escolhas datadas”</span>
+        </div>
+        <p class="txt">Este formato funciona porque combina <b>dor social</b> (medo de parecer “brega/datado”), <b>lista com progresso</b> (1/4…4/4) e <b>solução imediata</b> (alternativas + o que fazer se a pessoa já comprou/tem). O fechamento conecta a dor com um <b>recurso de compra/decisão</b> (curadoria/guia/checklist).</p>
+      </section>
+
+      <div class="grid2">
+        <section class="card">
+          <div class="titleRow">
+            <h2>Estrutura (sequência reproduzível)</h2>
+            <span class="tag">15–35s</span>
+          </div>
+          <ul>
+            <li><b>0–2s</b>: Hook (lista + consequência).</li>
+            <li><b>2–8s</b>: Erro #1 (bem específico) → por quê (1 frase) → 2–3 alternativas → correção rápida (“se já tem…”).</li>
+            <li><b>8–14s</b>: Erro #2 (mesmo padrão).</li>
+            <li><b>14–20s</b>: Erro #3 (mesmo padrão).</li>
+            <li><b>20–26s</b>: Erro #4 (mesmo padrão).</li>
+            <li><b>26–30s</b>: Regra geral (1 frase, opcional).</li>
+            <li><b>30–35s</b>: CTA (salvar + enviar + recurso no link/comentário).</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="txt"><b>Regra de ouro do ritmo:</b> troque de tópico a cada 6–12s. Frases curtas. Veredito primeiro, justificativa depois.</p>
+        </section>
+
+        <section class="card">
+          <div class="titleRow">
+            <h2>Elementos visuais (edição + tela)</h2>
+            <span class="tag">High retention</span>
+          </div>
+          <ul>
+            <li>Texto grande no topo: <b>“ERRO 1/4”</b>… <b>“ERRO 4/4”</b> (progress bar mental).</li>
+            <li>Cortes secos na mudança de item; jump cuts para remover pausas.</li>
+            <li>B-roll ilustrando cada erro (puxador, revestimento, sala, mobiliário).</li>
+            <li>Zoom leve nas frases polêmicas (“já deu”, “não recomendo”, “evite”).</li>
+            <li>SFX discreto (pop/tick) a cada troca de erro (opcional).</li>
+          </ul>
+          <p class="mini">Dica: mantenha o mesmo enquadramento no A-roll e mude apenas textos/B-roll para acelerar percepção de progresso.</p>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>Roteiro (fala + texto na tela)</h2>
+          <span class="tag">Copiável</span>
+        </div>
+        <p class="txt hook"><span class="badge">Hook</span><b>Fala:</b> “Quatro erros de decoração que deixam a sua casa com cara de datada — e o que fazer no lugar.”<br/><b>Tela:</b> “4 ERROS que deixam sua casa DATADA”</p>
+
+        <div class="hr"></div>
+
+        <div class="script" id="scriptText">[0–2s | HOOK]
+FALA: “4 erros de decoração que deixam sua casa datada — e como corrigir sem reforma.”
+TEXTO NA TELA: “4 ERROS que deixam sua casa DATADA”
+
+[2–8s | ERRO 1/4 — detalhe específico]
+FALA: “Erro 1: puxador perfil metálico. Visual pesado e polui a marcenaria.”
+TEXTO NA TELA: “1/4 Puxador perfil metálico = pesado”
+FALA (alternativas): “Prefira cava, puxador embutido ou um sobreposto mais leve.”
+TEXTO NA TELA: “Troque por: cava | embutido | sobreposto leve”
+FALA (se já tem): “Já tem? Pinta na cor da marcenaria e reduz o contraste.”
+TEXTO NA TELA: “Já tem? Pinte na cor da marcenaria”
+
+[8–14s | ERRO 2/4]
+FALA: “Erro 2: porcelanato que imita madeira. Em muitos projetos fica frio e artificial.”
+TEXTO NA TELA: “2/4 Porcelanato ‘madeirado’”
+FALA (alternativas): “Se você quer aconchego de verdade: madeira, vinílico de boa qualidade ou um laminado bem escolhido.”
+TEXTO NA TELA: “Prefira: madeira | vinílico | laminado”
+FALA (se já tem): “Se já instalou, compensa com tapete, iluminação quente e mais textura.”
+TEXTO NA TELA: “Corrige com: tapete + luz quente + textura”
+
+[14–20s | ERRO 3/4]
+FALA: “Erro 3: proporção errada. Hack pequeno com sofá gigante desequilibra a sala.”
+TEXTO NA TELA: “3/4 Proporção errada”
+FALA (regra simples): “Regra rápida: o hack precisa ‘segurar’ a parede — pensa em mais largura, não só altura.”
+TEXTO NA TELA: “Regra: hack mais largo = sala equilibrada”
+FALA (se já tem): “Se já comprou pequeno, resolve com painel maior, prateleiras laterais ou composição.”
+TEXTO NA TELA: “Corrige com: painel maior + composição”
+
+[20–26s | ERRO 4/4]
+FALA: “Erro 4: comprar o ‘conjunto’ mesa + buffet igualzinho. Fica monótono na hora.”
+TEXTO NA TELA: “4/4 ‘Conjunto’ mesa + buffet”
+FALA (alternativas): “Mistura materiais e volumes: mesa de um estilo, buffet mais leve ou um aparador diferente.”
+TEXTO NA TELA: “Prefira: peças soltas (variação!)”
+FALA (se já tem): “Se já tem o par, muda luminária, cadeiras ou o espelho pra quebrar a repetição.”
+TEXTO NA TELA: “Quebre o par: cadeiras | luminária | espelho”
+
+[26–30s | REGRA GERAL (opcional)]
+FALA: “Se uma escolha chama mais atenção do que o conjunto do ambiente, provavelmente ela está ‘pesando’.”
+TEXTO NA TELA: “Regra: o todo precisa ganhar”
+
+[30–35s | CTA]
+FALA: “Quer comprar sem medo de errar? Eu deixei uma curadoria/guia com itens e referências no link da bio. E salva esse vídeo pra revisar antes de fechar compra.”
+TEXTO NA TELA: “Salve + Veja a curadoria no link da bio”</div>
+        <p class="mini">Personalize trocando os 4 erros por itens do seu público (cozinha, banheiro, sala pequena, iluminação, bancada etc.). Mantenha o padrão “veredito → motivo → alternativa → correção”.</p>
+      </section>
+
+      <div class="grid2">
+        <section class="card">
+          <div class="titleRow">
+            <h2>Copy e ganchos</h2>
+            <span class="tag">Forte + específico</span>
+          </div>
+          <div class="cols">
+            <div>
+              <p class="txt"><b>Hooks prontos (escolha 1):</b></p>
+              <ul>
+                <li>“4 escolhas que deixam sua sala com cara de 2010.”</li>
+                <li>“5 erros que barateiam sua cozinha (mesmo com planejados).”</li>
+                <li>“3 coisas que parecem chiques, mas deixam tudo datado.”</li>
+                <li>“Se você tá reformando agora: evita isso aqui.”</li>
+              </ul>
+            </div>
+            <div>
+              <p class="txt"><b>Frases de veredito (sem atacar pessoas):</b></p>
+              <ul>
+                <li>“Já deu.”</li>
+                <li>“Pesa o ambiente.”</li>
+                <li>“Envelhece o projeto.”</li>
+                <li>“Dá uma cara de catálogo antigo.”</li>
+              </ul>
+              <p class="txt"><b>Comentários que você quer puxar:</b></p>
+              <ul>
+                <li>“Qual desses você já fez sem perceber?”</li>
+                <li>“Você concorda com o #2 ou é polêmico?”</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="titleRow">
+            <h2>CTA</h2>
+            <span class="tag">Salvar + enviar + recurso</span>
+          </div>
+          <ul>
+            <li><b>CTA principal (produto/recurso):</b> “Quer escolher sem medo? Pegue minha curadoria/guia no link da bio.”</li>
+            <li><b>CTA de engajamento:</b> “Salva pra revisar antes de comprar.”</li>
+            <li><b>CTA de compartilhamento:</b> “Envia pra quem tá fechando marcenaria agora.”</li>
+            <li><b>CTA por comentário:</b> “Comenta ‘CURADORIA’ que eu te mando.”</li>
+          </ul>
+          <p class="mini">Melhor prática: 1 CTA de ação + 1 CTA de engajamento (não use 4 CTAs na mesma fala).</p>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>Checklist de criação (rápido e repetível)</h2>
+          <span class="tag">Pré → Roteiro → Gravação → Edição</span>
+        </div>
+        <div class="cols">
+          <div>
+            <p class="txt"><b>Pré-roteiro</b></p>
+            <ul>
+              <li>Defina 1 dor social: <b>datado</b>, <b>barato</b>, <b>brega</b>, <b>bagunçado</b>, <b>aperta</b>, <b>escurece</b>.</li>
+              <li>Liste <b>4 erros reconhecíveis</b> (nome de produto/material/decisão).</li>
+              <li>Para cada erro, escreva: <b>veredito (1 frase)</b> + <b>motivo (1 frase)</b> + <b>2 alternativas</b> + <b>1 correção</b>.</li>
+              <li>Defina o recurso: curadoria, PDF, checklist, consultoria, link.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="txt"><b>Gravação e edição</b></p>
+            <ul>
+              <li>Grave em frases curtas (tom firme; sem explicar demais).</li>
+              <li>Textos fixos: <b>“ERRO 1/4”</b>…<b>“4/4”</b> + 1 linha de solução.</li>
+              <li>Troque cena/B-roll a cada item; cortes secos.</li>
+              <li>Inclua 1 “se você já tem…” por erro (aumenta retenção).</li>
+              <li>Finalize com tela: <b>benefício</b> + <b>CTA</b> (ex.: “compra sem insegurança”).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>Variações (mesmo molde, novos temas)</h2>
+          <span class="tag">Prontas para produzir</span>
+        </div>
+        <ul>
+          <li><b>Sala pequena:</b> “4 erros que fazem sua sala parecer menor (e como abrir o espaço).”</li>
+          <li><b>Cozinha planejada:</b> “4 erros de cozinha que dão cara de ‘projeto antigo’.”</li>
+          <li><b>Iluminação:</b> “4 decisões de luz que deixam o ambiente triste.”</li>
+          <li><b>Banheiro:</b> “4 escolhas que barateiam o banheiro (mesmo com porcelanato).”</li>
+          <li><b>Marcenaria:</b> “4 detalhes de armário que envelhecem o projeto.”</li>
+        </ul>
+        <p class="mini">Para cada variação, mantenha: item específico + alternativa clara + correção para quem já tem. Isso é o motor de salvamento.</p>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    const script = document.getElementById('scriptText');
+    const copyBtn = document.getElementById('copyBtn');
+    const copyAllBtn = document.getElementById('copyAllBtn');
+
+    function copyToClipboard(text){
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+      }
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.top = '-9999px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+
+    copyBtn.addEventListener('click', async () => {
+      await copyToClipboard(script.innerText.trim());
+      copyBtn.textContent = 'Roteiro copiado';
+      setTimeout(()=> copyBtn.textContent = 'Copiar roteiro', 1400);
+    });
+
+    copyAllBtn.addEventListener('click', async () => {
+      const extra = [
+        'TEXTO NA TELA (resumo pronto):',
+        'Hook: “4 ERROS que deixam sua casa DATADA”',
+        '1/4 “Puxador perfil metálico = pesado” | “Troque por: cava/embutido/sobreposto leve” | “Já tem? Pinte na cor da marcenaria”',
+        '2/4 “Porcelanato madeirado” | “Prefira: madeira/vinílico/laminado” | “Corrige com: tapete + luz quente + textura”',
+        '3/4 “Proporção errada” | “Regra: hack mais largo = sala equilibrada” | “Corrige com: painel maior + composição”',
+        '4/4 “Conjunto mesa + buffet” | “Prefira: peças soltas” | “Quebre o par: cadeiras/luminária/espelho”',
+        'Final: “Salve + Veja a curadoria no link da bio”'
+      ].join('\n');
+      await copyToClipboard(script.innerText.trim() + '\n\n' + extra);
+      copyAllBtn.textContent = 'Conteúdo copiado';
+      setTimeout(()=> copyAllBtn.textContent = 'Copiar tudo (roteiro + tela)', 1400);
+    });
+  </script>
+</body>
+</html>
