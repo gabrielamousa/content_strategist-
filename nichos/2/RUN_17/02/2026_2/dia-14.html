@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 14 — Arquitetura — O detalhe da infância que transforma sua casa</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.08);
+      --text:#EAF0FF;
+      --muted:#AAB6D6;
+      --line: rgba(255,255,255,0.10);
+      --shadow: 0 10px 30px rgba(0,0,0,0.45);
+      --r: 18px;
+      --g1: linear-gradient(90deg, #32ff9a, #27b7ff, #ff8a2a);
+      --g2: linear-gradient(135deg, rgba(50,255,154,0.18), rgba(39,183,255,0.16), rgba(255,138,42,0.16));
+      --green:#32ff9a;
+      --blue:#27b7ff;
+      --orange:#ff8a2a;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(39,183,255,0.22), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(255,138,42,0.18), transparent 55%),
+        radial-gradient(900px 700px at 30% 110%, rgba(50,255,154,0.16), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 46px;}
+
+    .top{
+      display:flex; gap:16px; align-items:stretch; justify-content:space-between;
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius: calc(var(--r) + 4px);
+      background: var(--g2);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .top:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 220px at 20% 0%, rgba(50,255,154,0.22), transparent 60%),
+                  radial-gradient(500px 240px at 80% 20%, rgba(39,183,255,0.20), transparent 55%),
+                  radial-gradient(520px 260px at 90% 90%, rgba(255,138,42,0.20), transparent 55%);
+      filter: blur(8px);
+      opacity:0.8;
+      z-index:0;
+    }
+    .top > *{position:relative; z-index:1;}
+
+    .brand{
+      display:flex; flex-direction:column; gap:8px;
+      min-width: 280px;
+      flex: 1;
+    }
+    .kicker{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.2px;
+    }
+    .pill{
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      backdrop-filter: blur(8px);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(20px, 2.4vw, 30px);
+      line-height:1.15;
+      letter-spacing: -0.3px;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height:1.5;
+      max-width: 70ch;
+    }
+
+    .actions{
+      display:flex; flex-direction:column; gap:10px;
+      align-items:flex-end;
+      justify-content:space-between;
+      min-width: 260px;
+    }
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
+    .btn{
+      appearance:none; border:1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.22);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size: 13px;
+      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      text-decoration:none;
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,0.22); background: rgba(0,0,0,0.28);}
+    .btn.primary{
+      border: none;
+      background: var(--g1);
+      color:#071018;
+    }
+    .btn.primary:hover{filter: saturate(1.05) brightness(1.02)}
+    .link{
+      color: var(--muted);
+      font-size: 12px;
+      text-decoration:none;
+      border-bottom: 1px dashed rgba(255,255,255,0.18);
+      padding-bottom: 2px;
+    }
+    .link:hover{color: var(--text); border-bottom-color: rgba(255,255,255,0.30)}
+
+    .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+    }
+    @media (max-width: 980px){
+      .top{flex-direction:column;}
+      .actions{align-items:flex-start; min-width:unset}
+      .grid{grid-template-columns: 1fr;}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(255,255,255,0.05);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding: 14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.16);
+    }
+    .card .hd .t{
+      font-weight: 800;
+      letter-spacing: .2px;
+      font-size: 13px;
+      text-transform: uppercase;
+      color: rgba(234,240,255,0.92);
+      display:flex; align-items:center; gap:10px;
+    }
+    .dot{width:8px; height:8px; border-radius:50%; background: var(--g1);}
+    .card .bd{padding: 14px 16px 16px;}
+    .card p{margin:0; color: var(--muted); line-height:1.55; font-size: 14px;}
+
+    .list{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:8px;}
+    .list li{
+      padding:10px 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+      color: rgba(234,240,255,0.92);
+      line-height:1.45;
+      font-size: 14px;
+    }
+    .list li .k{color: var(--muted); font-family: var(--mono); font-size: 12px; display:block; margin-bottom:4px;}
+
+    .scriptbox{
+      margin-top: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+      overflow:hidden;
+    }
+    .scriptbox .bar{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+    }
+    .scriptbox .bar .meta{color: var(--muted); font-size: 12px; font-family: var(--mono)}
+    .scriptbox pre{
+      margin:0;
+      padding: 12px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      color: rgba(234,240,255,0.92);
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height:1.55;
+    }
+
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap: 12px;}
+    @media (max-width: 760px){.cols{grid-template-columns:1fr}}
+
+    .tagrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+    .tag{
+      font-size: 12px;
+      color: rgba(234,240,255,0.92);
+      padding: 7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+    }
+    .tag strong{font-weight:800}
+
+    .footer{
+      margin-top: 14px;
+      padding: 14px 2px 0;
+      color: rgba(170,182,214,0.9);
+      font-size: 12px;
+      line-height:1.5;
+    }
+
+    .hr{
+      height:1px; background: rgba(255,255,255,0.08);
+      margin: 12px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="top">
+      <div class="brand">
+        <div class="kicker">
+          <span class="pill">Nicho: Arquitetura</span>
+          <span class="pill">Dia: 14</span>
+          <span class="pill">Formato: Reels</span>
+          <span class="pill">Pilar: Desejo</span>
+        </div>
+        <h1>O detalhe da infância que transforma sua casa (e seu projeto)</h1>
+        <p class="sub">Roteiro reproduzível para criar um Reels íntimo e altamente compartilhável: objeto simples + 3 perguntas + contraste “catálogo vs memória” + fecho poético.</p>
+      </div>
+      <div class="actions">
+        <div class="btnrow">
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+          <a class="btn" href="#checklist">Ir para checklist</a>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DUeI3mDjFlW/" target="_blank" rel="noreferrer">Post original: https://www.instagram.com/p/DUeI3mDjFlW/</a>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="hd"><div class="t"><span class="dot"></span>Resumo</div></div>
+        <div class="bd">
+          <p><strong>Ideia-mãe:</strong> casa não é vitrine — é memória. Um <strong>detalhe cotidiano</strong> (piso, azulejo, janela, luz, corredor) vira símbolo e faz o público se enxergar.</p>
+          <div class="tagrow">
+            <span class="tag"><strong>Motor:</strong> intimidade + objeto âncora</span>
+            <span class="tag"><strong>Retenção:</strong> perguntas em capítulos</span>
+            <span class="tag"><strong>Compartilhável:</strong> fecho em frase</span>
+          </div>
+          <div class="hr"></div>
+          <p><strong>Promessa do vídeo:</strong> em 45–60s, levar a pessoa a lembrar do “piso da infância” e aplicar isso numa reforma/projeto para criar uma <strong>casa com alma</strong>.</p>
+        </div>
+      </article>
+
+      <aside class="card">
+        <div class="hd"><div class="t"><span class="dot"></span>Estrutura (sequência)</div></div>
+        <div class="bd">
+          <ul class="list">
+            <li><span class="k">0–3s</span><strong>Hook íntimo</strong> em lugar real + “o detalhe não é o que você imagina”.</li>
+            <li><span class="k">3–10s</span><strong>Referência cultural</strong> (fala/citação) para ampliar alcance.</li>
+            <li><span class="k">10–25s</span><strong>Pergunta grande</strong>: “o que é casa hoje?” + 1 pausa.</li>
+            <li><span class="k">25–40s</span><strong>Objeto simples</strong> vira símbolo + linguagem sensorial.</li>
+            <li><span class="k">40–52s</span><strong>Contraste</strong>: catálogo/status vs memória/verdade.</li>
+            <li><span class="k">52–60s</span><strong>Fecho poético</strong> + CTA discreto (comentar + salvar/enviar).</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><div class="t"><span class="dot"></span>Roteiro (reproduzível + falas)</div></div>
+      <div class="bd">
+        <p>Personalize só os campos entre colchetes. Mantém o ritmo e a lógica de retenção.</p>
+        <div class="scriptbox" id="script">
+          <div class="bar">
+            <div class="meta">Duração alvo: 45–60s • Planos: A (você) + B-roll (detalhe) • Cortes: a cada pergunta</div>
+            <div class="meta">Legenda sempre ON</div>
+          </div>
+          <pre id="scriptText">[PLANO A — você em um lugar real: varanda/corredor/cozinha | 0–3s]
+“Eu tô aqui na [varanda/cozinha/quintal]… e o que mais me pegou nessa casa não foi o tamanho.
+Foi um detalhe.”
+
+[PLANO B — close no objeto âncora: piso/azulejo/janela | 3–8s]
+“Esse [piso/azulejo/luz da manhã] me jogou direto pra [uma lembrança curta: ‘casa da minha avó’, ‘meu quarto de criança’].”
+
+[PLANO A — inserção de referência cultural na tela (texto) | 8–14s]
+“Eu ouvi uma frase esses dias que ficou na minha cabeça: ‘[insira uma fala/citação curta e conhecida]’.
+E eu pensei: a gente esqueceu o que é casa.”
+
+[PLANO A — pergunta grande + pausa | 14–22s]
+“O que a gente chama de casa hoje?
+(…)
+É metragem? É tendência? Ou é um lugar onde a sua história consegue morar?”
+
+[PLANO B — mão tocando o detalhe + linguagem sensorial | 22–34s]
+“Porque tem coisa que não está no catálogo.
+O chão [frio/quente], a luz batendo de manhã, o som [da rua/do quintal]…
+Isso é memória.”
+
+[PLANO A — contraste claro | 34–47s]
+“E aqui é o ponto: você pode até ter um projeto ‘perfeito’…
+mas se ele não conversa com a criança que você foi,
+vira só uma vitrine bonita.”
+
+[PLANO A — convite aplicado + autoridade suave | 47–55s]
+“Quando eu começo um projeto, eu sempre tento encontrar esse detalhe-âncora.
+É ele que dá alma — mesmo em espaços pequenos.”
+
+[PLANO A — fecho poético | 55–60s]
+“No fim, casa é onde a gente se reconhece.
+E isso… não tem preço.”
+
+[CTA na fala e na tela]
+“Qual é o ‘piso da sua infância’? Me conta nos comentários.
+E salva pra lembrar disso quando for reformar.”</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="cols" style="margin-top:14px">
+      <section class="card">
+        <div class="hd"><div class="t"><span class="dot"></span>Elementos visuais</div></div>
+        <div class="bd">
+          <ul class="list">
+            <li><span class="k">Cenário</span>Ambiente real (sem “cara de set”): varanda, corredor, cozinha, garagem, hall.</li>
+            <li><span class="k">Objeto âncora</span>Escolha 1: piso/azulejo/rodapé/porta/janela/maçaneta/luz da manhã.</li>
+            <li><span class="k">B-roll</span>Close da mão tocando, reflexo de luz, passo no piso, pano passando, som ambiente.</li>
+            <li><span class="k">Edição</span>Cortes nas perguntas; push-in leve nas frases-chave; música nostálgica bem baixa.</li>
+            <li><span class="k">Texto na tela</span>Destaque de 2–4 palavras por linha; palavras “casa”, “memória”, “catálogo”, “infância”.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><div class="t"><span class="dot"></span>Copy e ganchos</div></div>
+        <div class="bd">
+          <p><strong>Ganchos (0–3s):</strong></p>
+          <ul class="list">
+            <li>“O que me emocionou aqui não foi a casa… foi <strong>o chão</strong>.”</li>
+            <li>“Posso te provar que <strong>casa</strong> não é tendência.”</li>
+            <li>“Se sua reforma não tem isso, ela vira só cenário.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Textos curtos na tela (prontos):</strong></p>
+          <div class="tagrow">
+            <span class="tag">“O que é ‘casa’ hoje?”</span>
+            <span class="tag">“Não é luxo.”</span>
+            <span class="tag">“É memória.”</span>
+            <span class="tag">“Qual é seu detalhe?”</span>
+            <span class="tag">“Catálogo ≠ história.”</span>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="cols" style="margin-top:14px">
+      <section class="card">
+        <div class="hd"><div class="t"><span class="dot"></span>CTA</div></div>
+        <div class="bd">
+          <ul class="list">
+            <li><span class="k">CTA principal (comentários)</span>“Qual detalhe da sua infância você traria pra sua casa hoje?”</li>
+            <li><span class="k">CTA secundário (salvar/compartilhar)</span>“Salva pra lembrar disso quando for reformar.” + “Envia pra alguém que tá construindo.”</li>
+            <li><span class="k">Autoridade (opcional e sutil)</span>“Se você quiser, eu aprofundo esse processo no [livro/consultoria] — link na bio.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" id="checklist">
+        <div class="hd"><div class="t"><span class="dot"></span>Checklist de criação (operacional)</div></div>
+        <div class="bd">
+          <ul class="list">
+            <li><span class="k">Pré</span>Defina: (1) ambiente real, (2) objeto âncora, (3) memória pessoal em 1 frase, (4) uma citação curta.</li>
+            <li><span class="k">Captação</span>Grave A-roll (plano médio) + 5 B-rolls (close no objeto, mão, passo, luz, detalhe do entorno).</li>
+            <li><span class="k">Roteiro</span>Inclua 1 pergunta grande + 2 perguntas menores. Faça 1 pausa de 1–2s após a pergunta grande.</li>
+            <li><span class="k">Edição</span>Corte a cada pergunta; destaque palavras-chave nas legendas; música baixa; som ambiente presente.</li>
+            <li><span class="k">Publicação</span>Capa com texto: “O detalhe da infância” + descrição com pergunta + fixe um comentário com o CTA de “salvar”.</li>
+          </ul>
+        </div>
+      </section>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><div class="t"><span class="dot"></span>Variações (para repetir sem enjoar)</div></div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <ul class="list">
+              <li><span class="k">Objeto âncora</span>“Janela da manhã” • “Azulejo antigo” • “Maçaneta” • “Cheiro de café” • “Quintal”</li>
+              <li><span class="k">Contraste</span>“Pinterest vs lembrança” • “Tendência vs tradição” • “Showroom vs vida real”</li>
+              <li><span class="k">Pergunta grande</span>“O que te dá sensação de casa?” • “O que você quer que seu filho lembre?”</li>
+            </ul>
+          </div>
+          <div>
+            <ul class="list">
+              <li><span class="k">Referência cultural</span>Troque por: fala de cliente, trecho de filme, música, frase de autor (curta e atribuída).</li>
+              <li><span class="k">Gancho alternativo</span>“Se eu te mostrar o 1 detalhe que muda qualquer projeto…”</li>
+              <li><span class="k">Formato rápido (30–40s)</span>Corte o bloco de autoridade e mantenha: hook → pergunta grande → contraste → CTA.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer">Dica de consistência: repita a mesma estrutura por 3 posts mudando apenas (a) o ambiente, (b) o objeto, (c) a pergunta final. Isso cria assinatura e melhora retenção.</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+      btn.addEventListener('click', async () => {
+        const content = text.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(content);
+          const old = btn.textContent;
+          btn.textContent = 'Copiado!';
+          setTimeout(()=>btn.textContent = old, 1200);
+        }catch(e){
+          const range = document.createRange();
+          range.selectNodeContents(text);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          document.execCommand('copy');
+          sel.removeAllRanges();
+          const old = btn.textContent;
+          btn.textContent = 'Copiado!';
+          setTimeout(()=>btn.textContent = old, 1200);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
