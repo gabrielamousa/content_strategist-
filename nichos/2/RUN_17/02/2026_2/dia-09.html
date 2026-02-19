@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 9 — Arquitetura | A “Geração do Quarto”</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.085);
+      --stroke: rgba(255,255,255,.12);
+      --stroke2: rgba(255,255,255,.18);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r12: 16px;
+      --r16: 22px;
+      --g1: linear-gradient(90deg, #30D158 0%, #2AC3FF 45%, #FF8A00 100%);
+      --g2: linear-gradient(135deg, rgba(48,209,88,.18), rgba(42,195,255,.16), rgba(255,138,0,.14));
+      --g3: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+      --green:#30D158;
+      --blue:#2AC3FF;
+      --orange:#FF8A00;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(42,195,255,.18), transparent 60%),
+        radial-gradient(900px 500px at 85% 10%, rgba(48,209,88,.14), transparent 55%),
+        radial-gradient(900px 600px at 70% 95%, rgba(255,138,0,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 70px;}
+
+    header{
+      border:1px solid var(--stroke);
+      background: var(--g3);
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(18px);
+      opacity:.9;
+      z-index:0;
+    }
+    .head-inner{position:relative; z-index:1; padding:20px 20px 18px;}
+    .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+    .chip{
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      letter-spacing:.2px;
+    }
+    .chip strong{color:var(--text); font-weight:650;}
+    .title{
+      margin:12px 0 6px;
+      font-size:22px;
+      line-height:1.18;
+      letter-spacing: -0.3px;
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      max-width: 86ch;
+    }
+    .meta{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .link{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      text-decoration:none;
+      color: var(--text);
+      font-size:13px;
+    }
+    .link .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: var(--g1);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+    }
+    .actions{display:flex; gap:10px; flex-wrap:wrap;}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-size:13px;
+    }
+    .btn.primary{
+      border-color: rgba(42,195,255,.35);
+      background: linear-gradient(135deg, rgba(42,195,255,.18), rgba(48,209,88,.14), rgba(255,138,0,.10));
+    }
+    .btn:active{transform: translateY(1px)}
+
+    main{margin-top:18px; display:grid; grid-template-columns: 1.05fr .95fr; gap:14px;}
+    @media (max-width: 920px){ main{grid-template-columns:1fr;}}
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:.2px;}
+    .badge{
+      font-size:11px; color: var(--muted);
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      padding:6px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .card .bd{padding:14px 16px;}
+    .card p{margin:0 0 10px; color: var(--muted); line-height:1.55; font-size:14px;}
+    .card ul{margin:0; padding-left:18px; color: var(--muted);}
+    .card li{margin:7px 0; line-height:1.45; font-size:14px;}
+    .hr{height:1px; background: var(--stroke); margin:12px 0;}
+
+    .kpi{
+      display:grid; grid-template-columns: repeat(3, 1fr);
+      gap:10px; margin-top:10px;
+    }
+    @media (max-width: 520px){ .kpi{grid-template-columns:1fr;}}
+    .kbox{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding:10px 10px;
+    }
+    .kbox .t{font-size:11px; color: var(--muted2); margin-bottom:6px;}
+    .kbox .v{font-size:13px; color: var(--text); line-height:1.25;}
+
+    .gradline{height:2px; background: var(--g1); opacity:.9;}
+
+    .script{
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color: rgba(234,240,255,.86);
+      white-space:pre-wrap;
+      word-break:break-word;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.26);
+      padding:12px 12px;
+      border-radius: 14px;
+    }
+
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+    @media (max-width: 720px){ .cols{grid-template-columns:1fr;}}
+
+    .pill{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius: 999px;
+      font-size:12px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+    }
+    .hl{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:750;
+    }
+
+    .small{font-size:12px; color: var(--muted2); line-height:1.5;}
+
+    footer{margin-top:14px; color: var(--muted2); font-size:12px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-inner">
+        <div class="topline">
+          <div class="chips">
+            <span class="chip"><strong>Nicho:</strong> Arquitetura</span>
+            <span class="chip"><strong>Dia:</strong> 9</span>
+            <span class="chip"><strong>Formato:</strong> Carrossel (10)</span>
+            <span class="chip"><strong>Pilar:</strong> Autoridade</span>
+          </div>
+          <div class="actions">
+            <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+            <button class="btn" id="copyCaptionBtn">Copiar legenda (opcional)</button>
+          </div>
+        </div>
+        <h1 class="title">A <span class="hl">“Geração do Quarto”</span>: o que a arquitetura tem a ver com isso</h1>
+        <p class="subtitle">Carrossel de autoridade com narrativa (fenômeno → causa estrutural → impacto emocional → solução prática). Use referência cultural/fato recente para abrir e conduza até “arquitetura afetiva” com exemplos aplicáveis.</p>
+        <div class="meta">
+          <a class="link" href="https://www.instagram.com/p/DHlEjCXN-Xy/" target="_blank" rel="noopener noreferrer"><span class="dot"></span> Ver post original</a>
+          <div class="small">Identidade: fundo escuro, cards suaves, destaques em degradê (verde/azul/laranja), vibe high-tech.</div>
+        </div>
+      </div>
+      <div class="gradline"></div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge">Objetivo: retenção + autoridade + compartilhamento</span>
+        </div>
+        <div class="bd">
+          <p><strong>Ideia central:</strong> o isolamento ("viver no quarto") não é só comportamento/tela; a <span class="hl">configuração da casa</span> reforça ou dificulta convivência. Você apresenta o diagnóstico e entrega micro-soluções de “arquitetura afetiva”.</p>
+          <div class="kpi">
+            <div class="kbox"><div class="t">Promessa</div><div class="v">Entender o fenômeno + o papel do espaço</div></div>
+            <div class="kbox"><div class="t">Tensão</div><div class="v">Conectados com o mundo, desconectados de casa</div></div>
+            <div class="kbox"><div class="t">Saída</div><div class="v">Ações simples para puxar a vida para áreas comuns</div></div>
+          </div>
+          <div class="hr"></div>
+          <p class="small"><span class="pill">Regra</span> 1 ideia por slide • 1 frase-martelo por slide • alternar headline curta + slide de leitura • terminar com CTA social (comentar/compartilhar/salvar).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="badge">Hook → Diagnóstico → Causa → Solução → CTA</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Slide 1</strong>: Referência cultural/fato + alerta + nome do fenômeno + micro-CTA.</li>
+            <li><strong>Slides 2–3</strong>: Definição + diagnóstico social (contraste forte).</li>
+            <li><strong>Slide 4</strong>: Quebra de culpa (“não é só o celular”) + causa estrutural (arquitetura).</li>
+            <li><strong>Slide 5</strong>: Consequência emocional (headline + explicação curta).</li>
+            <li><strong>Slide 6</strong>: Tese + conceito (“arquitetura afetiva/emocional”).</li>
+            <li><strong>Slide 7</strong>: Lista de ações (exemplos acionáveis).</li>
+            <li><strong>Slides 8–9</strong>: Virada + esperança (comece pequeno).</li>
+            <li><strong>Slide 10</strong>: CTA final (comentário + envio + salvar).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Slides sugeridos (1..10)</h2>
+          <span class="badge">Texto pronto + função</span>
+        </div>
+        <div class="bd">
+          <div id="roteiro" class="script">SLIDE 1 — HOOK (referência + alerta)
+“[SÉRIE/NOTÍCIA/ASSUNTO DO MOMENTO] nos traz um alerta.”
+A ‘GERAÇÃO DO QUARTO’
+Vem entender &gt;&gt;&gt;
+
+SLIDE 2 — DEFINIÇÃO + TESE
+Quarto virou escritório.
+Virou cinema.
+Virou mundo.
+E a convivência… ficou pra depois.
+“A geração do quarto já é real.”
+
+SLIDE 3 — DIAGNÓSTICO SOCIAL (contraste)
+Hoje a gente está:
+— conectado com o mundo
+— e desconectado de casa
+O problema não começa no adolescente.
+Começa no jeito que a casa funciona.
+
+SLIDE 4 — QUEBRA DE OBJEÇÃO + CAUSA (arquitetura)
+E não, não é só culpa do celular.
+A arquitetura também empurra cada um pro seu canto:
+— áreas comuns pequenas e apertadas
+— TV/ruído desconfortável na sala
+— cozinha “isolada” da convivência
+— quarto com tudo (mesa, tela, conforto)
+Frase-martelo: “A casa, sem querer, separa.”
+
+SLIDE 5 — CONSEQUÊNCIA (emocional)
+MENOS CONVIVÊNCIA.
+MAIS DISTÂNCIA.
+Quando não existe um lugar gostoso pra ficar junto,
+a tendência é cada um “se resolver” sozinho.
+E isso molda vínculo (sem ninguém perceber).
+
+SLIDE 6 — TESE CENTRAL + CONCEITO
+“A arquitetura influencia vínculos.”
+Arquitetura afetiva é quando o espaço:
+— convida (não impõe)
+— facilita encontros
+— cria pequenos rituais
+Não é só estética.
+É comportamento.
+
+SLIDE 7 — EXEMPLOS PRÁTICOS (acionáveis)
+Ideias simples que mudam o jogo:
+— iluminar e aquecer a sala (luz + textura)
+— mesa útil de verdade (não decorativa)
+— canto de estar com manta/livros/jogo
+— cozinha mais aberta/participativa
+— “jantar sem telas” 2x/semana
+Isso é arquitetura emocional.
+
+SLIDE 8 — VIRADA + PALAVRA-CHAVE
+Pode ser que a casa não esteja “errada”.
+Ela só precisa ser RESsignificada.
+Comece pequeno:
+troque a luz, mova um móvel, crie um ponto de encontro.
+
+SLIDE 9 — SÍNTESE INSPIRACIONAL
+Repensar espaços
+é repensar relações.
+Às vezes a reconexão começa
+com uma sala mais convidativa.
+
+SLIDE 10 — CTA FINAL
+Qual ambiente da sua casa mais afasta (ou aproxima) a família?
+Comente.
+E envie este post pra alguém que precisa ler isso.
+(Salve para aplicar depois.)</div>
+          <div class="hr"></div>
+          <div class="cols">
+            <div>
+              <p><strong>Observação de adaptação rápida</strong></p>
+              <ul>
+                <li>Troque a referência do Slide 1 por algo do momento (série, manchete, dado de pesquisa).</li>
+                <li>Mantenha o termo memorável (“geração do quarto”) para facilitar compartilhamento.</li>
+                <li>Se quiser nichar: fale de <strong>apartamentos compactos</strong>, <strong>home office</strong>, <strong>planta integrada</strong>, <strong>acústica</strong>.</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Legenda pronta (opcional)</strong></p>
+              <div id="legenda" class="script">A “geração do quarto” não é só sobre tela.
+É sobre como a casa foi ficando cada vez menos convidativa para o encontro.
+
+Quando a área social é apertada, desconfortável ou mal iluminada, o quarto vira a escolha óbvia.
+
+Arquitetura afetiva é isso: projetar (ou ajustar) espaços que facilitam convivência sem forçar.
+
+Se você pudesse mudar 1 coisa hoje na sua casa para aproximar a família, qual seria?
+
+Comente + envie para alguém.
+Salve para aplicar.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="badge">Design system reproduzível</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Canvas:</strong> 1080×1350 (4:5).</li>
+            <li><strong>Estética:</strong> documental/cinematográfica (interiores escuros, luz baixa, telas, cena de jantar).</li>
+            <li><strong>Legibilidade:</strong> overlay escuro 35–55% atrás do texto (faixa translúcida).</li>
+            <li><strong>Paleta:</strong> fundo azul/noite/preto; texto branco; palavras-chave em <span class="hl">degradê</span> (verde/azul/laranja) ou mostarda se quiser referência original.</li>
+            <li><strong>Tipografia:</strong> Headline condensada (Anton/Bebas/Oswald) + corpo Inter/Montserrat semibold.</li>
+            <li><strong>Ritmo:</strong> alternar “cartaz” (headline gigante) com “leitura” (3–6 linhas).</li>
+            <li><strong>Recurso de retenção:</strong> 1 palavra destacada no slide 8: <strong>RESSIGNIFICAR</strong>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">Variações rápidas</span>
+        </div>
+        <div class="bd">
+          <p><strong>Ganchos (Slide 1):</strong></p>
+          <ul>
+            <li>“Se você tem adolescente em casa, lê isso.”</li>
+            <li>“Não é só o celular. Tem outra coisa separando vocês.”</li>
+            <li>“O quarto virou o melhor cômodo da casa… e isso é um problema.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Frases-martelo (para fechar slides):</strong></p>
+          <ul>
+            <li>“A casa, sem querer, separa.”</li>
+            <li>“Não é estética. É comportamento.”</li>
+            <li>“Convivência também se projeta.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="badge">Curto + social + salvável</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Micro-CTA (Slide 1):</strong> “Vem entender &gt;&gt;&gt;”</li>
+            <li><strong>CTA final (Slide 10):</strong> “Comente + envie para alguém + salve para aplicar.”</li>
+            <li><strong>Perguntas que geram comentários:</strong> “Qual cômodo mais afasta?” / “O que te faz não ficar na sala?”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist</h2>
+          <span class="badge">Criação + revisão</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Antes:</strong> escolher 1 referência cultural atual (série/notícia/dado).</li>
+            <li><strong>Texto:</strong> garantir 1 ideia por slide + 1 frase-martelo.</li>
+            <li><strong>Diagnóstico:</strong> incluir contraste (mundo vs casa) até o slide 3.</li>
+            <li><strong>Objeção:</strong> colocar “não é só culpa do celular” no slide 4.</li>
+            <li><strong>Solução:</strong> listar 4–6 ações práticas no slide 7 (sem reformar a casa inteira).</li>
+            <li><strong>Design:</strong> overlay escuro, margens 8–10%, alto contraste, destaque em degradê.</li>
+            <li><strong>Revisão:</strong> cortar linhas longas; usar quebras manuais para ritmo.</li>
+            <li><strong>Publicação:</strong> capa com termo memorável; CTA de salvar; responder comentários com exemplos.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="badge">Mesma estrutura, outros ângulos</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Variação 1 (compactos):</strong> “A geração do quarto em apartamentos de 45m²: o que fazer?”</li>
+            <li><strong>Variação 2 (pais):</strong> “3 erros na sala que empurram seu filho pro quarto.”</li>
+            <li><strong>Variação 3 (projeto):</strong> “Planta integrada resolve? Depende: conforto, acústica e ritual.”</li>
+            <li><strong>Variação 4 (prova):</strong> antes/depois (simulação) de sala mais convidativa + micro mudança (luz/sofá/mesa).</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="small">Dica de produção: mantenha a “assinatura” (logo/@) discreta no topo e use fotos com pouca informação para o texto respirar.</div>
+    </footer>
+  </div>
+
+  <script>
+    function copyFromEl(id){
+      const el = document.getElementById(id);
+      const text = el ? el.innerText : "";
+      if(!text) return;
+      navigator.clipboard.writeText(text);
+    }
+    document.getElementById('copyBtn').addEventListener('click', function(){copyFromEl('roteiro');});
+    document.getElementById('copyCaptionBtn').addEventListener('click', function(){copyFromEl('legenda');});
+  </script>
+</body>
+</html>
