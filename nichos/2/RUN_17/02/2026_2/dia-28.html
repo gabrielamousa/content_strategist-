@@ -1,0 +1,408 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Dia 2 — Arquitetura | Roteiro reproduzível</title><style>
+:root{
+  --bg0:#070A0F;
+  --bg1:#0B1220;
+  --card:#0E1728;
+  --card2:#0C1424;
+  --text:#EAF0FF;
+  --muted:#AAB6D3;
+  --line:rgba(255,255,255,.10);
+  --shadow: 0 18px 60px rgba(0,0,0,.45);
+  --radius:16px;
+  --r2:12px;
+  --grad: linear-gradient(90deg,#25F4A6 0%, #39A8FF 45%, #FF9A3C 100%);
+  --grad2: linear-gradient(135deg, rgba(37,244,166,.20), rgba(57,168,255,.16), rgba(255,154,60,.14));
+  --ok:#25F4A6;
+  --warn:#FF9A3C;
+  --info:#39A8FF;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--text);
+  background:
+    radial-gradient(1200px 700px at 20% -10%, rgba(57,168,255,.18), transparent 55%),
+    radial-gradient(900px 500px at 90% 10%, rgba(255,154,60,.16), transparent 55%),
+    radial-gradient(900px 700px at 50% 110%, rgba(37,244,166,.14), transparent 60%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+}
+.container{max-width:1100px; margin:0 auto; padding:28px 18px 60px;}
+.header{
+  position:relative;
+  padding:18px 18px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(14,23,40,.85), rgba(12,20,36,.72));
+  border-radius:var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.header:before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background: var(--grad2);
+  filter: blur(14px);
+  opacity:.75;
+  z-index:0;
+}
+.header-inner{position:relative; z-index:1; display:flex; gap:14px; justify-content:space-between; align-items:flex-start; flex-wrap:wrap;}
+.kicker{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+.pill{
+  font-size:12px;
+  letter-spacing:.2px;
+  color:var(--text);
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  padding:6px 10px;
+  border-radius:999px;
+}
+.pill strong{font-weight:650}
+.title{
+  margin:10px 0 6px;
+  font-size:22px;
+  line-height:1.2;
+}
+.sub{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.35;
+  max-width:72ch;
+}
+.linkrow{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px}
+.a{
+  color:var(--text);
+  text-decoration:none;
+  border-bottom:1px dashed rgba(234,240,255,.35);
+}
+.a:hover{border-bottom-color:rgba(234,240,255,.75)}
+.actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+.btn{
+  cursor:pointer;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:12px;
+  font-size:13px;
+  font-weight:600;
+}
+.btn.primary{
+  border:0;
+  background: var(--grad);
+  color:#071014;
+}
+.btn:active{transform: translateY(1px)}
+.grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px}
+@media (min-width: 980px){ .grid{grid-template-columns: 1.1fr .9fr;} }
+.card{
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(14,23,40,.86), rgba(12,20,36,.78));
+  border-radius:var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.card h2{
+  margin:0;
+  padding:14px 16px 10px;
+  font-size:14px;
+  letter-spacing:.22px;
+  text-transform:uppercase;
+  color:rgba(234,240,255,.88);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.badge{
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+  color:rgba(234,240,255,.82);
+}
+.card .body{padding:14px 16px 16px;}
+.muted{color:var(--muted)}
+.list{margin:0; padding-left:18px}
+.list li{margin:8px 0; color:rgba(234,240,255,.92)}
+.hr{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+.callout{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.03);
+  border-radius:14px;
+  padding:12px 12px;
+}
+.callout .top{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+.gradtext{
+  background: var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  font-weight:800;
+}
+.kv{display:grid; grid-template-columns: 1fr; gap:10px}
+@media (min-width: 680px){ .kv{grid-template-columns: 1fr 1fr;} }
+.kv .item{border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.12); border-radius:14px; padding:12px}
+.kv .item b{display:block; margin-bottom:6px}
+pre{
+  margin:0;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.22);
+  overflow:auto;
+  font-family:var(--mono);
+  font-size:12.5px;
+  line-height:1.45;
+  color:rgba(234,240,255,.92);
+}
+.small{font-size:12px; color:var(--muted)}
+.checks{display:grid; grid-template-columns:1fr; gap:8px}
+@media (min-width: 680px){ .checks{grid-template-columns:1fr 1fr;} }
+.chk{display:flex; gap:10px; align-items:flex-start; padding:10px 10px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.12)}
+.dot{width:10px; height:10px; border-radius:3px; margin-top:4px; background:rgba(255,255,255,.18)}
+.dot.ok{background: rgba(37,244,166,.75)}
+.dot.info{background: rgba(57,168,255,.75)}
+.dot.warn{background: rgba(255,154,60,.78)}
+.footer{margin-top:14px; color:var(--muted); font-size:12px}
+</style></head><body><div class="container">
+  <header class="header">
+    <div class="header-inner">
+      <div>
+        <div class="kicker">
+          <span class="pill"><strong>Nicho</strong>: Arquitetura</span>
+          <span class="pill"><strong>Dia</strong>: 2</span>
+          <span class="pill"><strong>Formato</strong>: Reels</span>
+          <span class="pill"><strong>Pilar</strong>: Passo a passo</span>
+        </div>
+        <h1 class="title">6 cores de tinta pra fugir do branco (sem cair no cinza)</h1>
+        <p class="sub">Roteiro reproduzível para um Reel em formato lista (5–7 itens), com critérios fixos, cortes rápidos por item, texto grande na tela e CTA duplo (engajamento + conversão).</p>
+        <div class="linkrow">
+          <a class="a" href="https://www.instagram.com/p/DUIhrF1jgxe/" target="_blank" rel="noopener noreferrer">Post original: https://www.instagram.com/p/DUIhrF1jgxe/</a>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <button class="btn" id="copyHooks">Copiar ganchos</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Resumo <span class="badge">O que faz performar</span></h2>
+      <div class="body">
+        <div class="callout">
+          <div class="top">
+            <div class="gradtext">Fórmula</div>
+            <div class="small">Hook ultra específico + lista curta + curadoria (autoridade) + “erro/inimigo” + marcas conhecidas + CTA em 2 etapas</div>
+          </div>
+          <div class="hr"></div>
+          <div class="kv">
+            <div class="item"><b>Dor que resolve</b><span class="muted">Medo de errar na pintura (branco “clínico” / cinza “frio”).</span></div>
+            <div class="item"><b>Promessa</b><span class="muted">Neutro claro, leve, atemporal, elegante e fácil de combinar.</span></div>
+            <div class="item"><b>Prova/autoridade</b><span class="muted">Curadoria com critérios repetidos + nomes concretos + marcas populares.</span></div>
+            <div class="item"><b>Retenção</b><span class="muted">Lista “1 de 6” até “6 de 6” + cortes a cada item.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Metadados de execução <span class="badge">rápido</span></h2>
+      <div class="body">
+        <ul class="list">
+          <li><b>Duração alvo</b>: 30–45s (6 itens + fechamento).</li>
+          <li><b>Timing</b>: 0–3s hook | 3–6s critérios | 6–30s lista | 30–36s resumo | 36–45s CTA.</li>
+          <li><b>Texto na tela</b>: grande, fixo por item (Marca + Nome) + tag (quente/neutro/terroso).</li>
+          <li><b>Áudio</b>: voz limpa, música baixa, cortes secos por item.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Estrutura <span class="badge">template reproduzível</span></h2>
+    <div class="body">
+      <ol class="list">
+        <li><b>Hook (1–2s)</b>: promessa + recorte + inimigo. Ex.: “6 cores… pra fugir do branco (sem cair no cinza)”.</li>
+        <li><b>Critérios (2–3s)</b>: 3–5 adjetivos fixos repetíveis (leve/atemporal/versátil/elegante/não puxa pro cinza).</li>
+        <li><b>Lista (20–28s)</b>: 1 cor = 1 take. Sempre: nome/ marca + subtom + benefício rápido.</li>
+        <li><b>Fechamento (4–6s)</b>: tese geral (“amplia sem esfriar/escurecer”).</li>
+        <li><b>CTA (6–10s)</b>: comentar → salvar → próximo passo (link/DM/produto).</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Roteiro <span class="badge">fala + tempo + B-roll</span></h2>
+    <div class="body">
+      <pre id="roteiro">[0:00–0:02] HOOK (A-cam)
+Fala: “Quer um neutro claro sem usar branco e sem cair naquele cinza frio? Eu separei 6 cores seguras.”
+Tela: “6 cores de tinta pra fugir do branco (sem cair no cinza)”
+B-roll: corte rápido branco puro x amostra do 1º tom (split screen 0,5s)
+
+[0:02–0:05] CRITÉRIOS (A-cam + overlay)
+Fala: “Todas são leves, atemporais, fáceis de combinar e não puxam pro cinza.”
+Tela: “Neutras • claras • atemporais • fáceis de combinar”
+
+[0:05–0:09] COR 1/6
+Fala (modelo): “Primeira: [MARCA] [NOME]. Subtom [quente/neutro/terroso]. Boa pra [benefício/ambiente].”
+Tela: “[MARCA] — [NOME] | Subtom: [tag] | 1/6”
+B-roll: parede + cartela/latinha
+
+[0:09–0:13] COR 2/6
+Fala: “Segunda: …”
+Tela: “… | 2/6”
+B-roll: amostra grande em parede + objeto de madeira clara ao lado
+
+[0:13–0:17] COR 3/6
+Fala: “Terceira: …”
+Tela: “… | 3/6”
+B-roll: comparação com branco puro por 0,5s (antes/depois)
+
+[0:17–0:21] COR 4/6
+Fala: “Quarta: …”
+Tela: “… | 4/6”
+B-roll: plano de canto do ambiente (sensação de amplitude)
+
+[0:21–0:25] COR 5/6
+Fala: “Quinta: …”
+Tela: “… | 5/6”
+B-roll: close da textura/rolo pintando (ritmo)
+
+[0:25–0:29] COR 6/6
+Fala: “Sexta: …”
+Tela: “… | 6/6”
+B-roll: mosaico rápido com as 6 cores (0,8s)
+
+[0:29–0:34] TESE/RESUMO
+Fala: “Esses tons ampliam o ambiente sem estourar como o branco e sem deixar frio como o cinza.”
+Tela: “Ampliam + ficam elegantes + fáceis de combinar”
+
+[0:34–0:39] CTA 1 (ENGAJAMENTO)
+Fala: “Qual dessas você já usou — ou qual você escolheria? Comenta aqui.”
+Tela: “Comenta: qual você escolheria?”
+
+[0:39–0:45] CTA 2 (SALVAR + PRÓXIMO PASSO)
+Fala: “Salva pra usar na loja de tinta. E se você quer segurança pra escolher o resto da casa, pega minha curadoria no link da bio.”
+Tela: “Salva • Link na bio”</pre>
+      <div class="footer">Dica: prepare antes uma lista com 6 nomes reais (Coral/Suvinil ou as marcas mais comuns do seu público) para evitar travar na gravação.</div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Elementos visuais <span class="badge">edição high-retention</span></h2>
+      <div class="body">
+        <ul class="list">
+          <li><b>Cortes</b>: 1 cor = 1 take (3–4s). Sem pausas longas.</li>
+          <li><b>Overlay padrão</b>: Marca + Nome da cor (grande) + “Subtom: …” (pequeno) + contador “X/6”.</li>
+          <li><b>B-roll obrigatório</b>: amostra grande na parede + cartela/latinha/print do catálogo + comparação rápida com branco puro.</li>
+          <li><b>Composição</b>: fundo limpo, luz frontal, enquadramento estável; cor sempre bem iluminada.</li>
+          <li><b>Áudio</b>: voz na frente; música discreta; use redução de ruído.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Copy e ganchos <span class="badge">prontos pra testar</span></h2>
+      <div class="body">
+        <div class="callout">
+          <div class="top"><div class="gradtext">Hooks (1–2s)</div><div class="small">Use número + recorte + erro a evitar</div></div>
+          <div class="hr"></div>
+          <ul class="list" id="hooksList">
+            <li>“6 cores de tinta pra fugir do branco (sem cair no cinza)”</li>
+            <li>“5 tons neutros pra deixar a casa clara sem parecer clínica”</li>
+            <li>“7 cores seguras pra quem tem medo de errar na pintura”</li>
+            <li>“3 critérios pra escolher um ‘quase branco’ que não fica frio”</li>
+          </ul>
+        </div>
+        <div class="hr"></div>
+        <b>Frases-curinga (repetição de critérios)</b>
+        <ul class="list">
+          <li>“Leve, atemporal e fácil de combinar.”</li>
+          <li>“Não puxa pro cinza e não estoura como branco puro.”</li>
+          <li>“Funciona com madeira, preto, inox e tecidos neutros.”</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>CTA <span class="badge">ordem que converte</span></h2>
+    <div class="body">
+      <div class="kv">
+        <div class="item"><b>1) Comentários</b><span class="muted">“Qual você já usou? Qual você escolheria pra sala/quarto?”</span></div>
+        <div class="item"><b>2) Salvamento</b><span class="muted">“Salva esse vídeo pra levar na loja de tinta.”</span></div>
+        <div class="item"><b>3) Próximo passo</b><span class="muted">“Quer segurança nas escolhas do resto da casa? Link na bio / me chama no DM.”</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Checklist de criação <span class="badge">pré • gravação • pós</span></h2>
+    <div class="body">
+      <div class="checks">
+        <div class="chk"><div class="dot ok"></div><div><b>Defina 1 dor específica</b><div class="small">Ex.: “neutro claro sem branco / sem cinza frio”.</div></div></div>
+        <div class="chk"><div class="dot ok"></div><div><b>Escolha um número fechado (5–7)</b><div class="small">Lista curta aumenta retenção e saves.</div></div></div>
+        <div class="chk"><div class="dot info"></div><div><b>Selecione marcas conhecidas</b><div class="small">Facilita a compra e aumenta confiança.</div></div></div>
+        <div class="chk"><div class="dot info"></div><div><b>Crie critérios fixos (3–5)</b><div class="small">Ex.: leve, atemporal, versátil, elegante, não puxa pro cinza.</div></div></div>
+        <div class="chk"><div class="dot warn"></div><div><b>Escreva 1 linha por item</b><div class="small">Nome + subtom + por que é seguro (benefício).</div></div></div>
+        <div class="chk"><div class="dot warn"></div><div><b>Planeje B-roll obrigatório</b><div class="small">Parede + cartela/latinha + comparação com branco puro.</div></div></div>
+        <div class="chk"><div class="dot ok"></div><div><b>Grave em cortes por item</b><div class="small">Sem pauses: “Primeira… Segunda… Terceira…”.</div></div></div>
+        <div class="chk"><div class="dot info"></div><div><b>Overlay consistente</b><div class="small">Marca + nome + tag subtom + contador X/6.</div></div></div>
+        <div class="chk"><div class="dot ok"></div><div><b>Feche com tese geral</b><div class="small">Uma frase que resume o ganho do conjunto.</div></div></div>
+        <div class="chk"><div class="dot warn"></div><div><b>CTA em 3 passos</b><div class="small">Comentar → salvar → link/DM.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Variações <span class="badge">mesma fórmula, outros temas</span></h2>
+    <div class="body">
+      <ul class="list">
+        <li><b>Para sala pequena</b>: “6 cores que ampliam a sala sem ficar ‘lavada’.”</li>
+        <li><b>Para quarto</b>: “5 tons neutros relaxantes (sem cara de hospital).”</li>
+        <li><b>Parede de destaque</b>: “4 cores seguras pra parede de destaque (sem cansar).”</li>
+        <li><b>Obra/reforma</b>: “3 escolhas que evitam arrependimento na pintura.”</li>
+        <li><b>Mito vs verdade</b>: “Cinza é sempre elegante? Depende do subtom.”</li>
+      </ul>
+      <div class="hr"></div>
+      <div class="callout">
+        <div class="top"><div class="gradtext">Template de hook (preencha)</div><div class="small">Copie e substitua as variáveis</div></div>
+        <div class="hr"></div>
+        <pre id="hookTemplate">“{N} opções de {PRODUTO} ({MARCAS}) pra {OBJETIVO} (sem {ERRO/INIMIGO})”
+Ex.: “6 cores de tinta (Coral e Suvinil) pra ampliar a sala (sem esfriar no cinza)”</pre>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+function copyText(id){
+  const el = document.getElementById(id);
+  const text = el ? (el.innerText || el.textContent) : "";
+  if(!text) return;
+  navigator.clipboard.writeText(text);
+}
+
+document.getElementById('copyBtn').addEventListener('click', function(){
+  copyText('roteiro');
+  this.textContent = 'Roteiro copiado';
+  setTimeout(()=> this.textContent = 'Copiar roteiro', 1200);
+});
+
+document.getElementById('copyHooks').addEventListener('click', function(){
+  const hooks = Array.from(document.querySelectorAll('#hooksList li')).map(li=>li.textContent).join('\n');
+  navigator.clipboard.writeText(hooks);
+  this.textContent = 'Ganchos copiados';
+  setTimeout(()=> this.textContent = 'Copiar ganchos', 1200);
+});
+</script></body></html>
