@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 2 — Arquitetura — Esse “luxo” envelhece mal: o pendente dourado chamativo</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.58);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r12: 12px;
+      --r16: 16px;
+      --r20: 20px;
+      --g1: linear-gradient(90deg, #2AF598 0%, #009EFD 55%, #FFB347 100%);
+      --g2: radial-gradient(1200px 500px at 20% -10%, rgba(42,245,152,.22), transparent 55%),
+            radial-gradient(900px 450px at 90% 0%, rgba(0,158,253,.20), transparent 60%),
+            radial-gradient(900px 500px at 70% 110%, rgba(255,179,71,.18), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height: 100vh;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 54px}
+
+    .topbar{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      padding:18px;
+      border:1px solid var(--stroke);
+      border-radius: var(--r20);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .meta{
+      display:flex; flex-direction:column; gap:8px;
+      min-width:0;
+    }
+
+    .kicker{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .2px;
+    }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+
+    .dot{
+      width:8px; height:8px; border-radius:999px; background: #2AF598;
+      box-shadow: 0 0 0 4px rgba(42,245,152,.12);
+    }
+
+    h1{
+      margin:0;
+      font-size: clamp(20px, 2.2vw, 28px);
+      line-height:1.15;
+      letter-spacing: -0.3px;
+      word-break: break-word;
+    }
+
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height:1.5;
+      max-width: 74ch;
+    }
+
+    .actions{
+      display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; align-items:center;
+    }
+
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18)}
+
+    .btnPrimary{
+      position:relative;
+      border-color: transparent;
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+    }
+    .btnPrimary:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g1);
+      opacity:.95;
+      filter: blur(0px);
+      z-index:0;
+    }
+    .btnPrimary:after{
+      content:"";
+      position:absolute; inset:1px;
+      background: rgba(10,14,28,.92);
+      border-radius: 11px;
+      z-index:0;
+    }
+    .btnPrimary span{position:relative; z-index:1}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      margin-top:14px;
+    }
+
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+      .actions{justify-content:flex-start}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius: var(--r16);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: 0 14px 44px rgba(0,0,0,.40);
+      overflow:hidden;
+    }
+
+    .cardHeader{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+    }
+
+    .cardHeader h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+      text-transform: uppercase;
+      color: rgba(234,240,255,.82);
+    }
+
+    .badge{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: rgba(234,240,255,.78);
+    }
+
+    .content{padding:14px}
+    .content p{margin:0 0 10px; color: var(--muted); line-height:1.6; font-size:14px}
+    .content ul{margin:0; padding-left:18px; color: var(--muted); line-height:1.65; font-size:14px}
+    .content li{margin:8px 0}
+
+    .hr{height:1px; background: rgba(255,255,255,.08); margin:12px 0}
+
+    .highlight{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      border-radius: 14px;
+      padding:12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .highlight:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g1);
+      opacity:.26;
+      transform: translateY(-8px);
+      filter: blur(8px);
+    }
+    .highlight > *{position:relative}
+
+    .twoCol{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 700px){
+      .twoCol{grid-template-columns:1fr}
+    }
+
+    .scriptBox{
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: 14px;
+      background: rgba(0,0,0,.25);
+      padding:12px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: rgba(234,240,255,.86);
+      white-space: pre-wrap;
+    }
+
+    .small{font-size:12.5px; color: var(--muted2); line-height:1.55}
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      background: rgba(10,14,28,.85);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(234,240,255,.90);
+      padding: 10px 12px;
+      border-radius: 999px;
+      box-shadow: 0 18px 48px rgba(0,0,0,.55);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+      font-size: 13px;
+    }
+    .toast.on{opacity: 1; transform: translateX(-50%) translateY(-2px)}
+
+    .link{
+      color: rgba(234,240,255,.9);
+      text-decoration: underline;
+      text-decoration-color: rgba(255,255,255,.28);
+      text-underline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="meta">
+        <div class="kicker">
+          <span class="pill"><span class="dot"></span> Nicho: <strong>Arquitetura</strong></span>
+          <span class="pill">Dia: <strong>2</strong></span>
+          <span class="pill">Pilar: <strong>Mito vs Verdade</strong></span>
+          <span class="pill">Formato: <strong>Reels</strong></span>
+        </div>
+        <h1>Esse “luxo” envelhece mal: o pendente dourado chamativo</h1>
+        <p class="sub">Desmistifique um item popular com confronto direto + regra de elegância + alternativa/promessa de continuação. Post original: <a class="link" href="https://www.instagram.com/p/DUDYGOZiPkl/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DUDYGOZiPkl/</a></p>
+      </div>
+      <div class="actions">
+        <a class="btn" href="https://www.instagram.com/p/DUDYGOZiPkl/" target="_blank" rel="noopener noreferrer">Abrir post</a>
+        <button class="btn btnPrimary" id="copyBtn"><span>Copiar roteiro</span></button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Resumo</h2>
+          <span class="badge">Objetivo: retenção + compartilhamento</span>
+        </div>
+        <div class="content">
+          <div class="highlight">
+            <p><strong>Ideia central:</strong> “Parece luxo, mas é só chamativo — e deixa o ambiente datado rápido.” O vídeo funciona porque confronta uma crença popular, usa um objeto extremamente reconhecível e entrega uma regra simples (elegância = discrição + bom design), fechando com CTA de salvar/mandar pra alguém.</p>
+          </div>
+          <div class="hr"></div>
+          <div class="twoCol">
+            <div>
+              <p><strong>Público-alvo:</strong> pessoas montando/renovando casa, escolhendo iluminação, com medo de errar e se arrepender.</p>
+              <p><strong>Promessa:</strong> evitar compra por impulso e refinar o olhar para escolhas mais atemporais.</p>
+            </div>
+            <div>
+              <p><strong>Tom:</strong> assertivo, direto, “verdade que ninguém te fala na loja”.</p>
+              <p><strong>Motor do engajamento:</strong> polarização controlada + utilidade prática + vergonha/alerta (“cilada”) + gancho de série.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Estrutura</h2>
+          <span class="badge">45–60s · cortes curtos</span>
+        </div>
+        <div class="content">
+          <ul>
+            <li><strong>0–2s:</strong> Confronto (nega “luxo/elegância”).</li>
+            <li><strong>2–6s:</strong> Reconhecimento (descreve o item + close).</li>
+            <li><strong>6–12s:</strong> Concessão (quando funciona) + delimita público.</li>
+            <li><strong>12–20s:</strong> Regra (chamativo ≠ elegante) em 1 frase memorável.</li>
+            <li><strong>20–32s:</strong> Explicação do princípio (o que é elegante/atemporal).</li>
+            <li><strong>32–42s:</strong> Armadilha (por que vende tanto / por que a pessoa cai).</li>
+            <li><strong>42–55s:</strong> Imperativo (o que fazer/evitar) + CTA.</li>
+            <li><strong>final:</strong> Gancho de série ("no próximo eu mostro alternativas").</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader">
+          <h2>Roteiro</h2>
+          <span class="badge">Texto falado + textos de tela</span>
+        </div>
+        <div class="content">
+          <p class="small">Use o roteiro como template: troque apenas o [ITEM], 3 características visuais e a “regra” central. Mantenha o ritmo (frases curtas) e os imperativos.</p>
+          <div class="hr"></div>
+          <div class="scriptBox" id="scriptText">(0–2s) [CLOSE NO ITEM]
+FALA: “Quem foi que te disse que isso aqui é luxo? Não é.”
+TELA: “ISSO NÃO É LUXO.”
+
+(2–6s) [MOSTRA DETALHES: brilho / dourado / bolinhas]
+FALA: “Esse pendente dourado, brilhante, cheio de detalhe… ele é só chamativo.”
+TELA: “É SÓ CHAMATIVO.”
+
+(6–12s) [PAUSA CURTA + OLHAR PRA CÂMERA]
+FALA: “Tem como dar certo? Tem. Se você quer um efeito ‘uau’ bem tendência, bem moda.”
+TELA: “DÁ CERTO… DEPENDE.”
+
+(12–20s) [CORTE SECO]
+FALA: “Agora, se você quer uma casa atemporal e elegante: não compra.”
+TELA: “QUER ATEMPORAL? EVITE.”
+
+(20–32s) [EXPLICA EM 2–3 FRASES]
+FALA: “Elegante quase sempre é discreto. É proporção, bom desenho, material bem escolhido e acabamento bem feito. Não é ‘brilhar mais’.”
+TELA: “ELEGANTE = DISCRETO + BEM DESENHADO”
+
+(32–42s) [B-ROLL EM LOJA / PRINTS / EXEMPLOS]
+FALA: “Você vê isso em toda loja e no Pinterest porque vende fácil: parece ‘rico’ no primeiro olhar. E é aí que muita gente cai.”
+TELA: “VENDE FÁCIL = CILADA”
+
+(42–55s) [PUNCH-IN NOS IMPERATIVOS]
+FALA: “Desconfia do escandaloso. Se o seu objetivo é sofisticação, escolhe um design mais limpo.”
+TELA: “DESCONFIE DO ESCANDALOSO.”
+
+(final) [FECHA COM PROMESSA]
+FALA: “Salva pra não errar na iluminação e manda pra quem tá escolhendo pendente. No próximo eu te mostro os pendentes que funcionam de verdade.”
+TELA: “SALVE + ENVIE • PRÓXIMO: OS CERTOS”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Elementos visuais</h2>
+          <span class="badge">B-roll + edição</span>
+        </div>
+        <div class="content">
+          <ul>
+            <li><strong>Plano 1:</strong> close do item (brilho/dourado/detalhes) nos 2 primeiros segundos.</li>
+            <li><strong>Plano 2:</strong> você em quadro médio com fundo limpo (parede escura ou neutra) para autoridade.</li>
+            <li><strong>Plano 3:</strong> inserts rápidos (loja, catálogo, Pinterest) para “prova de mercado”.</li>
+            <li><strong>Edição:</strong> jump cuts a cada 1–2 frases; corte seco no “Não é.”</li>
+            <li><strong>Texto na tela:</strong> 3–6 palavras por tela; caps em termos-chave (ATEMPORAL / CHAMATIVO / ELEGANTE).</li>
+            <li><strong>Ênfase:</strong> punch-in leve nos imperativos (“não compra”, “desconfia”, “evite”).</li>
+            <li><strong>Som:</strong> whoosh discreto nas viradas (concessão → regra; regra → armadilha).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">Legendas + primeiras linhas</span>
+        </div>
+        <div class="content">
+          <div class="highlight">
+            <p><strong>Gancho (1ª linha da legenda):</strong> “Isso não é luxo. É só chamativo — e vai te cansar rápido.”</p>
+          </div>
+          <div class="hr"></div>
+          <div class="twoCol">
+            <div>
+              <p><strong>Opções de hook (falado/na tela):</strong></p>
+              <ul>
+                <li>“Se você quer atemporalidade, pare de comprar isso.”</li>
+                <li>“Chamativo não é sofisticado. Só parece.”</li>
+                <li>“A peça que mais deixa sala com cara de 2020.”</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Legenda pronta (curta):</strong></p>
+              <p class="small">“Nem tudo que brilha é elegante. Se sua intenção é uma casa atemporal, fuja do ‘efeito uau’ fácil e priorize proporção, desenho e acabamento. Quer que eu indique modelos que funcionam? Comenta ‘PENDENTE’.”</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>CTA</h2>
+          <span class="badge">Salvar · Enviar · Comentar</span>
+        </div>
+        <div class="content">
+          <ul>
+            <li><strong>CTA principal (1 frase):</strong> “Salva pra não cair nessa cilada e manda pra quem tá escolhendo pendente.”</li>
+            <li><strong>CTA de comentários:</strong> “Quer que eu avalie o seu? Comenta ‘PENDENTE’.”</li>
+            <li><strong>CTA de série:</strong> “No próximo: 3 pendentes elegantes e atemporais (com faixa de preço).”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader">
+          <h2>Checklist</h2>
+          <span class="badge">Criação reproduzível</span>
+        </div>
+        <div class="content">
+          <div class="twoCol">
+            <div>
+              <p><strong>Pré-produção</strong></p>
+              <ul>
+                <li>[ ] Escolher 1 item “modinha” reconhecível (pendente, lustre, espelho, etc.).</li>
+                <li>[ ] Definir a intenção: “atemporal/elegante” vs “chamativo/trend”.</li>
+                <li>[ ] Separar 2–3 referências visuais (loja, catálogo, prints).</li>
+                <li>[ ] Definir a regra principal em 1 linha (memorável).</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Roteiro</strong></p>
+              <ul>
+                <li>[ ] Hook com negação: “Quem te disse que [ITEM] é luxo? Não é.”</li>
+                <li>[ ] 3 características visuais (pra identificação imediata).</li>
+                <li>[ ] Concessão (quando funciona) + corte (quando não funciona).</li>
+                <li>[ ] Regra + definição (o que é elegância, na prática).</li>
+                <li>[ ] Armadilha (por que vende / por que você compra por impulso).</li>
+                <li>[ ] CTA (salvar + enviar) + gancho do próximo.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="twoCol">
+            <div>
+              <p><strong>Gravação</strong></p>
+              <ul>
+                <li>[ ] Primeira frase forte nos primeiros 2s.</li>
+                <li>[ ] Gravar takes curtinhos (1–2 frases por take).</li>
+                <li>[ ] Captar b-roll do item (close + movimento leve).</li>
+                <li>[ ] Luz frontal suave (evitar sombras duras no rosto).</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Edição/Publicação</strong></p>
+              <ul>
+                <li>[ ] Jump cuts (sem respiro) + punch-in nos imperativos.</li>
+                <li>[ ] Texto na tela com palavras-chave (CHAMATIVO / ATEMPORAL / ELEGANTE).</li>
+                <li>[ ] Legenda com 1ª linha forte + CTA de comentário.</li>
+                <li>[ ] Fixar comentário: “Quer o vídeo com opções? Digita ‘PENDENTE’.”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader">
+          <h2>Variações</h2>
+          <span class="badge">Mesma fórmula, outros temas</span>
+        </div>
+        <div class="content">
+          <div class="twoCol">
+            <div>
+              <p><strong>Itens para repetir a estrutura</strong></p>
+              <ul>
+                <li>Sofá retrátil gigante “de cinema”</li>
+                <li>Espelho orgânico (quando vira excesso)</li>
+                <li>Piso super brilhante (efeito “molhado”)</li>
+                <li>Porcelanato “mármore” muito marcado</li>
+                <li>LED colorido em sanca (uso indiscriminado)</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Trocas rápidas no template</strong></p>
+              <ul>
+                <li>Troque: [ITEM] + 3 características visuais (pra reconhecimento).</li>
+                <li>Troque: “regra” por uma frase sua (ex.: “sofisticação é hierarquia de luz”).</li>
+                <li>Feche sempre com: “no próximo, 3 alternativas que funcionam”.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="small"><strong>Dica de série:</strong> publique em sequência de 3: (1) o que evitar, (2) o que usar, (3) exemplos reais/antes-depois (prova).</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('on');
+        setTimeout(()=>toast.classList.remove('on'), 1200);
+      }
+
+      async function copyText(){
+        const text = script.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        } catch(e){
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          showToast('Roteiro copiado (modo compatível).');
+        }
+      }
+
+      btn.addEventListener('click', copyText);
+    })();
+  </script>
+</body>
+</html>
