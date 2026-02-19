@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 24 — Arquitetura — Vi potencial nessa fachada</title>
+  <style>
+    :root{
+      --bg0:#070A10;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.04);
+      --card2: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 12px 40px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --g1: linear-gradient(90deg, #2EE59D 0%, #2AA8FF 45%, #FF8A2B 100%);
+      --g2: linear-gradient(135deg, rgba(46,229,157,.20) 0%, rgba(42,168,255,.18) 50%, rgba(255,138,43,.16) 100%);
+      --g3: radial-gradient(900px 400px at 20% -10%, rgba(42,168,255,.22), transparent 60%),
+            radial-gradient(700px 360px at 90% 0%, rgba(255,138,43,.18), transparent 55%),
+            radial-gradient(700px 360px at 20% 100%, rgba(46,229,157,.16), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background: var(--bg0);
+      color: var(--text);
+      line-height:1.45;
+    }
+
+    .bg{
+      position:fixed;
+      inset:0;
+      background: var(--g3);
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    .wrap{
+      position:relative;
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 64px;
+    }
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius2);
+      padding:18px 18px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(14px);
+      opacity:.6;
+      z-index:0;
+    }
+
+    .hgrid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+      align-items:start;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.25);
+      padding:8px 12px;
+      border-radius:999px;
+      color: var(--muted);
+      font-size:13px;
+    }
+
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background: var(--g1);
+      box-shadow: 0 0 24px rgba(42,168,255,.35);
+    }
+
+    h1{
+      margin:10px 0 8px;
+      font-size:22px;
+      letter-spacing:.2px;
+    }
+
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .chip{
+      font-family: var(--mono);
+      font-size:12px;
+      color: rgba(234,240,255,.82);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      padding:6px 9px;
+      border-radius:999px;
+    }
+
+    .link{
+      color: rgba(234,240,255,.9);
+      text-decoration:none;
+      border-bottom:1px dashed rgba(234,240,255,.35);
+    }
+    .link:hover{border-bottom-color: rgba(234,240,255,.7)}
+
+    .actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.28);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+      font-size:13px;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.06)}
+
+    .btn.primary{
+      border-color: rgba(46,229,157,.35);
+      background: linear-gradient(180deg, rgba(46,229,157,.16), rgba(42,168,255,.10));
+    }
+
+    main{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 14px;
+      border-bottom:1px solid rgba(255,255,255,.07);
+      background: rgba(0,0,0,.18);
+    }
+
+    .card .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      color: rgba(234,240,255,.85);
+    }
+
+    .tag{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      color: rgba(234,240,255,.72);
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+    }
+
+    .card .bd{padding:14px 14px}
+
+    .lead{
+      color: var(--muted);
+      margin:0;
+      font-size:14px;
+    }
+
+    .k{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      margin:10px 0;
+    }
+
+    .k b{color: rgba(234,240,255,.92)}
+    .k .bar{
+      width:3px;
+      border-radius:99px;
+      background: var(--g1);
+      flex:0 0 3px;
+      margin-top:2px;
+      height: 100%;
+      min-height: 26px;
+    }
+
+    ul{margin:10px 0 0 18px; color: var(--muted)}
+    li{margin:6px 0}
+
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    .code{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: rgba(234,240,255,.78);
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .muted{color: var(--muted2)}
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.08);
+      margin: 12px 0;
+    }
+
+    .slides{
+      counter-reset: s;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+
+    .slide{
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .slide .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .num{
+      font-family: var(--mono);
+      font-weight:700;
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+    }
+
+    .pill{
+      font-size:12px;
+      color: rgba(234,240,255,.8);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      padding:4px 8px;
+      border-radius:999px;
+    }
+
+    @media (max-width: 860px){
+      .hgrid{grid-template-columns:1fr}
+      .actions{justify-content:flex-start}
+      .grid2, .cols{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="wrap">
+    <header>
+      <div class="hgrid">
+        <div>
+          <div class="badge"><span class="dot"></span><span><b>Nicho:</b> Arquitetura <span class="muted">•</span> <b>Dia:</b> 24</span></div>
+          <h1>Vi potencial nessa fachada: antes/depois conceitual</h1>
+          <div class="meta">
+            <span class="chip">Pilar: Passo a passo</span>
+            <span class="chip">Formato: Carrossel</span>
+            <span class="chip">Objetivo: provar que pequenas decisões elevam a fachada</span>
+          </div>
+          <div style="margin-top:10px" class="muted">
+            Post original: <a class="link" href="https://www.instagram.com/p/DT8IHQyl1D7/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DT8IHQyl1D7/</a>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <a class="btn" href="https://www.instagram.com/p/DT8IHQyl1D7/" target="_blank" rel="noreferrer" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Abrir post</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="hd"><h2>Resumo</h2><span class="tag">Use como série semanal</span></div>
+        <div class="bd">
+          <p class="lead">Carrossel de <b>exercício de olhar</b> com comparativo <b>Antes x Depois (conceitual)</b>. A narrativa é curta, visual e ética: você mostra o potencial, lista mudanças replicáveis e fecha convidando a audiência a analisar junto.</p>
+          <div class="k"><div class="bar"></div><div><b>Promessa central</b><div class="muted">“Sem reinventar. Só cuidando: ordem, paleta e hierarquia mudam tudo.”</div></div></div>
+          <div class="k"><div class="bar"></div><div><b>Dispositivo de confiança</b><div class="muted">Disclaimer explícito: estudo conceitual, sem vínculo com o imóvel/proprietário, sem julgamento.</div></div></div>
+        </div>
+      </section>
+
+      <div class="grid2">
+        <section class="card">
+          <div class="hd"><h2>Estrutura</h2><span class="tag">5–7 slides</span></div>
+          <div class="bd">
+            <ul>
+              <li><b>Hook</b> (promessa + curiosidade)</li>
+              <li><b>Antes</b> (foto crua, legível)</li>
+              <li><b>Depois (conceitual)</b> (organização plausível)</li>
+              <li><b>O que mudou</b> (3–6 bullets)</li>
+              <li><b>Por que funciona</b> (2–3 princípios)</li>
+              <li><b>Aplicação</b> (onde usar + por onde começar)</li>
+              <li><b>CTA + disclaimer</b> (comentário/salvar/direct)</li>
+            </ul>
+            <div class="hr"></div>
+            <div class="muted" style="font-size:13px">
+              Dica de retenção: se o antes/depois estiver em uma única imagem, teste dividir em 2 slides (Antes → Depois) para aumentar tempo de permanência.
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd"><h2>Elementos visuais</h2><span class="tag">High-tech + limpo</span></div>
+          <div class="bd">
+            <ul>
+              <li>Foto frontal, perspectiva corrigida (verticais retas)</li>
+              <li>Selos discretos: <b>ANTES</b> / <b>DEPOIS</b></li>
+              <li>Linha/ seta fina para reforçar comparação</li>
+              <li>Texto mínimo (barra semitransparente se necessário)</li>
+              <li>Paleta de 2–3 cores no “depois” (base + destaque + detalhes)</li>
+              <li>Detalhes “satisfatórios”: molduras, luminária, numeração, paisagismo baixo</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="hd"><h2>Slides sugeridos (1..7)</h2><span class="tag">modelo reproduzível</span></div>
+        <div class="bd">
+          <div class="slides">
+            <div class="slide">
+              <div class="top"><span class="num">Slide 1</span><span class="pill">Hook</span></div>
+              <div class="code">TEXTO (curto)
+“Vi potencial nessa fachada.”
+
+SUB (opcional)
+“Sem reinventar. Só cuidando.”</div>
+              <div class="muted" style="font-size:13px; margin-top:8px">Visual: recorte da fachada (detalhe) + selo “EXERCÍCIO DE OLHAR”.</div>
+            </div>
+
+            <div class="slide">
+              <div class="top"><span class="num">Slide 2</span><span class="pill">Antes</span></div>
+              <div class="code">SELO: ANTES
+Nota pequena: “Imagem original • sem julgamento”</div>
+              <div class="muted" style="font-size:13px; margin-top:8px">Evite filtros pesados. Priorize leitura do volume e dos vazios/cheios.</div>
+            </div>
+
+            <div class="slide">
+              <div class="top"><span class="num">Slide 3</span><span class="pill">Depois (conceitual)</span></div>
+              <div class="code">SELO: DEPOIS (conceitual)
+Nota: “Estudo de organização visual”</div>
+              <div class="muted" style="font-size:13px; margin-top:8px">Intervenção plausível: coerência de paleta, alinhamentos, poucos elementos novos.</div>
+            </div>
+
+            <div class="slide">
+              <div class="top"><span class="num">Slide 4</span><span class="pill">O que mudou (3–6 itens)</span></div>
+              <div class="code">Checklist de mudanças (exemplo)
+1) Paleta mais coesa
+2) Molduras e acabamentos
+3) Hierarquia na entrada (porta/número)
+4) Iluminação de fachada
+5) Base + paisagismo baixo</div>
+              <div class="muted" style="font-size:13px; margin-top:8px">Regra: cada bullet precisa ser “copiável” por quem está vendo.</div>
+            </div>
+
+            <div class="slide">
+              <div class="top"><span class="num">Slide 5</span><span class="pill">Por que funciona</span></div>
+              <div class="code">Princípios (curto)
+• Menos ruído → mais leitura
+• Repetição + alinhamento = ordem
+• Contraste só no que importa</div>
+              <div class="muted" style="font-size:13px; margin-top:8px">Objetivo: ensinar sem “aula longa”. 2–3 princípios bastam.</div>
+            </div>
+
+            <div class="slide">
+              <div class="top"><span class="num">Slide 6</span><span class="pill">Aplicação prática</span></div>
+              <div class="code">Onde usar
+“Lojas de rua • sobrados • prédios mistos”
+
+Por onde começar
+“Comece pelo térreo: entrada + vitrine + iluminação”</div>
+              <div class="muted" style="font-size:13px; margin-top:8px">Dê direção: “um primeiro passo” reduz trava e aumenta salvamentos.</div>
+            </div>
+
+            <div class="slide">
+              <div class="top"><span class="num">Slide 7</span><span class="pill">CTA + Disclaimer</span></div>
+              <div class="code">CTA (escolha 1)
+A) “Você mudaria o quê? Comenta 1 decisão.”
+B) “Quer um exercício de olhar na sua rua? Me manda uma foto no direct.”
+C) “Salva pra usar como referência de limpeza visual.”
+
+DISCLAIMER
+“Estudo conceitual • sem vínculo com o imóvel/proprietário.”</div>
+              <div class="muted" style="font-size:13px; margin-top:8px">O disclaimer evita defensividade e protege posicionamento.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="cols">
+        <section class="card">
+          <div class="hd"><h2>Roteiro</h2><span class="tag">texto copiável</span></div>
+          <div class="bd">
+            <div class="code" id="roteiroText">CARROSSEL — EXERCÍCIO DE OLHAR (ANTES/DEPOIS CONCEITUAL)
+
+SLIDE 1 — HOOK
+“Vi potencial nessa [FACHADA/TEMA].”
+“Sem reinventar. Só cuidando.”
+
+SLIDE 2 — ANTES
+Selo: ANTES
+Nota: “Imagem original • sem julgamento”
+
+SLIDE 3 — DEPOIS (CONCEITUAL)
+Selo: DEPOIS (conceitual)
+Nota: “Estudo de organização visual”
+
+SLIDE 4 — O QUE MUDOU (3–6)
+1) [Mudança 1: paleta/organização]
+2) [Mudança 2: molduras/acabamentos]
+3) [Mudança 3: hierarquia/entrada]
+4) [Mudança 4: iluminação/sinalização]
+5) [Mudança 5: base/paisagismo]
+
+SLIDE 5 — POR QUE FUNCIONA (2–3 princípios)
+• Menos ruído → mais leitura
+• Repetição + alinhamento = ordem
+• Contraste só no que importa
+
+SLIDE 6 — APLICAÇÃO
+“Serve para: [3 tipos de casos]”
+“Comece por: [1 primeiro passo prático]”
+
+SLIDE 7 — CTA + DISCLAIMER
+CTA: “Você mudaria o quê? Comenta 1 decisão.”
+OU: “Quer um exercício de olhar no seu caso? Envia foto no direct.”
+Disclaimer: “Estudo conceitual • sem vínculo com o imóvel/proprietário.”
+
+LEGENDA (modelo)
+“Hoje eu vi potencial nessa [fachada/ambiente/projeto].
+Não é crítica e não é um ‘antes e depois’ oficial.
+É um exercício de olhar: e se a gente limpasse visualmente, organizasse os elementos e valorizasse o que já existe?
+
+Muitas [fachadas/propostas/peças] não precisam ser reinventadas — só cuidadas.
+Pequenas decisões mudam tudo no conjunto.
+
+Quer que eu faça esse estudo com [um exemplo seu]? Me manda no direct.
+(Estudo conceitual, sem vínculo com o imóvel/proprietário.)”</div>
+            <div class="muted" style="font-size:13px; margin-top:10px">Campos entre colchetes são para substituição rápida em outros temas.</div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd"><h2>Copy e ganchos</h2><span class="tag">opções prontas</span></div>
+          <div class="bd">
+            <div class="k"><div class="bar"></div><div><b>Ganchos (Slide 1)</b><div class="muted" style="margin-top:4px">1) “Isso aqui só precisava de ordem.”<br/>2) “Pequenas decisões, grande impacto.”<br/>3) “Não é reforma: é leitura e acabamento.”<br/>4) “Eu não mudaria tudo — eu refinaria.”</div></div></div>
+            <div class="k"><div class="bar"></div><div><b>Linhas de autoridade (legenda)</b><div class="muted" style="margin-top:4px">• “Quando a hierarquia aparece, a fachada ‘respira’.”<br/>• “Repetição e alinhamento resolvem mais do que parece.”<br/>• “Contraste é tempero: use só onde quer atenção.”</div></div></div>
+            <div class="k"><div class="bar"></div><div><b>Disclaimers (variações)</b><div class="muted" style="margin-top:4px">• “Estudo conceitual, feito a partir de foto pública.”<br/>• “Sem vínculo com o imóvel/proprietário.”<br/>• “Objetivo: exercício de composição, não julgamento.”</div></div></div>
+          </div>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="hd"><h2>CTA</h2><span class="tag">escolha 1 primário + 1 secundário</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="k"><div class="bar"></div><div><b>Primários (resposta)</b><div class="muted" style="margin-top:4px">A) “Você mudaria o quê? Comenta 1 decisão.”<br/>B) “Qual detalhe mais elevou o conjunto: paleta, molduras ou luz?”<br/>C) “Você prefere ‘reformar tudo’ ou ‘cuidar do que já existe’?”</div></div></div>
+            </div>
+            <div>
+              <div class="k"><div class="bar"></div><div><b>Secundários (salvar/direct)</b><div class="muted" style="margin-top:4px">• “Salva pra usar como referência de limpeza visual.”<br/>• “Me manda uma foto no direct e eu faço um exercício de olhar.”<br/>• “Compartilha com alguém que tem comércio de rua.”</div></div></div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="muted" style="font-size:13px">Dica: se pedir direct, deixe claro o formato: “frontal, de dia, sem grande angulação”.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Checklist</h2><span class="tag">criação + revisão</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="k"><div class="bar"></div><div><b>Pré-produção</b><div class="muted" style="margin-top:4px">Defina: 1 foto “antes”, a tese (o que vai melhorar) e 3–6 mudanças.</div></div></div>
+              <ul>
+                <li>[ ] Escolher fachada com leitura clara (frontal e sem muita oclusão)</li>
+                <li>[ ] Definir o “tema” do exercício (paleta? hierarquia? ruído?)</li>
+                <li>[ ] Planejar mudanças plausíveis (não “milagre”)</li>
+              </ul>
+            </div>
+            <div>
+              <div class="k"><div class="bar"></div><div><b>Execução visual</b><div class="muted" style="margin-top:4px">Faça o “depois” parecer executável: poucas cores, alinhamentos e detalhes de acabamento.</div></div></div>
+              <ul>
+                <li>[ ] Corrigir perspectiva (verticais retas)</li>
+                <li>[ ] Paleta com 2–3 cores (base + destaque + detalhes)</li>
+                <li>[ ] Entrada com hierarquia (moldura/número/luz)</li>
+                <li>[ ] Repetição de elementos (ritmo e coerência)</li>
+                <li>[ ] Reduzir ruído (somente o que faz sentido remover)</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="cols">
+            <div>
+              <div class="k"><div class="bar"></div><div><b>Texto e ética</b><div class="muted" style="margin-top:4px">O tom é de estudo, não de crítica. Isso sustenta comentários e compartilhamentos.</div></div></div>
+              <ul>
+                <li>[ ] Inserir disclaimer (sem vínculo / conceitual)</li>
+                <li>[ ] Evitar adjetivos depreciativos (“feio”, “errado”)</li>
+                <li>[ ] Bullets curtos (copiáveis)</li>
+              </ul>
+            </div>
+            <div>
+              <div class="k"><div class="bar"></div><div><b>Publicação</b><div class="muted" style="margin-top:4px">Otimize para retenção: primeiro slide forte + comparação evidente.</div></div></div>
+              <ul>
+                <li>[ ] Capa com promessa clara (Hook)</li>
+                <li>[ ] Garantir que “Antes/Depois” fique óbvio em 1 segundo</li>
+                <li>[ ] CTA primário (comentário) + secundário (salvar/direct)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Variações</h2><span class="tag">mesmo impacto, outro tema</span></div>
+        <div class="bd">
+          <div class="k"><div class="bar"></div><div><b>Variação 1 — “Potencial no interior”</b><div class="muted" style="margin-top:4px">Troque fachada por <b>hall</b>, <b>cozinha</b> ou <b>banheiro</b>. Mantenha a estrutura: antes/depois + 3–6 decisões + princípios.</div></div></div>
+          <div class="k"><div class="bar"></div><div><b>Variação 2 — “Potencial na planta”</b><div class="muted" style="margin-top:4px">Antes: planta original. Depois: planta reorganizada (conceitual). Mudanças: circulação, setorização, iluminação, armazenamento.</div></div></div>
+          <div class="k"><div class="bar"></div><div><b>Variação 3 — “Mobiliário e composição”</b><div class="muted" style="margin-top:4px">Antes: sala sem hierarquia. Depois: layout com foco (tapete, iluminação, eixo visual). Princípios: escala, contraste, repetição.</div></div></div>
+
+          <div class="hr"></div>
+
+          <div class="cols">
+            <div>
+              <div class="k"><div class="bar"></div><div><b>Substituições rápidas (campos)</b><div class="muted" style="margin-top:4px">Use para adaptar sem perder o efeito.</div></div></div>
+              <div class="code">[OBJETO] = fachada / hall / vitrine / varanda / recepção
+[TEMA] = ruído visual / hierarquia / paleta / iluminação
+[MUDANÇAS] = 3–6 decisões (sempre copiáveis)
+[PRINCÍPIOS] = 2–3 regras simples
+[CTA] = comentário (1 decisão) + salvar + direct</div>
+            </div>
+            <div>
+              <div class="k"><div class="bar"></div><div><b>Ideias de séries (para calendário)</b><div class="muted" style="margin-top:4px">Para transformar em quadro fixo.</div></div></div>
+              <ul>
+                <li><b>“Exercício de olhar #01..#20”</b> (um por semana)</li>
+                <li><b>“Antes/Depois plausível”</b> (sem render exagerado)</li>
+                <li><b>“3 decisões que resolvem”</b> (micro-checklists)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const txt = document.getElementById('roteiroText');
+      function copy(){
+        const value = txt ? txt.innerText : '';
+        if(!value) return;
+        navigator.clipboard.writeText(value).then(()=>{
+          const old = btn.innerText;
+          btn.innerText = 'Roteiro copiado';
+          setTimeout(()=>btn.innerText = old, 1200);
+        }).catch(()=>{
+          // fallback
+          const range = document.createRange();
+          range.selectNodeContents(txt);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          try{ document.execCommand('copy'); }catch(e){}
+          sel.removeAllRanges();
+          const old = btn.innerText;
+          btn.innerText = 'Roteiro copiado';
+          setTimeout(()=>btn.innerText = old, 1200);
+        });
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
