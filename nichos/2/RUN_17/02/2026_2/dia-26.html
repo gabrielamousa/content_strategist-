@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Roteiro reproduzível — Arquitetura (Dia 26)</title>
+<style>
+  :root{
+    --bg:#0b0f17;
+    --panel:#0f1624;
+    --card:#101a2b;
+    --text:#e8eefc;
+    --muted:#a9b7d0;
+    --border:rgba(255,255,255,.10);
+    --shadow: 0 14px 40px rgba(0,0,0,.45);
+    --radius:18px;
+    --radius2:14px;
+    --g1: linear-gradient(135deg,#34d399 0%, #60a5fa 45%, #fb923c 100%);
+    --g2: linear-gradient(135deg, rgba(52,211,153,.18), rgba(96,165,250,.18), rgba(251,146,60,.18));
+    --codebg: rgba(255,255,255,.06);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    background:
+      radial-gradient(900px 500px at 15% 10%, rgba(96,165,250,.14), transparent 60%),
+      radial-gradient(900px 600px at 85% 15%, rgba(251,146,60,.12), transparent 60%),
+      radial-gradient(1000px 700px at 60% 90%, rgba(52,211,153,.12), transparent 65%),
+      var(--bg);
+    color:var(--text);
+    line-height:1.35;
+  }
+  a{color:#93c5fd; text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1080px; margin:0 auto; padding:28px 18px 60px}
+  header{
+    position:relative;
+    border:1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    padding:18px 18px 16px;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g2);
+    filter: blur(10px);
+    opacity:.9;
+    z-index:0;
+  }
+  header > *{position:relative; z-index:1}
+  .toprow{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .badges{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .badge{
+    border:1px solid var(--border);
+    background: rgba(15,22,36,.65);
+    padding:8px 10px;
+    border-radius: 999px;
+    font-size:12px;
+    color: var(--muted);
+  }
+  .badge strong{color:var(--text); font-weight:650}
+  h1{
+    margin:14px 0 8px;
+    font-size: clamp(18px, 2.4vw, 28px);
+    letter-spacing:.2px;
+  }
+  .sub{
+    margin:0;
+    color: var(--muted);
+    font-size:14px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap:14px;
+    margin-top:14px;
+  }
+  @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
+
+  .card{
+    border:1px solid var(--border);
+    background: rgba(16,26,43,.72);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card h2{
+    margin:0;
+    padding:14px 16px;
+    font-size:15px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .card h2 .tag{
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background: rgba(255,255,255,.04);
+    color: var(--muted);
+    white-space:nowrap;
+  }
+  .card .body{padding:14px 16px}
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    border-radius:999px;
+    padding:6px 10px;
+    border:1px solid var(--border);
+    background: rgba(255,255,255,.04);
+    color: var(--muted);
+    font-size:12px;
+    gap:8px;
+  }
+  .hr{height:1px; background:var(--border); margin:12px 0}
+  ul{margin:10px 0 0 18px; color: var(--text)}
+  li{margin:7px 0}
+  .muted{color:var(--muted)}
+  .callout{
+    border:1px solid var(--border);
+    background: rgba(255,255,255,.03);
+    border-radius: var(--radius2);
+    padding:12px;
+  }
+  .grad{
+    background: var(--g1);
+    -webkit-background-clip: text;
+    background-clip:text;
+    color: transparent;
+    font-weight: 750;
+  }
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap}
+  button{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    border-radius: 12px;
+    padding:10px 12px;
+    font-weight:650;
+    color:#0b0f17;
+    background: var(--g1);
+  }
+  button.secondary{
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    border:1px solid var(--border);
+    font-weight:600;
+  }
+  button:active{transform: translateY(1px)}
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    background: var(--codebg);
+    border:1px solid var(--border);
+    border-radius: var(--radius2);
+    padding:12px;
+    color: #eaf2ff;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media (max-width: 720px){.two{grid-template-columns:1fr}}
+  .kpi{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .kpi .pill b{color:var(--text)}
+  .footerNote{margin-top:12px; color:var(--muted); font-size:12px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="badges">
+          <div class="badge"><strong>Nicho</strong>: Arquitetura</div>
+          <div class="badge"><strong>Dia</strong>: 26</div>
+          <div class="badge"><strong>Formato</strong>: Carrossel</div>
+          <div class="badge"><strong>Pilar</strong>: Prova</div>
+        </div>
+        <div class="badge"><strong>Original</strong>: <a href="https://www.instagram.com/p/DT51gVnjw7A/" target="_blank" rel="noreferrer">ver post</a></div>
+      </div>
+      <h1><span class="grad">Antes e Depois</span> com pedido do cliente: o hook perfeito</h1>
+      <p class="sub">Objetivo: usar uma frase “Cliente: … (restrição)” para criar curiosidade + entregar transformação visual + converter em comentários/salvamentos.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo <span class="tag">o que este post faz bem</span></h2>
+        <div class="body">
+          <div class="callout">
+            <b>Fórmula central:</b> <span class="grad">Pedido real + restrição</span> → <span class="grad">Antes/Depois</span> → <span class="grad">decisões de projeto</span> → CTA simples.
+          </div>
+          <div class="kpi">
+            <span class="pill"><b>Gatilho</b>: bastidor (“Cliente:”)</span>
+            <span class="pill"><b>Retenção</b>: transformação imediata</span>
+            <span class="pill"><b>Autoridade</b>: materiais/detalhes</span>
+            <span class="pill"><b>Conversão</b>: pergunta fácil</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copiar e usar <span class="tag">cola pronta</span></h2>
+        <div class="body">
+          <div class="btnrow">
+            <button id="copyBtn">Copiar roteiro</button>
+            <button class="secondary" id="selectBtn">Selecionar texto</button>
+          </div>
+          <div class="hr"></div>
+          <pre id="scriptText">ROTEIRO (CARROSSEL) — “Cliente: quero… (restrição)”
+
+PROMESSA DO POST (1 linha):
+- “Como transformamos [ambiente] com a condição: [restrição]”
+
+CAPA (Slide 1):
+- Texto: “Cliente: quero [objetivo] (mas [restrição/condição])”
+- Visual: Antes x Depois (split) OU Antes com elemento de curiosidade.
+
+SLIDE 2 — ANTES (diagnóstico rápido):
+- “Antes: [problema 1] + [problema 2]”
+- (Opcional) 2 bullets: “sem [X] / pouco [Y]”
+
+SLIDE 3 — DIRETRIZ (a grande ideia):
+- “Diretriz: transformar em [conceito]”
+- “Por quê: [benefício funcional] + [benefício estético]”
+
+SLIDE 4 — DEPOIS (prova):
+- Render/foto do Depois.
+- Texto 3 palavras: “[resultado] + [sensação] + [função]”
+
+SLIDE 5 — DECISÕES (1–3 escolhas que geraram o resultado):
+- “Escolhas: 1) [decisão]  2) [decisão]  3) [decisão]”
+
+SLIDE 6 — DETALHES (credibilidade):
+- “Materiais: [material] | Iluminação: [tipo] | Verde: [espécies/estilo]”
+- (Opcional) mini planta / diagrama simples.
+
+SLIDE 7 — RESULTADO + CTA:
+- “Resultado: [principal ganho] sem [medo do cliente]”
+- CTA: “Qual detalhe você mais gostou? Comenta ↓”
+- CTA 2 (salvar): “Salve para usar como referência.”
+
+LEGENDA (curta):
+- 1ª linha (hook): “Pedido do cliente: [objetivo] (mas [restrição]).”
+- 2–4 linhas: “O que fizemos: [diretriz]. Decisões: [2–3 pontos].”
+- Fecho: “Qual parte você faria na sua casa? 👇”
+
+HASHTAGS (modelo):
+- #[nicho] #[cidade] #arquitetura #projeto #antesedepois #fachada #paisagismo (ajuste para seu tema)</pre>
+          <p class="footerNote">Dica: mantenha <b>máximo 2 linhas</b> de texto por slide quando a imagem for a protagonista.</p>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Estrutura <span class="tag">sequência replicável</span></h2>
+      <div class="body">
+        <div class="two">
+          <div class="callout">
+            <b>Storyline (a lógica):</b>
+            <ul>
+              <li><b>Contexto real</b>: frase do cliente.</li>
+              <li><b>Restrição</b>: o “mas…” que cria curiosidade.</li>
+              <li><b>Diagnóstico</b>: 1–2 problemas do antes.</li>
+              <li><b>Diretriz</b>: a ideia que guia tudo.</li>
+              <li><b>Prova</b>: depois forte (render/foto).</li>
+              <li><b>Decisões</b>: 1–3 escolhas (por quê).</li>
+              <li><b>Detalhes</b>: materiais/plantas/iluminação.</li>
+              <li><b>CTA</b>: pergunta simples + salvar.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <b>Regras de ouro (para qualquer tema):</b>
+            <ul>
+              <li><span class="grad">Restrição específica</span> vence promessa genérica.</li>
+              <li><span class="grad">Uma transformação</span> por post (não misture 3 ambientes).</li>
+              <li><span class="grad">Decisões nomeadas</span> (“pergolado”, “balizadores”, “paginação”) aumentam autoridade.</li>
+              <li>Texto serve a imagem: curto, alto contraste, leitura em 1s.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Slides sugeridos (1..7) <span class="tag">carrossel completo</span></h2>
+      <div class="body">
+        <ol style="margin:0 0 0 18px; padding:0">
+          <li><b>Capa (hook)</b> — “Cliente: quero [objetivo] (mas [restrição])” + Antes/Depois ou só Antes.</li>
+          <li><b>Antes</b> — “O problema em 1 frase” + 2 bullets (opcional).</li>
+          <li><b>Diretriz</b> — “Transformar em [conceito]” + “para [benefício]”.</li>
+          <li><b>Depois (hero)</b> — imagem mais bonita + 3 palavras de resultado.</li>
+          <li><b>Decisão #1–#3</b> — cards/labels na imagem ou lista curta.</li>
+          <li><b>Detalhes técnicos</b> — materiais + iluminação + vegetação/volumetria.</li>
+          <li><b>Fechamento</b> — “Resultado: [ganho]” + CTA comentários + “salve/mande”.</li>
+        </ol>
+        <div class="hr"></div>
+        <p class="muted" style="margin:0">Se você só tiver 5 slides, una “Decisões” + “Detalhes” no mesmo slide e mantenha a capa com Antes/Depois no split.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Roteiro <span class="tag">texto por slide + legenda</span></h2>
+      <div class="body">
+        <div class="two">
+          <div>
+            <div class="callout">
+              <b>Texto (substituível) por slide</b>
+              <div class="hr"></div>
+              <p style="margin:0 0 10px"><b>Slide 1 (capa)</b><br><span class="muted">Cliente:</span> quero <b>[melhoria desejada]</b><br><i class="muted">(sem/mas com [restrição real])</i></p>
+              <p style="margin:0 0 10px"><b>Slide 2 (antes)</b><br>Antes: <b>[problema principal]</b><br><span class="muted">+ [problema secundário]</span></p>
+              <p style="margin:0 0 10px"><b>Slide 3 (diretriz)</b><br>Solução: transformar em <b>[conceito]</b><br><span class="muted">Para: [benefício em linguagem simples]</span></p>
+              <p style="margin:0 0 10px"><b>Slide 4 (depois)</b><br>Depois: <b>[resultado 1] + [resultado 2] + [resultado 3]</b></p>
+              <p style="margin:0 0 10px"><b>Slide 5 (decisões)</b><br>3 escolhas que fizeram diferença:<br><span class="muted">1) [decisão]  2) [decisão]  3) [decisão]</span></p>
+              <p style="margin:0 0 10px"><b>Slide 6 (detalhes)</b><br>Materiais: <b>[X]</b> • Luz: <b>[Y]</b> • Verde: <b>[Z]</b></p>
+              <p style="margin:0"><b>Slide 7 (CTA)</b><br>Qual detalhe você mais gostou?<br><span class="muted">Comenta ↓ e salva para referência.</span></p>
+            </div>
+          </div>
+          <div>
+            <div class="callout">
+              <b>Legenda (modelo pronto)</b>
+              <div class="hr"></div>
+              <pre>Pedido do cliente: [objetivo] (mas [restrição]).
+
+Diretriz do projeto: [conceito].
+O que mudou na prática:
+• [decisão 1]
+• [decisão 2]
+• [decisão 3]
+
+Qual parte você faria na sua casa/negócio? Comenta aqui 👇
+
+(Salve para usar como referência + envie para alguém que está reformando.)</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Elementos visuais <span class="tag">identidade + composição</span></h2>
+      <div class="body">
+        <div class="two">
+          <div class="callout">
+            <b>Composição (o que dá o “efeito”)</b>
+            <ul>
+              <li><b>Split 50/50</b>: Antes em cima, Depois embaixo (ou vice-versa).</li>
+              <li><b>Depois mais vivo</b>: reforçar vegetação, luz e contraste.</li>
+              <li><b>Faixa de texto</b>: caixa clara e limpa (estilo editorial) para legibilidade.</li>
+              <li><b>Assinatura</b>: logo/monograma discreto no canto.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <b>Padrão de texto no slide</b>
+            <ul>
+              <li>Linha 1: <b>promessa/problema</b> (grande).</li>
+              <li>Linha 2: <b>restrição</b> em itálico + parênteses (menor).</li>
+              <li>Regra: <b>até 2 linhas</b> para não competir com a imagem.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <b>Especificação rápida (produção)</b>
+          <ul>
+            <li>Formato: 1080×1080 ou 1080×1350 (priorize 1350 se tiver muito detalhe).</li>
+            <li>Margens internas da caixa de texto: 24–40px.</li>
+            <li>Contraste: texto #111 em caixa branca (ou texto branco em faixa preta transparente).</li>
+            <li>Consistência: mesma posição do texto em todos os slides.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Copy e ganchos <span class="tag">substituições com mesmo impacto</span></h2>
+      <div class="body">
+        <div class="two">
+          <div class="callout">
+            <b>Ganchos (modelo “Cliente:”)</b>
+            <ul>
+              <li>“Cliente: quero <b>[resultado]</b> (sem <b>[custo]</b>)”</li>
+              <li>“Cliente: preciso de <b>[função]</b> (mas <b>[limitação do espaço]</b>)”</li>
+              <li>“Cliente: quero <b>[estilo]</b> (só que <b>[manutenção baixa]</b>)”</li>
+              <li>“Cliente: dá pra melhorar <b>[área]</b> (sem <b>quebrar tudo</b>)?”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <b>Outras variações de hook (mesma lógica)</b>
+            <ul>
+              <li>“Antes: [dor]. Depois: [desejo]. Com a condição: [restrição].”</li>
+              <li>“O ambiente tinha [problema]. A virada foi [diretriz].”</li>
+              <li>“3 decisões que mudaram tudo em [ambiente] (com [restrição]).”</li>
+              <li>“Se você não precisa de [X], dá pra transformar em [Y].”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <b>Banco de restrições (troque e mantenha o impacto)</b>
+          <div class="two">
+            <ul>
+              <li>“sem acesso para carro”</li>
+              <li>“sem obra pesada”</li>
+              <li>“com baixo orçamento”</li>
+              <li>“com pouca luz natural”</li>
+              <li>“com pouca manutenção”</li>
+            </ul>
+            <ul>
+              <li>“sem perder privacidade”</li>
+              <li>“com crianças/pets”</li>
+              <li>“com medida apertada”</li>
+              <li>“sem reduzir ventilação”</li>
+              <li>“aproveitando o existente”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>CTA <span class="tag">comentários + salvar + direct</span></h2>
+      <div class="body">
+        <div class="two">
+          <div class="callout">
+            <b>CTA principal (baixo esforço)</b>
+            <ul>
+              <li>“O que você achou? Responde aqui nos comentários ↓”</li>
+              <li>“Você faria essa mudança? Comenta <b>SIM</b> ou <b>NÃO</b>.”</li>
+              <li>“Qual detalhe você mais gostou: <b>[A]</b>, <b>[B]</b> ou <b>[C]</b>?”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <b>CTA secundário (conversão)</b>
+            <ul>
+              <li>“Quer uma ideia para o seu espaço com a sua restrição? Me chama no direct com ‘<b>[PALAVRA-CHAVE]</b>’.”</li>
+              <li>“Salve para referência e envie para alguém que está reformando.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Checklist <span class="tag">criação e publicação</span></h2>
+      <div class="body">
+        <div class="two">
+          <div class="callout">
+            <b>Checklist de criação (antes de abrir o Canva)</b>
+            <ul>
+              <li>Escolher <b>1 ambiente</b> e <b>1 transformação</b>.</li>
+              <li>Definir <b>objetivo</b> + <b>restrição real</b> (específica).</li>
+              <li>Separar mídia: <b>Antes</b> (foto/obra) + <b>Depois</b> (render/foto).</li>
+              <li>Listar <b>3 decisões</b> de projeto (nomeáveis).</li>
+              <li>Escolher <b>1 CTA</b> de comentário + <b>1 de salvar</b>.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <b>Checklist de design (no arquivo)</b>
+            <ul>
+              <li>Texto em no máximo <b>2 linhas</b> na capa.</li>
+              <li>Contraste garantido (faixa/caixa para texto).</li>
+              <li>Consistência: mesma fonte, tamanhos e posição.</li>
+              <li>Logo discreto, sem poluir o comparativo.</li>
+              <li>Exportar em <b>1080×1350</b> (quando possível) e checar cortes.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <b>Checklist de publicação</b>
+          <ul>
+            <li>Primeira linha da legenda repete o hook: “Cliente: … (restrição)”.</li>
+            <li>Fixar comentário com pergunta (pra puxar conversa).</li>
+            <li>Responder 10 primeiros comentários com pergunta de volta.</li>
+            <li>Reposicionar o carrossel nos Stories com enquete: “Você faria?”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Variações <span class="tag">para outros temas além de arquitetura</span></h2>
+      <div class="body">
+        <div class="two">
+          <div class="callout">
+            <b>Mesma estrutura, outros nichos</b>
+            <ul>
+              <li><b>Design de interiores</b>: “Cliente: quero sala mais clara (sem trocar piso)”.</li>
+              <li><b>Gastronomia</b>: “Cliente: quero sobremesa sem açúcar (mas cremosa)”.</li>
+              <li><b>Marketing</b>: “Cliente: quero leads (sem aumentar orçamento)”.</li>
+              <li><b>Fitness</b>: “Aluno: quero perder gordura (sem academia)”.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <b>Substituições que mantêm o impacto</b>
+            <ul>
+              <li><b>Antes/Depois</b> → “Sem/Com”, “Atual/Proposto”, “Erro/Correção”.</li>
+              <li><b>Render</b> → mockup, print, gráfico, checklist visual.</li>
+              <li><b>Materiais</b> → ferramentas, stack, ingredientes, métodos.</li>
+              <li><b>Decisões</b> → critérios, etapas, escolhas-chave.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  const scriptEl = document.getElementById('scriptText');
+  const copyBtn = document.getElementById('copyBtn');
+  const selectBtn = document.getElementById('selectBtn');
+
+  function selectText(el){
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  selectBtn.addEventListener('click', () => {
+    selectText(scriptEl);
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    const text = scriptEl.innerText;
+    try{
+      await navigator.clipboard.writeText(text);
+      copyBtn.innerText = 'Copiado!';
+      setTimeout(()=> copyBtn.innerText = 'Copiar roteiro', 1400);
+    }catch(e){
+      selectText(scriptEl);
+      copyBtn.innerText = 'Selecione e copie';
+      setTimeout(()=> copyBtn.innerText = 'Copiar roteiro', 1400);
+    }
+  });
+</script>
+</body>
+</html>
