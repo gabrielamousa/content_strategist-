@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 13 — Arquitetura — Por que o AFETO virou critério de valor no design</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --r12: 14px;
+      --r16: 18px;
+      --g1: linear-gradient(90deg,#22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --g2: linear-gradient(180deg, rgba(34,197,94,.18), rgba(56,189,248,.14) 55%, rgba(251,146,60,.12));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1100px 700px at 12% 8%, rgba(56,189,248,.18), transparent 55%),
+        radial-gradient(900px 520px at 86% 12%, rgba(34,197,94,.14), transparent 55%),
+        radial-gradient(1000px 620px at 70% 90%, rgba(251,146,60,.12), transparent 55%),
+        linear-gradient(180deg,var(--bg0),var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1120px;margin:0 auto;padding:28px 18px 60px}
+    header{
+      position:relative;
+      padding:18px 18px 16px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:var(--r16);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background:var(--g2);
+      opacity:.9;
+      pointer-events:none;
+    }
+    header > *{position:relative}
+    .topline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .badgeRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.2px;
+      color:rgba(234,240,255,.82);
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      padding:8px 10px;
+      border-radius:999px;
+    }
+    .badge strong{color:var(--text)}
+    h1{margin:12px 0 8px;font-size:22px;line-height:1.2}
+    .sub{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+    .link{
+      display:inline-flex;gap:8px;align-items:center;
+      color:rgba(234,240,255,.86);
+      text-decoration:none;
+      border-bottom:1px solid rgba(234,240,255,.22);
+      padding-bottom:2px;
+      font-size:13px;
+      opacity:.95;
+    }
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:14px}
+    @media (max-width: 920px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      border-radius:var(--r16);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .card .hd h2{margin:0;font-size:14px;letter-spacing:.2px}
+    .card .bd{padding:14px 16px}
+    .muted{color:var(--muted);font-size:13px;line-height:1.55}
+    .meta{display:flex;gap:10px;flex-wrap:wrap}
+    .pill{
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      color:rgba(234,240,255,.80);
+    }
+    .pill b{color:var(--text);font-weight:700}
+    .grad{
+      display:inline-block;
+      background:var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:800;
+    }
+    ul{margin:10px 0 0 18px;padding:0}
+    li{margin:7px 0;color:var(--muted);font-size:13px;line-height:1.5}
+    .kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+    @media (max-width: 520px){.kpi{grid-template-columns:1fr}}
+    .kpi .box{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+    }
+    .kpi .box .t{font-size:11px;color:var(--muted2);font-family:var(--mono)}
+    .kpi .box .v{margin-top:6px;font-size:13px;color:var(--text);font-weight:700}
+
+    .btn{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      transition:transform .08s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+      display:inline-flex;align-items:center;gap:10px;
+    }
+    .btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.20)}
+    .btn:active{transform:translateY(1px)}
+    .btnPrimary{
+      background:linear-gradient(180deg, rgba(34,197,94,.18), rgba(56,189,248,.12));
+      border-color:rgba(56,189,248,.22);
+    }
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap}
+
+    .script{
+      font-family:var(--sans);
+      white-space:pre-wrap;
+      font-size:13px;
+      line-height:1.6;
+      color:rgba(234,240,255,.86);
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:14px;
+      margin-top:10px;
+    }
+    .small{font-size:12px;color:var(--muted2)}
+    .divider{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badgeRow">
+          <div class="badge">Nicho: <strong>Arquitetura</strong></div>
+          <div class="badge">Dia: <strong>13</strong></div>
+          <div class="badge">Formato: <strong>Carrossel (9:16)</strong></div>
+          <div class="badge">Pilar: <strong>Autoridade</strong></div>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DUG5wy5DKyu/" target="_blank" rel="noreferrer noopener">Abrir post original ↗</a>
+      </div>
+      <h1>Por que o <span class="grad">AFETO</span> virou critério de valor no design</h1>
+      <p class="sub">Roteiro reproduzível para carrossel vertical: hook emocional + prova + aplicação em espaços + ponte com IA + slogan + quote compartilhável.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <div class="meta">
+            <span class="pill"><b>Objetivo</b>: salvar/compartilhar</span>
+            <span class="pill"><b>Tom</b>: editorial + humano</span>
+            <span class="pill"><b>Promessa</b>: explicar o “porquê”</span>
+          </div>
+        </div>
+        <div class="bd">
+          <p class="muted">Conteúdo para arquitetura/design de interiores com viés de marca e experiência: mostrar que o valor percebido não é só técnica ou tecnologia — é a emoção que o espaço desperta. A sequência alterna <span class="grad">emoção</span> (imagens humanas) com <span class="grad">validação</span> (menção a estudos) e fecha com uma frase-âncora memorável + citação autoral.</p>
+          <div class="kpi">
+            <div class="box"><div class="t">Retenção</div><div class="v">1 ideia por slide</div></div>
+            <div class="box"><div class="t">Leitura</div><div class="v">alto contraste + tarjas</div></div>
+            <div class="box"><div class="t">Distribuição</div><div class="v">quote final compartilhável</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura (sequência)</h2>
+          <span class="pill"><b>7</b> telas sugeridas</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>Capa</b>: Pergunta + palavra âncora gigante + micro-CTA de deslizar.</li>
+            <li><b>Contexto</b>: mudança de critério (técnica → emoção) + “estudos mostram”.</li>
+            <li><b>Mecanismo</b>: decisões não são só racionais + benefício direto.</li>
+            <li><b>Aplicação</b>: como traduzir afeto em projeto (vínculo/pertencimento).</li>
+            <li><b>Ponte com tendência</b>: IA/automação vs inteligência emocional no espaço.</li>
+            <li><b>Slogan</b>: frase curtíssima, memorável, “ponto de print”.</li>
+            <li><b>Fecho</b>: quote autoral + assinatura + CTA final (compartilhar/salvar).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Slides sugeridos (1..7)</h2>
+          <div class="btnRow">
+            <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+            <button class="btn" id="copyCaptionBtn">Copiar legenda</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="script" id="scriptText">SLIDE 1 — CAPA (Hook)
+Título (alto impacto):
+“POR QUE AS MARCAS ESTÃO DE OLHO NO”
+Palavra âncora gigante:
+“AFETO”
+Subtítulo:
+“O impacto do afeto no design e na forma como a gente vive os espaços.”
+Micro-CTA:
+“Vem ver →”
+
+SLIDE 2 — NOVO CRITÉRIO DE VALOR
+Texto:
+“Hoje, o valor de um projeto não está só na técnica.
+Está no que ele faz a gente sentir.”
+Linha de validação:
+“Estudos mostram: emoção muda percepção de valor, escolha e lembrança.”
+Destaque (grifo/degradê):
+“muda percepção de valor”
+
+SLIDE 3 — MECANISMO + BENEFÍCIOS
+Texto:
+“A gente decide com a cabeça… mas confirma com o corpo.”
+Bloco principal:
+“Ambientes que despertam emoções positivas aumentam:
+• satisfação
+• conexão
+• permanência”
+Destaque (grifo/degradê):
+“emoções positivas”
+
+SLIDE 4 — APLICAÇÃO EM ARQUITETURA
+Texto:
+“Quando o espaço considera memória, rotina e sensações,
+ele deixa de ser ‘bonito’ e vira vínculo.”
+Mini exemplos (1 linha):
+“luz + textura + acústica + cheiro = presença”
+Destaque:
+“vira vínculo”
+
+SLIDE 5 — PONTE COM IA / CONTEMPORANEIDADE
+Texto (em tarja/placa de leitura):
+“Quanto mais avançamos em IA e automação,
+mais o diferencial vira inteligência emocional.”
+Linha de amarração:
+“E isso também se projeta.”
+Destaque:
+“diferencial” ou “inteligência emocional”
+
+SLIDE 6 — SLOGAN (PRINTÁVEL)
+Linha 1:
+“Não é só forma. Não é só função.”
+Linha 2 (grande):
+“O afeto importa.”
+
+SLIDE 7 — QUOTE + AUTORIA + CTA
+Quote (2–3 linhas):
+“Tecnologia escala.
+Mas acolhimento é humano.
+Nenhuma máquina substitui o afeto.”
+Assinatura:
+“Seu nome | Arquitetura”
+CTA:
+“Compartilhe com alguém que projeta (ou mora) com intenção.”</div>
+          <div class="divider"></div>
+          <div class="small">Dica: mantenha 1 ideia por slide e finalize sempre com uma frase que dá vontade de enviar no direct.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Elementos visuais (reproduzível)</h2><span class="pill"><b>High-tech</b> + humano</span></div>
+        <div class="bd">
+          <ul>
+            <li><b>Base</b>: fotos full-bleed com gente/gestos/rotina (abraço, mãos, casa vivida, luz de fim de tarde).</li>
+            <li><b>Tratamento</b>: baixa saturação + contraste controlado. Se a foto for clara, aplique <b>tarja escura</b> atrás do texto.</li>
+            <li><b>Destaques</b>: substitua o “grifo roxo” por <b>destaque em degradê (verde→azul→laranja)</b> em 1–3 palavras por slide.</li>
+            <li><b>Tipografia</b>: Inter/SF Pro/Helvetica. Título Bold/ExtraBold; corpo Regular/Medium.</li>
+            <li><b>Composição</b>: texto ocupando 35–60% da altura; margens seguras (96px laterais, 140px topo/base).</li>
+            <li><b>Ritmo</b>: alterne slides com pouco texto (respiração) e slides com lista curta (prova/benefício).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><span class="pill"><b>Hook</b> → prova → aplicação</span></div>
+        <div class="bd">
+          <ul>
+            <li><b>Ganchos de capa</b> (escolha 1):
+              <br/>• “Por que o AFETO virou ativo de marca?”
+              <br/>• “O que faz um espaço ser lembrado?”
+              <br/>• “O novo luxo: sentir-se em casa.”</li>
+            <li><b>Frases-ponte</b> (para manter o swipe):
+              <br/>• “E isso muda como a gente projeta.”
+              <br/>• “O ponto é o que ninguém mede, mas todo mundo sente.”</li>
+            <li><b>Prova sem prometer dado específico</b>:
+              <br/>Use “pesquisas/estudos apontam” + um efeito claro (valor percebido, escolha, lembrança). Evite números se você não for citar a fonte.</li>
+            <li><b>Palavras fortes</b>: vínculo, pertencimento, acolhimento, presença, memória, ritual, conforto.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>CTA</h2><span class="pill"><b>Distribuição</b></span></div>
+        <div class="bd">
+          <ul>
+            <li><b>CTA inicial (slide 1)</b>: “Vem ver →” / “Desliza →”.</li>
+            <li><b>CTA final (slide 7)</b> (escolha 1):
+              <br/>• “Compartilhe com alguém que está reformando.”
+              <br/>• “Salve para lembrar no seu próximo briefing.”
+              <br/>• “Me diga: qual detalhe mais cria acolhimento na sua casa?”</li>
+            <li><b>Comentário induzido</b>: “Qual espaço te dá sensação de ‘cheguei’?”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Checklist de criação</h2><span class="pill"><b>Canva/Figma</b></span></div>
+        <div class="bd">
+          <ul>
+            <li><b>Definir tese</b> em 1 frase: “afeto = critério de valor no espaço/marca”.</li>
+            <li><b>Selecionar 7 fotos</b> (mesma atmosfera): humano, cotidiano, textura, luz.</li>
+            <li><b>Montar capa</b> com palavra âncora gigante (“AFETO”) + CTA de swipe.</li>
+            <li><b>Aplicar sistema</b>: texto branco + sombra leve; tarja escura quando necessário.</li>
+            <li><b>Destaque em degradê</b> em 1 termo por slide (consistência).</li>
+            <li><b>Revisão mobile</b>: 3–6 linhas por bloco; checar contraste; checar margens seguras.</li>
+            <li><b>Final compartilhável</b>: slide 6 como slogan e slide 7 como quote + assinatura.</li>
+            <li><b>Legenda</b>: 1 parágrafo de contexto + 3 bullets práticos + pergunta final.</li>
+            <li><b>Publicação</b>: capa forte + primeira linha da legenda repetindo a tese.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Variações (para repetir sem cansar)</h2><span class="pill"><b>3 modelos</b></span></div>
+        <div class="bd">
+          <ul>
+            <li><b>Variação A — residencial</b>: “Afeto no morar” (rituais, memória, conforto, pertencimento).</li>
+            <li><b>Variação B — comercial</b>: “Afeto no varejo/hospitalidade” (permanência, retorno, lembrança, recomendação).</li>
+            <li><b>Variação C — processo</b>: “Briefing afetivo” (3 perguntas: o que acalma? o que aproxima? o que dá orgulho?).</li>
+          </ul>
+          <div class="divider"></div>
+          <div class="script" id="captionText">LEGENDA (copiável)
+
+Por muito tempo a gente vendeu projeto como “solução técnica”.
+Mas o que faz um espaço ser escolhido, lembrado e defendido… é o que ele faz a pessoa sentir.
+
+Na prática, afeto no design aparece quando você projeta para:
+• presença (silêncio, luz, respiro)
+• pertencimento (identidade, memória, rotina)
+• vínculo (encontros, cuidado, conforto)
+
+Quanto mais a tecnologia avança, mais o humano vira diferencial.
+
+Pergunta: qual detalhe tem mais poder de acolhimento na sua casa — luz, textura, cheiro ou som?
+
+— Seu nome | Arquitetura</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    function copyFrom(elId){
+      const el = document.getElementById(elId);
+      const text = el ? el.innerText : "";
+      if (!text) return;
+      navigator.clipboard.writeText(text);
+    }
+    document.getElementById('copyBtn').addEventListener('click', function(){
+      copyFrom('scriptText');
+      this.innerText = 'Roteiro copiado';
+      setTimeout(()=>this.innerText='Copiar roteiro', 1400);
+    });
+    document.getElementById('copyCaptionBtn').addEventListener('click', function(){
+      copyFrom('captionText');
+      this.innerText = 'Legenda copiada';
+      setTimeout(()=>this.innerText='Copiar legenda', 1400);
+    });
+  </script>
+</body>
+</html>
