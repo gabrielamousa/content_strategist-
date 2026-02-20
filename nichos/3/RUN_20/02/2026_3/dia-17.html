@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 17 — Consultoria de Imagem — Carrossel</title>
+  <style>
+    :root{
+      --bg0:#06070A;
+      --bg1:#0B0D12;
+      --card:#0E121A;
+      --card2:#0B0F16;
+      --text:#EAF0FF;
+      --muted:#A9B3C7;
+      --line:rgba(255,255,255,.08);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --green:#35F39A;
+      --blue:#4AA3FF;
+      --orange:#FF8A3D;
+      --grad: linear-gradient(90deg, var(--green), var(--blue), var(--orange));
+      --grad2: radial-gradient(1200px 500px at 10% 10%, rgba(74,163,255,.22), transparent 60%),
+               radial-gradient(900px 500px at 90% 20%, rgba(53,243,154,.16), transparent 62%),
+               radial-gradient(900px 540px at 40% 100%, rgba(255,138,61,.14), transparent 65%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg0);
+      min-height:100vh;
+    }
+
+    .bg{
+      position:fixed;
+      inset:0;
+      background:
+        var(--grad2),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      pointer-events:none;
+    }
+
+    .wrap{
+      position:relative;
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 56px;
+    }
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(14,18,26,.88), rgba(11,15,22,.82));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+
+    .header-top{
+      padding:18px 18px 0;
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+
+    .badge-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .badge{
+      font-family: var(--mono);
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+    }
+
+    .badge strong{ color: var(--text); font-weight:650; }
+
+    .title-block{
+      padding:8px 18px 18px;
+    }
+
+    h1{
+      margin:8px 0 8px;
+      font-size: clamp(22px, 3.2vw, 34px);
+      line-height:1.12;
+      letter-spacing:-0.02em;
+    }
+
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      line-height:1.5;
+      max-width: 75ch;
+    }
+
+    a{
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .link{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+    }
+
+    .link:hover{ border-color: rgba(255,255,255,.16); color: var(--text); }
+
+    .link .dot{
+      width:10px; height:10px; border-radius:3px;
+      background: var(--grad);
+      box-shadow: 0 0 18px rgba(74,163,255,.35);
+      flex: 0 0 auto;
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+    }
+
+    @media (max-width: 930px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(14,18,26,.86), rgba(11,15,22,.78));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card h2{
+      font-size:14px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color: var(--muted);
+      font-family: var(--mono);
+      margin:0;
+    }
+
+    .card .head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:16px 16px 12px;
+      border-bottom:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+    }
+
+    .accent{
+      width: 112px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--grad);
+      opacity:.95;
+      filter: saturate(1.1);
+      box-shadow: 0 10px 40px rgba(53,243,154,.08);
+    }
+
+    .content{ padding:16px; }
+
+    .content p{ margin:10px 0; color: var(--text); line-height:1.55; }
+    .content .muted{ color: var(--muted); }
+
+    ul{ margin:10px 0 0; padding:0 0 0 18px; color: var(--text); }
+    li{ margin:8px 0; line-height:1.48; }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+
+    @media (max-width: 520px){
+      .kpi{ grid-template-columns: 1fr; }
+    }
+
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding:12px 12px;
+    }
+
+    .pill .t{
+      font-family: var(--mono);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color: var(--muted);
+    }
+    .pill .v{ margin-top:6px; font-size:14px; color: var(--text); line-height:1.35; }
+
+    .script{
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(650px 220px at 20% 0%, rgba(74,163,255,.10), transparent 60%),
+        radial-gradient(650px 220px at 80% 0%, rgba(53,243,154,.08), transparent 60%),
+        rgba(0,0,0,.22);
+      border-radius: var(--radius2);
+      padding:14px;
+      margin-top:12px;
+    }
+
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family: var(--mono);
+      font-size:13px;
+      line-height:1.52;
+      color: #EAF0FF;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+      align-items:center;
+    }
+
+    button{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      padding:10px 12px;
+      border-radius: 12px;
+      font-family: var(--mono);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      font-size:12px;
+    }
+
+    button.primary{
+      border:0;
+      background: var(--grad);
+      color:#081018;
+      box-shadow: 0 14px 50px rgba(74,163,255,.18);
+      font-weight:800;
+    }
+
+    .note{
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.45;
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    @media (max-width: 740px){
+      .two-col{ grid-template-columns: 1fr; }
+    }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 16px;
+      padding:12px;
+      margin-top:12px;
+    }
+
+    .callout .label{
+      font-family: var(--mono);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color: var(--muted);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .callout .label .spark{
+      width:10px;height:10px;border-radius:3px;
+      background: var(--grad);
+    }
+
+    .footer{
+      margin-top:18px;
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.5;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="wrap">
+
+    <header>
+      <div class="header-top">
+        <div class="badge-row">
+          <div class="badge">Nicho: <strong>Consultoria de Imagem</strong></div>
+          <div class="badge">Dia: <strong>17</strong></div>
+          <div class="badge">Formato: <strong>Carrossel</strong></div>
+          <div class="badge">Pilar: <strong>Desejo</strong></div>
+        </div>
+        <div class="badge-row">
+          <a class="link" href="https://www.instagram.com/p/DUVlRLIkeJv/" target="_blank" rel="noreferrer">
+            <span class="dot"></span>
+            <span style="font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase;">Ver post original</span>
+          </a>
+        </div>
+      </div>
+      <div class="title-block">
+        <h1>Mulher, seja obcecada por você</h1>
+        <p class="subtitle">Roteiro reproduzível de carrossel minimalista (manifesto) para gerar identificação, salvamentos e compartilhamentos — com opções de substituição para qualquer tema/nicho.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+
+      <section class="card">
+        <div class="head">
+          <h2>Resumo</h2>
+          <div class="accent" aria-hidden="true"></div>
+        </div>
+        <div class="content">
+          <p><strong>Ideia-força:</strong> uma frase-manifesto + uma lista de pilares (1 por slide) + uma conclusão citável.</p>
+          <p class="muted"><strong>Por que funciona:</strong> leitura instantânea, repetição visual (baixa carga cognitiva), loop de completude (o público arrasta para “terminar a frase”) e recompensa no slide final.</p>
+
+          <div class="kpi">
+            <div class="pill"><div class="t">Objetivo</div><div class="v">Inspiração + posicionamento + share/save</div></div>
+            <div class="pill"><div class="t">Tempo de leitura</div><div class="v">~1 segundo por slide</div></div>
+            <div class="pill"><div class="t">Tom</div><div class="v">Manifesto, direto, emocional</div></div>
+          </div>
+
+          <div class="callout">
+            <div class="label"><span class="spark"></span>Regra de ouro</div>
+            <div class="muted">O design não compete com a frase. Quanto mais limpo, mais “autoridade” a mensagem ganha.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="head">
+          <h2>Estrutura</h2>
+          <div class="accent" aria-hidden="true"></div>
+        </div>
+        <div class="content">
+          <ul>
+            <li><strong>Slide 1 (Hook/Manifesto):</strong> comando curto para o público-alvo.</li>
+            <li><strong>Slides 2–5 (Enumeração):</strong> 4 pilares, do mais “concreto” ao mais “identitário”.</li>
+            <li><strong>Slide 6 (Fechamento):</strong> “porque…” + tese final citável (efeito de assinatura).</li>
+          </ul>
+          <div class="two-col" style="margin-top:12px;">
+            <div class="pill">
+              <div class="t">Duração</div>
+              <div class="v">6 slides (padrão) ou 7–8 (variação)</div>
+            </div>
+            <div class="pill">
+              <div class="t">Padrão textual</div>
+              <div class="v">Frases curtas, sem bullets, sem explicação</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="head">
+          <h2>Slides sugeridos (1..6)</h2>
+          <div class="accent" aria-hidden="true"></div>
+        </div>
+        <div class="content">
+          <div class="script" id="roteiroBox">
+            <pre id="roteiroText">SLIDE 1 (HOOK)
+“[PÚBLICO], seja obcecada por [VOCÊ/SEU OBJETIVO]”
+
+SLIDE 2 (PILAR 1 — construção)
+“pelo seu [PILAR 1]”
+
+SLIDE 3 (PILAR 2 — capacidade)
+“pelo seu [PILAR 2]”
+
+SLIDE 4 (PILAR 3 — energia)
+“pela sua [PILAR 3]”
+
+SLIDE 5 (PILAR 4 — identidade/estética)
+“pela sua [PILAR 4]”
+
+SLIDE 6 (FECHAMENTO)
+“Porque [PÚBLICO] que é obcecada por [SI/PROCESSO] sempre [RESULTADO]”
+
+EXEMPLO (Consultoria de Imagem)
+1: “Mulher, seja obcecada por você.”
+2: “pelo seu estilo”
+3: “pelo seu posicionamento”
+4: “pela sua presença”
+5: “pela sua beleza”
+6: “Porque uma mulher que é obcecada por si mesma sempre vence.”</pre>
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="copyBtn" type="button">Copiar roteiro</button>
+            <button id="copyLegendaBtn" type="button">Copiar CTA (legenda)</button>
+            <span class="note" id="copyStatus" aria-live="polite"></span>
+          </div>
+
+          <div class="callout">
+            <div class="label"><span class="spark"></span>Como adaptar sem perder impacto</div>
+            <ul>
+              <li><strong>Troque “Mulher”</strong> por: “Profissional”, “Empreendedora”, “Você”, “Mãe”, “Líder”, “Criadora”.</li>
+              <li><strong>Troque “obcecada”</strong> por sinônimos com energia parecida: “comprometida”, “inabalável por”, “intencional com”.</li>
+              <li><strong>Mantenha</strong> a cadência: 1 comando + 4 áreas + 1 conclusão.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="head">
+          <h2>Roteiro (execução)</h2>
+          <div class="accent" aria-hidden="true"></div>
+        </div>
+        <div class="content">
+          <ol style="margin:10px 0 0; padding-left:18px;">
+            <li><strong>Defina o “verbo mestre”</strong> (ex.: seja obcecada / priorize / escolha / proteja).</li>
+            <li><strong>Escolha 4 pilares</strong> que subam em profundidade: concreto → habilidade → energia → identidade.</li>
+            <li><strong>Escreva cada pilar com 2–5 palavras</strong> (sem explicação).</li>
+            <li><strong>Feche com “Porque…”</strong> e um resultado amplo (vence / se destaca / não volta atrás / não se perde).</li>
+            <li><strong>Legenda curta</strong> + CTA de salvar/compartilhar.</li>
+          </ol>
+          <div class="callout">
+            <div class="label"><span class="spark"></span>Sequência recomendada (pilares)</div>
+            <div class="muted">Construção (trabalho/rotina) → Capacidade (habilidade/conhecimento) → Energia (saúde/mente) → Identidade (imagem/estilo/presença).</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="head">
+          <h2>Elementos visuais</h2>
+          <div class="accent" aria-hidden="true"></div>
+        </div>
+        <div class="content">
+          <ul>
+            <li><strong>Fundo:</strong> preto sólido (#0B0B0B) com vinheta sutil opcional.</li>
+            <li><strong>Texto principal:</strong> script/caligráfica branca; centralizado; muito respiro.</li>
+            <li><strong>Assinatura:</strong> sans em caixa alta, tracking alto, centro inferior (consistente em todos os slides).</li>
+            <li><strong>Sem ícones, sem fotos, sem bullets</strong> (o “vazio” é o luxo).</li>
+          </ul>
+          <div class="two-col" style="margin-top:12px;">
+            <div class="pill"><div class="t">Tamanho</div><div class="v">1080×1350 (preferencial) ou 1080×1080</div></div>
+            <div class="pill"><div class="t">Fontes equivalentes</div><div class="v">Script: Allura/Great Vibes/Parisienne • Sans: Montserrat/Poppins</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="head">
+          <h2>Copy e ganchos</h2>
+          <div class="accent" aria-hidden="true"></div>
+        </div>
+        <div class="content">
+          <div class="two-col">
+            <div>
+              <p><strong>Banco de hooks (substituíveis):</strong></p>
+              <ul>
+                <li>“[PÚBLICO], pare de se abandonar.”</li>
+                <li>“[PÚBLICO], volte pra você.”</li>
+                <li>“Seja leal ao seu futuro.”</li>
+                <li>“Não negocie o que te sustenta.”</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Banco de fechamentos (efeito “frase de tela”):</strong></p>
+              <ul>
+                <li>“Porque quem se escolhe, se sustenta.”</li>
+                <li>“Porque consistência é uma forma de amor-próprio.”</li>
+                <li>“Porque a sua imagem abre portas antes da sua fala.”</li>
+                <li>“Porque presença é poder.”</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="callout">
+            <div class="label"><span class="spark"></span>Fórmulas rápidas de substituição</div>
+            <ul>
+              <li><strong>“Seja obcecada por você”</strong> → “Seja intencional com você” / “Se priorize sem culpa” / “Proteja a sua energia”.</li>
+              <li><strong>“sempre vence”</strong> → “se destaca” / “não volta atrás” / “não se perde” / “cresce em silêncio”.</li>
+              <li><strong>Pilares</strong> → troque por 4 áreas do seu tema (ex.: finanças, rotina, confiança, comunicação).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="head">
+          <h2>CTA</h2>
+          <div class="accent" aria-hidden="true"></div>
+        </div>
+        <div class="content">
+          <p><strong>CTA ideal (na legenda, sem quebrar o minimalismo):</strong></p>
+          <div class="script">
+            <pre id="ctaText">Escolha 1 CTA:
+1) “Salve para reler nos dias em que você esquecer de você.”
+2) “Envie para uma mulher que precisa ouvir isso hoje.”
+3) “Comente: qual pilar você vai priorizar essa semana?”
+
+CTA opcional (para consultoria de imagem):
+“Se você quer alinhar estilo + mensagem, me chama no direct com a palavra ‘IMAGEM’.”</pre>
+          </div>
+          <p class="note">Dica: use 1 CTA principal. Dois CTAs só quando um for de engajamento e o outro de conversão (direct).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="head">
+          <h2>Checklist de criação</h2>
+          <div class="accent" aria-hidden="true"></div>
+        </div>
+        <div class="content">
+          <ul>
+            <li>Slide 1 abre loop? (dá vontade de arrastar)</li>
+            <li>Cada slide lê em 1 segundo, sem esforço?</li>
+            <li>Os 4 pilares têm <strong>paralelismo</strong> (mesma estrutura de frase)?</li>
+            <li>A ordem dos pilares faz sentido (concreto → identidade)?</li>
+            <li>Slide 6 é citável e fecha forte?</li>
+            <li>Assinatura/brand consistente (posição, tamanho, tracking)?</li>
+            <li>Legenda curta + 1 CTA claro (salvar/compartilhar/comentar ou direct)?</li>
+          </ul>
+          <div class="callout">
+            <div class="label"><span class="spark"></span>Checklist rápido de publicação</div>
+            <div class="muted">Revisar ortografia • Testar contraste no brilho mínimo • Conferir margens seguras • Exportar em PNG • Ordem correta dos slides.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="head">
+          <h2>Variações (mesmo impacto, outros temas)</h2>
+          <div class="accent" aria-hidden="true"></div>
+        </div>
+        <div class="content">
+          <div class="two-col">
+            <div class="callout" style="margin-top:0;">
+              <div class="label"><span class="spark"></span>Variação A — 7 slides (reforço)</div>
+              <ul>
+                <li>Slide 1: Hook</li>
+                <li>Slides 2–5: 4 pilares</li>
+                <li>Slide 6: “não é sobre…” (quebra de expectativa)</li>
+                <li>Slide 7: Fechamento citável</li>
+              </ul>
+            </div>
+            <div class="callout" style="margin-top:0;">
+              <div class="label"><span class="spark"></span>Variação B — 5 slides (mais rápido)</div>
+              <ul>
+                <li>Slide 1: Hook</li>
+                <li>Slides 2–4: 3 pilares</li>
+                <li>Slide 5: Fechamento</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="callout">
+            <div class="label"><span class="spark"></span>Substituições prontas de pilares (escolha 4)</div>
+            <ul>
+              <li><strong>Consultoria de imagem:</strong> estilo • mensagem • presença • coerência • armário • cores • postura</li>
+              <li><strong>Negócios:</strong> oferta • consistência • posicionamento • caixa</li>
+              <li><strong>Carreira:</strong> portfólio • repertório • comunicação • reputação</li>
+              <li><strong>Bem-estar:</strong> sono • treino • alimentação • mentalidade</li>
+            </ul>
+          </div>
+
+          <div class="callout">
+            <div class="label"><span class="spark"></span>Legenda-template (curta e reutilizável)</div>
+            <div class="script">
+              <pre id="legendaText">“Você não precisa de permissão para se priorizar.
+Começa pequeno. Começa firme. Mas começa.
+
+(CTA escolhido aqui)”</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="footer">Calendário — Dia 17 • Consultoria de Imagem • Carrossel minimalista (manifesto) • Ajuste pilares e fechamento para qualquer tema.</div>
+
+  </div>
+
+  <script>
+    const statusEl = document.getElementById('copyStatus');
+    const roteiroText = document.getElementById('roteiroText');
+    const ctaText = document.getElementById('ctaText');
+
+    function setStatus(msg){
+      statusEl.textContent = msg;
+      setTimeout(() => { if(statusEl.textContent === msg) statusEl.textContent = ''; }, 2200);
+    }
+
+    async function copyToClipboard(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        setStatus('Copiado.');
+      } catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        setStatus('Copiado.');
+      }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      copyToClipboard(roteiroText.innerText.trim());
+    });
+
+    document.getElementById('copyLegendaBtn').addEventListener('click', () => {
+      copyToClipboard(ctaText.innerText.trim());
+    });
+  </script>
+</body>
+</html>
