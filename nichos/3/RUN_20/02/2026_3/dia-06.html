@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 6 — Consultoria de Imagem — Carrossel</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B1226;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.58);
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --radius:16px;
+      --radius2:22px;
+      --g1: linear-gradient(90deg, #22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.20), rgba(56,189,248,.18), rgba(251,146,60,.18));
+      --g3: radial-gradient(1200px 600px at 20% 0%, rgba(56,189,248,.18), transparent 60%),
+            radial-gradient(900px 500px at 90% 20%, rgba(251,146,60,.14), transparent 55%),
+            radial-gradient(900px 500px at 30% 110%, rgba(34,197,94,.12), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g3), linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 48px}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius2);
+      padding:18px 18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      opacity:.65;
+      pointer-events:none;
+      mask: linear-gradient(#000, transparent 70%);
+    }
+    .toprow{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      position:relative;
+      z-index:1;
+    }
+    .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .chip{
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.25);
+      padding:7px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .chip b{color:var(--text); font-weight:650}
+    .title{
+      margin:10px 0 0;
+      font-size:24px;
+      line-height:1.15;
+      letter-spacing:-.02em;
+      position:relative;
+      z-index:1;
+    }
+    .subtitle{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      position:relative;
+      z-index:1;
+    }
+    .linkrow{
+      margin-top:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:1;
+    }
+    .postlink{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      font-size:13px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.20);
+      padding:10px 12px;
+      border-radius:12px;
+      max-width:100%;
+    }
+    .postlink span{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:680px;
+      display:inline-block;
+    }
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.085); border-color: rgba(255,255,255,.22)}
+    .btn.primary{
+      border-color: rgba(56,189,248,.35);
+      background: linear-gradient(180deg, rgba(56,189,248,.18), rgba(34,197,94,.10));
+    }
+    .btn .dot{
+      width:10px; height:10px; border-radius:50%; background: var(--g1);
+    }
+
+    main{margin-top:18px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 940px){
+      .grid{grid-template-columns:1fr;}
+      .postlink span{max-width: 72vw}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02));
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid var(--stroke);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.82);
+    }
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      color:rgba(255,255,255,.80);
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+    }
+    .card .bd{padding:14px 16px}
+
+    .kvs{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 520px){
+      .kvs{grid-template-columns:1fr;}
+    }
+    .kv{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      padding:12px;
+      border-radius:16px;
+    }
+    .kv .k{font-size:12px; color:var(--muted2); text-transform:uppercase; letter-spacing:.06em}
+    .kv .v{margin-top:6px; font-size:13px; color:var(--text)}
+
+    .list{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.55;
+      font-size:14px;
+    }
+    .list li{margin:8px 0}
+
+    .steps{display:grid; gap:10px}
+    .step{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+      padding:12px;
+      border-radius:16px;
+    }
+    .step .row{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap}
+    .step .n{
+      font-family:var(--mono);
+      color:rgba(255,255,255,.80);
+      font-size:12px;
+      border:1px solid var(--stroke);
+      padding:5px 8px;
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+    }
+    .step .t{font-weight:650; font-size:14px}
+    .step .p{margin-top:6px; color:var(--muted); font-size:13px; line-height:1.5}
+    .grad{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:750;
+    }
+
+    .copybox{
+      border:1px solid rgba(56,189,248,.28);
+      background: linear-gradient(180deg, rgba(56,189,248,.10), rgba(251,146,60,.06));
+      padding:12px;
+      border-radius:16px;
+      overflow:auto;
+    }
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family:var(--mono);
+      font-size:12.5px;
+      color:rgba(255,255,255,.86);
+      line-height:1.5;
+    }
+    .muted{color:var(--muted)}
+
+    .two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 700px){
+      .two{grid-template-columns:1fr;}
+    }
+
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      margin:12px 0;
+      border:0;
+    }
+    .tiny{font-size:12px; color:var(--muted2)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="chips">
+          <div class="chip"><b>Nicho</b>: Consultoria de Imagem</div>
+          <div class="chip"><b>Dia</b>: 6</div>
+          <div class="chip"><b>Formato</b>: Carrossel</div>
+          <div class="chip"><b>Pilar</b>: Mito vs Verdade</div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn" type="button"><span class="dot"></span>Copiar roteiro</button>
+          <a class="btn" href="#slides"><span class="dot"></span>Ver slides</a>
+        </div>
+      </div>
+      <h1 class="title">Elogio não garante: a cor certa é a que harmoniza com você</h1>
+      <p class="subtitle">Carrossel reproduzível com prova visual (✓/✗), pergunta ponte e fechamento em cartela + CTA por comentário.</p>
+      <div class="linkrow">
+        <a class="postlink" href="https://www.instagram.com/p/DS55piqjvSg/" target="_blank" rel="noreferrer">
+          <strong class="grad">Post original</strong>
+          <span>https://www.instagram.com/p/DS55piqjvSg/</span>
+        </a>
+        <div class="tiny">UX: use 1080×1350 (4:5) e texto no terço inferior.</div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="hd"><h2>Resumo</h2><span class="badge">Objetivo: comentários + leads</span></div>
+        <div class="bd">
+          <div class="kvs">
+            <div class="kv">
+              <div class="k">Promessa</div>
+              <div class="v">Você não é “difícil de vestir” — só está usando cores fora da sua harmonia.</div>
+            </div>
+            <div class="kv">
+              <div class="k">Tese</div>
+              <div class="v">Elogio/moda ≠ funciona em você. O que funciona é o que <span class="grad">harmoniza</span> (cartela/temperatura/contraste).</div>
+            </div>
+            <div class="kv">
+              <div class="k">Mecânica de retenção</div>
+              <div class="v">Quebra de crença → antes/depois → lacuna (pergunta) → recomendações → diagnóstico → CTA.</div>
+            </div>
+            <div class="kv">
+              <div class="k">CTA</div>
+              <div class="v">Comente <b>“COR”</b> para receber orientação/diagnóstico.</div>
+            </div>
+          </div>
+          <hr class="hr" />
+          <ul class="list">
+            <li><b>Âncora visual:</b> split-screen 50/50 com ✓ vs ✗.</li>
+            <li><b>Âncora verbal:</b> frases curtas em CAPS no H1 + explicação em H2.</li>
+            <li><b>Oferta:</b> análise de coloração/cartela (ou diagnóstico rápido/triagem).</li>
+          </ul>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd"><h2>Estrutura (macro)</h2><span class="badge">8 slides</span></div>
+        <div class="bd">
+          <ol class="list">
+            <li><b>Hook</b> (quebra de crença).</li>
+            <li><b>Exemplo</b> (autoridade por analogia: “até gente linda erra”).</li>
+            <li><b>Prova visual</b> (errado vs certo).</li>
+            <li><b>Pergunta ponte</b> (abre lacuna).</li>
+            <li><b>Recomendação 1</b> (famílias de cores).</li>
+            <li><b>Recomendação 2</b> (técnica simples: cabelo/metais/contraste).</li>
+            <li><b>Diagnóstico</b> (nome da cartela/temperatura/contraste) + sensação de “agora entendi”.</li>
+            <li><b>Oferta + CTA</b> (comentário com palavra-chave).</li>
+          </ol>
+        </div>
+      </aside>
+
+      <section class="card" id="slides">
+        <div class="hd"><h2>Slides sugeridos (1..8)</h2><span class="badge">Textos prontos</span></div>
+        <div class="bd">
+          <div class="steps">
+            <div class="step">
+              <div class="row"><span class="n">SLIDE 1</span><span class="t">Hook (mito vs verdade)</span></div>
+              <div class="p"><b>H1:</b> NÃO É PORQUE<br/><b>H2:</b> te elogiam / que funciona em você.</div>
+              <div class="p muted">Visual: foto forte + texto no rodapé. Evite poluição.</div>
+            </div>
+            <div class="step">
+              <div class="row"><span class="n">SLIDE 2</span><span class="t">Exemplo que libera a dor</span></div>
+              <div class="p"><b>H1:</b> [CELEB/CLIENTE] É LINDA<br/><b>H2:</b> mas nem por isso fica bem com tudo. (✓/✗)</div>
+              <div class="p muted">Visual: 2 fotos lado a lado + ícones grandes ✓ e ✗.</div>
+            </div>
+            <div class="step">
+              <div class="row"><span class="n">SLIDE 3</span><span class="t">Prova visual (transformação)</span></div>
+              <div class="p"><b>Lado ✗:</b> CORES [FRIAS/ESCURAS] te apagam<br/><b>Lado ✓:</b> CORES [QUENTES] te iluminam</div>
+              <div class="p muted">Visual: corte 50/50 com mesma pessoa (ideal) ou referências bem próximas.</div>
+            </div>
+            <div class="step">
+              <div class="row"><span class="n">SLIDE 4</span><span class="t">Pergunta ponte (lacuna)</span></div>
+              <div class="p"><b>Texto (editorial):</b> Então o que usar para estar dentro da cartela? →</div>
+              <div class="p muted">Visual: slide “respiro” (fundo mais claro/limpo), seta no final.</div>
+            </div>
+            <div class="step">
+              <div class="row"><span class="n">SLIDE 5</span><span class="t">Recomendação 1 (aplicável)</span></div>
+              <div class="p"><b>H1:</b> CORES QUENTES<br/><b>H2:</b> terrosos, dourados, coral, pêssego.</div>
+              <div class="p muted">Visual: swatches em mini (3–5) + foto exemplo.</div>
+            </div>
+            <div class="step">
+              <div class="row"><span class="n">SLIDE 6</span><span class="t">Recomendação 2 (técnica simples)</span></div>
+              <div class="p"><b>H1:</b> ILUMINADO EM MEL<br/><b>H2:</b> metais dourados + médio contraste (harmoniza).</div>
+              <div class="p muted">Visual: detalhe de cabelo/joia + 1 linha de texto.</div>
+            </div>
+            <div class="step">
+              <div class="row"><span class="n">SLIDE 7</span><span class="t">Diagnóstico (nomeia e fecha)</span></div>
+              <div class="p"><b>H1:</b> BELEZA DE PRIMAVERA<br/><b>H2:</b> quente + clara/vibrante na medida. →</div>
+              <div class="p muted">Visual: 2–3 imagens referência + setinha “fecha o raciocínio”.</div>
+            </div>
+            <div class="step">
+              <div class="row"><span class="n">SLIDE 8</span><span class="t">Oferta + CTA (baixa fricção)</span></div>
+              <div class="p"><b>Texto:</b> Quer descobrir sua cartela e escolher cores com segurança (roupas, make, cabelo e acessórios)?<br/><b>CTA:</b> Comente <b>“COR”</b> que eu te explico por onde começar.</div>
+              <div class="p muted">Visual: mockup (celular/notebook) + benefício em 1 frase.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd"><h2>Elementos visuais</h2><span class="badge">design system</span></div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Grid:</b> 1080×1350; margens 80–120px; área segura de texto no último terço.</li>
+            <li><b>Layout:</b> split-screen 50/50 (antes/depois) nos slides 2 e 3; slide “respiro” no 4.</li>
+            <li><b>Ícones:</b> ✓ e ✗ grandes (decisão instantânea); seta → para continuidade.</li>
+            <li><b>Tipografia:</b> Sans (Inter/Montserrat) em CAPS para H1; Serif itálica (Playfair) no slide ponte.</li>
+            <li><b>Legibilidade:</b> se necessário, overlay escuro 10–25% atrás do texto, sem caixa pesada.</li>
+            <li><b>Branding:</b> marca d’água discreta no topo (all caps, fina).</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><span class="badge">variações rápidas</span></div>
+        <div class="bd">
+          <div class="two">
+            <div class="copybox">
+              <pre><span class="grad">Ganchos (Slide 1)</span>
+- Elogio não é métrica.
+- Moda não é bússola.
+- Não é “cor bonita”: é cor que harmoniza.
+- Você não é difícil. Você está fora da sua cartela.</pre>
+            </div>
+            <div class="copybox">
+              <pre><span class="grad">Pontes (Slide 4)</span>
+- “Tá, então por onde eu começo?” →
+- “Como saber a cor certa sem chutar?” →
+- “Qual é o atalho pra não errar na loja?” →</pre>
+            </div>
+          </div>
+          <hr class="hr" />
+          <div class="copybox">
+            <pre><span class="grad">Frases curtas (para slides com foto)</span>
+- Apaga x ilumina
+- Pálida x viva
+- Pesado x leve
+- Envelhece x rejuvenesce
+- Sem contraste x na medida</pre>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd"><h2>CTA</h2><span class="badge">comentário → DM</span></div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Principal:</b> Comente <b>“COR”</b> para conhecer/receber o passo a passo.</li>
+            <li><b>Alternativas:</b> “CARTELA”, “PRIMAVERA”, “PALETA”.</li>
+            <li><b>Follow-up (DM):</b> 3 perguntas rápidas (subtom, contraste, objetivo) + convite para análise completa.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="hd"><h2>Checklist de criação</h2><span class="badge">produção</span></div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Definir:</b> 1 persona/celebridade/cliente (com autorização) + 2 fotos comparáveis.</li>
+            <li><b>Escolher:</b> “errado vs certo” (temperatura/valor/contraste) com diferença clara.</li>
+            <li><b>Escrever:</b> H1 (1–6 palavras) + H2 (1 linha) por slide; evitar parágrafos.</li>
+            <li><b>Montar:</b> slides 2–3 em split 50/50 + ✓/✗ no mesmo lugar sempre.</li>
+            <li><b>Inserir:</b> slide ponte (4) com respiro e seta →.</li>
+            <li><b>Adicionar:</b> 3–5 swatches no slide 5 (consistentes com a recomendação).</li>
+            <li><b>Fechar:</b> diagnóstico (slide 7) + oferta e CTA (slide 8).</li>
+            <li><b>Revisar:</b> contraste do texto; padding; consistência do posicionamento; marca d’água.</li>
+            <li><b>Publicar:</b> legenda curta com reforço + pergunta final; fixar comentário com CTA “COR”.</li>
+          </ul>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd"><h2>Variações (reproduzível)</h2><span class="badge">mesma estrutura</span></div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Variação 1 (Dor):</b> “Por que essa cor te deixa cansada nas fotos?” (antes/depois + solução).</li>
+            <li><b>Variação 2 (Erro comum):</b> “Comprar no provador com luz errada” (ponte: como testar na prática).</li>
+            <li><b>Variação 3 (Desejo):</b> “Parecer mais alinhada sem trocar o guarda-roupa” (cartela + metais + cabelo).</li>
+            <li><b>Variação 4 (Objeção):</b> “Mas eu amo preto…” (como usar perto do rosto sem te apagar).</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="hd"><h2>Roteiro (texto contínuo para copiar)</h2><span class="badge">colável no Canva/Figma</span></div>
+        <div class="bd">
+          <div class="copybox" id="scriptBox">
+            <pre id="scriptText">CARROSSEL (8 SLIDES) — “Elogio não garante: a cor certa é a que harmoniza com você”
+
+SLIDE 1 (HOOK)
+H1: NÃO É PORQUE
+H2: te elogiam / que funciona em você.
+
+SLIDE 2 (EXEMPLO + ✓/✗)
+H1: [CELEB/CLIENTE] É LINDA
+H2: mas nem por isso fica bem com tudo. (✓/✗)
+
+SLIDE 3 (PROVA VISUAL)
+Lado ✗: CORES [FRIAS/ESCURAS] te apagam
+Lado ✓: CORES [QUENTES] te iluminam
+
+SLIDE 4 (PONTE)
+Texto: Então o que usar para estar dentro da cartela? →
+
+SLIDE 5 (RECOMENDAÇÃO 1)
+H1: CORES QUENTES
+H2: terrosos, dourados, coral, pêssego.
+
+SLIDE 6 (RECOMENDAÇÃO 2)
+H1: ILUMINADO EM MEL
+H2: metais dourados + médio contraste (harmoniza).
+
+SLIDE 7 (DIAGNÓSTICO)
+H1: BELEZA DE PRIMAVERA
+H2: quente + clara/vibrante na medida. →
+
+SLIDE 8 (OFERTA + CTA)
+Texto: Quer descobrir sua cartela e escolher cores com segurança (roupas, make, cabelo e acessórios)?
+CTA: Comente “COR” que eu te explico por onde começar.</pre>
+          </div>
+          <p class="tiny" style="margin:10px 2px 0">Dica: fixe um comentário “Digite COR que eu te mando as recomendações” para aumentar conversão.</p>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd"><h2>Notas de execução</h2><span class="badge">qualidade</span></div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Não prometa diagnóstico fechado</b> se não houver análise: ofereça “triagem + direção”.</li>
+            <li><b>Prova visual manda:</b> diferença precisa ser clara; se estiver sutil, ajuste exemplos.</li>
+            <li><b>Consistência:</b> repita posição de textos/ícones para leitura rápida.</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('scriptText');
+      function copy(){
+        const t = textEl.innerText;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(t).then(()=>{
+            btn.textContent = 'Roteiro copiado';
+            setTimeout(()=>btn.innerHTML = '<span class="dot"></span>Copiar roteiro', 1400);
+          }).catch(()=>fallback(t));
+        } else fallback(t);
+      }
+      function fallback(t){
+        const ta = document.createElement('textarea');
+        ta.value = t;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try{ document.execCommand('copy'); }catch(e){}
+        document.body.removeChild(ta);
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.innerHTML = '<span class="dot"></span>Copiar roteiro', 1400);
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
