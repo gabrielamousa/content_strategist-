@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 7 — Desafio dos 50k</title>
+  <style>
+    :root{
+      --bg:#070A10;
+      --panel:#0C1220;
+      --panel2:#0A1020;
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --line:rgba(255,255,255,.10);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg, #28F07A 0%, #20B7FF 48%, #FF9B2F 100%);
+      --g2: linear-gradient(135deg, rgba(40,240,122,.18) 0%, rgba(32,183,255,.18) 45%, rgba(255,155,47,.18) 100%);
+      --accent:#20B7FF;
+      --good:#28F07A;
+      --warn:#FF9B2F;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 650px at 20% 10%, rgba(32,183,255,.16) 0%, rgba(7,10,16,0) 55%),
+        radial-gradient(1000px 600px at 85% 15%, rgba(40,240,122,.12) 0%, rgba(7,10,16,0) 60%),
+        radial-gradient(900px 700px at 55% 90%, rgba(255,155,47,.10) 0%, rgba(7,10,16,0) 60%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 46px}
+
+    .top{
+      display:flex;align-items:stretch;justify-content:space-between;gap:14px;
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,.02) 100%);
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .top:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background:var(--g2);
+      opacity:.9;
+      filter: blur(20px);
+      pointer-events:none;
+    }
+    .top > *{position:relative;z-index:1}
+
+    .kicker{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .pill{
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(10,16,32,.55);
+      backdrop-filter: blur(8px);
+    }
+    .title{
+      margin:10px 0 0;
+      font-size:26px;
+      letter-spacing:-0.02em;
+    }
+    .sub{
+      margin:8px 0 0;
+      color:var(--muted);
+      max-width:68ch;
+    }
+
+    .top-right{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-width:260px;
+      justify-content:space-between;
+    }
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .btn{
+      border:1px solid var(--line);
+      background:rgba(12,18,32,.7);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+      user-select:none;
+    }
+    .btn:hover{border-color:rgba(255,255,255,.22);background:rgba(12,18,32,.9)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{
+      border:0;
+      background:var(--g1);
+      color:#071018;
+    }
+    .link{
+      font-size:13px;
+      color:var(--muted);
+      text-decoration:none;
+      border:1px solid var(--line);
+      padding:9px 12px;
+      border-radius:12px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      justify-content:center;
+      background:rgba(10,16,32,.4);
+    }
+    .link:hover{border-color:rgba(255,255,255,.22)}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:16px;
+    }
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.15fr .85fr;}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.03) 0%, rgba(255,255,255,.015) 100%);
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow: 0 14px 45px rgba(0,0,0,.35);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      letter-spacing:.01em;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .tag{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      padding:5px 9px;
+      border-radius:999px;
+      background:rgba(10,16,32,.5);
+    }
+
+    .hr{
+      height:1px;
+      background:linear-gradient(90deg, rgba(40,240,122,.0) 0%, rgba(32,183,255,.35) 40%, rgba(255,155,47,.0) 100%);
+      margin:12px 0;
+    }
+
+    ul{margin:10px 0 0;padding:0 0 0 18px;color:var(--muted)}
+    li{margin:7px 0}
+    .strong{color:var(--text);font-weight:700}
+
+    .scriptbox{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(8,12,22,.65);
+      border-radius:var(--radius2);
+      padding:14px;
+      overflow:auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:13px;
+      color:#DDE7FF;
+      white-space:pre-wrap;
+    }
+
+    .cols{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width: 980px){
+      .cols{grid-template-columns:1fr 1fr}
+    }
+
+    .callout{
+      border-left:3px solid rgba(32,183,255,.75);
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(32,183,255,.08);
+      color:var(--muted);
+    }
+
+    .checklist{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+      margin-top:10px;
+    }
+    @media (min-width: 780px){
+      .checklist{grid-template-columns:1fr 1fr}
+    }
+    .check{
+      display:flex;gap:10px;align-items:flex-start;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(10,16,32,.35);
+      color:var(--muted);
+    }
+    .box{
+      width:18px;height:18px;margin-top:2px;
+      border-radius:5px;
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(255,255,255,.03);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
+      flex: 0 0 auto;
+    }
+
+    .mini{
+      font-size:12px;color:var(--muted);
+    }
+
+    .footer{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      opacity:.95;
+    }
+
+    .toast{
+      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+      background:rgba(12,18,32,.92);
+      border:1px solid rgba(255,255,255,.16);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      box-shadow: 0 18px 55px rgba(0,0,0,.55);
+      display:none;
+      z-index:99;
+      font-size:13px;
+    }
+    .toast b{background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div>
+        <div class="kicker">
+          <span class="pill"><span class="strong">Nicho:</span> Finanças</span>
+          <span class="pill"><span class="strong">Dia:</span> 7</span>
+          <span class="pill"><span class="strong">Pilar:</span> Passo a passo</span>
+          <span class="pill"><span class="strong">Formato:</span> Reels</span>
+        </div>
+        <h1 class="title">Desafio dos 50k: transforme economia em jogo até 2026</h1>
+        <p class="sub">Roteiro reproduzível para alto engajamento: hook com meta+prazo, método visual (tabela 1↔225), matemática simples (450 depósitos) e CTA por comentário (envio no direct).</p>
+      </div>
+      <div class="top-right">
+        <div class="btnrow">
+          <a class="link" href="https://www.instagram.com/p/DU_AbJSgBOz/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+        <div class="mini" style="text-align:right;">
+          Identidade visual sugerida: fundo escuro + números grandes + destaque em degradê (verde/azul/laranja).
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Resumo <span class="tag">o que vai no vídeo</span></h2>
+        <div class="callout">
+          Você convida a audiência para uma meta grande com prazo (R$50.000 até 2026), apresenta um “desafio” com tabela para marcar depósitos e entrega a ferramenta via comentário (“DESAFIO”) no direct.
+        </div>
+        <div class="hr"></div>
+        <ul>
+          <li><span class="strong">Motor do engajamento:</span> aspiração + sensação de comunidade (“comigo”) + gamificação (marcar números) + recompensa (DM) + prova de método (matemática).</li>
+          <li><span class="strong">Promessa:</span> “não é força de vontade, é sistema”.</li>
+          <li><span class="strong">Oferta/lead magnet:</span> tabela (PDF/planilha) + opcional: planner/aulas/comunidade.</li>
+        </ul>
+      </section>
+
+      <aside class="card">
+        <h2>Metadados para calendário <span class="tag">pronto pra agenda</span></h2>
+        <ul>
+          <li><span class="strong">Título:</span> Desafio dos 50k: transforme economia em jogo até 2026</li>
+          <li><span class="strong">Instrução curta:</span> Grave um Reel de 30–45s com hook de meta+prazo, mostre a tabela 1↔225, explique a lógica (450 depósitos) e finalize com CTA para comentar “DESAFIO” e receber no direct.</li>
+          <li><span class="strong">Pilar:</span> Passo a passo</li>
+          <li><span class="strong">Formato:</span> Reels</li>
+        </ul>
+      </aside>
+
+      <section class="card">
+        <h2>Estrutura <span class="tag">sequência</span></h2>
+        <ul>
+          <li><span class="strong">0–2s (Hook):</span> meta grande + prazo + convite coletivo.</li>
+          <li><span class="strong">2–6s (Dor):</span> “quero guardar, mas não sei por onde começar”.</li>
+          <li><span class="strong">6–12s (Método):</span> nome do desafio + por que funciona (sistema/visual).</li>
+          <li><span class="strong">12–24s (Passo a passo):</span> regra simples + números (1↔225; 450 depósitos).</li>
+          <li><span class="strong">24–32s (Demonstração):</span> marcar 1–2 exemplos na tabela.</li>
+          <li><span class="strong">32–38s (Resultado):</span> fecha a conta (R$50k).</li>
+          <li><span class="strong">38–45s (CTA):</span> comentar palavra-chave + seguir + enviar para alguém.</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="cols">
+          <div>
+            <h3 style="margin:0 0 8px;font-size:14px; color:var(--text)">Cadência (retenção)</h3>
+            <ul>
+              <li>Frases curtas; um novo dado a cada 1–2s.</li>
+              <li>Repita o CTA 3x: após “o que é”, após “como faz”, no final.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px;font-size:14px; color:var(--text)">Regras do jogo (clareza)</h3>
+            <ul>
+              <li>Tabela com números: 1→225 e 225→1 (total 450 entradas).</li>
+              <li>Fez um depósito de X reais? marca o número X.</li>
+              <li>Consistência &gt; valor alto de uma vez.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro <span class="tag">30–45s + texto na tela</span></h2>
+        <div class="scriptbox" id="scriptText">[CENA 1 — 0–2s | Você na câmera, texto grande]
+FALA: “Bora guardar R$50.000 comigo até 2026?”
+TEXTO: “R$50.000 até 2026”
+
+[CENA 2 — 2–6s | Corte rápido, aproxima]
+FALA: “Se você quer guardar dinheiro, mas trava porque não sabe por onde começar…”
+TEXTO: “Sem saber por onde começar?”
+
+[CENA 3 — 6–12s | Mostra a tabela/folha]
+FALA: “Você só precisa de um sistema. Eu chamo de Desafio dos 50k.”
+TEXTO: “Desafio dos 50k (sistema)”
+
+[CENA 4 — 12–20s | Mostra a lógica 1↔225]
+FALA: “Você faz uma tabela assim: de 1 até 225… e do 225 até 1.”
+TEXTO: “1→225 + 225→1”
+
+[CENA 5 — 20–24s | Número forte + prova]
+FALA: “Isso dá 450 depósitos no total.”
+TEXTO: “Total: 450 depósitos”
+
+[CENA 6 — 24–32s | Demonstração com caneta + som de ‘tick’]
+FALA: “Depositou R$5? marca o 5. Depositou R$20? marca o 20. E vai seguindo.”
+TEXTO: “Depositou? Marca o número.”
+
+[CENA 7 — 32–38s | Fecha a conta]
+FALA: “Quando você completa a tabela, você chega nos R$50.000.”
+TEXTO: “No fim: R$50.000”
+
+[CENA 8 — 38–45s | CTA com zoom + tela final limpa]
+FALA: “Comenta ‘DESAFIO’ que eu te mando a tabela no direct. E me segue pra mais planos simples de dinheiro.”
+TEXTO: “Comente: DESAFIO → receba no direct”
+
+OBS: Se quiser aumentar conversão, adicione: “manda pra alguém que quer começar a guardar.”</div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais <span class="tag">o que mostrar</span></h2>
+        <ul>
+          <li><span class="strong">B-roll obrigatório:</span> close da tabela + mão marcando números (reforça “progresso”).</li>
+          <li><span class="strong">Overlays:</span> “R$50.000”, “2026”, “450 depósitos”, “1→225 / 225→1”.</li>
+          <li><span class="strong">Padrão de edição:</span> jump cuts em cada frase-chave (velocidade + retenção).</li>
+          <li><span class="strong">Áudio/SFX:</span> “tick/check” quando marcar números (gamificação).</li>
+          <li><span class="strong">Tela final:</span> fundo limpo, palavra-chave “DESAFIO”, seta pro comentário, e mini-stack do que entrega (PDF/tabela + bônus opcional).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos <span class="tag">variações prontas</span></h2>
+        <div class="cols">
+          <div>
+            <h3 style="margin:0 0 8px;font-size:14px; color:var(--text)">Hooks (0–2s)</h3>
+            <ul>
+              <li>“Bora guardar <span class="strong">R$50.000</span> até <span class="strong">2026</span>?”</li>
+              <li>“Se eu te der a tabela, você consegue guardar <span class="strong">R$10.000</span> em 12 meses?”</li>
+              <li>“Você não precisa de força de vontade. Precisa disso aqui.” (mostra a tabela)</li>
+              <li>“Quer começar a guardar hoje sem planilha complicada?”</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px;font-size:14px; color:var(--text)">Linhas de reforço (meio do vídeo)</h3>
+            <ul>
+              <li>“Economizar vira jogo quando você enxerga progresso.”</li>
+              <li>“Pequenos depósitos &gt; esperar sobrar.”</li>
+              <li>“Se você consegue marcar um número, você consegue seguir o desafio.”</li>
+              <li>“O segredo é o sistema, não o valor.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA <span class="tag">alto engajamento</span></h2>
+        <ul>
+          <li><span class="strong">Primário (comentários):</span> “Comenta <span class="strong">DESAFIO</span> que eu mando a tabela no direct.”</li>
+          <li><span class="strong">Secundário (crescimento):</span> “Me segue pra mais sistemas simples de dinheiro.”</li>
+          <li><span class="strong">Compartilhamento:</span> “Envia pra alguém que sempre diz que ‘não consegue guardar’.”</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="callout">
+          Dica de execução: repita o CTA em 3 pontos (após apresentar o desafio / após demonstrar / no final). Troque a entonação e o enquadramento para parecer “novo”.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Checklist <span class="tag">criação + publicação</span></h2>
+        <div class="checklist">
+          <div class="check"><div class="box"></div><div><span class="strong">Definir meta + prazo</span><br><span class="mini">Ex.: 50k até 2026 / 10k em 12 meses.</span></div></div>
+          <div class="check"><div class="box"></div><div><span class="strong">Dar nome ao desafio</span><br><span class="mini">Ex.: “Desafio dos 50k” (memorável).</span></div></div>
+          <div class="check"><div class="box"></div><div><span class="strong">Criar mecânica visual</span><br><span class="mini">Tabela para marcar + regra simples.</span></div></div>
+          <div class="check"><div class="box"></div><div><span class="strong">Preparar lead magnet</span><br><span class="mini">PDF/planilha/tabela para enviar via DM.</span></div></div>
+          <div class="check"><div class="box"></div><div><span class="strong">Roteiro com cortes</span><br><span class="mini">Novo dado a cada 1–2s.</span></div></div>
+          <div class="check"><div class="box"></div><div><span class="strong">Overlays com números</span><br><span class="mini">Meta/prazo/450 depósitos.</span></div></div>
+          <div class="check"><div class="box"></div><div><span class="strong">B-roll marcando a tabela</span><br><span class="mini">Som de “tick” ajuda a reter.</span></div></div>
+          <div class="check"><div class="box"></div><div><span class="strong">CTA 3x + palavra-chave</span><br><span class="mini">Comentário “DESAFIO” → DM.</span></div></div>
+          <div class="check"><div class="box"></div><div><span class="strong">Legenda curta e objetiva</span><br><span class="mini">1 linha de promessa + instrução do comentário.</span></div></div>
+          <div class="check"><div class="box"></div><div><span class="strong">Fixar comentário</span><br><span class="mini">“Escreve DESAFIO que eu envio a tabela”.</span></div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Variações <span class="tag">mesma fórmula, outros objetivos</span></h2>
+        <ul>
+          <li><span class="strong">Reserva de emergência:</span> “Bora fazer 3 meses de reserva em 12 meses?” (tabela por faixas: 10, 20, 30…).</li>
+          <li><span class="strong">Quitar dívidas:</span> “Bora matar R$5.000 de dívida até junho?” (tabela com parcelas/saldos e check por semana).</li>
+          <li><span class="strong">Primeiros 10k:</span> “Bora fazer os primeiros R$10.000 em 1 ano?” (regra: 4 depósitos/semana + marcar).</li>
+          <li><span class="strong">Casais:</span> “Bora guardar em dupla?” (dois marcadores na mesma tabela, disputa saudável).</li>
+          <li><span class="strong">Versão ‘baixa fricção’:</span> ao invés de 450 depósitos, faça “100 marcações” (mais simples para iniciantes).</li>
+        </ul>
+      </section>
+    </main>
+
+    <div class="footer">Feito para reprodução: mantenha números grandes, demonstração visual e CTA por comentário com recompensa imediata.</div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado. Cole no seu editor e grave em <b>30–45s</b>.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const scriptEl = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(){
+        toast.style.display = 'block';
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>{ toast.style.display = 'none'; }, 2200);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = scriptEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast();
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
