@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 12 — Pare de usar #000000</title>
+<style>
+  :root{
+    --bg:#0b0f17;
+    --panel:#0f1624;
+    --panel2:#0c1220;
+    --text:#eaf0ff;
+    --muted:#a9b4d0;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.14);
+    --shadow: 0 18px 60px rgba(0,0,0,.45);
+    --radius:16px;
+    --radius2:22px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    --g1: linear-gradient(135deg, #22c55e 0%, #06b6d4 46%, #f59e0b 100%);
+    --g2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(6,182,212,.18), rgba(245,158,11,.18));
+    --ok:#22c55e;
+    --warn:#f59e0b;
+    --info:#06b6d4;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:
+      radial-gradient(1200px 700px at 10% 5%, rgba(6,182,212,.18), transparent 60%),
+      radial-gradient(1000px 700px at 90% 12%, rgba(245,158,11,.14), transparent 55%),
+      radial-gradient(1100px 800px at 55% 110%, rgba(34,197,94,.14), transparent 60%),
+      linear-gradient(180deg, #070a12 0%, var(--bg) 54%, #070a12 100%);
+    min-height:100vh;
+  }
+  a{color:inherit}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 70px}
+  .topbar{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    padding:18px 18px 16px;
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border:1px solid var(--stroke);
+    border-radius:var(--radius2);
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .topbar:before{
+    content:"";
+    position:absolute;inset:-2px;
+    background:var(--g2);
+    filter: blur(18px);
+    opacity:.9;
+    z-index:0;
+  }
+  .topbar > *{position:relative;z-index:1}
+  .kicker{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+    font-size:12px;color:var(--muted);
+  }
+  .pill{border:1px solid var(--stroke2);padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.18)}
+  h1{margin:10px 0 6px;font-size:22px;line-height:1.2;letter-spacing:-.02em}
+  .sub{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+  .right{
+    display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end
+  }
+  .btn{
+    appearance:none;border:1px solid var(--stroke2);
+    background:rgba(0,0,0,.25);
+    color:var(--text);
+    padding:10px 12px;border-radius:12px;
+    font-weight:600;font-size:13px;
+    cursor:pointer;
+    transition: transform .06s ease, border-color .12s ease, background .12s ease;
+  }
+  .btn:hover{border-color:rgba(255,255,255,.26);background:rgba(0,0,0,.35)}
+  .btn:active{transform: translateY(1px)}
+  .btn.primary{
+    border:0;
+    background:var(--g1);
+    color:#071018;
+  }
+  .btn.primary:hover{filter:saturate(1.05) brightness(1.02)}
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+    margin-top:16px;
+  }
+  @media(min-width: 920px){
+    .grid{grid-template-columns: 1.1fr .9fr}
+  }
+
+  .card{
+    border:1px solid var(--stroke);
+    border-radius:var(--radius2);
+    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 16px;
+    border-bottom:1px solid var(--stroke);
+    display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  }
+  .card .hd h2{margin:0;font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:rgba(234,240,255,.92)}
+  .tag{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .card .bd{padding:14px 16px}
+  .list{margin:0;padding-left:18px;color:rgba(234,240,255,.92);line-height:1.55}
+  .list li{margin:8px 0}
+  .muted{color:var(--muted)}
+  .hr{height:1px;background:var(--stroke);margin:14px 0}
+
+  .callout{
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(0,0,0,.22);
+    padding:12px 12px;
+    border-radius:14px;
+  }
+  .callout strong{color:#ffffff}
+
+  .scriptBox{
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(0,0,0,.30);
+    border-radius:18px;
+    overflow:hidden;
+  }
+  .scriptHead{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    padding:12px 14px;
+    border-bottom:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  }
+  .scriptHead .lefty{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--g1)}
+  pre{
+    margin:0;
+    padding:14px;
+    color:#eaf0ff;
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.5;
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+
+  .cols{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width: 920px){.cols{grid-template-columns:1fr 1fr}}
+
+  .kbd{font-family:var(--mono);font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--stroke2);background:rgba(0,0,0,.18);color:rgba(234,240,255,.9)}
+
+  .toast{
+    position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+    background:rgba(10,16,28,.88);
+    border:1px solid var(--stroke2);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    font-size:13px;
+    box-shadow: var(--shadow);
+    opacity:0;pointer-events:none;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-2px)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="topbar">
+      <div>
+        <div class="kicker">
+          <span class="pill"><strong>Nicho:</strong> Design Gráfico</span>
+          <span class="pill"><strong>Dia:</strong> 12</span>
+          <span class="pill"><strong>Formato:</strong> Carrossel</span>
+          <span class="pill"><strong>Pilar:</strong> Checklist</span>
+        </div>
+        <h1>Pare de usar #000000: 5 pretos melhores pro seu design</h1>
+        <p class="sub">Link do post original: <a href="https://www.instagram.com/p/DUYEHKvACts/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DUYEHKvACts/</a></p>
+      </div>
+      <div class="right">
+        <a class="btn" href="https://www.instagram.com/p/DUYEHKvACts/" target="_blank" rel="noreferrer">Abrir post</a>
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo: reduzir contraste agressivo e melhorar leitura</span>
+        </div>
+        <div class="bd">
+          <div class="callout">
+            <strong>Ideia central:</strong> preto puro (#000000) costuma “vibrar” em fundos claros e cansar a leitura. Troque por pretos suavizados (near-black) com textura/ruído para ganhar conforto e sofisticação.
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Promessa:</strong> “Aqui vão 5 pretos melhores + HEX pra copiar”.</li>
+            <li><strong>Entrega:</strong> 5 slides com alternativa + benefício em 1 linha.</li>
+            <li><strong>Retenção:</strong> comparativo visual (#000000 X alternativa) + micro-CTA de salvar cedo.</li>
+            <li><strong>Fechamento:</strong> tese + pergunta para comentários.</li>
+          </ul>
+        </div>
+      </article>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Metadados rápidos</h2>
+          <span class="tag">Calendário / Produção</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Hook:</strong> “Pare de usar #000000”.</li>
+            <li><strong>Sub:</strong> “Substituições inteligentes para o preto puro”.</li>
+            <li><strong>Itens:</strong> 5 tons near-black (ex.: #111111, #1C1C1C, #262626, #292929, #333333).</li>
+            <li><strong>CTA primário:</strong> salvar.</li>
+            <li><strong>CTA secundário:</strong> “Qual você mais usa?”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="muted" style="margin:0">Dica: mantenha o layout repetível (mesma estrutura de card), variando apenas a foto/objeto e o tom para não cansar.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Estrutura (reproduzível)</h2>
+        <span class="tag">8 slides • 1080×1350</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <p style="margin:0 0 10px"><strong>Fórmula:</strong> Interrupção → Por que (dor) → Lista salvável → Tese → Pergunta.</p>
+            <ul class="list">
+              <li><strong>Slide 1:</strong> Capa (hook + promessa + selo “pra salvar”).</li>
+              <li><strong>Slide 2:</strong> Problema (fadiga/contraste) + “vou te dar 5 opções”.</li>
+              <li><strong>Slides 3–7:</strong> 1 alternativa por slide (nome + HEX + benefício).</li>
+              <li><strong>Slide 8:</strong> Fechamento (princípio maior) + pergunta.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout">
+              <strong>Padrão de texto por slide de lista:</strong><br/>
+              <span class="kbd">Errado</span> #000000 (com X) → <span class="kbd">Melhor</span> [Nome] [HEX] + 1 benefício (“mais confortável”, “mais premium”, “menos agressivo”).
+            </div>
+            <div class="hr"></div>
+            <ul class="list">
+              <li><strong>Micro-CTA:</strong> “Salva pra usar nos próximos layouts”.</li>
+              <li><strong>Prova/autoridade:</strong> badge “feito no Photoshop” / “feito no Figma”.</li>
+              <li><strong>Branding:</strong> assinatura pequena e constante.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Slides sugeridos (1..8)</h2>
+        <span class="tag">Texto pronto para adaptar</span>
+      </div>
+      <div class="bd">
+        <ol class="list">
+          <li><strong>Capa:</strong> “Pare de usar <strong>#000000</strong>”<br/><span class="muted">Sub:</span> “5 substituições inteligentes pro preto puro” + selo “pra você salvar”.</li>
+          <li><strong>Por quê:</strong> “Preto puro cria <strong>contraste agressivo</strong> e pode cansar a leitura (principalmente em fundo claro).”<br/>“Aqui vão 5 pretos melhores com HEX pra copiar.”<br/><span class="muted">Micro-CTA:</span> “Já salva.”</li>
+          <li><strong>Opção 1:</strong> “Near Black — <span style="font-family:var(--mono);color:#c7a56a">#111111</span>”<br/>Benefício: “Mantém a força, mas fica menos ‘duro’ no olhar.”</li>
+          <li><strong>Opção 2:</strong> “Carbon — <span style="font-family:var(--mono);color:#c7a56a">#1C1C1C</span>”<br/>Benefício: “Ótimo pra UI: contraste alto sem gritar.”</li>
+          <li><strong>Opção 3:</strong> “Graphite — <span style="font-family:var(--mono);color:#c7a56a">#262626</span>”<br/>Benefício: “Mais elegante em fundos quentes e fotos.”</li>
+          <li><strong>Opção 4:</strong> “Slate Black — <span style="font-family:var(--mono);color:#c7a56a">#292929</span>”<br/>Benefício: “Deixa sombras e divisões mais naturais.”</li>
+          <li><strong>Opção 5:</strong> “Soft Black — <span style="font-family:var(--mono);color:#c7a56a">#333333</span>”<br/>Benefício: “Perfeito pra textos longos e grids editoriais.”</li>
+          <li><strong>Fechamento:</strong> “Design de verdade vai além da estética.”<br/>“Boas escolhas de <strong>contraste</strong> e <strong>hierarquia</strong> mudam a experiência.”<br/><strong>Pergunta:</strong> “Qual desses você mais usa?”</li>
+        </ol>
+        <div class="hr"></div>
+        <p class="muted" style="margin:0">Obs.: Se quiser manter idêntico ao post, use fotos com filtro quente + textura de papel e repita o mesmo card em todos os slides 3–7.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Roteiro (publicação)</h2>
+        <span class="tag">Legenda + comentários + fixado</span>
+      </div>
+      <div class="bd">
+        <div class="scriptBox">
+          <div class="scriptHead">
+            <div class="lefty">
+              <span class="dot"></span>
+              <strong style="font-size:14px">Roteiro completo (copiável)</strong>
+              <span class="tag">Use como legenda + texto dos slides</span>
+            </div>
+            <span class="kbd">Copiar com 1 clique</span>
+          </div>
+          <pre id="scriptText">CARROSSEL (8 slides) — “Pare de usar #000000”
+
+SLIDE 1 (CAPA)
+Pare de usar #000000
+5 pretos melhores (com HEX) pra você salvar
+[Selo: “pra você salvar”]
+
+SLIDE 2 (POR QUÊ)
+Preto puro dá contraste agressivo e pode cansar a leitura — principalmente em fundo claro.
+Aqui vão 5 substituições inteligentes com HEX pra você copiar.
+[Handwritten: “salva isso”]
+
+SLIDE 3
+Near Black — #111111
+Benefício: mantém a força, mas fica menos “duro” no olhar.
+
+SLIDE 4
+Carbon — #1C1C1C
+Benefício: contraste alto sem gritar (ótimo pra UI).
+
+SLIDE 5
+Graphite — #262626
+Benefício: mais “premium” em fundos quentes, fotos e textura.
+
+SLIDE 6
+Slate Black — #292929
+Benefício: sombras e divisões ficam mais naturais.
+
+SLIDE 7
+Soft Black — #333333
+Benefício: perfeito pra textos longos e grids editoriais.
+
+SLIDE 8 (FECHAMENTO)
+Design de verdade vai muito além da estética.
+Escolhas de contraste + hierarquia mudam a experiência.
+Pergunta: qual desses você mais usa?
+[Reforço: “pra você salvar” + assinatura]
+
+LEGENDA (copiar e colar)
+Pare de usar #000000 como preto padrão.
+Ele pode ficar agressivo em fundo claro e “vibrar” mais do que você imagina.
+
+5 alternativas (pra copiar):
+#111111 • #1C1C1C • #262626 • #292929 • #333333
+
+Se quiser, comenta “PRETO” que eu mando uma variação pra: dark UI + editorial + social post.
+
+CTA: Salva esse post pra consultar no próximo layout.</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Elementos visuais</h2>
+        <span class="tag">Direção de arte + tokens</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <ul class="list">
+              <li><strong>Fundo:</strong> foto com filtro quente + granulação (paper/film).</li>
+              <li><strong>Card principal:</strong> retângulo escuro com cantos grandes + leve textura.</li>
+              <li><strong>Comparativo:</strong> coluna “#000000” com <strong>X</strong> + seta para alternativa.</li>
+              <li><strong>Handwriting:</strong> setas curvas e círculos guiando o olhar.</li>
+              <li><strong>Badge:</strong> “pra você salvar” (slide 1–2 e 8).</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout">
+              <strong>Tokens sugeridos</strong><br/>
+              <span class="muted">Card:</span> #0B0B0B<br/>
+              <span class="muted">Texto no card:</span> #F2F0EA<br/>
+              <span class="muted">Destaque (setas/HEX):</span> #C7A56A<br/>
+              <span class="muted">Grain:</span> 8–15% • <span class="muted">Vignette:</span> 5–10%
+            </div>
+            <div class="hr"></div>
+            <p class="muted" style="margin:0">Dica de consistência: repita a posição do título e do HEX em todos os slides 3–7 (mesma hierarquia). Troque só a imagem/textura e o tom.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Copy e ganchos</h2>
+        <span class="tag">Variações prontas</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <p style="margin:0 0 10px"><strong>Hooks (capas alternativas):</strong></p>
+            <ul class="list">
+              <li>“#000000 está sabotando seu layout.”</li>
+              <li>“O preto ‘certo’ quase nunca é preto puro.”</li>
+              <li>“Quer um design mais premium? Começa pelo preto.”</li>
+              <li>“O erro silencioso do contraste: #000000.”</li>
+            </ul>
+          </div>
+          <div>
+            <p style="margin:0 0 10px"><strong>Linhas de retenção (slides 2–3):</strong></p>
+            <ul class="list">
+              <li>“A diferença é sutil, mas no conjunto ela muda tudo.”</li>
+              <li>“Você vai ver mais conforto sem perder força.”</li>
+              <li>“Copia os HEX e testa no seu próximo projeto.”</li>
+              <li>“Se você trabalha com UI, isso aqui é obrigatório.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>CTA</h2>
+        <span class="tag">Salvar • comentar • seguir</span>
+      </div>
+      <div class="bd">
+        <ul class="list">
+          <li><strong>Primário (salvar):</strong> “Salva pra consultar quando for escolher preto no seu próximo layout.”</li>
+          <li><strong>Secundário (comentário):</strong> “Qual tom você mais usa: #111, #1C1C1C ou #333?”</li>
+          <li><strong>DM/lead (opcional):</strong> “Comenta ‘PRETO’ que eu te mando uma paleta com 10 near-blacks.”</li>
+          <li><strong>Follow (discreto):</strong> “Quer mais ‘trocas inteligentes’? segue pra não perder a série.”</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Checklist de criação</h2>
+        <span class="tag">Produção rápida (30–60 min)</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <ul class="list">
+              <li>Definir <strong>crença comum</strong>: “preto é #000000”.</li>
+              <li>Escolher <strong>4–6 alternativas</strong> “salváveis” com HEX.</li>
+              <li>Escrever benefício de <strong>1 linha</strong> por alternativa.</li>
+              <li>Preparar layout base: card + área de comparação + espaço pro HEX.</li>
+              <li>Aplicar textura (paper/grain) e padronizar contraste.</li>
+              <li>Inserir selo “pra você salvar” no slide 1–2 e 8.</li>
+            </ul>
+          </div>
+          <div>
+            <ul class="list">
+              <li>Conferir legibilidade (zoom 50% e 25%).</li>
+              <li>Padronizar alinhamentos/margens (mesmo grid).</li>
+              <li>Exportar: JPG alta (carrossel) + nitidez moderada.</li>
+              <li>Legenda com: dor → lista → CTA salvar → pergunta.</li>
+              <li>Fixar comentário com os HEX (para copiar rápido).</li>
+              <li>Repost nos stories com enquete: “Você usa #000000?”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Variações</h2>
+        <span class="tag">Mesma fórmula, outros temas</span>
+      </div>
+      <div class="bd">
+        <ul class="list">
+          <li><strong>Tipografia:</strong> “Pare de usar 2 fontes sem contraste” → 5 combinações prontas (Display + Sans) com motivo.</li>
+          <li><strong>UI:</strong> “Pare de usar branco puro #FFFFFF” → 5 off-whites + quando usar.</li>
+          <li><strong>Grid:</strong> “Pare de centralizar tudo” → 5 alternativas de composição (alinhamento/colunas/ritmo).</li>
+          <li><strong>Cor:</strong> “Pare de usar cinza genérico” → 6 cinzas com temperatura (quente/frio) e aplicação.</li>
+          <li><strong>Ferramenta:</strong> “Pare de exportar do jeito errado” → 5 presets de export para IG.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+<script>
+  const copyBtn = document.getElementById('copyBtn');
+  const scriptText = document.getElementById('scriptText');
+  const toast = document.getElementById('toast');
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'), 1400);
+  }
+
+  copyBtn.addEventListener('click', async () => {
+    const text = scriptText.innerText;
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast('Roteiro copiado.');
+    }catch(e){
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Roteiro copiado (modo compatível).');
+    }
+  });
+</script>
+</body>
+</html>
