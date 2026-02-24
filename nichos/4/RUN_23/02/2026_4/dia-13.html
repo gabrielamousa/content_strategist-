@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dia 13 — Finanças | O ritual mensal pra fazer o salário render</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 18px 45px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --g1: linear-gradient(90deg,#19FFA2 0%, #2BB2FF 48%, #FFB04A 100%);
+      --g2: radial-gradient(1200px 800px at 15% 0%, rgba(43,178,255,.18) 0%, rgba(7,10,18,0) 60%),
+            radial-gradient(900px 700px at 90% 20%, rgba(25,255,162,.14) 0%, rgba(7,10,18,0) 55%),
+            radial-gradient(700px 650px at 50% 100%, rgba(255,176,74,.12) 0%, rgba(7,10,18,0) 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", Noto Sans, "Liberation Sans", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg);
+      background-image: var(--g2);
+      line-height:1.35;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 44px}
+
+    .top{
+      display:flex; gap:14px; align-items:stretch; justify-content:space-between;
+      flex-wrap:wrap;
+      padding:18px;
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .top:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g1);
+      opacity:.14;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .top > *{position:relative}
+
+    .meta{display:flex; flex-direction:column; gap:10px; min-width:280px; flex:1}
+    .badgeRow{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--muted);
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+    .dot{width:8px; height:8px; border-radius:999px; background: var(--g1)}
+
+    h1{
+      font-size:22px;
+      margin:0;
+      letter-spacing:-.4px;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size:14px;
+    }
+
+    .actions{display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      font-size:14px;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.20)}
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(25,255,162,.14), rgba(43,178,255,.10));
+      border-color: rgba(43,178,255,.35);
+    }
+    .btn .k{font-family:var(--mono); font-size:12px; color: var(--muted2); padding:2px 6px; border:1px solid rgba(255,255,255,.14); border-radius:8px}
+
+    .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px; margin-top:14px}
+    @media (max-width: 920px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 28px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .card .hd h2{margin:0; font-size:15px; letter-spacing:.2px}
+    .pill{
+      font-size:12px;
+      color: var(--muted);
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      white-space:nowrap;
+    }
+    .card .bd{padding:14px 16px}
+
+    .hi{
+      display:inline;
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight:700;
+    }
+
+    ul{margin:10px 0 0; padding:0 0 0 18px; color: var(--muted)}
+    li{margin:8px 0}
+    .muted{color: var(--muted)}
+    .muted2{color: var(--muted2)}
+
+    .script{
+      white-space:pre-wrap;
+      font-family: var(--sans);
+      color: var(--text);
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius2);
+      padding:12px;
+      line-height:1.4;
+    }
+
+    .kpi{
+      display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 520px){.kpi{grid-template-columns:1fr}}
+    .kpi .box{
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+    }
+    .kpi .t{font-size:12px; color: var(--muted2); font-family: var(--mono)}
+    .kpi .v{margin-top:6px; font-size:14px; color: var(--text)}
+
+    .hooks{
+      display:grid; grid-template-columns:1fr; gap:10px;
+    }
+    .hookItem{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      border-radius: 14px;
+      padding:10px 12px;
+    }
+    .hookItem .label{font-family: var(--mono); font-size:12px; color: var(--muted2)}
+    .hookItem .text{margin-top:6px; color: var(--text)}
+
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 820px){.twoCol{grid-template-columns:1fr}}
+
+    .checklist{display:grid; grid-template-columns:1fr; gap:8px; margin-top:10px}
+    .chk{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+    }
+    .boxTick{width:18px; height:18px; border-radius:6px; border:1px solid rgba(255,255,255,.20); background: rgba(0,0,0,.15); margin-top:1px; flex: 0 0 auto}
+    .chk .txt{color: var(--muted)}
+
+    .footerNote{
+      margin-top:14px;
+      padding:12px 14px;
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius: 14px;
+      color: var(--muted);
+      background: rgba(255,255,255,.03);
+    }
+
+    .link{
+      display:inline-flex; align-items:center; gap:8px;
+      color: var(--text);
+      border-bottom:1px solid rgba(255,255,255,.22);
+      padding-bottom:2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="meta">
+        <div class="badgeRow">
+          <span class="badge"><span class="dot"></span><strong>Nicho:</strong>&nbsp;Finanças</span>
+          <span class="badge"><strong>Dia:</strong>&nbsp;13</span>
+          <span class="badge"><strong>Formato:</strong>&nbsp;Reels</span>
+          <span class="badge"><strong>Pilar:</strong>&nbsp;Passo a passo</span>
+        </div>
+        <h1>O ritual mensal pra fazer o salário render <span class="hi">(5 passos)</span></h1>
+        <p class="sub">Baseado no post original: <a class="link" href="https://www.instagram.com/p/DKavH9Sty6u/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DKavH9Sty6u/</a></p>
+        <div class="kpi">
+          <div class="box"><div class="t">Duração alvo</div><div class="v">45–60s</div></div>
+          <div class="box"><div class="t">Cadência</div><div class="v">troca de bloco 2–4s</div></div>
+          <div class="box"><div class="t">Entrega (CTA)</div><div class="v">planilha/checklist via DM</div></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro <span class="k">Ctrl/Cmd+C</span></button>
+        <a class="btn" href="https://www.instagram.com/p/DKavH9Sty6u/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="pill">Objetivo: transformação + método replicável</span>
+        </div>
+        <div class="bd">
+          <p class="muted">Conteúdo em formato de ritual mensal que combina <span class="hi">dor muito comum</span> (salário some rápido), <span class="hi">promessa mensurável</span> (render mais/durar o mês) e <span class="hi">passo a passo prático</span> com automação + teto por categorias + acompanhamento semanal. Fecho com uma quebra de objeção (“se eu esperar sobrar, nunca sobra”) e um CTA de palavra-chave para enviar a planilha no direct.</p>
+          <div class="twoCol" style="margin-top:12px">
+            <div>
+              <div class="muted2" style="font-family:var(--mono); font-size:12px">Mensagem central</div>
+              <div style="margin-top:6px">Você não precisa ganhar mais pra sentir controle; precisa de um <span class="hi">processo</span>.</div>
+            </div>
+            <div>
+              <div class="muted2" style="font-family:var(--mono); font-size:12px">Big idea</div>
+              <div style="margin-top:6px"><span class="hi">Separe antes de gastar</span> e trate o resto como “teto”.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="pill">Template reproduzível</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>0–2s:</strong> Hook com transformação desejável e simples.</li>
+            <li><strong>2–6s:</strong> Mini-história (dor) + identificação.</li>
+            <li><strong>6–10s:</strong> Virada + regra contraintuitiva.</li>
+            <li><strong>10–38s:</strong> Passos 1–4 (um por bloco, com sinalizador na tela).</li>
+            <li><strong>38–42s:</strong> Mid-hook (“não acabou…” + passo 5).</li>
+            <li><strong>42–50s:</strong> Dica comportamental (armadilha do “eu mereço”).</li>
+            <li><strong>50–60s:</strong> CTA por palavra-chave + entrega via DM.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column:1/-1">
+        <div class="hd">
+          <h2>Roteiro (pronto para gravar)</h2>
+          <span class="pill">Falas + texto na tela + ritmo</span>
+        </div>
+        <div class="bd">
+          <div class="script" id="scriptText">[CENA 1 — 0–2s | você em plano fechado]
+FALA: “É isso que eu faço todo mês pra fazer meu salário render muito mais — e parar de sumir em 5 dias.”
+TEXTO NA TELA: “Como fazer o salário render (ritual mensal)”
+
+[CENA 2 — 2–6s | corte rápido + expressão de ‘poxa’]
+FALA: “Antes eu recebia, pagava uma coisa aqui, outra ali… e quando eu via, acabou.”
+TEXTO NA TELA: “Antes: 5 dias e a conta zerada”
+
+[CENA 3 — 6–10s | virada + frase de impacto]
+FALA: “A virada foi entender isso: se eu esperar sobrar, nunca vai sobrar.”
+TEXTO NA TELA: “Regra: separar ANTES de gastar”
+
+[CENA 4 — 10–16s | PASSO 1]
+FALA: “Passo 1: assim que o salário cai, eu separo pra mim primeiro — reserva, objetivos e investimento.”
+TEXTO NA TELA: “1/5 Separe p/ você (automático)”
+B-ROLL/OVERLAY: app do banco → agendamento/poupança/investimento
+
+[CENA 5 — 16–22s | PASSO 2]
+FALA: “Passo 2: eu faço um panorama do mês: contas, eventos, aniversários e ‘surpresas’.”
+TEXTO NA TELA: “2/5 Panorama do mês”
+B-ROLL/OVERLAY: calendário + contas fixas
+
+[CENA 6 — 22–30s | PASSO 3]
+FALA: “Passo 3: eu separo por categorias e coloco teto: mercado, transporte, lazer, delivery…”
+TEXTO NA TELA: “3/5 Categorias + teto”
+B-ROLL/OVERLAY: lista de categorias + números
+
+[CENA 7 — 30–38s | PASSO 4]
+FALA: “Passo 4: eu anoto tudo que vai entrar no mês, até renda extra — pra não me enganar.”
+TEXTO NA TELA: “4/5 Registrar entradas”
+B-ROLL/OVERLAY: planilha/checklist com ‘entradas’
+
+[CENA 8 — 38–42s | MID-HOOK + PASSO 5]
+FALA: “E não acabou: eu acompanho 1 a 2 vezes por semana. É isso que mantém o controle.”
+TEXTO NA TELA: “5/5 Acompanhe 1–2x/semana”
+EFEITO: jump cut/zoom em “não acabou”
+
+[CENA 9 — 42–50s | DICA EXTRA]
+FALA: “Dica extra: cuidado com o ‘eu mereço’ todo dia. Um ‘eu mereço’ pequeno repetido vira um rombo no mês.”
+TEXTO NA TELA: “Armadilha: ‘eu mereço’ repetido”
+
+[CENA 10 — 50–60s | CTA]
+FALA: “Quer a minha planilha/roteiro pra fazer isso em 10 minutos? Comenta ‘ORGANIZAÇÃO’ que eu te mando no direct.”
+TEXTO NA TELA: “Comente: ORGANIZAÇÃO”</div>
+          <div class="footerNote">
+            <strong class="hi">Observação de performance:</strong> mantenha frases curtas (1 ideia por frase) e sinalize progresso visualmente (“1/5 … 2/5 …”).
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="pill">Edição + overlays</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Cortes:</strong> a cada 1–2 frases (ritmo alto).</li>
+            <li><strong>Texto na tela:</strong> só palavras-chave (não parágrafos).</li>
+            <li><strong>Progressão:</strong> “Passo 1/5” + barra de progresso.</li>
+            <li><strong>Ênfase:</strong> zoom/jump cut em “antes de gastar”, “nunca sobra”, “não acabou”.</li>
+            <li><strong>B-roll:</strong> app do banco, planilha, calendário do mês, lista de categorias.</li>
+            <li><strong>Paleta:</strong> fundo escuro + destaques em verde/azul/laranja (dá sensação high-tech e ‘controle’).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="pill">Opções plug-and-play</span>
+        </div>
+        <div class="bd">
+          <div class="hooks">
+            <div class="hookItem">
+              <div class="label">Hook 1 (promessa mensurável)</div>
+              <div class="text">“O ritual de 10 minutos que fez meu salário durar o mês inteiro.”</div>
+            </div>
+            <div class="hookItem">
+              <div class="label">Hook 2 (dor + contraste)</div>
+              <div class="text">“Se seu salário some em 5 dias, o problema não é falta de força de vontade — é falta de processo.”</div>
+            </div>
+            <div class="hookItem">
+              <div class="label">Hook 3 (contraintuitivo)</div>
+              <div class="text">“Você não economiza com ‘o que sobra’. Você separa antes — ou não separa nunca.”</div>
+            </div>
+            <div class="hookItem">
+              <div class="label">Mid-hook (retenção)</div>
+              <div class="text">“E não acabou… o que muda o jogo é o acompanhamento semanal.”</div>
+            </div>
+            <div class="hookItem">
+              <div class="label">Frase de compartilhamento</div>
+              <div class="text">“Um ‘eu mereço’ por dia vira uma parcela invisível no fim do mês.”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="pill">Engajamento + recompensa</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div>
+              <div class="muted2" style="font-family:var(--mono); font-size:12px">CTA principal (comentário → DM)</div>
+              <div style="margin-top:8px" class="script">“Comenta ‘ORGANIZAÇÃO’ que eu te mando a planilha no direct.”</div>
+            </div>
+            <div>
+              <div class="muted2" style="font-family:var(--mono); font-size:12px">Variações rápidas</div>
+              <ul>
+                <li>“Comenta ‘PLANILHA’ que eu te envio o link.”</li>
+                <li>“Quer o checklist do ritual mensal? Comenta ‘ROTINA’.”</li>
+                <li>“Se você quer a versão pra quem ganha por comissão, comenta ‘COMISSÃO’.”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <span class="pill">Pré-produção → gravação → edição</span>
+        </div>
+        <div class="bd">
+          <div class="muted2" style="font-family:var(--mono); font-size:12px">Antes de gravar</div>
+          <div class="checklist">
+            <div class="chk"><div class="boxTick"></div><div class="txt">Definir uma promessa mensurável (ex.: “durar o mês inteiro”, “render mais”).</div></div>
+            <div class="chk"><div class="boxTick"></div><div class="txt">Escolher 1 dor comum (ex.: “em 5 dias já acabou”).</div></div>
+            <div class="chk"><div class="boxTick"></div><div class="txt">Listar 5 passos práticos + 1 dica comportamental.</div></div>
+            <div class="chk"><div class="boxTick"></div><div class="txt">Ter um presente claro do CTA (planilha/checklist/template).</div></div>
+          </div>
+
+          <div class="muted2" style="font-family:var(--mono); font-size:12px; margin-top:14px">Na gravação</div>
+          <div class="checklist">
+            <div class="chk"><div class="boxTick"></div><div class="txt">Falar em frases curtas (1 ideia por frase) e olhar direto pra câmera no hook.</div></div>
+            <div class="chk"><div class="boxTick"></div><div class="txt">Trocar de bloco a cada 2–4s (passos numerados).</div></div>
+            <div class="chk"><div class="boxTick"></div><div class="txt">Inserir a quebra de objeção no meio: “se eu esperar sobrar, nunca sobra”.</div></div>
+          </div>
+
+          <div class="muted2" style="font-family:var(--mono); font-size:12px; margin-top:14px">Na edição</div>
+          <div class="checklist">
+            <div class="chk"><div class="boxTick"></div><div class="txt">Adicionar “Passo 1/5” + barra de progresso e palavras-chave sincronizadas.</div></div>
+            <div class="chk"><div class="boxTick"></div><div class="txt">Usar b-rolls rápidos (app/planilha/calendário) pra cada passo.</div></div>
+            <div class="chk"><div class="boxTick"></div><div class="txt">Aplicar zoom/jump cut em 3 pontos: “antes de gastar”, “nunca sobra”, “não acabou”.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="pill">Reaproveitamento sem cansar</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Variação por público:</strong> CLT / autônomo / renda variável (troque o Passo 4 para “previsão conservadora de entradas”).</li>
+            <li><strong>Variação por dor:</strong> “cartão estourando”, “não consigo investir”, “sempre caio no delivery”.</li>
+            <li><strong>Variação por formato:</strong> fazer versão “3 passos essenciais” (até 25–35s) mantendo a mesma CTA.</li>
+            <li><strong>Variação por prova:</strong> inserir 1 frame com print borrado da planilha + “antes/depois” de categorias (sem valores sensíveis).</li>
+            <li><strong>Variação por crença:</strong> trocar “eu mereço” por “só hoje” / “é baratinho” / “depois eu compenso”.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const scriptEl = document.getElementById('scriptText');
+      const textToCopy = () => scriptEl ? scriptEl.innerText.trim() : '';
+
+      async function copy(){
+        const txt = textToCopy();
+        if(!txt) return;
+        try{
+          await navigator.clipboard.writeText(txt);
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>{ btn.innerHTML = 'Copiar roteiro <span class="k">Ctrl/Cmd+C</span>'; }, 1200);
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>{ btn.innerHTML = 'Copiar roteiro <span class="k">Ctrl/Cmd+C</span>'; }, 1200);
+        }
+      }
+
+      btn.addEventListener('click', copy);
+      document.addEventListener('keydown', (e) => {
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        if((isMac ? e.metaKey : e.ctrlKey) && e.key.toLowerCase() === 'c'){
+          // só copia se o foco não estiver em input/textarea
+          const tag = (document.activeElement && document.activeElement.tagName) ? document.activeElement.tagName.toLowerCase() : '';
+          if(tag !== 'input' && tag !== 'textarea') copy();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
