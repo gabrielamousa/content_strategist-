@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha reproduzível — Carrossel (Finanças) | Dia 19</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0D1428cc;
+      --card2:#0C1326;
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --line:#1C2A52;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:16px;
+
+      --g1: linear-gradient(90deg,#1EE39A 0%, #22D3EE 45%, #FFB020 100%);
+      --g2: linear-gradient(135deg,#22C55E 0%, #38BDF8 55%, #F97316 100%);
+      --good:#22C55E;
+      --bad:#EF4444;
+      --hi:#F59E0B;
+      --blue:#38BDF8;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,.20), transparent 60%),
+        radial-gradient(900px 500px at 95% 10%, rgba(34,197,94,.18), transparent 55%),
+        radial-gradient(900px 500px at 50% 110%, rgba(249,115,22,.16), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 44px}
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(13,20,40,.85), rgba(10,16,36,.55));
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--radius) + 6px);
+      padding:18px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      opacity:.10;
+      filter: blur(16px);
+      pointer-events:none;
+    }
+    .toprow{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;position:relative}
+    .meta{
+      display:flex;flex-direction:column;gap:8px;
+      min-width:260px;
+    }
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{
+      font-size:12px;
+      letter-spacing:.3px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      background: rgba(7,10,18,.35);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+    .chip strong{color:var(--text);font-weight:650}
+    h1{
+      margin:4px 0 0;
+      font-size:20px;
+      line-height:1.2;
+      letter-spacing:-.2px;
+    }
+    .sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13.5px;
+      line-height:1.35;
+      max-width:70ch;
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(10,16,36,.55);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      text-decoration:none;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .btn:hover{transform: translateY(-1px);border-color:#2A3E74;background: rgba(12,19,41,.75)}
+    .btn.primary{
+      border-color: transparent;
+      background: var(--g1);
+      color:#07101A;
+      font-weight:700;
+    }
+    .btn.primary:hover{filter:saturate(1.05) brightness(1.02)}
+    .link{
+      color:var(--muted);
+      font-size:13px;
+      text-decoration:none;
+      border-bottom:1px dashed rgba(169,180,208,.35);
+      padding-bottom:2px;
+    }
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+      .actions{justify-content:flex-start}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(13,20,40,.78), rgba(10,16,36,.50));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(28,42,82,.7);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .badge{
+      font-size:11px;
+      color:#08121B;
+      background: var(--g1);
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:800;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+    .card .bd{padding:14px}
+
+    .kvs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 520px){.kvs{grid-template-columns:1fr}}
+    .kv{
+      border:1px solid rgba(28,42,82,.75);
+      background: rgba(7,10,18,.32);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .kv .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .kv .v{margin-top:6px;font-size:13.5px;line-height:1.35;color:var(--text)}
+
+    .list{margin:0;padding-left:18px;color:var(--text)}
+    .list li{margin:8px 0;color:var(--text);line-height:1.35}
+    .mut{color:var(--muted)}
+
+    .split{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 720px){.split{grid-template-columns:1fr}}
+    .panel{
+      border:1px solid rgba(28,42,82,.75);
+      background: rgba(7,10,18,.35);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .panel .t{
+      display:flex;align-items:center;gap:8px;
+      font-weight:800;font-size:12px;letter-spacing:.4px;text-transform:uppercase
+    }
+    .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
+    .dot.bad{background:var(--bad)}
+    .dot.good{background:var(--good)}
+
+    code.inline{
+      background: rgba(56,189,248,.10);
+      border:1px solid rgba(56,189,248,.22);
+      padding:2px 6px;
+      border-radius:9px;
+      color: #D8F3FF;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+    }
+    .hr{height:1px;background:rgba(28,42,82,.7);margin:12px 0}
+
+    textarea{
+      width:100%;
+      min-height:340px;
+      resize:vertical;
+      border-radius:14px;
+      border:1px solid rgba(28,42,82,.85);
+      background: rgba(7,10,18,.35);
+      color: var(--text);
+      padding:12px;
+      line-height:1.45;
+      font-size:13px;
+      outline:none;
+    }
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background: rgba(0,0,0,.75);
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-size:13px;
+      display:none;
+      z-index:99;
+      backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="meta">
+          <div class="chips">
+            <span class="chip"><strong>Nicho</strong>: Finanças</span>
+            <span class="chip"><strong>Dia</strong>: 19</span>
+            <span class="chip"><strong>Formato</strong>: Carrossel</span>
+            <span class="chip"><strong>Pilar</strong>: Dor</span>
+          </div>
+          <h1>Pai Pobre x Pai Rico: o exemplo que molda o dinheiro</h1>
+          <p class="sub">Template reproduzível de carrossel em comparação (lado A vs lado B) para ensinar um valor por modelagem, com microcenas e CTA por comentário.</p>
+          <a class="link" href="https://www.instagram.com/p/DVBo77dEeqx/" target="_blank" rel="noopener">Ver post original</a>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+          <a class="btn" href="#checklist">Ir para checklist</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge">Big idea</span>
+        </div>
+        <div class="bd">
+          <div class="kvs">
+            <div class="kv">
+              <div class="k">Promessa do post</div>
+              <div class="v">As pessoas aprendem mais pelo que veem repetidamente (exemplo) do que pelo que ouvem (discurso). Use contraste para gerar reflexão e ação.</div>
+            </div>
+            <div class="kv">
+              <div class="k">Mecânica de retenção</div>
+              <div class="v">Comparação instantânea + micro-histórias do cotidiano + progressão (hoje → amanhã) + CTA simples com recompensa.</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Tom</strong>: direto, moral simples, sem dados.</li>
+            <li><strong>Regra</strong>: 1 insight por slide; até 10–14 palavras por bloco.</li>
+            <li><strong>Objetivo</strong>: gerar autoidentificação (“qual lado eu estou mostrando?”) e converter no comentário.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura (macro)</h2>
+          <span class="badge">7 slides</span>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><strong>Hook + tese</strong> (comparação + mantra)</li>
+            <li><strong>Situação 1</strong>: decisão cotidiana (erro vs acerto)</li>
+            <li><strong>Crença 1</strong>: frase típica (atalho mental vs consciência)</li>
+            <li><strong>Rotina silenciosa</strong>: hábito que modela sem falar</li>
+            <li><strong>Contraponto extremo</strong>: disciplina/constância vs excesso</li>
+            <li><strong>Virada emocional</strong>: “não foi por acaso, foi repetição”</li>
+            <li><strong>Futuro + CTA</strong>: identidade do adulto + comentário + recompensa</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Slides sugeridos (1..7)</h2>
+          <span class="badge">texto pronto + campos</span>
+        </div>
+        <div class="bd">
+          <div class="split">
+            <div class="panel">
+              <div class="t"><span class="dot good"></span>Modelo (para qualquer tema)</div>
+              <ul class="list">
+                <li><strong>Slide 1</strong> — Tese: “Você aprende mais com <code class="inline">[AÇÃO]</code> do que com <code class="inline">[DISCURSO]</code>.” + mantra.</li>
+                <li><strong>Slide 2</strong> — Decisão cotidiana: erro (impulso) vs acerto (processo).</li>
+                <li><strong>Slide 3</strong> — Crença/Frase típica: justificar vs assumir custo.</li>
+                <li><strong>Slide 4</strong> — Rotina silenciosa: o que você normaliza sem perceber.</li>
+                <li><strong>Slide 5</strong> — Contraste extremo: constância vs excesso + frase-âncora.</li>
+                <li><strong>Slide 6</strong> — Espelho: “virou por repetição” + responsabilidade sem culpa.</li>
+                <li><strong>Slide 7</strong> — Futuro + CTA: adulto problema vs adulto solução + palavra-chave + recurso.</li>
+              </ul>
+            </div>
+            <div class="panel">
+              <div class="t"><span class="dot bad"></span>Armadilhas (o que evitar)</div>
+              <ul class="list">
+                <li>Texto longo explicando “a teoria” (mata o contraste).</li>
+                <li>Trocar o padrão visual a cada slide (perde leitura rápida).</li>
+                <li>Comparação moralista/agressiva (gera defesa; prefira responsabilidade).</li>
+                <li>CTA genérico (“me chama no direct”) sem recompensa concreta.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Roteiro (copiável)</h2>
+          <span class="badge">pronto para colar</span>
+        </div>
+        <div class="bd">
+          <textarea id="script" spellcheck="false">CARROSSEL 7 SLIDES — TEMPLATE “LADO A vs LADO B” (ADAPTÁVEL)
+
+[CONFIG]
+- Tema central (valor): [VALOR]
+- Anti-valor (o oposto): [ANTI-VALOR]
+- Público: [QUEM]
+- Recurso do CTA (lead magnet): [RECURSO]
+- Palavra-chave do comentário: [PALAVRA]
+- Cenário recorrente: [CENÁRIO DO COTIDIANO]
+
+SLIDE 1 — HOOK + TESE
+Topo (tags): LADO A: “[MODELO 1]” | LADO B: “[MODELO 2]”
+Headline: “Você aprende mais com [AÇÃO] do que com [DISCURSO].”
+Sub/Mantra (rodapé): “EXEMPLO CONSTRÓI COMPORTAMENTO.”
+Visual: split 50/50 + um gesto igual nos dois lados (mesma situação, atitudes diferentes).
+
+SLIDE 2 — SITUAÇÃO 1 (DECISÃO COTIDIANA)
+Lado A (erro): “Hoje não dá… mas eu [ESCAPE/IMPULSO].”
+Lado B (acerto): “Agora não. Vamos [PROCESSO SIMPLES].”
+Nota de direção: use props óbvios (caos vs organização).
+
+SLIDE 3 — CRENÇA 1 (FRASE TÍPICA)
+Lado A: “Depois eu vejo [FATOR IMPORTANTE].”
+Lado B: “[FATOR IMPORTANTE] também é decisão.”
+Destaque (1 palavra em cor): [PALAVRA DE IMPACTO] (ex.: “DECISÃO”, “CUSTO”, “PRIORIDADE”).
+
+SLIDE 4 — ROTINA SILENCIOSA (O QUE VOCÊ NORMALIZA)
+Pouco texto; foco em cena.
+Lado A (passivo): “Normaliza [HÁBITO RUIM] sem perceber.”
+Lado B (ativo): “Normaliza [HÁBITO BOM] sem discurso.”
+Microcopy curta no rodapé: “O padrão vira destino.”
+
+SLIDE 5 — CONTRAPONTO EXTREMO (DISCIPLINA/CONSTÂNCIA)
+Lado A: “Excesso hoje → conta amanhã.”
+Lado B: “Constância hoje → liberdade amanhã.”
+Frase-âncora: “[VALOR] se ensina vivendo.”
+
+SLIDE 6 — VIRADA (ESPELHO EMOCIONAL)
+Texto central (sem muita cena):
+“Não foi por acaso. Foi por repetição.”
+Complemento: “O que você repete, você ensina.”
+
+SLIDE 7 — FUTURO + CTA (CONVERSÃO)
+Topo (tags): “Adulto [PROBLEMA]” | “Adulto [SOLUÇÃO]”
+Pergunta: “Você está ensinando [VALOR] ou [ANTI-VALOR] no dia a dia?”
+CTA: “Comente [PALAVRA] que eu te envio [RECURSO].”
+Extra (opcional): “Quer em PDF/planilha? Salva e comenta.”
+
+[LEGENDA SUGERIDA]
+“A disciplina (e o dinheiro) quase nunca nasce de uma palestra. Nasce do que você vê todo dia.
+Se você quer um passo a passo simples para aplicar [VALOR] ainda essa semana, comente [PALAVRA] que eu envio [RECURSO].”
+
+[HASHTAGS BASE — ajuste]
+#financas #financaspessoais #educacaofinanceira #habitos #disciplina #organizacaofinanceira #planejamento</textarea>
+          <p class="sub mut" style="margin-top:10px">Dica: mantenha o mesmo layout em todos os slides (tags fixas + divisor central + pouco texto) para acelerar leitura.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="badge">high-retention</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Composição</strong>: split 50/50 com divisor luminoso central (amarelo/laranja com glow).</li>
+            <li><strong>Tags fixas</strong>: topo com rótulos “LADO A” (vermelho) vs “LADO B” (verde).</li>
+            <li><strong>Microcenas</strong>: situações do cotidiano (mesa, mercado, celular, treino, planilha).</li>
+            <li><strong>Props simbólicos</strong>: caos (recibos, sacolas, bagunça) vs controle (checklist, porquinho, planilha).</li>
+            <li><strong>Textura</strong>: grain leve + vinheta discreta para profundidade.</li>
+            <li><strong>Regra</strong>: 1 elemento “igual” nos dois lados (mesmo cenário) para reforçar contraste.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">substituível</span>
+        </div>
+        <div class="bd">
+          <div class="kvs">
+            <div class="kv">
+              <div class="k">Ganchos (Slide 1) — opções</div>
+              <div class="v">
+                <ul class="list" style="margin:0">
+                  <li>“Você aprende mais com <strong>[AÇÃO]</strong> do que com <strong>[DISCURSO]</strong>.”</li>
+                  <li>“O que você repete, você ensina.”</li>
+                  <li>“Seu resultado é o que você normaliza.”</li>
+                  <li>“Você não ensina com conselho. Ensina com hábito.”</li>
+                </ul>
+              </div>
+            </div>
+            <div class="kv">
+              <div class="k">Frases-âncora (Slide 5/6) — opções</div>
+              <div class="v">
+                <ul class="list" style="margin:0">
+                  <li>“Consistência é amor em forma de rotina.”</li>
+                  <li>“Liberdade é consequência de processo.”</li>
+                  <li>“Não é motivação. É ambiente + repetição.”</li>
+                  <li>“Pequenos hábitos hoje evitam grandes problemas amanhã.”</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Estrutura de contraste</strong>: frase curta no A (justificativa) vs frase curta no B (processo).</li>
+            <li><strong>Palavra destacada</strong>: escolha 1 por slide (ex.: “DECISÃO”, “PRIORIDADE”, “PROCESSO”, “CONSTÂNCIA”).</li>
+            <li><strong>Tom</strong>: responsabilidade sem ataque (“é repetição”, não “você é ruim”).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="badge">comentário + recompensa</span>
+        </div>
+        <div class="bd">
+          <div class="split">
+            <div class="panel">
+              <div class="t"><span class="dot good"></span>Fórmula (fixa)</div>
+              <ul class="list">
+                <li><strong>Pergunta de autoidentificação</strong>: “Você está ensinando <code class="inline">[VALOR]</code> ou <code class="inline">[ANTI-VALOR]</code>?”</li>
+                <li><strong>Ação simples</strong>: “Comente <code class="inline">[PALAVRA]</code>…”</li>
+                <li><strong>Recompensa clara</strong>: “…que eu envio <code class="inline">[RECURSO]</code>.”</li>
+              </ul>
+            </div>
+            <div class="panel">
+              <div class="t"><span class="dot bad"></span>Exemplos de recursos (finanças)</div>
+              <ul class="list">
+                <li>Planilha 50/30/20 + categorias básicas</li>
+                <li>Checklist “primeiros 30 dias de organização”</li>
+                <li>Modelo de orçamento semanal (1 página)</li>
+                <li>Guia “como cortar 3 gastos invisíveis”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="checklist" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Checklist de criação (produção + qualidade)</h2>
+          <span class="badge">reproduzível</span>
+        </div>
+        <div class="bd">
+          <div class="kvs">
+            <div class="kv">
+              <div class="k">Antes de criar</div>
+              <div class="v">
+                <ul class="list" style="margin:0">
+                  <li>Defina <strong>1 valor</strong> e <strong>1 anti-valor</strong>.</li>
+                  <li>Liste 4 microcenas reais do cotidiano onde isso aparece.</li>
+                  <li>Escolha 1 <strong>recurso</strong> que ajude a agir em 10 minutos.</li>
+                  <li>Escolha 1 <strong>palavra-chave curta</strong> (ex.: PLANILHA, GUIA, CHECK).</li>
+                </ul>
+              </div>
+            </div>
+            <div class="kv">
+              <div class="k">Durante o design</div>
+              <div class="v">
+                <ul class="list" style="margin:0">
+                  <li>Formato 1080×1350 (4:5), 7 slides.</li>
+                  <li>Padrão fixo: tags no topo + divisor central + 1 microtexto.</li>
+                  <li>Até <strong>10–14 palavras</strong> por bloco; fonte grande.</li>
+                  <li>1 palavra em cor por slide (reforço).</li>
+                </ul>
+              </div>
+            </div>
+            <div class="kv">
+              <div class="k">Revisão de retenção</div>
+              <div class="v">
+                <ul class="list" style="margin:0">
+                  <li>Cada slide responde: “Qual é o exemplo prático?”</li>
+                  <li>Há progressão (hoje → futuro) e virada no slide 6?</li>
+                  <li>O contraste é visível sem ler?</li>
+                  <li>Último slide: benefício explícito + ação de baixa fricção.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="kv">
+              <div class="k">Publicação</div>
+              <div class="v">
+                <ul class="list" style="margin:0">
+                  <li>Legenda curta + 1 parágrafo de contexto + CTA repetido.</li>
+                  <li>Fixe um comentário com a palavra-chave e instrução.</li>
+                  <li>Responda comentários em lote nos primeiros 30–60 min.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Variações (mesmo impacto, outros temas)</h2>
+          <span class="badge">adaptações</span>
+        </div>
+        <div class="bd">
+          <div class="kvs">
+            <div class="kv">
+              <div class="k">Trocas seguras (mantém performance)</div>
+              <div class="v">
+                <ul class="list" style="margin:0">
+                  <li><strong>Pai Pobre x Pai Rico</strong> → “Profissional estagnado x profissional em evolução”, “Aluno reativo x aluno estratégico”, “Eu do impulso x eu do processo”.</li>
+                  <li><strong>Criança aprende com o exemplo</strong> → “Equipe copia o líder”, “Cliente copia o padrão que você tolera”, “Seu corpo copia sua rotina”.</li>
+                  <li><strong>Planilha</strong> → checklists, templates, scripts, mini-guia, calculadora, PDF 1 página.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="kv">
+              <div class="k">Mapas de tema prontos (plug-and-play)</div>
+              <div class="v">
+                <ul class="list" style="margin:0">
+                  <li><strong>Estudos</strong>: [VALOR]=constância | [ANTI]=procrastinação | [RECURSO]=cronograma 7 dias | [PALAVRA]=CRONOGRAMA</li>
+                  <li><strong>Saúde</strong>: [VALOR]=disciplina alimentar | [ANTI]=compulsão | [RECURSO]=lista de compras | [PALAVRA]=LISTA</li>
+                  <li><strong>Carreira</strong>: [VALOR]=priorização | [ANTI]=urgência eterna | [RECURSO]=matriz Eisenhower | [PALAVRA]=MATRIZ</li>
+                  <li><strong>Relacionamentos</strong>: [VALOR]=comunicação | [ANTI]=silêncio punitivo | [RECURSO]=script de conversa | [PALAVRA]=SCRIPT</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="sub" style="margin:0"><span style="background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800">Regra de adaptação:</span> preserve a dualidade visual + microcenas + virada no slide 6 + CTA com recompensa. Só troque o valor, as cenas e o recurso.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    const btn = document.getElementById('copyBtn');
+    const ta = document.getElementById('script');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=>{ toast.style.display = 'none'; }, 1600);
+    }
+
+    btn.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(ta.value);
+        showToast('Roteiro copiado.');
+      }catch(e){
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        showToast('Roteiro copiado (modo compatível).');
+      }
+    });
+  </script>
+</body>
+</html>
