@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Roteiro Reproduzível — Finanças (Dia 25)</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1524;
+      --panel2:#0c1322;
+      --text:#e8eefc;
+      --muted:#a9b6d3;
+      --line:rgba(255,255,255,.10);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius:16px;
+      --radius2:12px;
+      --g1: linear-gradient(90deg,#00e887 0%, #2f8bff 55%, #ff8a00 100%);
+      --g2: linear-gradient(180deg, rgba(0,232,135,.14), rgba(47,139,255,.10) 45%, rgba(255,138,0,.10));
+      --chip: rgba(255,255,255,.06);
+      --ok:#00e887;
+      --warn:#ffb020;
+      --info:#2f8bff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 600px at 15% 10%, rgba(47,139,255,.18), transparent 55%),
+                  radial-gradient(1000px 600px at 90% 20%, rgba(0,232,135,.16), transparent 55%),
+                  radial-gradient(900px 520px at 70% 95%, rgba(255,138,0,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 40px}
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .topbar{
+      padding:18px 18px 14px;
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;
+      background: var(--g2);
+    }
+    .brand{
+      display:flex; gap:12px; align-items:flex-start;
+    }
+    .dot{
+      width:12px; height:12px; border-radius:999px; background: var(--g1);
+      box-shadow: 0 0 0 6px rgba(255,255,255,.03);
+      margin-top:6px;
+    }
+    h1{font-size:18px; margin:0 0 2px; letter-spacing:.2px}
+    .meta{color:var(--muted); font-size:13px}
+    .chips{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+    .chip{
+      font-size:12px; color:var(--text);
+      padding:6px 10px; border-radius:999px;
+      background: var(--chip);
+      border:1px solid var(--line);
+      backdrop-filter: blur(8px);
+      white-space:nowrap;
+    }
+    .chip b{font-weight:650}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 12px; border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      cursor:pointer;
+      text-decoration:none;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      font-size:13px;
+    }
+    .btn:hover{background: rgba(255,255,255,.06)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      border-color: rgba(0,232,135,.35);
+      background: linear-gradient(90deg, rgba(0,232,135,.18), rgba(47,139,255,.12), rgba(255,138,0,.12));
+    }
+    .btn .kbd{
+      font-size:11px; color:var(--muted);
+      padding:2px 6px; border-radius:8px; border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+    }
+    .content{padding:18px}
+    .grid{display:grid; grid-template-columns: 1fr; gap:14px}
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1fr 1fr}
+      .span2{grid-column: 1 / -1}
+    }
+    section.card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0; padding:14px 14px 10px;
+      font-size:14px; letter-spacing:.2px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+    }
+    .badge{
+      font-size:11px; color:var(--muted);
+      padding:4px 8px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .card .body{padding:14px}
+    .lead{color:var(--muted); font-size:13px; margin:0 0 12px}
+    .list{margin:0; padding-left:18px; color:var(--text)}
+    .list li{margin:8px 0}
+    .hr{
+      height:1px; background: var(--line);
+      margin:12px 0;
+    }
+    .callout{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius2);
+      padding:12px;
+      margin:10px 0 0;
+    }
+    .callout .t{font-size:12px; color:var(--muted); margin:0 0 6px}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12.5px}
+    .gradline{height:2px; background: var(--g1); border-radius:999px; opacity:.9}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .pill{
+      padding:8px 10px; border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      font-size:12.5px;
+    }
+    .pill b{font-weight:650}
+    textarea{
+      width:100%; min-height:260px; resize:vertical;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      color:var(--text);
+      padding:12px;
+      outline:none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+    .footer-note{color:var(--muted); font-size:12px; margin-top:10px}
+    .ok{color:var(--ok)} .info{color:var(--info)} .warn{color:var(--warn)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <div class="dot"></div>
+          <div>
+            <h1>Roteiro Reproduzível (Dia 25) — Finanças</h1>
+            <div class="meta">Base universal para recriar o mesmo padrão em qualquer tema, mantendo impacto de retenção e CTA.</div>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DU3Q-EYADH7/" target="_blank" rel="noopener">Abrir post original</a>
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro <span class="kbd">Ctrl/⌘ + C</span></button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="chips">
+          <div class="chip"><b>Nicho</b>: Finanças</div>
+          <div class="chip"><b>Dia</b>: 25</div>
+          <div class="chip"><b>Pilar</b>: Passo a passo</div>
+          <div class="chip"><b>Formato</b>: Reels</div>
+          <div class="chip"><b>Status</b>: Falta transcrição do original</div>
+        </div>
+        <div class="hr"></div>
+        <div class="gradline"></div>
+      </div>
+    </header>
+
+    <div class="grid" style="margin-top:14px;">
+      <section class="card span2">
+        <h2>Resumo <span class="badge">o que este template resolve</span></h2>
+        <div class="body">
+          <p class="lead">Como a ficha original veio sem transcrição/legenda/cenas, este documento entrega um <b>sistema reproduzível</b> para você preencher e publicar com alto padrão: <b>Hook → Promessa → Passo a passo → Prova → CTA</b>. Quando você colar a transcrição do Reel, dá para refinar o texto “word-by-word”.</p>
+          <div class="row">
+            <div class="pill"><b>Objetivo</b>: retenção + salvamentos</div>
+            <div class="pill"><b>Entrega</b>: roteiro falado + texto na tela + cenas</div>
+            <div class="pill"><b>Aplicação</b>: finanças e qualquer outro nicho</div>
+          </div>
+          <div class="callout">
+            <p class="t">Entrada mínima para personalizar (cole depois):</p>
+            <div class="mono">tema específico • promessa • 3–5 passos • erro comum • exemplo real • CTA</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura <span class="badge">sequência recomendada (15–35s)</span></h2>
+        <div class="body">
+          <ol class="list">
+            <li><b>0–2s — Hook direto</b>: dor/curiosidade + resultado em 1 frase.</li>
+            <li><b>2–5s — Autoridade mínima</b>: “eu já vi X acontecer / atendi Y casos / testei Z”.</li>
+            <li><b>5–18s — Passo a passo</b>: 3 passos curtos, cada um com verbo de ação.</li>
+            <li><b>18–26s — Prova/Exemplo</b>: número, print, mini-caso (sem enrolar).</li>
+            <li><b>26–35s — Fechamento + CTA</b>: pedir salvar/compartilhar/DM com palavra-chave.</li>
+          </ol>
+          <div class="hr"></div>
+          <p class="lead"><b>Regra de ouro:</b> uma ideia por frase. Se uma frase precisar de “e”, provavelmente vira 2 cortes.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro <span class="badge">modelo preenchível (copiável)</span></h2>
+        <div class="body">
+          <p class="lead">Edite os campos entre <span class="mono">[colchetes]</span>. Mantenha frases curtas para caber em legenda dinâmica.</p>
+          <textarea id="script" class="mono">TÍTULO (texto na tela): [Pare de fazer X com seu dinheiro]
+
+0–2s (HOOK — falado + na tela)
+“Se você [comportamento comum], você está [perdendo/atrasando] [resultado desejado] — e quase ninguém percebe.”
+
+2–5s (CONTEXTO/AUTORIDADE)
+“Eu vejo isso direto com [perfil: iniciantes/autônomos/CLT/investidores] e dá pra corrigir em 3 passos.”
+
+5–18s (PASSO A PASSO — 3 blocos)
+Passo 1: “Faça [ação simples], porque [motivo curto].”
+Passo 2: “Corte/ajuste [alavanca], e defina [regra/limite].”
+Passo 3: “Automatize [aplicação/hábito] em [frequência] pra não depender de motivação.”
+
+18–26s (EXEMPLO/PROVA)
+“Exemplo: com [R$X] por mês em [estratégia], em [tempo] você tem [resultado]. O segredo foi [1 detalhe].”
+
+26–35s (FECHAMENTO + CTA)
+“Quer que eu faça um passo a passo pra [objetivo específico]? Comenta ‘[PALAVRA]’ que eu mando.”
+“E salva esse vídeo pra rever na hora de [ação que a pessoa faz].”
+
+TEXTO FINAL NA TELA:
+“Comenta [PALAVRA] + salva ✅”
+
+LEGENDA (CAPTION) — 3 linhas + bullets
+Você não precisa de [solução mágica]. Precisa de:
+• [passo 1 em 5–7 palavras]
+• [passo 2 em 5–7 palavras]
+• [passo 3 em 5–7 palavras]
+
+Se você quer [resultado], comenta “[PALAVRA]”.</textarea>
+          <div class="footer-note">Dica: grave em 9:16, luz frontal, cortes a cada 1–2 frases.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais <span class="badge">retenção e clareza</span></h2>
+        <div class="body">
+          <ul class="list">
+            <li><b>Legenda dinâmica</b>: 3–6 palavras por linha, destaque em 1 termo-chave por frase.</li>
+            <li><b>Barra de progresso</b> (topo ou rodapé) para sinalizar avanço do “3 passos”.</li>
+            <li><b>On-screen checklist</b>: “1/3”, “2/3”, “3/3” com animação simples.</li>
+            <li><b>B-roll rápido</b>: app de banco, planilha, gráfico, “print” de resultado (com dados sensíveis ocultos).</li>
+            <li><b>Zoom-in leve</b> nos momentos de “passo 2” e “prova”.</li>
+          </ul>
+          <div class="callout">
+            <p class="t">Identidade high-tech (sugestão):</p>
+            <div class="mono">Fundo #0b0f17 • cards #0f1524 • destaques em degradê verde→azul→laranja • tipografia sem serifa • ícones lineares</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos <span class="badge">substituições com mesmo impacto</span></h2>
+        <div class="body">
+          <p class="lead">Use 1 gancho por vídeo. Troque apenas os campos.</p>
+          <ul class="list">
+            <li><b>“Você está fazendo X e chamando de Y”</b>: “Você está [gastando] e chamando de [investir].”</li>
+            <li><b>“Se você faz X, você paga uma taxa invisível”</b>: “Se você [parcela tudo], você paga a taxa invisível da [desorganização].”</li>
+            <li><b>“3 passos pra sair de X sem fazer Y”</b>: “3 passos pra [guardar dinheiro] sem [virar ‘mão de vaca’].”</li>
+            <li><b>“O erro #1 de quem quer Z”</b>: “O erro #1 de quem quer [investir] é [começar pelo produto].”</li>
+            <li><b>“O que ninguém te conta sobre X”</b>: “O que ninguém te conta sobre [cartão de crédito] é [o timing].”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="lead"><span class="info">Pro tip</span>: prometa um <b>resultado específico</b> (tempo, valor, esforço) e entregue o “como” em verbos.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA <span class="badge">comentário + salvar + DM</span></h2>
+        <div class="body">
+          <ul class="list">
+            <li><b>Salvar</b>: “Salva pra usar quando for [dia do pagamento/fechar fatura/planejar mês].”</li>
+            <li><b>Comentário (palavra-chave)</b>: “Comenta ‘<span class="mono">PLANILHA</span>’ que eu te mando o modelo.”</li>
+            <li><b>DM</b>: “Me chama no direct com ‘<span class="mono">MAPA</span>’ que eu te envio o passo a passo.”</li>
+            <li><b>Compartilhar</b>: “Manda pra alguém que sempre diz que ‘não sobra’.”</li>
+          </ul>
+          <div class="callout">
+            <p class="t">Regra: 1 CTA principal + 1 secundário.</p>
+            <div class="mono">Principal: comentar palavra-chave (aumenta alcance) • Secundário: salvar (aumenta vida útil)</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2>Checklist <span class="badge">criação, gravação e publicação</span></h2>
+        <div class="body">
+          <div class="row">
+            <div class="pill"><b>Pré</b>: ideia → promessa → 3 passos</div>
+            <div class="pill"><b>Gravação</b>: 1 take por bloco</div>
+            <div class="pill"><b>Edição</b>: cortes + textos</div>
+            <div class="pill"><b>Post</b>: capa + legenda + CTA</div>
+          </div>
+          <div class="hr"></div>
+          <ol class="list">
+            <li><b>Defina o alvo</b>: [iniciante / endividado / investidor / autônomo] e 1 dor principal.</li>
+            <li><b>Escreva a promessa</b> em 12 palavras: “Como [resultado] em [tempo] sem [objeção]”.</li>
+            <li><b>Escolha 3 passos</b> que cabem em 10–12s (cada um com 1 verbo no início).</li>
+            <li><b>Adicione 1 prova</b>: número, antes/depois, mini-caso, print (oculte dados).</li>
+            <li><b>Texto na tela</b>: título + “1/3 2/3 3/3” + CTA final.</li>
+            <li><b>Grave com energia</b>: pausas curtas, olhar na lente, sem introdução longa.</li>
+            <li><b>Edite para ritmo</b>: corte respirações longas, zoom leve, b-roll nos passos.</li>
+            <li><b>Capa</b>: 4–6 palavras (dor/resultado) + contraste alto.</li>
+            <li><b>Legenda</b>: 1 frase forte + bullets + CTA (palavra-chave).</li>
+            <li><b>Publicação</b>: fixe comentário com a palavra-chave e o “próximo passo”.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2>Variações <span class="badge">adapte para outros temas mantendo performance</span></h2>
+        <div class="body">
+          <p class="lead">Troque apenas as variáveis (X/Y/Z) e mantenha a cadência.</p>
+          <ul class="list">
+            <li><b>Variação A — “Mito vs Verdade”</b>: Hook “Você acha que X, mas na prática Y.” → 3 verdades → CTA “comenta MITO”.</li>
+            <li><b>Variação B — “Erro comum”</b>: Hook “O erro que te custa [tempo/dinheiro]” → por que acontece → correção em 3 passos → prova.</li>
+            <li><b>Variação C — “Checklist”</b>: Hook “Antes de [ação], confira isso” → 5 itens rápidos → CTA salvar.</li>
+            <li><b>Variação D — “Objeção”</b>: Hook “Se você diz ‘não dá porque…’” → 2 contrapontos → 1 passo possível hoje.</li>
+            <li><b>Variação E — “Prova”</b>: Hook “Como eu consegui X” → 3 decisões → 1 print → CTA “quer o modelo?”</li>
+          </ul>
+          <div class="callout">
+            <p class="t">Substituições universais (mesmo impacto):</p>
+            <div class="mono">X = comportamento errado • Y = resultado ruim • Z = resultado desejado • Prova = número/tempo/antes-depois • CTA = palavra-chave</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2>Slides sugeridos (1..N) <span class="badge">se você quiser adaptar para carrossel</span></h2>
+        <div class="body">
+          <p class="lead">Mesmo roteiro, formato carrossel (8–10 slides) para maximizar salvamentos.</p>
+          <ol class="list">
+            <li><b>Slide 1</b>: Título com dor/resultado: “Pare de [X] e comece a [Z]”.</li>
+            <li><b>Slide 2</b>: Por que isso importa (1 consequência real).</li>
+            <li><b>Slide 3</b>: Passo 1 (com exemplo de 1 linha).</li>
+            <li><b>Slide 4</b>: Passo 2 (com regra prática).</li>
+            <li><b>Slide 5</b>: Passo 3 (com automatização).</li>
+            <li><b>Slide 6</b>: Erro comum + correção rápida.</li>
+            <li><b>Slide 7</b>: Prova/mini-caso (número/tempo).</li>
+            <li><b>Slide 8</b>: Checklist final (3 itens) para print.</li>
+            <li><b>Slide 9</b>: CTA: “Comenta [PALAVRA] / salva / envia”.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2>Próximo passo <span class="badge">para destrinchar o post original</span></h2>
+        <div class="body">
+          <p class="lead">Quando você enviar a transcrição do Reel (áudio + texto na tela + cenas + legenda), eu devolvo uma versão <b>100% fiel ao original</b> com melhorias de copy, cortes e CTA.</p>
+          <ul class="list">
+            <li><b>Transcrição falada</b> (mesmo aproximada)</li>
+            <li><b>Texto na tela</b> (ordem e frases)</li>
+            <li><b>Cena a cena</b> (0–2s, 2–6s…)</li>
+            <li><b>Legenda/hashtags</b> e CTA usado</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ta = document.getElementById('script');
+      function copy(){
+        const text = ta.value;
+        if(navigator.clipboard && window.isSecureContext){
+          navigator.clipboard.writeText(text);
+        } else {
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          ta.setSelectionRange(0,0);
+          ta.blur();
+        }
+        const old = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>{btn.textContent = old;}, 1200);
+      }
+      btn.addEventListener('click', copy);
+      document.addEventListener('keydown', (e)=>{
+        const isMac = navigator.platform.toUpperCase().includes('MAC');
+        if((isMac ? e.metaKey : e.ctrlKey) && e.key.toLowerCase()==='c'){
+          // não interceptar cópia normal do usuário
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
