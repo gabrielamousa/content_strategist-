@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 4 — Finanças — 7 fontes de renda</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0F1730;
+      --card2:#0C1328;
+      --text:#EAF0FF;
+      --muted:#AAB6DA;
+      --muted2:#7F8AB5;
+      --border: rgba(255,255,255,.10);
+      --border2: rgba(255,255,255,.14);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --g1: linear-gradient(90deg, #19D37A 0%, #1EA7FF 55%, #FFB648 100%);
+      --g2: linear-gradient(135deg, rgba(25,211,122,.25) 0%, rgba(30,167,255,.18) 55%, rgba(255,182,72,.18) 100%);
+      --ok:#19D37A;
+      --warn:#FFB648;
+      --info:#1EA7FF;
+      --danger:#FF5A7A;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(900px 600px at 12% 10%, rgba(30,167,255,.18), transparent 60%),
+        radial-gradient(900px 600px at 85% 18%, rgba(25,211,122,.14), transparent 55%),
+        radial-gradient(900px 600px at 70% 92%, rgba(255,182,72,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    a{ color: #BFE3FF; text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .wrap{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+
+    header{
+      display:flex;
+      gap:16px;
+      align-items:stretch;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      opacity:.9;
+      filter: blur(20px);
+      pointer-events:none;
+    }
+
+    header > *{ position: relative; z-index: 1; }
+
+    .h-left{ min-width: 280px; flex: 1 1 auto; }
+    .kicker{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+    }
+    .pill{
+      border: 1px solid var(--border2);
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.18);
+    }
+    h1{
+      margin: 10px 0 8px;
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .sub{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 68ch;
+    }
+
+    .h-right{
+      display:flex;
+      align-items:flex-end;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .btn{
+      border: 1px solid var(--border2);
+      background: rgba(15,23,48,.55);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      font-weight: 600;
+      font-size: 14px;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.22); background: rgba(15,23,48,.75); }
+    .btn:active{ transform: translateY(0px); }
+
+    .btn-primary{
+      background: rgba(0,0,0,.25);
+      border-color: rgba(255,255,255,.18);
+      position: relative;
+      overflow:hidden;
+    }
+    .btn-primary:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: var(--g1);
+      opacity:.22;
+      pointer-events:none;
+    }
+    .btn-primary span{ position: relative; z-index:1; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      .h-right{ width:100%; justify-content:flex-start; }
+    }
+
+    .card{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position: relative;
+    }
+
+    .card .hd{
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .card .hd h2{
+      margin:0;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--muted);
+    }
+    .tag{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #D3DCFF;
+      background: rgba(0,0,0,.18);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .card .bd{ padding: 16px; }
+    .card p{ margin: 0 0 10px; color: var(--text); line-height:1.6; }
+    .muted{ color: var(--muted); }
+    ul{ margin: 10px 0 0; padding-left: 18px; color: var(--text); }
+    li{ margin: 8px 0; line-height: 1.6; }
+
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      margin: 14px 0;
+    }
+
+    .gradient-line{
+      height: 4px;
+      background: var(--g1);
+      border-radius: 999px;
+      opacity: .95;
+      margin-top: 10px;
+    }
+
+    .script{
+      font-family: var(--mono);
+      font-size: 13px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      white-space: pre-wrap;
+      line-height: 1.65;
+      color: #EAF0FF;
+    }
+
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 780px){
+      .cols{ grid-template-columns: 1fr; }
+    }
+
+    .callout{
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 12px 12px;
+    }
+    .callout b{ color: #FFFFFF; }
+
+    .ok{ color: var(--ok); }
+    .info{ color: var(--info); }
+    .warn{ color: var(--warn); }
+
+    .toast{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(0,0,0,.62);
+      border: 1px solid rgba(255,255,255,.16);
+      color: var(--text);
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+      display:none;
+      max-width: 320px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="h-left">
+        <div class="kicker">
+          <span class="pill">Nicho: <b>Finanças</b></span>
+          <span class="pill">Dia: <b>4</b></span>
+          <span class="pill">Formato: <b>Carrossel</b></span>
+          <span class="pill">Pilar: <b>Passo a passo</b></span>
+        </div>
+        <h1>7 fontes de renda para ficar menos dependente do salário</h1>
+        <p class="sub">Transforme o post “infográfico único” em um carrossel escaneável: tese curta + lista numerada + fechamento prático. Link do original: <a href="https://www.instagram.com/p/DUvR-HzAGn0/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DUvR-HzAGn0/</a></p>
+        <div class="gradient-line"></div>
+      </div>
+      <div class="h-right">
+        <button class="btn btn-primary" id="copyBtn" type="button"><span>Copiar roteiro</span></button>
+        <a class="btn" href="https://www.instagram.com/p/DUvR-HzAGn0/" target="_blank" rel="noopener noreferrer">Abrir post</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo: retenção + compartilhamento</span>
+        </div>
+        <div class="bd">
+          <p><b>Ideia central:</b> aumentar o número de fontes de renda reduz risco e acelera patrimônio. A retenção vem da <b>promessa numerada</b> (7 itens) e da leitura rápida (títulos em caixa alta + microexplicações).</p>
+          <div class="hr"></div>
+          <div class="cols">
+            <div class="callout">
+              <p><b class="info">Para quem:</b> pessoas que dependem só do salário, autônomos, iniciantes em investimentos.</p>
+              <p><b class="info">Resultado esperado:</b> comentários com “qual você vai construir” + salvamentos (“vou voltar pra fazer”).</p>
+            </div>
+            <div class="callout">
+              <p><b class="warn">Promessa (headline):</b> “As 7 fontes de renda que constroem milionários” (adaptar para seu posicionamento: <i>menos dependência</i>, <i>mais segurança</i>).</p>
+              <p><b class="warn">Tese:</b> “Quanto mais diversificado, mais protegido você está.”</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Metas do post</h2>
+          <span class="tag">KPIs</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>Salvar:</b> lista prática + microexplicações.</li>
+            <li><b>Compartilhar:</b> “manda para quem depende de 1 renda”.</li>
+            <li><b>Comentar:</b> pergunta objetiva (número/90 dias) + palavra-chave.</li>
+            <li><b>Seguir:</b> promessa de sequência (ex.: “MAPA de 90 dias”).</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="muted"><b>Tempo de produção:</b> 35–60 min (texto + Canva/Figma) com template fixo.</p>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura (reproduzível)</h2>
+          <span class="tag">7–9 slides</span>
+        </div>
+        <div class="bd">
+          <p><b>Fórmula:</b> <span class="muted">Capa (promessa numerada)</span> → <span class="muted">Tese (princípio)</span> → <span class="muted">Itens 1..7 (nome + 1–2 linhas)</span> → <span class="muted">Fechamento (próximo passo) + CTA</span>.</p>
+          <ul>
+            <li><b>Slide 1:</b> Headline com número + resultado (sem jargão).</li>
+            <li><b>Slide 2:</b> Regra do jogo (diversificação = proteção).</li>
+            <li><b>Slides 3–8:</b> 1 fonte por slide (ou 2 no mesmo se ficar limpo).</li>
+            <li><b>Slide 9:</b> Fechamento + pergunta + palavra-chave.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Slides sugeridos (1..9)</h2>
+          <span class="tag">texto pronto (adaptável)</span>
+        </div>
+        <div class="bd">
+          <div class="script" id="roteiro">SLIDE 1 — CAPA (HOOK)
+“As 7 fontes de renda para ficar menos dependente do salário”
+Sub: “Diversificar é proteção. E dá para começar com pouco.”
+
+SLIDE 2 — TESE (REGRA)
+“Quanto mais diversificado, mais protegido você está.”
+Linha de apoio: “1 renda = 1 ponto de falha.”
+
+SLIDE 3 — 1) SALÁRIO / PRESTAÇÃO DE SERVIÇO
+“Renda principal. O objetivo é usar parte dela para comprar tempo e ativos.”
+
+SLIDE 4 — 2) FREELAS / RENDA EXTRA
+“Projetos fora do trabalho para aumentar caixa e acelerar metas.”
+
+SLIDE 5 — 3) RENDA DE NEGÓCIO (ONLINE OU LOCAL)
+“Um produto/serviço com processo repetível. Comece simples e valide.”
+
+SLIDE 6 — 4) JUROS / RENDA FIXA
+“Você ‘aluga’ dinheiro para o mercado. Priorize liquidez e consistência.”
+
+SLIDE 7 — 5) DIVIDENDOS (AÇÕES/FIIs)
+“Participação em empresas/ativos que distribuem lucros. Visão de longo prazo.”
+
+SLIDE 8 — 6) ALUGUÉIS (IMÓVEIS OU ‘ALUGUEL DIGITAL’)
+“Receita recorrente por locação. Pode incluir locação de quarto, garagem etc.”
+
+SLIDE 9 — 7) ROYALTIES / DIREITOS (CONTEÚDO/LICENÇAS)
+“Você cria uma vez e recebe várias. Ex.: e-book, curso, fotos, músicas, templates.”
+
+FECHAMENTO + CTA (no slide 9 ou extra)
+“Você não precisa ter todas. Precisa começar a próxima.”
+Pergunta: “Qual vai ser sua próxima fonte de renda nos próximos 90 dias?”
+CTA: “Comente ‘MAPA’ que eu te mando uma sequência de passos.”</div>
+          <p class="muted" style="margin-top:10px;">Dica: mantenha cada descrição com <b>1–2 linhas</b> (máx. 120–150 caracteres) para ficar escaneável.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="tag">Canva/Figma</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>Canvas:</b> 1080×1350 (4:5). Margens 80–100px.</li>
+            <li><b>Layout:</b> 40% esquerda (ilustração/ícone), 60% direita (texto).</li>
+            <li><b>Fundo:</b> escuro (grafite/azul-noite). Card interno com borda suave.</li>
+            <li><b>Destaques:</b> linha/faixa com degradê (verde→azul→laranja) sob o título.</li>
+            <li><b>Tipografia:</b> Título bold grande; itens em CAIXA ALTA; descrições regulares.</li>
+            <li><b>Ícones:</b> 1 por fonte (maleta, raio, loja, gráfico, prédio, nota, livro/coroa).</li>
+            <li><b>Assinatura:</b> @handle no rodapé em uma “etiqueta” pequena.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">variações rápidas</span>
+        </div>
+        <div class="bd">
+          <p><b>Headlines (capa):</b></p>
+          <ul>
+            <li>“7 fontes de renda para você nunca depender de uma só”</li>
+            <li>“7 fontes de renda que pessoas ricas constroem (em ordem de prioridade)”</li>
+            <li>“7 maneiras de criar renda além do salário (começando do zero)”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><b>Ganchos (primeira linha da legenda):</b></p>
+          <ul>
+            <li>“Se sua renda parar amanhã, quanto tempo você aguenta?”</li>
+            <li>“Diversificar renda é mais importante do que achar ‘o investimento perfeito’.”</li>
+            <li>“O segredo não é ter 7 hoje. É construir a 2ª, depois a 3ª…”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="muted"><b>Nota editorial:</b> evite prometer “ficar milionário rápido”. Posicione como <b>segurança</b>, <b>consistência</b> e <b>processo</b>.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="tag">comentário + DM</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>Enquete objetiva:</b> “Quantas rendas você tem hoje? 1, 2 ou 3+?”</li>
+            <li><b>Compromisso de prazo:</b> “Qual você constrói em 90 dias?”</li>
+            <li><b>Palavra-chave:</b> “Comente <b>MAPA</b> que eu envio os próximos passos.”</li>
+            <li><b>Compartilhamento:</b> “Envie para alguém que depende só do salário.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <span class="tag">controle de qualidade</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>Mensagem:</b> tese em 1 frase + benefício claro (proteção/segurança).</li>
+            <li><b>Estrutura:</b> 7 itens numerados, todos com padrão “NOME — 1–2 linhas”.</li>
+            <li><b>Escaneabilidade:</b> CAIXA ALTA nos títulos, espaçamento confortável, sem parágrafos longos.</li>
+            <li><b>Consistência:</b> mesmos alinhamentos, mesma posição do número, mesma hierarquia em todos os slides.</li>
+            <li><b>Design:</b> fundo escuro + cards, borda suave, degradê nos destaques (verde/azul/laranja).</li>
+            <li><b>Legibilidade:</b> teste em 25% de zoom (se der para ler, está ok).</li>
+            <li><b>CTA:</b> 1 pergunta + 1 ação (comentar/DM) — não mais que isso.</li>
+            <li><b>Legenda:</b> 3 blocos: gancho → explicação curta → CTA.</li>
+            <li><b>Revisão:</b> remover promessas absolutas; manter tom educativo.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações (para repostar sem cansar)</h2>
+          <span class="tag">mesma estrutura</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>Versão “iniciante”:</b> 5 fontes (mais simples) + “comece por 1 e 2”.</li>
+            <li><b>Versão “ordem de prioridade”:</b> reorganize os itens e explique o porquê (1 linha extra por slide).</li>
+            <li><b>Versão “erros”:</b> “7 erros ao tentar criar renda extra” (mesmo layout).</li>
+            <li><b>Versão “plano”:</b> “Plano de 90 dias para criar a 2ª renda” (passo a passo por slide).</li>
+            <li><b>Versão “mito vs verdade”:</b> 7 crenças sobre renda extra (uma por slide).</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast">Roteiro copiado.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const roteiro = document.getElementById('roteiro');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 1800);
+      }
+
+      async function copyText(text){
+        try{
+          if(navigator.clipboard && window.isSecureContext){
+            await navigator.clipboard.writeText(text);
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+          showToast('Roteiro copiado.');
+        } catch(e){
+          showToast('Não consegui copiar automaticamente. Selecione e copie.');
+        }
+      }
+
+      btn.addEventListener('click', () => copyText(roteiro.innerText));
+    })();
+  </script>
+</body>
+</html>
