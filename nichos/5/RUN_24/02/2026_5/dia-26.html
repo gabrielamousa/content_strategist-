@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 26 — Design Gráfico — Roteiro de Carrossel</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1022;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.075);
+    --stroke:rgba(255,255,255,.10);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.55);
+    --shadow: 0 18px 50px rgba(0,0,0,.55);
+    --radius:18px;
+    --radius2:14px;
+    --g1: linear-gradient(135deg, #2CFD7E 0%, #00D5FF 40%, #FFB000 100%);
+    --g2: linear-gradient(135deg, rgba(44,253,126,.9) 0%, rgba(0,213,255,.85) 45%, rgba(255,176,0,.90) 100%);
+    --blue:#3B7CFF;
+    --green:#2CFD7E;
+    --orange:#FFB000;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    color:var(--text);
+    font-family:var(--sans);
+    background:
+      radial-gradient(1200px 700px at 12% 10%, rgba(59,124,255,.18), transparent 55%),
+      radial-gradient(900px 600px at 85% 18%, rgba(44,253,126,.12), transparent 60%),
+      radial-gradient(900px 600px at 70% 92%, rgba(255,176,0,.10), transparent 58%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{color:inherit}
+  .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 64px}
+
+  header{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    justify-content:space-between;
+    padding:18px 18px;
+    border:1px solid var(--stroke);
+    border-radius:var(--radius);
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(10px);
+  }
+  .h-left{display:flex; flex-direction:column; gap:10px; min-width:0}
+  .kicker{
+    display:flex; flex-wrap:wrap; gap:10px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--muted);
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background:rgba(0,0,0,.20);
+    white-space:nowrap;
+  }
+  .dot{width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 0 3px rgba(44,253,126,.12)}
+  .dot.blue{background:var(--blue); box-shadow:0 0 0 3px rgba(59,124,255,.14)}
+  .dot.orange{background:var(--orange); box-shadow:0 0 0 3px rgba(255,176,0,.16)}
+
+  h1{
+    margin:0;
+    font-size:20px;
+    line-height:1.25;
+    letter-spacing:.2px;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.5;
+    max-width:72ch;
+  }
+  .h-right{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--stroke);
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+    text-decoration:none;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:hover{transform: translateY(-1px); background:rgba(255,255,255,.085); border-color:rgba(255,255,255,.16)}
+  .btn.primary{
+    background: var(--g2);
+    border-color: rgba(255,255,255,.18);
+    color:#06101A;
+  }
+  .btn.primary:hover{background: var(--g1)}
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap:14px;
+    margin-top:14px;
+  }
+  @media (max-width: 980px){
+    .grid{grid-template-columns: 1fr}
+    .h-right{justify-content:flex-start}
+  }
+
+  .card{
+    border:1px solid var(--stroke);
+    border-radius:var(--radius);
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background:rgba(0,0,0,.18);
+  }
+  .card .hd strong{font-size:13px; letter-spacing:.2px}
+  .tag{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--muted);
+    border:1px solid rgba(255,255,255,.10);
+    padding:6px 8px;
+    border-radius:999px;
+    background:rgba(0,0,0,.18);
+  }
+  .card .bd{padding:14px 16px}
+
+  .callout{
+    border:1px dashed rgba(255,255,255,.22);
+    background:rgba(0,0,0,.22);
+    padding:12px 12px;
+    border-radius:var(--radius2);
+    margin-top:10px;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.45;
+  }
+  .callout b{color:var(--text)}
+
+  .list{margin:10px 0 0; padding-left:0; list-style:none; display:grid; gap:10px}
+  .list li{
+    display:flex; gap:10px; align-items:flex-start;
+    padding:10px 10px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.03);
+  }
+  .star{
+    width:18px; height:18px; flex:0 0 18px;
+    border-radius:6px;
+    background: rgba(0,213,255,.12);
+    border:1px solid rgba(0,213,255,.22);
+    display:flex; align-items:center; justify-content:center;
+    color:#9DEBFF;
+    font-family:var(--mono);
+    font-size:12px;
+    margin-top:1px;
+  }
+  .list p{margin:0; color:var(--muted); font-size:13px; line-height:1.4}
+  .list p b{color:var(--text)}
+
+  .two{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+  }
+  @media (max-width: 720px){ .two{grid-template-columns:1fr} }
+
+  .code{
+    font-family:var(--mono);
+    font-size:12px;
+    color:rgba(234,240,255,.78);
+    background:rgba(0,0,0,.28);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:14px;
+    padding:12px;
+    overflow:auto;
+    white-space:pre-wrap;
+    line-height:1.55;
+  }
+
+  .slides{
+    counter-reset: slide;
+    display:grid;
+    gap:10px;
+    margin-top:8px;
+  }
+  .slide{
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.03);
+    border-radius:14px;
+    padding:12px;
+  }
+  .slide .t{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;
+    margin-bottom:8px;
+  }
+  .slide .t strong{font-size:13px}
+  .slide .t .n{
+    font-family:var(--mono);
+    font-size:11px;
+    color:rgba(234,240,255,.68);
+    border:1px solid rgba(255,255,255,.10);
+    padding:6px 8px;
+    border-radius:999px;
+    background:rgba(0,0,0,.18);
+  }
+  .slide ul{margin:0; padding-left:18px; color:var(--muted); font-size:13px; line-height:1.55}
+
+  .muted{color:var(--muted)}
+  .small{font-size:12px; color:var(--muted2); line-height:1.45}
+
+  .footer{
+    margin-top:14px;
+    padding:14px 16px;
+    border:1px solid var(--stroke);
+    background:rgba(0,0,0,.22);
+    border-radius:var(--radius);
+    color:var(--muted2);
+    font-size:12px;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .sep{opacity:.4}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="h-left">
+        <div class="kicker">
+          <span class="pill"><span class="dot"></span><span><b>Nicho:</b> Design Gráfico</span></span>
+          <span class="pill"><span class="dot blue"></span><span><b>Dia:</b> 26</span></span>
+          <span class="pill"><span class="dot orange"></span><span><b>Formato:</b> Carrossel</span></span>
+          <span class="pill"><span><b>Pilar:</b> Autoridade</span></span>
+        </div>
+        <h1>Quais são meus serviços (modelo editorial de alta conversão)</h1>
+        <p class="sub">Roteiro reproduzível para apresentar serviços com estética “revista/portfólio”, prova visual e lista escaneável — fechando com CTA em formato de botão para Direct/WhatsApp/link.</p>
+        <p class="small">Post original: <a href="https://www.instagram.com/p/DBMplFeRaEm/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DBMplFeRaEm/</a></p>
+      </div>
+      <div class="h-right">
+        <a class="btn" href="https://www.instagram.com/p/DBMplFeRaEm/" target="_blank" rel="noopener noreferrer">Abrir referência</a>
+        <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <strong>Resumo</strong>
+          <span class="tag">Objetivo: clareza + percepção de valor + DM</span>
+        </div>
+        <div class="bd">
+          <div class="two">
+            <div>
+              <p class="muted" style="margin:0; line-height:1.6">
+                <b>Ideia central:</b> abrir com pergunta (curiosidade) + posicionar “meus serviços” + mostrar 2 ofertas com prova visual e bullets curtos + fechar com pergunta e botão.
+              </p>
+              <div class="callout"><b>Quando usar:</b> sempre que você precisar reduzir atrito (“o que exatamente você faz?”) e facilitar orçamento.</div>
+            </div>
+            <div>
+              <p class="muted" style="margin:0; line-height:1.6"><b>Métrica de sucesso:</b> salvamentos (referência futura), cliques no perfil e DMs com palavra-chave.</p>
+              <div class="callout"><b>Destino do CTA:</b> Direct (padrão) • WhatsApp • formulário • página de serviços.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <strong>Estrutura (sequência)</strong>
+          <span class="tag">4–6 slides</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><span class="star">*</span><p><b>Slide 1:</b> Capa (pergunta + promessa + segmentação).</p></li>
+            <li><span class="star">*</span><p><b>Slide 2:</b> Serviço 01 (prova + lista objetiva).</p></li>
+            <li><span class="star">*</span><p><b>Slide 3:</b> Serviço 02 (prova + lista em 2 colunas).</p></li>
+            <li><span class="star">*</span><p><b>Slide 4:</b> Fechamento (pergunta + botão CTA).</p></li>
+          </ul>
+          <div class="callout"><b>Opcional (Slide 5/6):</b> “Como funciona” (processo em 3 passos) e/ou “FAQ + prazos”, mantendo a estética editorial.</div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <strong>Slides sugeridos (1..6)</strong>
+        <span class="tag">Use 4 se quiser curto; 6 se precisar de mais clareza</span>
+      </div>
+      <div class="bd">
+        <div class="slides">
+          <div class="slide">
+            <div class="t"><strong>Slide 1 — CAPA (Hook + Posicionamento)</strong><span class="n">1</span></div>
+            <ul>
+              <li>Headline (gigante): “AFINAL, QUAIS SÃO OS” + <b>[SEUS SERVIÇOS]</b></li>
+              <li>Callout tracejado: “Se você precisa de <b>[profissional/solução]</b>, este post é pra você.”</li>
+              <li>Microinfos editoriais: “Produção: [mês/ano] • Cód: [###] • [áreas/palavras-chave]”</li>
+              <li>Elemento humano: foto autoral recortada (ou ícone/mascote se não quiser aparecer)</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="t"><strong>Slide 2 — SERVIÇO 01 (Prova + Lista)</strong><span class="n">2</span></div>
+            <ul>
+              <li>Topo: mosaico de 4–8 miniaturas (antes/depois, peças, mockups)</li>
+              <li>Script sobreposto: “Design para”</li>
+              <li>Headline (gigante): <b>[NOME DO SERVIÇO 1]</b></li>
+              <li>Bullets (4–6): entregáveis + 1 benefício (ex.: “clareza”, “consistência”, “conversão”)</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="t"><strong>Slide 3 — SERVIÇO 02 (Prova + Lista em 2 colunas)</strong><span class="n">3</span></div>
+            <ul>
+              <li>Topo: 1–2 mockups grandes</li>
+              <li>Script: “Estratégia” / “Direção” / “Sistema”</li>
+              <li>Headline: <b>[NOME DO SERVIÇO 2]</b></li>
+              <li>Bullets (6–10): agrupar por módulos (ex.: “marca”, “guias”, “aplicações”)</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="t"><strong>Slide 4 — FECHAMENTO (Pergunta + Botão)</strong><span class="n">4</span></div>
+            <ul>
+              <li>Pergunta direta: “Quer <b>[resultado desejado]</b> comigo?”</li>
+              <li>Botão preto: “Vamos conversar” / “Pedir orçamento”</li>
+              <li>Microtexto: “Direct aberto • respondo em até [X]h”</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="t"><strong>Slide 5 (opcional) — COMO FUNCIONA</strong><span class="n">5</span></div>
+            <ul>
+              <li>3 passos curtos: Briefing → Criação → Entrega/Aplicação</li>
+              <li>Reduz ansiedade: “prazo médio: [X] dias” “revisões: [Y]”</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="t"><strong>Slide 6 (opcional) — FAQ/OBJEÇÕES</strong><span class="n">6</span></div>
+            <ul>
+              <li>3–5 perguntas: “faz só logo?”, “tem pacote?”, “faz urgente?”</li>
+              <li>Fechar com CTA de palavra-chave: “Me chama com a palavra <b>‘SERVIÇOS’</b>.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <strong>Roteiro (texto pronto editável)</strong>
+        <span class="tag">Substitua os campos entre colchetes</span>
+      </div>
+      <div class="bd">
+<pre class="code" id="scriptText">SLIDE 1 — CAPA
+Headline: “AFINAL, QUAIS SÃO OS MEUS SERVIÇOS?”
+Callout (borda tracejada): “Se você está precisando de [PROFISSÃO/SOLUÇÃO], este post é pra você.”
+Microinfo: “Produção: [MÊS/ANO] • Cód: [###] • [3 ÁREAS/ETIQUETAS]”
+Assinatura: [SELO/MONOGRAMA] • @seuuser
+
+SLIDE 2 — SERVIÇO 01
+Script: “Design para”
+Headline: “[SERVIÇO 1]”
+Bullets (4–6):
+* [Entregável 1]
+* [Entregável 2]
+* [Entregável 3]
+* [Entregável 4]
+(+ opcional) “Ideal para: [tipo de cliente]”
+
+SLIDE 3 — SERVIÇO 02
+Script: “Estratégia” (ou “Direção”) 
+Headline: “[SERVIÇO 2]”
+Bullets (6–10, em 2 colunas na arte):
+* [Módulo A] | [item]
+* [Módulo A] | [item]
+* [Módulo B] | [item]
+* [Módulo B] | [item]
+* [Aplicações] | [item]
+
+SLIDE 4 — FECHAMENTO
+Headline: “QUER [RESULTADO DESEJADO] COMIGO?”
+Botão (preto): “Vamos conversar”
+Microtexto: “Me chama no direct com a palavra ‘[PALAVRA-CHAVE]’ + me diga: [1] seu negócio [2] prazo [3] objetivo.”
+
+SLIDE 5 (opcional) — COMO FUNCIONA
+1) Briefing (15 min) — alinhamos [objetivo]
+2) Criação — você aprova por etapas
+3) Entrega — arquivos + orientações de uso
+Nota: “Prazos: [X] dias • Revisões: [Y]”
+
+SLIDE 6 (opcional) — FAQ
+“Você faz só [parte do serviço]?” — Sim, em formato de [opção].
+“Tem pacote mensal?” — Sim: [nome do pacote] (vagas limitadas).
+“Entrega urgente?” — Depende do calendário (me chama pra checar).</pre>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:14px">
+      <section class="card">
+        <div class="hd">
+          <strong>Elementos visuais (para replicar)</strong>
+          <span class="tag">Editorial + high-tech</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><span class="star">*</span><p><b>Headline condensada gigante</b> (40–60% do slide): Bebas Neue / Anton / Oswald.</p></li>
+            <li><span class="star">*</span><p><b>Script elegante</b> sobreposto (contraste): Great Vibes / Allura (use 1–2 palavras).</p></li>
+            <li><span class="star">*</span><p><b>Microinfos editoriais</b>: data, código, “créditos”, tags (aumenta percepção de produto).</p></li>
+            <li><span class="star">*</span><p><b>Prova visual no topo</b>: mosaico de miniaturas + mockups (não deixe o slide só “texto”).</p></li>
+            <li><span class="star">*</span><p><b>Bullets com “*”</b> (marca visual) + espaçamento alto para leitura rápida.</p></li>
+            <li><span class="star">*</span><p><b>Botão CTA preto</b> com raio 16–24 (parece clicável).</p></li>
+          </ul>
+          <div class="callout"><b>Specs rápidas:</b> 1080×1350 (4:5) • margens seguras ~80px laterais e ~120px topo/base • grain leve 5–12%.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <strong>Copy e ganchos (substituições)</strong>
+          <span class="tag">Mesmo impacto em outros temas</span>
+        </div>
+        <div class="bd">
+          <div class="two">
+            <div>
+              <p class="muted" style="margin:0 0 8px; font-weight:700">Ganchos de capa (escolha 1)</p>
+              <ul class="list" style="margin-top:0">
+                <li><span class="star">*</span><p><b>“Afinal, o que eu faço?”</b> (clareza)</p></li>
+                <li><span class="star">*</span><p><b>“Como posso te ajudar em [dor]?”</b> (empatia)</p></li>
+                <li><span class="star">*</span><p><b>“Se você precisa de [resultado], leia isso.”</b> (segmentação)</p></li>
+                <li><span class="star">*</span><p><b>“3 formas de trabalhar comigo”</b> (estrutura e previsibilidade)</p></li>
+              </ul>
+            </div>
+            <div>
+              <p class="muted" style="margin:0 0 8px; font-weight:700">Callout (promessa) — modelos</p>
+              <ul class="list" style="margin-top:0">
+                <li><span class="star">*</span><p>“Se você está buscando <b>[benefício]</b>, este post é pra você.”</p></li>
+                <li><span class="star">*</span><p>“Aqui está o que está incluso em <b>[serviço]</b> (sem enrolação).”</p></li>
+                <li><span class="star">*</span><p>“Para <b>[público]</b> que quer <b>[resultado]</b> em <b>[prazo]</b>.”</p></li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout"><b>Regra de ouro da copy:</b> nome do serviço + 1 frase de benefício + lista de entregáveis. Se faltar 1 dos 3, a contratação fica “nebulosa”.</div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <strong>CTA (modelos prontos)</strong>
+        <span class="tag">Pergunta + botão + palavra-chave</span>
+      </div>
+      <div class="bd">
+        <div class="two">
+          <div>
+            <p class="muted" style="margin:0 0 8px; font-weight:700">Perguntas de fechamento</p>
+            <ul class="list" style="margin-top:0">
+              <li><span class="star">*</span><p>“Quer <b>[resultado]</b> com consistência?”</p></li>
+              <li><span class="star">*</span><p>“Quer que eu cuide de <b>[parte do processo]</b> pra você focar em <b>[prioridade]</b>?”</p></li>
+              <li><span class="star">*</span><p>“Seu próximo passo é <b>[ação]</b> — vamos?”</p></li>
+            </ul>
+          </div>
+          <div>
+            <p class="muted" style="margin:0 0 8px; font-weight:700">Botão (texto curto)</p>
+            <ul class="list" style="margin-top:0">
+              <li><span class="star">*</span><p>“Vamos conversar”</p></li>
+              <li><span class="star">*</span><p>“Pedir orçamento”</p></li>
+              <li><span class="star">*</span><p>“Agendar uma call”</p></li>
+              <li><span class="star">*</span><p>“Me chama no direct”</p></li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout"><b>Palavra-chave (aumenta resposta):</b> “Me chama com ‘SERVIÇOS’ + me diga: nicho, prazo e objetivo.”</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <strong>Checklist de criação (produção rápida)</strong>
+        <span class="tag">Antes de publicar</span>
+      </div>
+      <div class="bd">
+        <div class="two">
+          <div>
+            <p class="muted" style="margin:0 0 8px; font-weight:700">Conteúdo</p>
+            <ul class="list" style="margin-top:0">
+              <li><span class="star">*</span><p><b>Definiu 2 serviços principais</b> (o que mais vende/agrega)?</p></li>
+              <li><span class="star">*</span><p><b>Listou 4–6 entregáveis</b> por serviço, sem jargão?</p></li>
+              <li><span class="star">*</span><p><b>Incluiu 1 linha de “ideal para”</b> (segmentação)?</p></li>
+              <li><span class="star">*</span><p><b>Escolheu palavra-chave</b> para DM e 3 perguntas do briefing?</p></li>
+            </ul>
+          </div>
+          <div>
+            <p class="muted" style="margin:0 0 8px; font-weight:700">Design</p>
+            <ul class="list" style="margin-top:0">
+              <li><span class="star">*</span><p><b>Hierarquia clara</b>: headline gigante → script → bullets → microtexto.</p></li>
+              <li><span class="star">*</span><p><b>Prova visual no topo</b> (mosaico/mockup) em todos os slides de serviço.</p></li>
+              <li><span class="star">*</span><p><b>Consistência de cor</b> (um azul/tema dominante + preto/branco).</p></li>
+              <li><span class="star">*</span><p><b>CTA com cara de botão</b> (preto, arredondado, central).</p></li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout"><b>Checklist final:</b> leitura em 3 segundos (capa), leitura em 10 segundos (serviços), ação em 1 clique (CTA).</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <strong>Variações (para adaptar a qualquer tema)</strong>
+        <span class="tag">Mesma arquitetura, outros usos</span>
+      </div>
+      <div class="bd">
+        <div class="two">
+          <div>
+            <p class="muted" style="margin:0 0 8px; font-weight:700">Se você não vende “serviço” (vende produto/conteúdo)</p>
+            <ul class="list" style="margin-top:0">
+              <li><span class="star">*</span><p><b>Troque “Serviço 1/2”</b> por “Oferta 1/2” ou “Pacote 1/2”.</p></li>
+              <li><span class="star">*</span><p><b>Bullets</b> viram “o que vem na caixa”, “o que você recebe”, “para quem é”.</p></li>
+              <li><span class="star">*</span><p><b>Prova visual</b>: fotos reais, UGC, prints de resultado, depoimentos curtos.</p></li>
+            </ul>
+          </div>
+          <div>
+            <p class="muted" style="margin:0 0 8px; font-weight:700">Se você quer um carrossel educativo (sem cara de venda)</p>
+            <ul class="list" style="margin-top:0">
+              <li><span class="star">*</span><p><b>Slide 2/3</b>: “Método 1/2” (em vez de serviços) + passos e exemplo visual.</p></li>
+              <li><span class="star">*</span><p><b>Slide 4</b>: “Quer o template?” (CTA: comentar palavra-chave).</p></li>
+              <li><span class="star">*</span><p><b>Microinfos editoriais</b> continuam (dão “produto” ao conteúdo).</p></li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout"><b>Substituições de impacto:</b> “Meus serviços” → “Como posso te ajudar” • “Vamos conversar” → “Pegar o link”/“Baixar template”/“Entrar na lista”.</div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <span>Identidade: fundo escuro • cards com borda suave • destaques em degradê (verde/azul/laranja) • layout limpo high-tech</span>
+      <span class="sep">|</span>
+      <span style="font-family:var(--mono)">Dia 26 • Design Gráfico</span>
+    </div>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const text = document.getElementById('scriptText');
+    btn.addEventListener('click', async function(){
+      const value = (text && text.innerText) ? text.innerText : '';
+      try{
+        await navigator.clipboard.writeText(value);
+        const old = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.textContent = old, 1300);
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = value;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const old = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.textContent = old, 1300);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
