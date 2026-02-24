@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 8 — Psicologia das cores: template de carrossel (8 slides)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1220;
+    --card:#0E172A;
+    --card2:#0B1324;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.14);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.58);
+    --shadow: 0 18px 60px rgba(0,0,0,.45);
+    --radius:16px;
+    --radius2:22px;
+    --g1: linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --g2: radial-gradient(1200px 600px at 10% -10%, rgba(56,189,248,.25), transparent 55%),
+          radial-gradient(900px 500px at 85% 0%, rgba(34,197,94,.22), transparent 55%),
+          radial-gradient(1100px 700px at 50% 115%, rgba(251,146,60,.18), transparent 55%);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
+    color:var(--text);
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
+  header{
+    border:1px solid var(--stroke);
+    background: rgba(14,23,42,.72);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius2);
+    padding:18px 18px 16px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: var(--g1);
+    opacity:.12;
+    filter: blur(18px);
+    pointer-events:none;
+  }
+  .toprow{display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between; position:relative}
+  .badge{
+    display:inline-flex; gap:10px; align-items:center;
+    padding:8px 12px;
+    border:1px solid var(--stroke);
+    background: rgba(7,10,18,.35);
+    border-radius:999px;
+    color:var(--muted);
+    font-size:13px;
+  }
+  .badge b{color:var(--text); font-weight:700}
+  .title{
+    margin:12px 0 10px;
+    font-size:22px;
+    line-height:1.18;
+    letter-spacing:-.02em;
+    position:relative;
+  }
+  .sub{
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    color:var(--muted);
+    font-size:14px;
+    position:relative;
+  }
+  .link{
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--stroke);
+    background: rgba(11,19,36,.65);
+  }
+  .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px}
+  @media (min-width: 960px){
+    .grid{grid-template-columns: 1.1fr .9fr}
+  }
+  .card{
+    border:1px solid var(--stroke);
+    background: rgba(14,23,42,.68);
+    border-radius: var(--radius2);
+    padding:16px;
+    box-shadow: var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+  .card:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: linear-gradient(180deg, rgba(255,255,255,.06), transparent 35%);
+    pointer-events:none;
+  }
+  h2{
+    margin:0 0 10px;
+    font-size:16px;
+    letter-spacing:-.01em;
+  }
+  .kicker{font-size:12px; color:var(--muted2); text-transform:uppercase; letter-spacing:.14em}
+  p, li{color:var(--muted); line-height:1.55}
+  ul{margin:10px 0 0 18px}
+  .hr{height:1px; background: var(--stroke); margin:12px 0}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background: rgba(7,10,18,.25);
+    color:var(--muted);
+    font-size:13px;
+    margin:6px 8px 0 0;
+  }
+  .pill .dot{width:8px; height:8px; border-radius:50%; background: var(--g1)}
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  button{
+    cursor:pointer;
+    border:1px solid var(--stroke2);
+    color:var(--text);
+    background: rgba(11,19,36,.8);
+    padding:10px 12px;
+    border-radius: 12px;
+    font-weight:650;
+  }
+  button.primary{
+    background: linear-gradient(90deg, rgba(34,197,94,.18), rgba(56,189,248,.18), rgba(251,146,60,.18));
+    border-color: rgba(255,255,255,.16);
+  }
+  button:active{transform: translateY(1px)}
+  .mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12.5px;
+    line-height:1.55;
+    background: rgba(7,10,18,.35);
+    border:1px solid var(--stroke);
+    border-radius: 14px;
+    padding:12px;
+    overflow:auto;
+    color: rgba(234,240,255,.80);
+  }
+  .hl{
+    background: var(--g1);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-weight:800;
+  }
+  .twocol{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  @media(min-width:720px){
+    .twocol{grid-template-columns:1fr 1fr}
+  }
+  .small{font-size:13px; color:var(--muted2)}
+  .taglist{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+  .tag{padding:7px 10px; border:1px solid var(--stroke); border-radius:999px; background: rgba(7,10,18,.18); font-size:13px; color:var(--muted)}
+  .footerNote{margin-top:14px; color:var(--muted2); font-size:12.5px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="badge"><b>Nicho</b> Design Gráfico</div>
+        <div class="badge"><b>Dia</b> 8</div>
+        <div class="badge"><b>Formato</b> Carrossel</div>
+      </div>
+      <div class="title"><span class="hl">Psicologia das cores</span>: template de carrossel (8 slides)</div>
+      <div class="sub">
+        <div class="link">Post original: <a href="https://www.instagram.com/p/DGA2yRgsNA6/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DGA2yRgsNA6/</a></div>
+      </div>
+      <div class="btnrow">
+        <button class="primary" id="copyBtn">Copiar roteiro</button>
+        <button id="copySlidesBtn">Copiar slides sugeridos</button>
+      </div>
+      <div class="footerNote">Dica: replique com qualquer obra/marca — mantenha o mesmo molde “Cor → evidência → paleta → significado → síntese”.</div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="kicker">Resumo</div>
+        <h2>O que você vai publicar</h2>
+        <p>Carrossel editorial/análise: você prova que a <b>paleta</b> de uma obra/marca não é estética aleatória — ela comunica <b>tema, conflito e emoção</b>. O público desliza para “completar a coleção” (uma cor por slide) e recebe recompensa no slide-síntese.</p>
+        <div class="taglist">
+          <div class="tag">Hook de curiosidade</div>
+          <div class="tag">Prova visual (frames + swatches)</div>
+          <div class="tag">Padrão repetível</div>
+          <div class="tag">Síntese final</div>
+          <div class="tag">Pergunta p/ comentários</div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="kicker">Metadados do calendário</div>
+        <h2>Execução rápida</h2>
+        <ul>
+          <li><b>Quantidade:</b> 8 slides (1080×1350).</li>
+          <li><b>Conteúdo:</b> 4 cores (1 por slide) + síntese + CTA.</li>
+          <li><b>Design:</b> editorial + textura + elementos de “software” + marcações manuais.</li>
+          <li><b>Tempo:</b> 60–120 min (com frames prontos).</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="pill"><span class="dot"></span> Pilar: Passo a passo</div>
+        <div class="pill"><span class="dot"></span> Objetivo: retenção + comentários + follows</div>
+      </aside>
+
+      <section class="card">
+        <div class="kicker">Estrutura</div>
+        <h2>Macroestrutura (8 slides)</h2>
+        <div class="twocol">
+          <div>
+            <ul>
+              <li><b>1. Capa:</b> hook + promessa + frame icônico.</li>
+              <li><b>2. Contexto/método:</b> “nada é por acaso” + como você vai analisar.</li>
+              <li><b>3. Cor 1:</b> evidência + paleta + significado.</li>
+              <li><b>4. Cor 2:</b> contraste (vs/quebra).</li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><b>5. Cor 3 (neutros):</b> ausência de cor como mensagem.</li>
+              <li><b>6. Cor 4 (dupla leitura):</b> 2 interpretações numeradas.</li>
+              <li><b>7. Síntese:</b> big idea + 2–3 bullets (recompensa).</li>
+              <li><b>8. Encerramento:</b> pergunta + follow + próximo tema.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="small"><b>Ritmo:</b> slides “densos” (2–7) + respiro/impacto (1 e 8).</p>
+      </section>
+
+      <section class="card">
+        <div class="kicker">Slides sugeridos (1..8)</div>
+        <h2>Texto-base para você só preencher os colchetes</h2>
+        <div class="mono" id="slidesText">SLIDE 1 — CAPA (HOOK)
+H1: As cores de [OBRA/MARCA] falam mais do que você imagina
+H2 (micro): psicologia das cores • design • narrativa visual
+Visual: 1 frame icônico + 1 highlight/caixa marcando um detalhe
+
+SLIDE 2 — CONTEXTO + MÉTODO
+Headline: [OBRA] é [opinião forte / por que vale atenção].
+Corpo: Nada do que vemos é por acaso — principalmente a paleta.
+Pergunta: Bora ver o que cada cor está dizendo?
+Micro: arraste →
+
+SLIDE 3 — COR 1 ([COR])
+Título: O [COR] domina [ambiente/situação].
+Prova: 2–3 frames (pilha/colagem) + extração de paleta (5–7 swatches).
+Leitura 1 (sensação): [frieza/acolhimento/urgência…]
+Leitura 2 (função): [controle/tensão/pertencimento…]
+Destaque: circule 2–3 palavras-chave.
+
+SLIDE 4 — COR 2 ([COR] em contraste)
+Título: Quando aparece [COR], algo muda.
+Prova: 2 frames antes/depois + swatches.
+Interpretação: [tensão/quebra/regra vs rebeldia].
+
+SLIDE 5 — COR 3 (NEUTROS)
+Título: [Branco/Cinza/Preto] = a mensagem da ausência.
+Prova: cenário neutro + swatches sutis.
+Interpretação: [rotina/vazio/padronização/perda de individualidade].
+
+SLIDE 6 — COR 4 (DUPLA LEITURA)
+Título: O [COR] pode significar duas coisas:
+(1) [significado A] — 1 linha
+(2) [significado B] — 1 linha
+Nota manuscrita: 3 palavras-resumo.
+
+SLIDE 7 — SÍNTESE (BIG IDEA)
+Headline: Juntas, essas cores constroem: [tema central].
+Bullets:
+• [ideia 1]
+• [ideia 2]
+• [ideia 3]
+Visual: 1 frame grande + tipografia forte.
+
+SLIDE 8 — FECHAMENTO (CTA)
+Pergunta: Você já tinha notado isso em [obra]?
+CTA: Quer mais análises assim? Me segue.
+Próximo: Comenta “PRÓXIMA” + sugere uma obra/marca.</div>
+      </section>
+
+      <section class="card">
+        <div class="kicker">Roteiro</div>
+        <h2>Roteiro reproduzível (sequência lógica + copy por bloco)</h2>
+        <div class="mono" id="scriptText">Tese do post:
+“Cores não decoram — elas contam a história.”
+
+Sequência (use como checklist de escrita):
+1) Promessa (capa): “você está perdendo camadas ocultas”.
+2) Autoridade leve (slide 2): opinião + ‘nada é por acaso’.
+3) Método explícito: “cor → evidência → significado”.
+4) Provas por cor (slides 3–6):
+   - Mostre a evidência (frames)
+   - Mostre a paleta (swatches)
+   - Traduza em 1 frase de sensação + 1 frase de função narrativa
+5) Recompensa (slide 7): amarre em um tema humano (controle, tensão, identidade, liberdade etc.).
+6) Engajamento (slide 8): pergunta específica + convite para sugerir a próxima.
+
+Fórmulas prontas (troque os colchetes):
+• “O [COR] aparece quando [situação].”
+• “Repara como o [COR] deixa tudo mais [sensação].”
+• “Isso reforça [tema] porque [motivo].”</div>
+      </section>
+
+      <section class="card">
+        <div class="kicker">Elementos visuais</div>
+        <h2>DNA do design (para ficar consistente)</h2>
+        <ul>
+          <li><b>Estética:</b> editorial/analógica + metalinguagem de “interface de edição”.</li>
+          <li><b>Texturas:</b> papel/grão + vinheta leve + desgaste sutil.</li>
+          <li><b>Prova visual:</b> frames dessaturados + ruído + recortes estilo colagem.</li>
+          <li><b>Swatches:</b> 5–7 retângulos (do escuro → claro) sempre ao lado da imagem.</li>
+          <li><b>Guias de leitura:</b> 2–3 marcações manuais/slide (setas, círculos, sublinhado).</li>
+          <li><b>Assinatura:</b> microheader fixo (@nome + tag) e rodapé discreto.</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="small"><b>Grid sugerido (4:5):</b> margens grandes; topo com microheader; centro com imagem+swatches; base com headline + explicação.</p>
+      </section>
+
+      <section class="card">
+        <div class="kicker">Copy e ganchos</div>
+        <h2>Ganchos (capa) + microcopys (meio) + frases de síntese</h2>
+        <div class="twocol">
+          <div>
+            <p><b>Ganchos de capa (escolha 1):</b></p>
+            <ul>
+              <li>“As cores de <b>[OBRA]</b> falam mais do que você imagina”</li>
+              <li>“O que a paleta de <b>[OBRA]</b> revela sobre <b>[tema]</b>”</li>
+              <li>“Você percebeu isso? A cor entrega o plot”</li>
+              <li>“Design escondido à vista: a paleta explica tudo”</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Microcopy de retenção:</b></p>
+            <ul>
+              <li>“Nada é por acaso (principalmente aqui).”</li>
+              <li>“Olha a repetição dessa cor nas cenas…”</li>
+              <li>“Agora compara com quando entra o <b>[COR]</b>.”</li>
+              <li>“No final eu amarro tudo em uma frase.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p><b>Frases de síntese (slide 7):</b></p>
+        <ul>
+          <li>“Quando você junta [cor 1] + [cor 2] + [neutros], o tema vira visível.”</li>
+          <li>“A paleta não só cria clima — ela <b>organiza o conflito</b>.”</li>
+          <li>“É direção de arte conduzindo emoção sem pedir permissão.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="kicker">CTA</div>
+        <h2>CTAs prontos (comentário + follow + próximo post)</h2>
+        <ul>
+          <li><b>Comentário (pergunta específica):</b> “Qual cor você acha que mais define <b>[OBRA]</b>: [A] ou [B]? Por quê?”</li>
+          <li><b>Pedido de sugestão:</b> “Comenta uma obra/marca pra eu analisar a paleta no próximo.”</li>
+          <li><b>Follow (direto e curto):</b> “Me segue pra mais análises de design + narrativa visual.”</li>
+          <li><b>Salvamento:</b> “Salva esse template pra usar no seu próximo carrossel.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="kicker">Checklist</div>
+        <h2>Checklist de criação (produção rápida e reproduzível)</h2>
+        <ul>
+          <li><b>Definição:</b> escolha [OBRA/MARCA] + o <b>tema central</b> (1 frase).</li>
+          <li><b>Frames:</b> selecione 8–12 imagens que representem bem as cores.</li>
+          <li><b>Paletas:</b> extraia 5–7 tons por cor (consistentes entre slides).</li>
+          <li><b>Texto por cor:</b> escreva <b>1 sensação</b> + <b>1 função narrativa</b> (máx. 2–3 linhas).</li>
+          <li><b>Marcação manual:</b> aplique 2–3 intervenções (círculo/sublinhado/seta) por slide.</li>
+          <li><b>Consistência:</b> microheader/rodapé fixos + moldura/borda unificadora.</li>
+          <li><b>Slide 7:</b> síntese em 2–3 bullets (recompensa cognitiva).</li>
+          <li><b>Slide 8:</b> pergunta + follow + convite de sugestão (1 linha cada).</li>
+          <li><b>Revisão final:</b> contraste, legibilidade, margens, ortografia e ritmo.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="kicker">Variações</div>
+        <h2>Como reaproveitar o mesmo template (sem parecer repetido)</h2>
+        <ul>
+          <li><b>Variação A (Marca/Produto):</b> “O que a paleta de [marca] revela sobre [posicionamento]”. Troque frames por peças de campanha/packaging/UI.</li>
+          <li><b>Variação B (Interface/UI):</b> 4 cores do design system (primária, secundária, feedback, neutros) + impacto em usabilidade.</li>
+          <li><b>Variação C (Antes/Depois):</b> pegue uma peça sua e mostre “sem cor estratégica” vs “com cor estratégica”.</li>
+          <li><b>Variação D (Mito vs Verdade):</b> slide 2 vira “Mito: cor é gosto. Verdade: cor é decisão de comunicação.”</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+<script>
+  function copyText(id){
+    const el = document.getElementById(id);
+    const text = el ? el.innerText : "";
+    if(!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = id === 'scriptText' ? document.getElementById('copyBtn') : document.getElementById('copySlidesBtn');
+      const original = btn.textContent;
+      btn.textContent = 'Copiado!';
+      setTimeout(()=> btn.textContent = original, 1200);
+    });
+  }
+  document.getElementById('copyBtn').addEventListener('click', ()=>copyText('scriptText'));
+  document.getElementById('copySlidesBtn').addEventListener('click', ()=>copyText('slidesText'));
+</script>
+</body>
+</html>
