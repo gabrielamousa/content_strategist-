@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dia 27 — Finanças — Regra 70/30</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.08);
+      --stroke: rgba(255,255,255,0.10);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,0.72);
+      --muted2: rgba(234,240,255,0.60);
+      --good:#39D98A;
+      --blue:#4EA1FF;
+      --orange:#FF9F43;
+      --shadow: 0 16px 60px rgba(0,0,0,0.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --max: 1100px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(900px 400px at 10% 10%, rgba(78,161,255,0.18), transparent 60%),
+        radial-gradient(700px 380px at 90% 15%, rgba(57,217,138,0.14), transparent 55%),
+        radial-gradient(900px 450px at 60% 95%, rgba(255,159,67,0.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{max-width: var(--max); margin: 0 auto; padding: 28px 18px 70px;}
+
+    header{
+      position: relative;
+      padding: 18px 18px;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .glow{
+      position:absolute; inset:-2px;
+      background:
+        linear-gradient(90deg, rgba(57,217,138,0.20), rgba(78,161,255,0.18), rgba(255,159,67,0.18));
+      filter: blur(18px);
+      opacity:0.35;
+      pointer-events:none;
+    }
+
+    .head-grid{
+      position:relative;
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 14px;
+      align-items:start;
+    }
+
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+
+    .pill{
+      border:1px solid var(--stroke);
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(0,0,0,0.18);
+      font-size: 12px;
+      letter-spacing: 0.2px;
+    }
+
+    h1{
+      margin: 6px 0 6px;
+      font-size: clamp(20px, 2.2vw, 28px);
+      line-height: 1.15;
+      letter-spacing: -0.2px;
+    }
+
+    .sub{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 72ch;
+    }
+
+    .actions{
+      position:relative;
+      display:flex;
+      gap: 10px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top: 4px;
+    }
+
+    a.btn, button.btn{
+      appearance:none;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      text-decoration:none;
+      font-size: 13px;
+      display:inline-flex;
+      gap: 10px;
+      align-items:center;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+
+    .btn:hover{ background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.18); }
+    .btn:active{ transform: translateY(1px); }
+
+    .btn.primary{
+      border: 1px solid rgba(78,161,255,0.35);
+      background:
+        linear-gradient(90deg, rgba(78,161,255,0.18), rgba(57,217,138,0.16), rgba(255,159,67,0.14));
+    }
+
+    .btn small{ color: var(--muted2); font-size: 12px; }
+
+    .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .section{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.035));
+      border-radius: var(--radius);
+      padding: 16px 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    }
+
+    .section h2{
+      margin: 0 0 10px;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+
+    .dot{
+      width: 10px; height:10px; border-radius:999px;
+      background: linear-gradient(180deg, rgba(57,217,138,0.95), rgba(78,161,255,0.8));
+      box-shadow: 0 0 0 4px rgba(78,161,255,0.12);
+      flex: 0 0 auto;
+    }
+
+    .section p, .section li{ color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .section ul{ margin: 8px 0 0; padding-left: 18px; }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .tile{
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.16);
+      border-radius: var(--radius2);
+      padding: 12px;
+      min-height: 74px;
+    }
+
+    .tile .t{ color: var(--muted2); font-size: 12px; margin:0 0 6px; }
+    .tile .v{ margin:0; font-size: 13px; color: var(--text); line-height: 1.35; }
+
+    .highlight{
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(90deg, rgba(57,217,138,0.15), rgba(78,161,255,0.12), rgba(255,159,67,0.10));
+      color: rgba(234,240,255,0.92);
+      font-size: 12px;
+      display:inline-block;
+      margin: 2px 0;
+    }
+
+    .script{
+      margin-top: 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+      border-radius: var(--radius);
+      padding: 14px;
+      overflow:auto;
+    }
+
+    pre{
+      margin:0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: var(--mono);
+      font-size: 12.8px;
+      line-height: 1.55;
+      color: rgba(234,240,255,0.86);
+    }
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .note{
+      border-left: 3px solid rgba(255,159,67,0.65);
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,159,67,0.08);
+      color: rgba(234,240,255,0.82);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 920px){
+      .head-grid{grid-template-columns: 1fr;}
+      .actions{justify-content:flex-start;}
+      .kpi{grid-template-columns: 1fr;}
+      .two{grid-template-columns: 1fr;}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="glow"></div>
+      <div class="head-grid">
+        <div>
+          <div class="meta">
+            <span class="pill">Nicho: <strong>Finanças</strong></span>
+            <span class="pill">Dia: <strong>27</strong></span>
+            <span class="pill">Pilar: <strong>Passo a passo</strong></span>
+            <span class="pill">Formato: <strong>Reels</strong></span>
+          </div>
+          <h1>Regra 70/30: organize sua renda e pare de ficar no aperto</h1>
+          <p class="sub">Roteiro reproduzível baseado em: regra + dor específica + exemplo numérico simples + CTA leve (comentário + seguir/salvar). Use o mesmo esqueleto para qualquer nicho trocando <span class="highlight">público</span>, <span class="highlight">dor</span> e <span class="highlight">exemplo</span>.</p>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DULYSDBAPtN/" target="_blank" rel="noopener noreferrer">Abrir post original <small>↗</small></a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro <small>(texto)</small></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="section" id="resumo">
+        <h2><span class="dot"></span>Resumo</h2>
+        <p><strong>Ideia central:</strong> uma regra numérica memorável (70/30) que resolve uma dor específica (dinheiro entra e some por misturar pessoal/negócio) e entrega um <strong>passo a passo</strong> com <strong>exemplo real</strong>.</p>
+        <div class="kpi">
+          <div class="tile"><p class="t">Gancho</p><p class="v">“Conheça a regra <strong>X/Y</strong>” + benefício direto</p></div>
+          <div class="tile"><p class="t">Prova de clareza</p><p class="v">Aplicar em um valor comum do público (ex.: diária) em 10s</p></div>
+          <div class="tile"><p class="t">Conversão</p><p class="v">CTA duplo: comentário <strong>SIM/NÃO</strong> + seguir + salvar</p></div>
+        </div>
+        <div class="note"><strong>Regra de ouro:</strong> a pessoa precisa entender e repetir a regra em voz alta em menos de 7 segundos (isso aumenta salva/compartilha).</div>
+      </section>
+
+      <section class="section" id="estrutura">
+        <h2><span class="dot"></span>Estrutura (sequência pronta)</h2>
+        <ul>
+          <li><strong>0–2s — Hook:</strong> regra + promessa (simples, aplicável hoje).</li>
+          <li><strong>2–8s — Identificação:</strong> chama um público específico + 1 frase de dor.</li>
+          <li><strong>8–18s — Sintomas (check mental):</strong> 3 sinais rápidos, em lista.</li>
+          <li><strong>18–24s — Virada:</strong> “não é ganhar pouco, é não ter método”.</li>
+          <li><strong>24–38s — Método:</strong> explicar 70% (pessoal) e 30% (negócio/reserva).</li>
+          <li><strong>38–50s — Exemplo numérico:</strong> pega um valor típico e calcula na tela.</li>
+          <li><strong>50–58s — CTA:</strong> pergunta simples + seguir + salvar.</li>
+        </ul>
+        <p><span class="highlight">Substituições com o mesmo impacto</span>: “regra 70/30” pode virar “regra 60/30/10”, “regra das 3 contas”, “regra do envelope”, “regra do 1º boleto (pague-se primeiro)”. Mantenha: <strong>número memorável + ação imediata + exemplo</strong>.</p>
+      </section>
+
+      <section class="section" id="roteiro">
+        <h2><span class="dot"></span>Roteiro (falas + texto na tela + cortes)</h2>
+        <p><strong>Config:</strong> 55–60s, frases curtas, corte a cada 1–2 frases. Texto grande sempre que aparecer número.</p>
+        <div class="script">
+          <pre id="scriptText">ROTEIRO-BASE (REELS 55–60s)
+
+[0:00–0:02] HOOK (corte rápido + texto grande)
+FALA: “Conheça a regra 70/30 pra você que trabalha e o dinheiro some.”
+TELA: “REGRA 70/30” + “dinheiro some?”
+
+[0:02–0:08] IDENTIFICAÇÃO + DOR
+FALA: “Se você vive de diária / serviço, isso aqui muda seu mês.”
+TELA: “Vive de diária/serviço?”
+
+[0:08–0:18] SINTOMAS (lista de 3)
+FALA: “Sinais de que você tá misturando tudo: 1) paga conta pessoal com dinheiro do serviço… 2) quando tem imprevisto, você trava… 3) um trabalho acaba pagando o outro.”
+TELA: “3 sinais:” + bullets (1,2,3)
+
+[0:18–0:24] VIRADA (verdade incômoda)
+FALA: “O problema nem sempre é ganhar pouco. É não ter um método simples.”
+TELA: “Não é só ganhar mais.”
+
+[0:24–0:38] MÉTODO (didático, sem jargão)
+FALA: “Funciona assim: 70% vira o seu ‘salário’ pra gastos pessoais. E 30% é da sua ‘empresa’: reserva, material, ferramenta, imposto, imprevisto.”
+TELA: “70% = salário (pessoal)” / “30% = reserva do negócio”
+
+[0:38–0:50] EXEMPLO NUMÉRICO (a parte que dá salva)
+FALA: “Exemplo: se a diária é R$400… 70% dá R$280 pra você. 30% dá R$120 pra sua reserva do serviço.”
+TELA: “R$400 → R$280 + R$120” (com pop/click)
+
+[0:50–0:58] CTA DUPLO (comentário + seguir + salvar)
+FALA: “Você já fazia isso? Comenta ‘SIM’ ou ‘NÃO’. E salva esse vídeo pra aplicar na próxima diária. Me segue pra mais dicas simples.”
+TELA: “Comenta: SIM/NÃO” + “Salva” + “Segue”</pre>
+        </div>
+        <div class="two">
+          <div class="note" style="border-left-color: rgba(57,217,138,0.7); background: rgba(57,217,138,0.08);">
+            <strong>Como adaptar para outro tema (mesma estrutura):</strong><br>
+            Troque “70/30” por outro número/regra; troque “diária R$400” por um valor típico do seu público (mensalidade, ticket, salário, faturamento, tempo, calorias, km, leads etc.).
+          </div>
+          <div class="note" style="border-left-color: rgba(78,161,255,0.7); background: rgba(78,161,255,0.08);">
+            <strong>Opção de fala alternativa (mais curta e agressiva):</strong><br>
+            “Se você ganha e não sobra, você não tem método. Faz 70/30 a partir de hoje.”
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="elementos-visuais">
+        <h2><span class="dot"></span>Elementos visuais</h2>
+        <ul>
+          <li><strong>Texto na tela:</strong> números grandes (70%, 30%, R$400, R$280, R$120). Repetir “70/30” 3x no vídeo.</li>
+          <li><strong>B-roll (1–2s):</strong> dinheiro/carteira, comprovantes, calculadora, ferramentas/obra (ou equivalente do seu nicho).</li>
+          <li><strong>Edição:</strong> jump cuts + zoom-in leve nas frases de dor e no cálculo.</li>
+          <li><strong>SFX:</strong> “pop/click” ao aparecer percentuais/valores; volume baixo.</li>
+          <li><strong>Tela final (printável):</strong> “Regra 70/30: 70% pessoal | 30% reserva do negócio” + exemplo.</li>
+        </ul>
+        <p><span class="highlight">Substituições visuais</span>: se não for construção, use objetos do universo do público (consultório, cozinha, notebook, planilha, academia, estoque), mantendo o padrão: <strong>dor (close)</strong> → <strong>método (texto)</strong> → <strong>exemplo (número)</strong>.</p>
+      </section>
+
+      <section class="section" id="copy-ganchos">
+        <h2><span class="dot"></span>Copy e ganchos</h2>
+        <div class="two">
+          <div>
+            <p><strong>Hooks prontos (escolha 1):</strong></p>
+            <ul>
+              <li>“Conheça a regra <strong>X/Y</strong> pra parar de trabalhar e ficar no aperto.”</li>
+              <li>“Se você ganha bem e mesmo assim não sobra, faz isso: <strong>X/Y</strong>.”</li>
+              <li>“Trabalha, recebe e some? 60 segundos e você entende o que fazer.”</li>
+              <li>“A verdade: não é só ganhar mais. É parar de misturar dinheiro.”</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Legendas (curtas e salváveis):</strong></p>
+            <ul>
+              <li>“Regra 70/30: 70% pessoal | 30% reserva do negócio. Ex.: R$400 → R$280 + R$120. Salva pra aplicar.”</li>
+              <li>“Se o dinheiro entra e some, você precisa de método. Começa no 70/30 e ajusta com o tempo.”</li>
+              <li>“Misturar pessoal e serviço é o caminho mais rápido pro aperto. Separa em 2 partes: 70/30.”</li>
+            </ul>
+          </div>
+        </div>
+        <p><strong>Perguntas para fixar no comentário:</strong> “Qual sua diária/ticket médio?” | “Você se paga como salário?” | “Hoje você teria reserva pra um imprevisto?”</p>
+      </section>
+
+      <section class="section" id="cta">
+        <h2><span class="dot"></span>CTA</h2>
+        <ul>
+          <li><strong>CTA de comentário (alto volume):</strong> “Você já fazia isso? Comenta: <strong>SIM</strong> ou <strong>NÃO</strong>.”</li>
+          <li><strong>CTA de salvamento:</strong> “Salva pra aplicar no próximo pagamento/na próxima diária.”</li>
+          <li><strong>CTA de follow:</strong> “Me segue pra mais regras simples que dão resultado.”</li>
+          <li><strong>CTA opcional de DM (se fizer sentido):</strong> “Quer a planilha/checklist? Comenta ‘REGRA’ que eu te mando.”</li>
+        </ul>
+        <div class="note"><strong>Dica:</strong> use no máximo 2 CTAs falados. O terceiro pode ficar só no texto da tela (ex.: “Salvar”).</div>
+      </section>
+
+      <section class="section" id="checklist">
+        <h2><span class="dot"></span>Checklist de criação (reproduzível)</h2>
+        <div class="two">
+          <div>
+            <p><strong>Pré-produção (10 min):</strong></p>
+            <ul>
+              <li>[ ] Definir <strong>público específico</strong> (1 persona).</li>
+              <li>[ ] Escolher <strong>1 regra com número</strong> (X/Y, X/Y/Z ou “3 passos”).</li>
+              <li>[ ] Listar <strong>3 sintomas</strong> que a pessoa reconhece na hora.</li>
+              <li>[ ] Escolher <strong>1 exemplo</strong> com valor/medida real do público.</li>
+              <li>[ ] Definir <strong>uma frase-virada</strong> (“não é X, é Y”).</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Gravação + edição (30–60 min):</strong></p>
+            <ul>
+              <li>[ ] Gravar em pé, enquadramento médio, boa luz, áudio limpo.</li>
+              <li>[ ] Cortar respiros: troca de cena a cada 1–2 frases.</li>
+              <li>[ ] Inserir texto grande nos <strong>números</strong> e no <strong>exemplo</strong>.</li>
+              <li>[ ] Colocar <strong>tela final resumão</strong> (print).</li>
+              <li>[ ] Revisar: dá para entender sem áudio? (legendagem/texto).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="two">
+          <div>
+            <p><strong>Publicação (5 min):</strong></p>
+            <ul>
+              <li>[ ] Primeira linha da legenda repete o hook (“Regra 70/30…”).</li>
+              <li>[ ] Fixar comentário com pergunta objetiva.</li>
+              <li>[ ] Usar 5–12 hashtags específicas do nicho (evitar genéricas demais).</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Checklist de qualidade (antes de postar):</strong></p>
+            <ul>
+              <li>[ ] A regra aparece pelo menos <strong>3x</strong> (fala ou texto).</li>
+              <li>[ ] O exemplo numérico ficou <strong>sem contas difíceis</strong>.</li>
+              <li>[ ] O vídeo tem um “momento de print” (tela final).</li>
+              <li>[ ] CTA pede <strong>uma resposta fácil</strong> (SIM/NÃO, número, 1 palavra).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="variacoes">
+        <h2><span class="dot"></span>Variações (mesmo impacto, outros temas)</h2>
+        <div class="two">
+          <div>
+            <p><strong>Variação A — Regra 50/30/20 (público geral):</strong></p>
+            <ul>
+              <li>Hook: “Se você recebe e não sobra, faz 50/30/20.”</li>
+              <li>50% essenciais | 30% estilo de vida | 20% reserva/dívidas.</li>
+              <li>Exemplo com salário R$2.000.</li>
+            </ul>
+            <p><strong>Variação B — Regra das 3 contas (autônomo/MEI):</strong></p>
+            <ul>
+              <li>Conta 1: Pessoal (salário fixo)</li>
+              <li>Conta 2: Impostos + custos</li>
+              <li>Conta 3: Reserva/caixa</li>
+              <li>Exemplo com faturamento semanal.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Variação C — Outro nicho (mesma engenharia de retenção):</strong></p>
+            <ul>
+              <li><strong>Saúde:</strong> “Regra 2/1” (2 porções de legumes para 1 de carbo) + exemplo no prato.</li>
+              <li><strong>Marketing:</strong> “Regra 70/20/10” (conteúdo principal/reciclagem/testes) + exemplo do calendário.</li>
+              <li><strong>Estudos:</strong> “Regra 25/5” (Pomodoro) + exemplo de 1 hora.</li>
+              <li><strong>Produtividade:</strong> “Regra 1-3-5” (tarefas) + exemplo do dia.</li>
+            </ul>
+            <div class="note" style="border-left-color: rgba(255,159,67,0.75); background: rgba(255,159,67,0.08);">
+              <strong>Fórmula de substituição (copiar/colar):</strong><br>
+              “Conheça a regra <strong>[NÚMERO]</strong> pra <strong>[BENEFÍCIO]</strong>. Se você é <strong>[PÚBLICO]</strong> e sofre com <strong>[DOR]</strong>, faz assim: <strong>[PASSO 1]</strong>, <strong>[PASSO 2]</strong>. Exemplo: <strong>[NÚMERO REAL]</strong> vira <strong>[RESULTADO]</strong>. Comenta <strong>[RESPOSTA FÁCIL]</strong> e salva pra aplicar.”
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+
+      async function copy(){
+        const value = text.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(value);
+          btn.innerHTML = 'Copiado <small>(pronto)</small>';
+          setTimeout(()=> btn.innerHTML = 'Copiar roteiro <small>(texto)</small>', 1300);
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = value;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          btn.innerHTML = 'Copiado <small>(fallback)</small>';
+          setTimeout(()=> btn.innerHTML = 'Copiar roteiro <small>(texto)</small>', 1300);
+        }
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
