@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Roteiro Reproduzível – Carrossel</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:#0E1630cc;
+    --card2:#0B1228cc;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.14);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.55);
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --r:18px;
+    --r2:14px;
+    --gradA: linear-gradient(90deg, #22C55E 0%, #38BDF8 50%, #F59E0B 100%);
+    --gradB: radial-gradient(1200px 700px at 10% 0%, rgba(34,197,94,.25), transparent 55%),
+             radial-gradient(900px 600px at 80% 10%, rgba(56,189,248,.22), transparent 56%),
+             radial-gradient(900px 600px at 60% 90%, rgba(245,158,11,.18), transparent 60%);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background: var(--gradB), linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px;}
+  header{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(14,22,48,.80), rgba(11,18,40,.70));
+    box-shadow: var(--shadow);
+    border-radius: calc(var(--r) + 6px);
+    padding:20px 18px;
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--gradA);
+    opacity:.16;
+    filter: blur(18px);
+    pointer-events:none;
+  }
+  .toprow{display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; position:relative;}
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+  }
+  .pill{
+    border:1px solid var(--stroke2);
+    background: rgba(255,255,255,.04);
+    padding:7px 10px;
+    border-radius:999px;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .title{
+    position:relative;
+    margin-top:12px;
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  h1{
+    margin:0;
+    font-size:22px;
+    line-height:1.15;
+    letter-spacing:-.02em;
+  }
+  .subtitle{
+    margin-top:6px;
+    color:var(--muted);
+    font-size:13px;
+    max-width:72ch;
+  }
+  a{color:#93C5FD; text-decoration:none}
+  a:hover{text-decoration:underline}
+  .btnrow{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  .btn{
+    border:1px solid var(--stroke2);
+    background: rgba(255,255,255,.06);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:13px;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    user-select:none;
+  }
+  .btn:hover{background: rgba(255,255,255,.09); border-color:rgba(255,255,255,.22)}
+  .btn:active{transform: translateY(1px)}
+  .btn.primary{
+    border:none;
+    background: var(--gradA);
+    color:#061015;
+    font-weight:700;
+  }
+  .grid{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+  }
+  @media (min-width: 980px){
+    .grid{grid-template-columns: 1.1fr .9fr;}
+  }
+  .card{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(14,22,48,.74), rgba(11,18,40,.64));
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 16px 10px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:10px;
+  }
+  .card .hd h2{margin:0; font-size:15px; letter-spacing:-.01em}
+  .tag{
+    font-family:var(--mono);
+    font-size:11px;
+    color:rgba(234,240,255,.62);
+    border:1px solid rgba(255,255,255,.10);
+    padding:5px 8px;
+    border-radius:999px;
+    background: rgba(255,255,255,.03);
+    white-space:nowrap;
+  }
+  .card .bd{padding:14px 16px 16px; color:var(--muted); font-size:14px; line-height:1.55}
+  .bd ul{margin:10px 0 0 18px; padding:0}
+  .bd li{margin:6px 0}
+  .callout{
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.04);
+    border-radius: var(--r2);
+    padding:12px 12px;
+    margin-top:10px;
+  }
+  .callout strong{color:var(--text)}
+  .divider{
+    height:1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+    margin:14px 0;
+  }
+  .section{
+    margin-top:14px;
+  }
+  .section h3{
+    margin:0 0 8px;
+    font-size:13px;
+    color:var(--text);
+  }
+  .kbd{
+    font-family:var(--mono);
+    font-size:12px;
+    padding:2px 7px;
+    border:1px solid rgba(255,255,255,.12);
+    border-bottom-color:rgba(255,255,255,.08);
+    border-radius:8px;
+    background: rgba(0,0,0,.25);
+    color:rgba(234,240,255,.78);
+    display:inline-block;
+  }
+  textarea{
+    width:100%;
+    min-height: 420px;
+    resize: vertical;
+    border-radius: var(--r);
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.22);
+    color: rgba(234,240,255,.86);
+    padding: 14px;
+    line-height: 1.45;
+    font-size: 13px;
+    font-family: var(--mono);
+    outline:none;
+  }
+  textarea:focus{border-color:rgba(56,189,248,.45); box-shadow:0 0 0 4px rgba(56,189,248,.10)}
+  .foot{
+    margin-top:14px;
+    color:var(--muted2);
+    font-size:12px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="meta">
+          <div class="pill"><strong>Nicho</strong>: Finanças</div>
+          <div class="pill"><strong>Dia</strong>: 18</div>
+          <div class="pill"><strong>Formato</strong>: Carrossel</div>
+          <div class="pill"><strong>Pilar</strong>: Mito vs Verdade</div>
+        </div>
+        <div class="btnrow">
+          <a class="btn" href="https://www.instagram.com/p/DU_L-EqkRY9/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <div class="title">
+        <div>
+          <h1>Pai Pobre vs Pai Rico: o que seu filho aprende sobre dinheiro</h1>
+          <div class="subtitle">Roteiro replicável com comparação paralela + linha do tempo + payoff futuro + CTA por comentário (isca). Adaptável para qualquer tema com “Personagem A vs Personagem B”.</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <div class="tag">Objetivo: retenção + salvamentos + comentários</div>
+        </div>
+        <div class="bd">
+          Use a narrativa “Pai Pobre x Pai Rico” como <strong>mito vs verdade</strong>: duas abordagens para o mesmo evento, evoluindo por fases da vida (primeira decisão → infância → adolescência → aos 22). Feche com uma tese simples e um CTA de comentário para entregar uma isca (ex.: planilha/regra de mesada/checklist).
+          <div class="divider"></div>
+          <div class="callout"><strong>Promessa central:</strong> não é sobre ter muito dinheiro; é sobre construir mentalidade e hábito cedo (com pouco, mas com consistência).</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <div class="tag">8 slides (padrão)</div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>S1 Hook</strong> (comparação instantânea): mesma frase base → duas mentalidades.</li>
+            <li><strong>S2–S4 Capítulos</strong> (linha do tempo): 1 exemplo prático por fase.</li>
+            <li><strong>S5 Payoff</strong> (resultado futuro): diálogo curto que “paga” a curiosidade.</li>
+            <li><strong>S6 Tese</strong> (síntese salvável): 2 frases espelho (ensinar a gastar vs multiplicar).</li>
+            <li><strong>S7 Pergunta</strong> (espelho do público): dor/desejo em 1 linha.</li>
+            <li><strong>S8 CTA</strong> (comentário + isca): comando memorizável (palavra-chave).</li>
+          </ul>
+          <div class="divider"></div>
+          <div class="section">
+            <h3>Regra de ouro (reprodutível)</h3>
+            <div>1 slide = 1 ideia. Texto em blocos curtos (8–20 palavras). Sempre com um objeto visual-âncora por quadro.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Slides sugeridos (1..8)</h2>
+        <div class="tag">1080×1350 (4:5) • split screen</div>
+      </div>
+      <div class="bd">
+        <ol style="margin:0; padding-left:18px;">
+          <li><strong>Hook / Contraste</strong>: “Pai Pobre” vs “Pai Rico” com mesma abertura.</li>
+          <li><strong>Primeira decisão</strong>: escolha prática (parcelar/consumir vs reservar/investir).</li>
+          <li><strong>Infância</strong>: “deixa pra depois” vs “ensina brincando”.</li>
+          <li><strong>Adolescência</strong>: “se quer, compra” vs “regra da mesada”.</li>
+          <li><strong>Aos 22 anos</strong>: consequência inevitável (sem reserva vs carteira crescendo).</li>
+          <li><strong>A diferença</strong>: 2 frases espelhadas (tese).</li>
+          <li><strong>Pergunta espelho</strong>: quer X e não Y?</li>
+          <li><strong>CTA</strong>: “Comente PALAVRA-CHAVE que eu envio (isca)”.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Roteiro (copiável)</h2>
+        <div class="tag">Preencha os colchetes</div>
+      </div>
+      <div class="bd">
+        <textarea id="roteiro" spellcheck="false">CARROSSEL — “Personagem A x Personagem B” (linha do tempo)
+
+CONFIG
+- Formato: 1080x1350 (4:5)
+- Layout: comparação 50/50 (topo/baixo ou esquerda/direita)
+- Regra: 1 ideia por slide | 8–20 palavras por bloco
+
+SLIDE 1 — HOOK (comparação imediata)
+[PERSONAGEM A] (label)
+“[Evento comum]. Vou dar [‘tudo que não tive’: coisas/consumo/status].”
+
+[PERSONAGEM B] (label)
+“[Evento comum]. Vou dar [o que não tive: habilidade/mentalidade/hábito].”
+
+SLIDE 2 — CAPÍTULO 1: PRIMEIRA DECISÃO
+Título: Primeira decisão
+A: “Eu resolvo com [parcelamento/atalho/impulso].”
+B: “Eu começo com pouco e faço [regra simples + consistência].”
+
+SLIDE 3 — CAPÍTULO 2: INFÂNCIA
+Título: Infância
+A: “Dinheiro é assunto de adulto. Depois eu ensino.”
+B: “Dinheiro vira jogo: [cofrinho/metas/regra 2 potes].”
+
+SLIDE 4 — CAPÍTULO 3: ADOLESCÊNCIA
+Título: Adolescência
+A: “Se quer, compra. Aproveita a vida.”
+B: “Regra da mesada: [X]% gasta | [Y]% guarda | [Z]% investe.”
+
+SLIDE 5 — PAYOFF: AOS [IDADE] ANOS
+Título: Aos [22] anos
+Filho(a) do A: “Eu tô com [dívida/sem reserva/sem controle]. Você me ajuda?”
+Filho(a) do B: “Minha [reserva/carteira/meta] já passou de [marco]. Obrigado(a) por [hábito].”
+
+SLIDE 6 — TESE (SALVÁVEL)
+Título: A diferença
+“Um ensinou a [verbo que empobrece: gastar/parcelar/compensar].”
+“O outro ensinou a [verbo que enriquece: planejar/investir/adiar recompensa].”
+
+SLIDE 7 — PERGUNTA ESPELHO
+Texto grande:
+“Quer que seu/sua [filho(a)/você] [benefício] e não [dor]?”
+
+SLIDE 8 — CTA (comentário + isca)
+“Comece agora.”
+“Comente [PALAVRA-CHAVE] que eu te envio [ISCA].”
+(opcional pequeno) “Sem custo • envio no direct”</textarea>
+        <div class="foot">Dica: mantenha a mesma frase-base no slide 1 para aumentar o efeito de contraste. Use objetos-âncora: cartão/cofrinho/gráfico/celular com números.</div>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:14px;">
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <div class="tag">Consistência & leitura rápida</div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Split screen fixo</strong>: A vs B sempre no mesmo lado (não invertendo).</li>
+            <li><strong>Ribbons/labels</strong>: “Pai Pobre”, “Pai Rico”, “Infância”, “Adolescência”, etc.</li>
+            <li><strong>Balões curtos</strong>: 2–4 linhas, sem parágrafos longos.</li>
+            <li><strong>1 objeto por quadro</strong>: cartão, cofrinho, gráfico, celular com patrimônio.</li>
+            <li><strong>Microcliffhanger</strong>: termine S2–S4 com sensação de “e o resultado disso?”</li>
+          </ul>
+          <div class="callout"><strong>Substituição universal:</strong> se não houver “pai/filho”, use “Pessoa Sem Método vs Pessoa Com Método”, “Profissional Reativo vs Profissional Estratégico”, etc.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <div class="tag">Modelos prontos</div>
+        </div>
+        <div class="bd">
+          <div class="section">
+            <h3>Ganchos (slide 1)</h3>
+            <ul>
+              <li>“Mesma situação. Dois destinos.”</li>
+              <li>“O que você ensina hoje vira liberdade amanhã.”</li>
+              <li>“Não é sobre ganhar mais. É sobre decidir melhor.”</li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="section">
+            <h3>Frases espelho (slide 6)</h3>
+            <ul>
+              <li>“Um criou consumo. O outro criou critério.”</li>
+              <li>“Um comprou alívio. O outro comprou tempo.”</li>
+              <li>“Um normalizou dívida. O outro normalizou reserva.”</li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="section">
+            <h3>Micro-regras (fáceis de copiar)</h3>
+            <ul>
+              <li>“Parte gasta. Parte guardada. Parte investida.”</li>
+              <li>“Antes de comprar, espera 24 horas.”</li>
+              <li>“Ganho extra não é gasto extra: é meta.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid" style="margin-top:14px;">
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <div class="tag">Comentário rastreável</div>
+        </div>
+        <div class="bd">
+          <div><strong>Estrutura:</strong> Pergunta curta (dor/desejo) → Comando → Palavra-chave → O que a pessoa recebe.</div>
+          <div class="callout">
+            <div><strong>Modelo (pronto):</strong></div>
+            <div>“Quer criar um(a) filho(a) que sabe lidar com dinheiro?”</div>
+            <div>“Comente <span class="kbd">PLANILHA</span> que eu te envio a regra de mesada + controle simples.”</div>
+          </div>
+          <div class="section">
+            <h3>Palavras-chave alternativas (mesmo impacto)</h3>
+            <ul>
+              <li><span class="kbd">MESADA</span> (entrega: regra + exemplos por idade)</li>
+              <li><span class="kbd">GUIA</span> (entrega: mini guia PDF/Notion)</li>
+              <li><span class="kbd">CHECKLIST</span> (entrega: passos para começar)</li>
+              <li><span class="kbd">AULA</span> (entrega: link para aula curta)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <div class="tag">Produção rápida</div>
+        </div>
+        <div class="bd">
+          <div class="section">
+            <h3>Checklist (conteúdo)</h3>
+            <ul>
+              <li>Definir <strong>duas personas</strong> (A vs B) com 1 traço claro cada.</li>
+              <li>Definir a <strong>linha do tempo</strong> (3 fases + payoff).</li>
+              <li>Escolher <strong>1 regra simples</strong> (ex.: % da mesada / 2 potes / 24h).</li>
+              <li>Escrever <strong>diálogos curtos</strong> (sem explicar demais).</li>
+              <li>Fechar com <strong>tese em 2 frases</strong> (espelho).</li>
+              <li>Definir <strong>isca</strong> e palavra-chave do comentário.</li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="section">
+            <h3>Checklist (design)</h3>
+            <ul>
+              <li>Split 50/50 fixo + labels consistentes</li>
+              <li>1 objeto-âncora por quadro</li>
+              <li>Título do capítulo em ribbon (topo)</li>
+              <li>Texto com alto contraste e poucas linhas</li>
+              <li>Slide 6 “salvável” com tipografia maior</li>
+              <li>Slide 8 com CTA central e palavra-chave em caixa alta</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Variações (adaptações para outros temas)</h2>
+        <div class="tag">Substituições com o mesmo efeito</div>
+      </div>
+      <div class="bd">
+        <div class="section">
+          <h3>1) Troca de personagens (mesmo DNA)</h3>
+          <ul>
+            <li><strong>Finanças pessoais:</strong> “Eu de 2019 vs Eu de 2026”</li>
+            <li><strong>Carreira:</strong> “Profissional Reativo vs Profissional Estratégico”</li>
+            <li><strong>Saúde:</strong> “Pessoa do 8 ou 80 vs Pessoa do hábito”</li>
+            <li><strong>Empreendedorismo:</strong> “Dono de negócio ocupado vs dono de negócio previsível”</li>
+          </ul>
+        </div>
+        <div class="divider"></div>
+        <div class="section">
+          <h3>2) Troca da linha do tempo (se não for ‘filhos’)</h3>
+          <ul>
+            <li>“Primeira semana → Primeiro mês → 6 meses → 1 ano”</li>
+            <li>“Hoje → Próxima compra → Próxima fatura → Próximo ano”</li>
+            <li>“Iniciante → Intermediário → Avançado → Resultado”</li>
+          </ul>
+        </div>
+        <div class="divider"></div>
+        <div class="section">
+          <h3>3) Troca do payoff (mesmo impacto emocional)</h3>
+          <ul>
+            <li>“Sem reserva” vs “3 meses de reserva”</li>
+            <li>“Ansiedade com boleto” vs “previsibilidade”</li>
+            <li>“Depender de alguém” vs “poder escolher”</li>
+            <li>“Recomeçar todo mês” vs “patrimônio crescendo”</li>
+          </ul>
+        </div>
+        <div class="callout"><strong>Atalho para adaptar rápido:</strong> mantenha a estrutura 8 slides; troque apenas: (a) evento do hook, (b) a regra simples, (c) o payoff, (d) a isca do CTA.</div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const ta = document.getElementById('roteiro');
+    function setBtn(text){ btn.textContent = text; }
+
+    btn.addEventListener('click', async function(){
+      try{
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        if (navigator.clipboard && navigator.clipboard.writeText){
+          await navigator.clipboard.writeText(ta.value);
+        } else {
+          document.execCommand('copy');
+        }
+        const prev = btn.textContent;
+        setBtn('Roteiro copiado');
+        setTimeout(()=>setBtn(prev), 1200);
+      } catch(e){
+        const prev = btn.textContent;
+        setBtn('Falha ao copiar');
+        setTimeout(()=>setBtn(prev), 1200);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
