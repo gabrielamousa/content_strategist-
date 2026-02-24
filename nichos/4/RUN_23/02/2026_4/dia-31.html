@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Ficha reproduzível — Instagram</title>
+<style>
+  :root{
+    --bg0:#060912;
+    --bg1:#0a1022;
+    --card:#0d1327cc;
+    --card2:#0b1124;
+    --text:#e9eefc;
+    --muted:#a9b4d0;
+    --line:rgba(255,255,255,.10);
+    --line2:rgba(255,255,255,.14);
+    --shadow: 0 18px 55px rgba(0,0,0,.55);
+
+    --g1: linear-gradient(90deg,#2ce6a6 0%, #2a7fff 52%, #ff9a3d 100%);
+    --g2: linear-gradient(135deg, rgba(44,230,166,.18), rgba(42,127,255,.16), rgba(255,154,61,.14));
+    --g3: linear-gradient(180deg, rgba(44,230,166,.16), rgba(10,16,34,0));
+
+    --radius: 18px;
+    --radius2: 14px;
+    --pad: 18px;
+
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    color:var(--text);
+    font-family:var(--sans);
+    background:
+      radial-gradient(1200px 700px at 25% 10%, rgba(42,127,255,.20), rgba(6,9,18,0) 55%),
+      radial-gradient(900px 600px at 70% 25%, rgba(44,230,166,.16), rgba(6,9,18,0) 60%),
+      radial-gradient(900px 700px at 60% 90%, rgba(255,154,61,.12), rgba(6,9,18,0) 55%),
+      linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 65%, #050711 100%);
+    min-height:100vh;
+  }
+
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 16px 56px;}
+
+  header{
+    background: var(--g2);
+    border:1px solid var(--line);
+    border-radius: calc(var(--radius) + 6px);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    position: relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g3);
+    pointer-events:none;
+  }
+
+  .topbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; position:relative;}
+
+  .meta{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+
+  .pill{
+    font-size:12px;
+    color:var(--muted);
+    border:1px solid var(--line);
+    padding:8px 10px;
+    border-radius:999px;
+    background: rgba(6,9,18,.35);
+    backdrop-filter: blur(6px);
+  }
+  .pill strong{color:var(--text); font-weight:650;}
+
+  .h1{
+    margin:12px 0 2px;
+    font-size:22px;
+    line-height:1.2;
+    letter-spacing:-.02em;
+    position:relative;
+  }
+
+  .gradline{
+    height:3px;
+    width:160px;
+    background: var(--g1);
+    border-radius:999px;
+    margin:10px 0 0;
+    opacity:.95;
+  }
+
+  .link{
+    color: var(--text);
+    text-decoration:none;
+    border-bottom:1px dashed rgba(233,238,252,.35);
+  }
+  .link:hover{border-bottom-color: rgba(233,238,252,.8);}
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap:14px;
+    margin-top:14px;
+  }
+
+  @media (max-width: 920px){
+    .grid{grid-template-columns:1fr;}
+  }
+
+  .card{
+    background: rgba(13,19,39,.70);
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 14px 45px rgba(0,0,0,.40);
+    overflow:hidden;
+  }
+
+  .card h2{
+    margin:0;
+    font-size:14px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color: rgba(233,238,252,.86);
+  }
+
+  .card .hd{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+  }
+
+  .tag{
+    font-family:var(--mono);
+    font-size:11px;
+    color: rgba(233,238,252,.78);
+    padding:6px 8px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background: rgba(6,9,18,.35);
+  }
+
+  .card .bd{padding: 16px;}
+
+  .sub{
+    color: var(--muted);
+    margin: 8px 0 0;
+    line-height:1.55;
+    font-size:14px;
+  }
+
+  .list{margin: 10px 0 0; padding:0; list-style:none; display:grid; gap:10px;}
+  .li{
+    border:1px solid var(--line);
+    background: rgba(6,9,18,.32);
+    border-radius: var(--radius2);
+    padding: 12px 12px;
+  }
+  .li .t{display:flex; align-items:flex-start; justify-content:space-between; gap:10px;}
+  .li .t strong{font-size:14px; letter-spacing:-.01em;}
+  .li .t .mini{font-size:12px; color:var(--muted); font-family:var(--mono);}
+  .li p{margin:6px 0 0; color: var(--muted); font-size:13px; line-height:1.5;}
+
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:720px){.cols{grid-template-columns:1fr;}}
+
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end;}
+  .btn{
+    border:1px solid var(--line2);
+    background: rgba(6,9,18,.35);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius: 12px;
+    cursor:pointer;
+    font-weight:650;
+    letter-spacing:-.01em;
+  }
+  .btn.primary{
+    border: none;
+    background: var(--g1);
+    color: #07101a;
+  }
+  .btn:active{transform: translateY(1px);}
+
+  textarea{
+    width:100%;
+    min-height: 520px;
+    resize: vertical;
+    padding: 14px;
+    border-radius: var(--radius2);
+    border:1px solid var(--line);
+    background: rgba(6,9,18,.35);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12.6px;
+    line-height: 1.55;
+    outline: none;
+  }
+
+  .note{
+    margin-top:10px;
+    color: rgba(233,238,252,.70);
+    font-size:12px;
+  }
+  .note code{font-family:var(--mono); color: rgba(233,238,252,.9)}
+
+  .divider{height:1px; background: var(--line); margin: 14px 0;}
+
+  .kpi{display:grid; grid-template-columns: repeat(3,1fr); gap:10px; margin-top:12px;}
+  @media (max-width:720px){.kpi{grid-template-columns:1fr;}}
+  .k{
+    border:1px solid var(--line);
+    background: rgba(6,9,18,.28);
+    border-radius: var(--radius2);
+    padding: 12px;
+  }
+  .k .n{font-size:20px; font-weight:780; letter-spacing:-.02em;}
+  .k .l{font-size:12px; color:var(--muted); margin-top:4px;}
+
+  .small{font-size:12px; color:var(--muted);}
+
+  .accent{
+    background: var(--g1);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-weight:850;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div class="meta">
+          <div class="pill"><strong>Nicho:</strong> Finanças</div>
+          <div class="pill"><strong>Dia:</strong> 31</div>
+          <div class="pill"><strong>Formato:</strong> Carrossel</div>
+          <div class="pill"><strong>Pilar:</strong> Checklist</div>
+        </div>
+        <div class="pill"><strong>Original:</strong> <a class="link" href="https://www.instagram.com/p/DUvwIj0kTN8/" target="_blank" rel="noopener">instagram.com/p/DUvwIj0kTN8</a></div>
+      </div>
+      <div class="h1"><span class="accent">10 habilidades</span> que aumentam sua renda e liberdade</div>
+      <div class="sub">Ficha revisada para ser repetível em outros temas: estrutura de carrossel, roteiro por slide, copy pronta, CTA e checklist de produção.</div>
+      <div class="gradline"></div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo: retenção + salvamentos</span>
+        </div>
+        <div class="bd">
+          <p class="sub">
+            Post em formato lista (checklist) com promessa transformacional. O motor do desempenho aqui é: <strong>capa com número</strong> → <strong>itens escaneáveis</strong> → <strong>micro-ação por item</strong> → <strong>CTA pedindo comentário do número</strong>.
+          </p>
+          <div class="kpi">
+            <div class="k"><div class="n">1–2s</div><div class="l">para entender a promessa da capa</div></div>
+            <div class="k"><div class="n">10–14</div><div class="l">slides (lista + síntese + CTA)</div></div>
+            <div class="k"><div class="n">3</div><div class="l">CTAs: comentar + salvar + enviar</div></div>
+          </div>
+          <div class="divider"></div>
+          <ul class="list">
+            <li class="li">
+              <div class="t"><strong>Quando usar</strong><span class="mini">caso ideal</span></div>
+              <p>Quando você quer dobrar salvamentos e compartilhamentos com conteúdo “colecionável” (lista, passo a passo, erros).</p>
+            </li>
+            <li class="li">
+              <div class="t"><strong>Promessa (template)</strong><span class="mini">substituível</span></div>
+              <p><code>As [N] [COISAS] que [PROMESSA GRANDE] (sem [OBSTÁCULO])</code>. Ex.: “As 10 habilidades que aumentam sua renda (mesmo sem indicação)”.</p>
+            </li>
+            <li class="li">
+              <div class="t"><strong>Regra de ouro do formato</strong><span class="mini">padrão</span></div>
+              <p>1 item por slide + 1 frase de impacto + 1 micro-ação. Leitura rápida = retenção alta.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Botões rápidos</h2>
+          <span class="tag">UX</span>
+        </div>
+        <div class="bd">
+          <div class="btnrow">
+            <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+            <button class="btn" id="selectBtn">Selecionar texto</button>
+            <a class="btn" href="https://www.instagram.com/p/DUvwIj0kTN8/" target="_blank" rel="noopener" style="text-decoration:none; display:inline-flex; align-items:center;">Abrir post</a>
+          </div>
+          <p class="note">Dica: personalize os campos entre <code>[colchetes]</code> e mantenha o padrão visual para virar série.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="tag">Sequência recomendada</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="li">
+              <div class="t"><strong>Estrutura base (repetível)</strong><span class="mini">10–14 slides</span></div>
+              <p class="small"><strong>1.</strong> Capa/gancho (número + promessa) <br/>
+              <strong>2.</strong> Tese (por que importa agora) <br/>
+              <strong>3..(N+2).</strong> Itens (1 por slide) <br/>
+              <strong>Penúltimo.</strong> Síntese (modelo mental) <br/>
+              <strong>Último.</strong> CTA (comentário + salvar + enviar)</p>
+            </div>
+            <div class="li">
+              <div class="t"><strong>Fórmula de cada item</strong><span class="mini">padrão visual</span></div>
+              <p class="small"><code>#X [ITEM]</code><br/>
+              <code>Destrava:</code> [benefício concreto] <br/>
+              <code>Faça hoje (5 min):</code> [micro-ação simples]</p>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <ul class="list">
+            <li class="li"><div class="t"><strong>Sequência de leitura</strong><span class="mini">retenção</span></div><p>Título (1s) → tese (2s) → lista escaneável (3–5s) → micro-ação (valor) → CTA (ação).</p></li>
+            <li class="li"><div class="t"><strong>Tom de copy</strong><span class="mini">consistente</span></div><p>Direto, orientado a benefício e ação: menos teoria, mais “isso gera X porque você faz Y”.</p></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="hd">
+          <h2>Slides sugeridos (1..14)</h2>
+          <span class="tag">Modelo pronto</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><div class="t"><strong>Slide 1 — Capa</strong><span class="mini">gancho</span></div><p><strong>Título:</strong> “As 10 habilidades que aumentam sua renda e liberdade” <br/><strong>Sub (opcional):</strong> “Sem depender de sorte.”</p></li>
+            <li class="li"><div class="t"><strong>Slide 2 — Tese</strong><span class="mini">por que isso importa</span></div><p>“Renda cresce quando você vira raro: habilidades certas + aplicação consistente.”</p></li>
+            <li class="li"><div class="t"><strong>Slide 3 — #1 Negociação</strong><span class="mini">habilidade</span></div><p><strong>Destrava:</strong> salário, preço e limite. <br/><strong>Faça hoje (5 min):</strong> escreva 3 concessões que você aceita e 1 que você nunca aceita.</p></li>
+            <li class="li"><div class="t"><strong>Slide 4 — #2 Vendas (mesmo sem ser vendedor)</strong><span class="mini">habilidade</span></div><p><strong>Destrava:</strong> oportunidades e renda extra. <br/><strong>Faça hoje (5 min):</strong> descreva seu trabalho em 1 frase: “Eu ajudo [público] a [resultado]”.</p></li>
+            <li class="li"><div class="t"><strong>Slide 5 — #3 Comunicação clara</strong><span class="mini">habilidade</span></div><p><strong>Destrava:</strong> promoção e influência. <br/><strong>Faça hoje (5 min):</strong> reescreva um texto seu eliminando 30% das palavras.</p></li>
+            <li class="li"><div class="t"><strong>Slide 6 — #4 Gestão do dinheiro (básico bem feito)</strong><span class="mini">habilidade</span></div><p><strong>Destrava:</strong> paz + capital para investir. <br/><strong>Faça hoje (5 min):</strong> liste 3 gastos que você pode reduzir já e defina um teto mensal.</p></li>
+            <li class="li"><div class="t"><strong>Slide 7 — #5 Tomada de decisão</strong><span class="mini">habilidade</span></div><p><strong>Destrava:</strong> velocidade sem ansiedade. <br/><strong>Faça hoje (5 min):</strong> use a regra: “se eu adiar 30 dias, o problema melhora ou piora?”</p></li>
+            <li class="li"><div class="t"><strong>Slide 8 — #6 Resolver problemas</strong><span class="mini">habilidade</span></div><p><strong>Destrava:</strong> valor no mercado. <br/><strong>Faça hoje (5 min):</strong> pegue um problema do trabalho e escreva 2 hipóteses + 1 próximo passo.</p></li>
+            <li class="li"><div class="t"><strong>Slide 9 — #7 Construir rede (networking útil)</strong><span class="mini">habilidade</span></div><p><strong>Destrava:</strong> portas e indicações. <br/><strong>Faça hoje (5 min):</strong> mande 1 mensagem com contexto + elogio específico + pergunta simples.</p></li>
+            <li class="li"><div class="t"><strong>Slide 10 — #8 Disciplina e consistência</strong><span class="mini">habilidade</span></div><p><strong>Destrava:</strong> resultado composto. <br/><strong>Faça hoje (5 min):</strong> escolha 1 hábito mínimo (10 min/dia) e defina horário fixo.</p></li>
+            <li class="li"><div class="t"><strong>Slide 11 — #9 Aprender rápido (meta-aprendizado)</strong><span class="mini">habilidade</span></div><p><strong>Destrava:</strong> adaptação e promoção. <br/><strong>Faça hoje (5 min):</strong> estude 1 conceito e escreva: “o que muda amanhã no meu comportamento?”</p></li>
+            <li class="li"><div class="t"><strong>Slide 12 — #10 Pensamento de longo prazo</strong><span class="mini">habilidade</span></div><p><strong>Destrava:</strong> patrimônio e escolhas melhores. <br/><strong>Faça hoje (5 min):</strong> escreva sua “regra”: “eu não compro X porque estou comprando Y (objetivo)”.</p></li>
+            <li class="li"><div class="t"><strong>Slide 13 — Síntese (modelo mental)</strong><span class="mini">amarração</span></div><p>“Habilidade é alavanca. Consistência é multiplicador. Seu resultado é a soma disso no tempo.”</p></li>
+            <li class="li"><div class="t"><strong>Slide 14 — CTA</strong><span class="mini">engajamento</span></div><p>“Qual você vai priorizar esta semana? Comente o número. Salve para revisar e envie para alguém que precisa focar no que dá retorno.”</p></li>
+          </ul>
+          <p class="note">Se quiser mais curto: faça <code>8 itens</code> e mantenha <code>capa + tese + síntese + CTA</code> (total 12 slides).</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="hd">
+          <h2>Roteiro (texto copiável)</h2>
+          <span class="tag">para criar rápido</span>
+        </div>
+        <div class="bd">
+<textarea id="roteiro" spellcheck="false">TÍTULO (Slide 1)
+As [N] habilidades que [PROMESSA GRANDE]
+Sub (opcional): sem [OBSTÁCULO]/mesmo com [RESTRIÇÃO]
+
+TESE (Slide 2)
+Renda e liberdade crescem quando você vira raro: habilidades certas + aplicação consistente.
+
+ITENS (Slides 3..N+2) — 1 por slide
+#1 [HABILIDADE]
+Destrava: [benefício concreto e desejável].
+Faça hoje (5 min): [micro-ação simples].
+
+#2 [HABILIDADE]
+Destrava: [benefício].
+Faça hoje (5 min): [micro-ação].
+
+(repetir até #N)
+
+SÍNTESE (Penúltimo slide)
+Habilidade é alavanca. Consistência é multiplicador.
+Escolha 1 para praticar por 7 dias e compare seu resultado.
+
+CTA (Último slide)
+Qual você vai priorizar esta semana?
+Comente o número (1–[N]).
+Salve para revisar e envie para alguém que precisa focar no que dá retorno.
+
+LEGENDA (copiar e preencher)
+Dominar habilidades separa quem só trabalha de quem constrói oportunidades.
+
+A maioria tenta [resultado desejado] sem dominar [2–3 habilidades-chave].
+Aqui vão [N] alavancas que mais impactam [área/resultado]:
+
+1) [Habilidade] → [benefício direto].
+2) [Habilidade] → [benefício direto].
+...
+
+O ponto não é saber um pouco.
+É aplicar com consistência.
+
+Qual dessas você precisa desenvolver com urgência? Comente o número.
+(Se quiser, eu te mando um plano de 7 dias: comente “PLANO”.)</textarea>
+          <div class="note">Atalho de adaptação: substitua <code>[habilidades]</code> por <code>[hábitos]</code>, <code>[erros]</code>, <code>[etapas]</code> ou <code>[ferramentas]</code> mantendo a mesma estrutura.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="tag">design replicável</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><div class="t"><strong>Identidade</strong><span class="mini">consistência</span></div><p>Fundo escuro + cards/placas com borda suave. Repetir padrão em série (mesma paleta e tipografia).</p></li>
+            <li class="li"><div class="t"><strong>Hierarquia</strong><span class="mini">leitura</span></div><p><strong>1)</strong> Número + promessa na capa. <strong>2)</strong> Item em caixa alta. <strong>3)</strong> Linha “Destrava” e “Faça hoje”.</p></li>
+            <li class="li"><div class="t"><strong>Componentes</strong><span class="mini">Canva/Figma</span></div><p>Cards com sombra leve, ícone simples por habilidade (cadeado=segurança, foguete=velocidade, gráfico=crescimento) e um marcador numérico grande.</p></li>
+            <li class="li"><div class="t"><strong>Destaques</strong><span class="mini">degradê</span></div><p>Use o degradê (verde-azul-laranja) apenas em: sublinhado do título, tags e bullets. Evita “poluição” visual.</p></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">opções prontas</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><div class="t"><strong>Ganchos de capa (substituíveis)</strong><span class="mini">escolha 1</span></div><p>
+              • “As [N] habilidades que aumentam sua renda”<br/>
+              • “As [N] habilidades que te dão liberdade”<br/>
+              • “[N] habilidades que te deixam difícil de substituir”<br/>
+              • “[N] habilidades que eu treinaria se começasse do zero”
+            </p></li>
+            <li class="li"><div class="t"><strong>Tese (Slide 2)</strong><span class="mini">variações</span></div><p>
+              • “Renda é reflexo do valor que você gera e comunica.”<br/>
+              • “Você não precisa de mais horas. Precisa de alavancas.”<br/>
+              • “Quem domina o básico com consistência ganha do ‘talento’ irregular.”
+            </p></li>
+            <li class="li"><div class="t"><strong>Frases de impacto por item</strong><span class="mini">templates</span></div><p>
+              • “Destrava: [ganho concreto] em [contexto].”<br/>
+              • “Isso te faz ganhar mais porque [mecanismo].”<br/>
+              • “Se você só melhorar isso, já muda seu [resultado].”
+            </p></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="tag">conversão em ação</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="li">
+              <div class="t"><strong>CTA principal (comentário)</strong><span class="mini">padrão</span></div>
+              <p>“Qual você precisa desenvolver com mais urgência? Comente o número (1–[N]).”</p>
+            </div>
+            <div class="li">
+              <div class="t"><strong>CTA de performance</strong><span class="mini">salvar/enviar</span></div>
+              <p>“Salve para revisar. Envie para alguém que quer aumentar a renda em 2026.”</p>
+            </div>
+            <div class="li">
+              <div class="t"><strong>CTA de lead (keyword)</strong><span class="mini">opcional</span></div>
+              <p>“Quer um plano de 7 dias para treinar 1 habilidade? Comente ‘PLANO’.”</p>
+            </div>
+            <div class="li">
+              <div class="t"><strong>CTA de DM (variação)</strong><span class="mini">menos fricção</span></div>
+              <p>“Se você quiser, me chama no direct com a palavra ‘HABILIDADE’ que eu te mando um modelo.”</p>
+            </div>
+          </div>
+          <p class="note">Mantenha <code>apenas 1 CTA principal</code> por post; os demais entram como “PS” (uma linha).</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="hd">
+          <h2>Checklist</h2>
+          <span class="tag">criação e publicação</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <ul class="list">
+                <li class="li"><div class="t"><strong>Antes (estratégia)</strong><span class="mini">5 min</span></div><p>
+                  ☐ Defina <strong>tema</strong>: [habilidades/hábitos/erros/etapas]<br/>
+                  ☐ Defina <strong>promessa</strong>: [o que muda na vida da pessoa]<br/>
+                  ☐ Escolha <strong>N</strong>: 8–12 (10 é o padrão ideal)<br/>
+                  ☐ Defina 1 <strong>micro-ação</strong> por item (máx. 1 linha)
+                </p></li>
+                <li class="li"><div class="t"><strong>Produção (design)</strong><span class="mini">40–70 min</span></div><p>
+                  ☐ Capa com número grande e contraste alto<br/>
+                  ☐ Template do item duplicado (mesma hierarquia em todos)<br/>
+                  ☐ Ícone simples por item (consistência visual)<br/>
+                  ☐ Espaçamento: respiro para leitura em tela pequena
+                </p></li>
+              </ul>
+            </div>
+            <div>
+              <ul class="list">
+                <li class="li"><div class="t"><strong>Revisão (qualidade)</strong><span class="mini">10 min</span></div><p>
+                  ☐ “Título lê em 1s” (testar em 30% do zoom)<br/>
+                  ☐ Cada slide tem apenas <strong>1 ideia</strong><br/>
+                  ☐ Verbos no imperativo na micro-ação (faça / escreva / defina)<br/>
+                  ☐ Último slide com CTA explícito (comente o número)
+                </p></li>
+                <li class="li"><div class="t"><strong>Publicação</strong><span class="mini">pós</span></div><p>
+                  ☐ Primeira linha da legenda = tese/gancho<br/>
+                  ☐ 3 hashtags no máximo (bem específicas)<br/>
+                  ☐ Fixar comentário com: “Comente o número + peça o PLANO”<br/>
+                  ☐ Responder comentários nas primeiras 2h
+                </p></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="tag">mesmo impacto, outro tema</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><div class="t"><strong>Variação 1 — “Erros” (Dor)</strong><span class="mini">alta identificação</span></div><p>
+              Capa: “Os 10 erros que te impedem de [resultado]”<br/>
+              Slide 2: “Se você corrigir 2–3 deles, seu resultado muda rápido.”<br/>
+              Itens: erro → consequência → ajuste de 5 min.<br/>
+              CTA: “Qual você faz sem perceber? Comente o número.”
+            </p></li>
+            <li class="li"><div class="t"><strong>Variação 2 — “Passos” (Passo a passo)</strong><span class="mini">clareza</span></div><p>
+              Capa: “O passo a passo para [resultado] em [prazo]”<br/>
+              Itens: passo → objetivo → exemplo.<br/>
+              CTA: “Quer o template? Comente ‘GUIA’.”
+            </p></li>
+            <li class="li"><div class="t"><strong>Variação 3 — “Mito vs Verdade”</strong><span class="mini">autoridade</span></div><p>
+              Capa: “10 mitos sobre [tema] que te custam dinheiro”<br/>
+              Itens: mito → verdade → ação prática.<br/>
+              CTA: “Qual mito você mais ouve? Comente.”
+            </p></li>
+            <li class="li"><div class="t"><strong>Variação 4 — “Checklist de ferramentas”</strong><span class="mini">salvamentos</span></div><p>
+              Capa: “10 ferramentas para [resultado]”<br/>
+              Itens: ferramenta → para que serve → como começar hoje.<br/>
+              CTA: “Quer a lista com links? Comente ‘LISTA’.”
+            </p></li>
+          </ul>
+          <p class="note">Troca rápida de nicho: mantenha a fórmula <code>número + promessa + item por slide + micro-ação + CTA por número</code>. Só altere os itens e os exemplos.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+<script>
+  const ta = document.getElementById('roteiro');
+  const copyBtn = document.getElementById('copyBtn');
+  const selectBtn = document.getElementById('selectBtn');
+
+  function selectText(){
+    ta.focus();
+    ta.select();
+  }
+
+  async function copyText(){
+    try{
+      await navigator.clipboard.writeText(ta.value);
+      copyBtn.textContent = 'Copiado!';
+      setTimeout(()=> copyBtn.textContent = 'Copiar roteiro', 1400);
+    }catch(e){
+      // fallback
+      selectText();
+      document.execCommand('copy');
+      copyBtn.textContent = 'Copiado!';
+      setTimeout(()=> copyBtn.textContent = 'Copiar roteiro', 1400);
+    }
+  }
+
+  copyBtn.addEventListener('click', copyText);
+  selectBtn.addEventListener('click', selectText);
+</script>
+</body>
+</html>
