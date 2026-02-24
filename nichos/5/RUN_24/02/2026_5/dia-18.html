@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 18 — Design Gráfico — Carrossel replicável</title>
+  <style>
+    :root{
+      --bg:#070A0F;
+      --panel:#0B1020;
+      --panel2:#0A0F1A;
+      --text:#EAF0FF;
+      --muted:#AAB4CF;
+      --line:rgba(255,255,255,.08);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --g1: linear-gradient(90deg, #25D366 0%, #2ED7A2 25%, #2B7CFF 60%, #FF8A00 100%);
+      --g2: linear-gradient(135deg, rgba(37,211,102,.16), rgba(43,124,255,.16), rgba(255,138,0,.14));
+      --g3: radial-gradient(1200px 450px at 10% 0%, rgba(43,124,255,.22), transparent 55%),
+            radial-gradient(900px 400px at 90% 10%, rgba(255,138,0,.18), transparent 55%),
+            radial-gradient(900px 500px at 50% 100%, rgba(37,211,102,.14), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: var(--bg);
+      color:var(--text);
+      line-height:1.4;
+      letter-spacing:.2px;
+    }
+    a{color:inherit; text-decoration:none}
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 60px;
+      position:relative;
+    }
+    .bgfx{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background: var(--g3);
+      opacity:.9;
+      filter:saturate(1.05);
+    }
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(11,16,32,.72), rgba(10,15,26,.65));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius2);
+      padding:18px 18px 16px;
+      backdrop-filter: blur(8px);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      opacity:.9;
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1}
+
+    .toprow{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      padding:7px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size:12px;
+      font-family: var(--mono);
+    }
+    .chip strong{color:var(--text); font-weight:600}
+
+    .title{
+      margin:12px 0 6px;
+      font-size:22px;
+      line-height:1.15;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      max-width:80ch;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+      align-items:center;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:600;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.16); background: rgba(0,0,0,.35)}
+    .btn.primary{
+      border:0;
+      background: var(--g1);
+      color:#081018;
+    }
+
+    main{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+    }
+    @media (max-width: 960px){
+      main{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(11,16,32,.72), rgba(10,15,26,.62));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius2);
+      padding:16px;
+      overflow:hidden;
+      position:relative;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:#CFE1FF;
+    }
+    .card h2 .grad{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:800;
+    }
+
+    .card p{margin:0 0 10px; color:var(--muted); font-size:14px}
+    .card ul{margin:0; padding-left:18px; color:var(--muted); font-size:14px}
+    .card li{margin:6px 0}
+
+    .divider{height:1px; background:var(--line); margin:12px 0}
+
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 540px){.grid2{grid-template-columns:1fr}}
+
+    .code{
+      font-family: var(--mono);
+      font-size:12.5px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.08);
+      padding:12px;
+      border-radius: 14px;
+      white-space: pre-wrap;
+      color:#D6E2FF;
+    }
+
+    .kpi{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      padding:8px 10px;
+      border-radius: 14px;
+      font-size:12px;
+      color: var(--muted);
+    }
+    .pill b{color:var(--text)}
+
+    .slides{
+      counter-reset: s;
+      display:grid;
+      gap:10px;
+    }
+    .slide{
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.22);
+      border-radius: 16px;
+      padding:12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .slide:before{
+      counter-increment: s;
+      content: counter(s);
+      position:absolute;
+      top:10px;
+      right:12px;
+      font-family: var(--mono);
+      font-weight:700;
+      color: rgba(255,255,255,.35);
+    }
+    .slide h3{margin:0 0 6px; font-size:14px; color:var(--text)}
+    .slide p{margin:0; font-size:13px; color:var(--muted)}
+
+    .muted{color:var(--muted)}
+    .note{
+      border-left: 3px solid rgba(43,124,255,.55);
+      padding:10px 12px;
+      background: rgba(43,124,255,.08);
+      border-radius: 12px;
+      color: var(--muted);
+      margin-top:10px;
+      font-size:13px;
+    }
+
+    footer{
+      margin-top:16px;
+      color: rgba(234,240,255,.55);
+      font-family: var(--mono);
+      font-size:12px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="bgfx"></div>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="chips">
+          <span class="chip"><strong>Nicho</strong>: Design Gráfico</span>
+          <span class="chip"><strong>Dia</strong>: 18</span>
+          <span class="chip"><strong>Formato</strong>: carrossel</span>
+          <span class="chip"><strong>Pilar</strong>: Checklist</span>
+        </div>
+        <a class="chip" href="https://www.instagram.com/p/DU025PeDZBz/" target="_blank" rel="noopener noreferrer" title="Abrir post original">
+          <strong>Original</strong>: instagram.com/p/DU025PeDZBz/
+        </a>
+      </div>
+
+      <h1 class="title">Carrossel de curadoria: fontes + exemplos (template replicável)</h1>
+      <p class="subtitle">Modelo reproduzível de carrossel “vitrine”: capa com promessa + palavra-âncora, sequência de exemplos com nomes de fontes (entrega utilitária), slide de salvar no meio e CTA final para seguir/link.</p>
+
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <button class="btn" id="copyCaptionBtn">Copiar copy (legenda)</button>
+        <a class="btn" href="#slides">Ver slides sugeridos</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2><span class="grad">Resumo</span></h2>
+        <p><b>Objetivo:</b> gerar saves e compartilhamentos com uma curadoria prática e colecionável.</p>
+        <div class="kpi">
+          <span class="pill"><b>Gatilho</b>: entrega + coleção</span>
+          <span class="pill"><b>Retenção</b>: padrão repetível + variedade controlada</span>
+          <span class="pill"><b>Conversão</b>: “salvar” no meio + CTA final</span>
+        </div>
+        <div class="divider"></div>
+        <h2><span class="grad">Estrutura</span></h2>
+        <ul>
+          <li><b>Canvas:</b> 1080×1350 (4:5), fundo escuro, conteúdo central “em vitrine”.</li>
+          <li><b>Slides:</b> Capa → 4 exemplos → Slide “salvar” → 2 exemplos → Encerramento/CTA. (Total recomendado: 9)</li>
+          <li><b>Regra de ouro:</b> 1 variação estética por slide, sem quebrar o esqueleto.</li>
+        </ul>
+
+        <div class="divider"></div>
+        <h2><span class="grad">Roteiro</span></h2>
+        <div class="code" id="roteiro">TEMPLATE (substituível por qualquer tema)
+
+SLIDE 1 — CAPA (HOOK)
+• Linha 1 (sans, CAIXA ALTA): “FONTES PARA USAR”
+• Linha 2 (sans, CAIXA ALTA): “NO/NA [SEU NICHO / SEU CONTEXTO]”
+• Palavra-âncora (serif/script, grande): “[PALAVRA-CHAVE DO TEMA]”
+• Rodapé fixo: sua assinatura (esq.) + seta “→” (dir.)
+
+SLIDES 2–5 — EXEMPLOS (1 por slide)
+• Banner/retângulo central com cor sólida
+• Headline (1–2 palavras): “[CHAMADA CURTA / TÍTULO DO EXEMPLO]”
+• Subheadline (2–4 palavras): “[COMPLEMENTO]”
+• Abaixo: “FONTE A + FONTE B (+ FONTE C)”
+• Rodapé fixo: assinatura + “→”
+
+SLIDE 6 — RETENÇÃO (SALVAR)
+• “TÁ CURTINDO?”
+• “JÁ SALVA COM VOCÊ.”
+• 1 elemento simples pra quebrar padrão (oval/mancha/ícone minimal)
+
+SLIDES 7–8 — MAIS EXEMPLOS
+• Repete o mesmo sistema (banner + tipografia + pairing)
+• Aumente a variedade: 1 efeito/estilo diferente (ex.: recorte, outline, pixel, ligaturas)
+
+SLIDE 9 — ENCERRAMENTO (CTA)
+• “Pra mais conteúdos assim: me segue e confere o link da bio.”
+• Destaque “me segue” OU “link da bio” com cor de acento
+• Rodapé: assinatura (opcional) + sem seta (ou seta discreta) </div>
+
+        <div class="note"><b>Dica de adaptação rápida:</b> se o tema não for “fontes”, troque a linha técnica “FONTE A + FONTE B” por um equivalente colecionável (ex.: “Ferramenta + uso”, “Checklist + exemplo”, “Framework + aplicação”).</div>
+      </section>
+
+      <aside class="card">
+        <h2><span class="grad">Elementos visuais</span></h2>
+        <ul>
+          <li><b>Base:</b> #0B0B0B (fundo), texto off-white (#F2F0E6 ou similar).</li>
+          <li><b>Acento:</b> 1 cor chapada por slide (vermelho/rosa/azul/verde/roxo/dourado).</li>
+          <li><b>Composição:</b> retângulo central (75–85% largura; 28–35% altura), muito espaço negativo.</li>
+          <li><b>Rodapé fixo:</b> assinatura esquerda + seta “→” direita (induz swipe).</li>
+          <li><b>Hierarquia:</b>
+            <ul>
+              <li>N1: headline sans condensada (ExtraBold/Black) em caixa alta.</li>
+              <li>N2: subheadline menor (sans regular/semibold) em caixa alta.</li>
+              <li>N3: 1 palavra statement (serif/script) para contraste.</li>
+              <li>N4: linha técnica pequena (mono ou sans geométrica) centralizada.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="divider"></div>
+        <h2><span class="grad">Copy e ganchos</span></h2>
+        <p><b>Ganchos de capa (escolha 1):</b></p>
+        <ul>
+          <li>“[X] opções de [ITEM] para usar no(a) seu(sua) [CONTEXTO]”</li>
+          <li>“Se você cria para [PÚBLICO], salva isso aqui”</li>
+          <li>“Combinações prontas de [ITEM] que sempre funcionam”</li>
+        </ul>
+        <div class="divider"></div>
+        <p><b>Micro-copy nos exemplos:</b></p>
+        <ul>
+          <li>“Pairing:” / “Combinação:” / “Kit:” (padronize)</li>
+          <li>“Use em:” (ex.: post, cartaz, anúncio, capa, thumbnail)</li>
+        </ul>
+
+        <div class="divider"></div>
+        <h2><span class="grad">CTA</span></h2>
+        <ul>
+          <li><b>CTA meio (Slide 6):</b> “Tá curtindo? Já salva com você.”</li>
+          <li><b>CTA final (Slide 9):</b> “Pra mais conteúdos assim, me segue e confere o link da bio.”</li>
+          <li><b>CTA opcional (comentários):</b> “Comenta ‘PDF’ que eu mando a lista completa / versão atualizada.”</li>
+        </ul>
+
+        <div class="divider"></div>
+        <h2><span class="grad">Checklist</span></h2>
+        <ul>
+          <li>[ ] Capa com promessa + palavra-âncora (contraste serif/script).</li>
+          <li>[ ] 6–7 slides de entrega (1 item por slide) com linha técnica colecionável.</li>
+          <li>[ ] 1 slide de “salvar” no meio.</li>
+          <li>[ ] Rodapé padrão (assinatura + seta).</li>
+          <li>[ ] 1 variação estética por slide (apenas 1).</li>
+          <li>[ ] Legenda com: promessa + para quem é + instrução de salvar + pergunta final.</li>
+        </ul>
+      </aside>
+
+      <section class="card" id="slides" style="grid-column: 1 / -1;">
+        <h2><span class="grad">Slides sugeridos (1..9)</span></h2>
+        <div class="slides">
+          <div class="slide">
+            <h3>Slide 1 — Capa (promessa + palavra-âncora)</h3>
+            <p>Estrutura: “FONTES PARA USAR” + “NO/NA [CONTEXTO]” + palavra-âncora grande. Contraste máximo.</p>
+          </div>
+          <div class="slide">
+            <h3>Slide 2 — Exemplo 1 (padrão base)</h3>
+            <p>Banner central + headline curta + subheadline + “FONTE A + FONTE B”. Cor de acento #1.</p>
+          </div>
+          <div class="slide">
+            <h3>Slide 3 — Exemplo 2 (variação: outline ou tracking)</h3>
+            <p>Mantenha o grid. Troque 1 efeito: outline, condensada extrema ou espaçamento.</p>
+          </div>
+          <div class="slide">
+            <h3>Slide 4 — Exemplo 3 (variação: serif editorial)</h3>
+            <p>Inclua 1 palavra em serif display dentro do banner para assinatura.</p>
+          </div>
+          <div class="slide">
+            <h3>Slide 5 — Exemplo 4 (variação: script/swashes)</h3>
+            <p>Use script apenas como “tempero” (1 palavra). Evite perder legibilidade.</p>
+          </div>
+          <div class="slide">
+            <h3>Slide 6 — Interlúdio (Salvar)</h3>
+            <p>Mensagem direta: “TÁ CURTINDO? JÁ SALVA COM VOCÊ.” + elemento simples (oval/mancha).</p>
+          </div>
+          <div class="slide">
+            <h3>Slide 7 — Exemplo 5 (variação: pixel/retro)</h3>
+            <p>Introduza uma estética diferente sem alterar o esqueleto.</p>
+          </div>
+          <div class="slide">
+            <h3>Slide 8 — Exemplo 6 (variação: shape recortado/colagem)</h3>
+            <p>1 técnica: letras recortadas, máscara ou textura leve (muito sutil).</p>
+          </div>
+          <div class="slide">
+            <h3>Slide 9 — Encerramento (CTA)</h3>
+            <p>“Me segue” + “link da bio” destacado. Objetivo: follow + tráfego.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2><span class="grad">Variações</span></h2>
+        <div class="grid2">
+          <div>
+            <p><b>Variação A — Mesmo formato, outro tema (alto impacto):</b></p>
+            <ul>
+              <li>Troque “FONTES” por <b>“CORES”</b>: “Paletas para usar em [nicho]” + abaixo “HEX + aplicação”.</li>
+              <li>Troque por <b>“LAYOUTS”</b>: “Composições para posts de [nicho]” + abaixo “Grid + hierarquia”.</li>
+              <li>Troque por <b>“TIPOS DE POST”</b>: “Ideias de carrossel para [nicho]” + abaixo “Gancho + CTA”.</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Variação B — Substituições equivalentes (mesmo efeito de “coleção”):</b></p>
+            <ul>
+              <li>“FONTE A + FONTE B” → “Ferramenta + Para quê”</li>
+              <li>“FONTE A + FONTE B” → “Antes/Depois (o que mudou)”</li>
+              <li>“FONTE A + FONTE B” → “Regra + Exemplo” (ex.: “Contraste + aplicação”)</li>
+              <li>Slide salvar → “Quer parte 2? salva pra eu saber” (mantém o comportamento)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <h2><span class="grad">Legenda (copy pronta)</span></h2>
+        <div class="code" id="caption">FONTES PARA USAR NO/NA [SEU CONTEXTO] — com combinações prontas.
+
+Passe pro lado e pega a lista (cada slide tem o pairing).
+
+✅ Dica: salva esse post pra consultar quando for criar.
+
+Quer que eu faça uma versão pra [OUTRO CONTEXTO/TEMA]? Comenta: “QUERO”.</div>
+      </section>
+    </main>
+
+    <footer>Guia reproduzível • Fundo escuro • Cards suaves • Destaques em degradê (verde/azul/laranja)</footer>
+  </div>
+
+  <script>
+    function copyFrom(elId){
+      const el = document.getElementById(elId);
+      const text = el ? el.innerText : "";
+      if(!text) return;
+      navigator.clipboard.writeText(text);
+      const btn = elId === 'roteiro' ? document.getElementById('copyBtn') : document.getElementById('copyCaptionBtn');
+      const prev = btn.innerText;
+      btn.innerText = 'Copiado!';
+      setTimeout(()=> btn.innerText = prev, 1100);
+    }
+    document.getElementById('copyBtn').addEventListener('click', ()=> copyFrom('roteiro'));
+    document.getElementById('copyCaptionBtn').addEventListener('click', ()=> copyFrom('caption'));
+  </script>
+</body>
+</html>
