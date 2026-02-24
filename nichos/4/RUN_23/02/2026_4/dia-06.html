@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 6 — Regra 50-30-20</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0B1020;
+      --card:rgba(255,255,255,.04);
+      --card2:rgba(255,255,255,.06);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.56);
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --radius:18px;
+
+      --g1: linear-gradient(135deg, #22c55e 0%, #3b82f6 55%, #f59e0b 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.22) 0%, rgba(59,130,246,.18) 55%, rgba(245,158,11,.18) 100%);
+      --green:#22c55e;
+      --blue:#3b82f6;
+      --orange:#f59e0b;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 18% 12%, rgba(59,130,246,.18), transparent 60%),
+        radial-gradient(900px 500px at 82% 18%, rgba(245,158,11,.12), transparent 62%),
+        radial-gradient(900px 520px at 55% 92%, rgba(34,197,94,.12), transparent 60%),
+        var(--bg);
+      line-height:1.45;
+    }
+
+    a{color:inherit; text-decoration:none}
+    a:hover{opacity:.92}
+
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 64px}
+
+    .header{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:24px;
+      padding:20px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(18px);
+      opacity:.8;
+      z-index:0;
+    }
+    .header > *{position:relative; z-index:1}
+
+    .topline{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
+    }
+
+    .badges{display:flex; gap:10px; flex-wrap:wrap}
+    .badge{
+      font-size:12px;
+      color:var(--muted);
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+    }
+    .badge strong{color:var(--text); font-weight:650}
+
+    .title{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+      justify-content:space-between;
+    }
+
+    h1{margin:0; font-size:26px; letter-spacing:-.02em}
+    .subtitle{margin:8px 0 0; color:var(--muted); max-width:72ch}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .08s ease, background .2s ease;
+    }
+    .btn:hover{background:rgba(255,255,255,.08)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(59,130,246,.16) 55%, rgba(245,158,11,.16));
+      border-color: rgba(255,255,255,.16);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+      margin-top:16px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+      .title{align-items:flex-start}
+    }
+
+    .card{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.35);
+    }
+
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+
+    .list{margin:0; padding-left:18px; color:var(--muted)}
+    .list li{margin:7px 0}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 520px){
+      .kpi{grid-template-columns:1fr}
+    }
+
+    .pill{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding:12px 12px;
+      background: rgba(0,0,0,.22);
+    }
+    .pill .num{
+      font-family:var(--mono);
+      font-size:18px;
+      letter-spacing:.02em;
+      margin-bottom:4px;
+    }
+    .pill .label{font-size:12px; color:var(--muted2)}
+
+    .hl{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800}
+
+    .script{
+      font-family:var(--mono);
+      font-size:13px;
+      color:rgba(234,240,255,.86);
+      background: rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:14px;
+      white-space:pre-wrap;
+      overflow:auto;
+      min-height: 240px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      margin: 6px 8px 0 0;
+    }
+
+    .tag i{display:inline-block; width:8px; height:8px; border-radius:999px; background: var(--g1)}
+
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 820px){.twoCol{grid-template-columns:1fr}}
+
+    .mini{font-size:12.5px; color:var(--muted)}
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background: rgba(10,14,26,.88);
+      border:1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      display:none;
+      box-shadow: 0 14px 40px rgba(0,0,0,.5);
+      backdrop-filter: blur(10px);
+      z-index:50;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="topline">
+        <div class="badges">
+          <span class="badge"><strong>Nicho:</strong> Finanças</span>
+          <span class="badge"><strong>Dia:</strong> 6</span>
+          <span class="badge"><strong>Formato:</strong> Reels</span>
+          <span class="badge"><strong>Pilar:</strong> Passo a passo</span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/C_6WFQkvIfs/" target="_blank" rel="noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+
+      <div class="title">
+        <div>
+          <h1><span class="hl">Regra 50-30-20</span>: controle o salário sem planilha</h1>
+          <p class="subtitle">Um Reel de utilidade pública, rápido e salvável: nome forte (com números), 3 blocos com exemplos do cotidiano, e CTA de <strong>salvar</strong> + <strong>enviar</strong> para aumentar saves e compartilhamentos.</p>
+        </div>
+      </div>
+
+      <div class="kpi">
+        <div class="pill">
+          <div class="num"><span style="color:var(--green)">50%</span> Essenciais</div>
+          <div class="label">base do mês (fixos e necessários)</div>
+        </div>
+        <div class="pill">
+          <div class="num"><span style="color:var(--orange)">30%</span> Não essenciais</div>
+          <div class="label">lazer e desejos (com limite)</div>
+        </div>
+        <div class="pill">
+          <div class="num"><span style="color:var(--blue)">20%</span> Investimentos</div>
+          <div class="label">prioridade: reserva de emergência</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Resumo <span class="mini">(o que o post entrega)</span></h2>
+        <ul class="list">
+          <li>Ensina um framework simples de orçamento mensal: <strong>50-30-20</strong>.</li>
+          <li>Transforma uma dor comum (“meu salário some”) em um plano executável.</li>
+          <li>Inclui exemplos práticos para reduzir fricção e aumentar a chance de aplicação.</li>
+          <li>Fecha com CTA alinhado: <strong>salvar</strong> para usar no próximo salário e <strong>enviar</strong> para alguém.</li>
+        </ul>
+        <div class="divider"></div>
+        <div>
+          <span class="tag"><i></i> Nomeável e pesquisável (número + regra)</span>
+          <span class="tag"><i></i> Estrutura em passos (retenção + saves)</span>
+          <span class="tag"><i></i> Exemplos cotidianos (clareza)</span>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Estrutura <span class="mini">(sequência vencedora)</span></h2>
+        <ol class="list" style="padding-left:20px">
+          <li><strong>Hook (1–2s):</strong> “Se seu dinheiro some, use a regra 50-30-20.”</li>
+          <li><strong>Promessa:</strong> “Você divide o salário em 3 partes e ganha controle.”</li>
+          <li><strong>50% Essenciais:</strong> 3–5 exemplos rápidos.</li>
+          <li><strong>30% Não essenciais:</strong> 3–5 exemplos + reforço do limite (“apenas”).</li>
+          <li><strong>20% Investimentos:</strong> prioridade (reserva) + destinos do dinheiro.</li>
+          <li><strong>Fechamento:</strong> frase aspiracional + CTA (salvar/enviar/seguir).</li>
+        </ol>
+        <div class="divider"></div>
+        <p class="mini"><strong>Ritmo:</strong> 20–35s, cortes rápidos, troca de bloco a cada 4–6s, legenda dinâmica com palavras-chave destacadas.</p>
+      </aside>
+
+      <section class="card" style="grid-column:1/-1">
+        <h2>Roteiro <span class="mini">(pronto para gravar)</span></h2>
+        <div class="twoCol">
+          <div>
+            <p class="mini" style="margin:0 0 10px"><strong>Instruções de gravação:</strong> fale em frases curtas; a cada categoria, aponte para o texto na tela; faça um micro-zoom em “apenas 30%” e “prioridade: reserva de emergência”.</p>
+            <div class="script" id="scriptText">[CENA 1 — 0:00–0:02 | Hook]
+TEXTO NA TELA: “REGRA 50-30-20 (pra controlar seu salário)”
+FALA: “Se todo mês seu dinheiro some, usa a regra do cinquenta-trinta-vinte.”
+
+[CENA 2 — 0:02–0:05 | Promessa]
+TEXTO NA TELA: “Divida o salário em 3 partes”
+FALA: “É um jeito simples de dividir o salário e parar de gastar no automático.”
+
+[CENA 3 — 0:05–0:13 | 50% Essenciais]
+TEXTO NA TELA: “50% = ESSENCIAIS ✅”
+TEXTO PEQUENO: “moradia • alimentação • transporte • saúde • educação”
+FALA: “50% vai pros essenciais: moradia, alimentação, transporte, saúde e educação.”
+
+[CENA 4 — 0:13–0:22 | 30% Não essenciais + limite]
+TEXTO NA TELA: “30% = NÃO ESSENCIAIS ⚠️ (APENAS)” 
+TEXTO PEQUENO: “lazer • shopping • lanches • assinaturas • viagens”
+FALA: “30% é pros não essenciais: lazer, shopping, lanches, assinaturas… mas é limite: apenas 30%.”
+
+[CENA 5 — 0:22–0:30 | 20% Investimentos + prioridade]
+TEXTO NA TELA: “20% = INVESTIMENTOS 📌”
+TEXTO PEQUENO: “1º reserva de emergência • depois: metas • aposentadoria”
+FALA: “E 20% é pra investimentos. Primeiro: reserva de emergência. Depois, metas e aposentadoria.”
+
+[CENA 6 — 0:30–0:35 | Fechamento + CTA]
+TEXTO NA TELA: “Salve pra aplicar no próximo salário ▸ Envie pra alguém”
+FALA: “Salva isso pra aplicar no próximo salário e envia pra alguém que precisa organizar o dinheiro.”</div>
+          </div>
+
+          <div>
+            <h3 style="margin:0 0 10px; font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)">Notas de performance</h3>
+            <ul class="list">
+              <li><strong>Hook nomeável:</strong> fale “regra 50-30-20” nos 2 primeiros segundos e mostre na tela.</li>
+              <li><strong>Retenção:</strong> a audiência espera chegar no “20%”, então mantenha a sequência previsível.</li>
+              <li><strong>Saves:</strong> dê exemplos e uma frase de aplicação (“no próximo salário”).</li>
+              <li><strong>Autoridade sem teoria:</strong> use verbos de direção: “vai”, “limite”, “primeiro”.</li>
+            </ul>
+
+            <div class="divider"></div>
+            <h3 style="margin:0 0 10px; font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)">Tempo sugerido</h3>
+            <ul class="list">
+              <li>Cena 1: 2s</li>
+              <li>Cena 2: 3s</li>
+              <li>Cena 3: 8s</li>
+              <li>Cena 4: 9s</li>
+              <li>Cena 5: 8s</li>
+              <li>Cena 6: 3–5s</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais <span class="mini">(identidade + edição)</span></h2>
+        <ul class="list">
+          <li><strong>Template fixo:</strong> tela dividida ou barras que preenchem 50 → 30 → 20.</li>
+          <li><strong>Cores por categoria:</strong> 50% <span style="color:var(--green)">verde</span>, 30% <span style="color:var(--orange)">laranja</span>, 20% <span style="color:var(--blue)">azul</span>.</li>
+          <li><strong>Ícones/B-roll:</strong> casa/mercado/transporte/saúde (essenciais); cinema/shopping/streaming/viagem (não essenciais); cofre/gráfico/escudo (investimentos).</li>
+          <li><strong>Legendas dinâmicas:</strong> destacar em cor: “APENAS 30%”, “RESERVA DE EMERGÊNCIA”, “APOSENTADORIA”.</li>
+          <li><strong>Cortes:</strong> a cada frase ou item (ritmo alto-tech).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos <span class="mini">(variações prontas)</span></h2>
+        <div class="twoCol">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:13px; color:var(--text)">Hooks (1–2s)</h3>
+            <ul class="list">
+              <li>“Seu salário cai e some? Faz isso: 50-30-20.”</li>
+              <li>“A forma mais simples de dividir o salário em 3 partes.”</li>
+              <li>“Se você nunca sabe pra onde foi o dinheiro, anota essa regra.”</li>
+              <li>“Você não precisa de planilha pra começar a se organizar.”</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size:13px; color:var(--text)">Frases de autoridade (curtas)</h3>
+            <ul class="list">
+              <li>“Isso é limite, não sugestão.”</li>
+              <li>“Primeiro segurança, depois crescimento.”</li>
+              <li>“Se passar de 30%, você tá comprando estresse do mês que vem.”</li>
+              <li>“A regra funciona porque simplifica a decisão.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA <span class="mini">(1 primário + 2 secundários)</span></h2>
+        <ul class="list">
+          <li><strong>Primário (melhor):</strong> “Salve este vídeo pra aplicar no próximo salário.”</li>
+          <li><strong>Secundário:</strong> “Envie pra um amigo que vive no aperto.”</li>
+          <li><strong>Secundário:</strong> “Me siga pra mais regras simples de dinheiro.”</li>
+          <li><strong>Opcional (engenharia de comentários):</strong> “Comente ‘REGRA’ que eu te mando um modelo de divisão.”</li>
+        </ul>
+      </section>
+
+      <section class="card" style="grid-column:1/-1">
+        <h2>Checklist <span class="mini">(criação reproduzível)</span></h2>
+        <div class="twoCol">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:13px; color:var(--text)">Pré-roteiro</h3>
+            <ul class="list">
+              <li>Escolher um framework com números (aqui: 50-30-20).</li>
+              <li>Definir a dor em 6 palavras: “meu salário some todo mês”.</li>
+              <li>Definir promessa em 1 linha: “dividir em 3 partes e ter controle”.</li>
+              <li>Separar 3–5 exemplos por categoria (não mais que isso).</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size:13px; color:var(--text)">Gravação + edição</h3>
+            <ul class="list">
+              <li>Texto grande com 50/30/20 sempre visível.</li>
+              <li>Trocar bloco a cada 4–6s (ritmo).</li>
+              <li>Inserir barra/progressão preenchendo 50 → 30 → 20.</li>
+              <li>Destaque visual em “APENAS 30%” e “RESERVA DE EMERGÊNCIA”.</li>
+              <li>Final com CTA duplo: salvar + enviar (e opcional seguir).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1">
+        <h2>Variações <span class="mini">(para testar sem mudar a espinha dorsal)</span></h2>
+        <div class="twoCol">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:13px; color:var(--text)">Variação A (mais direta, 20–25s)</h3>
+            <div class="script">Hook: “Se o salário some, 50-30-20.”
+50%: “Essenciais: moradia, mercado, transporte.”
+30%: “Lazer e extras: assinaturas, rolês, delivery. Apenas 30%.”
+20%: “Investimentos: primeiro reserva, depois metas.”
+CTA: “Salva e manda pra quem precisa.”</div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size:13px; color:var(--text)">Variação B (mais completa, 35–45s)</h3>
+            <div class="script">Hook: “Você não precisa de planilha: precisa de regra.”
+Setup: “50-30-20 divide seu salário e evita gasto no impulso.”
+50%: “Essenciais: moradia + contas, mercado, transporte, saúde.”
+30%: “Não essenciais: lazer, compras, viagens, assinaturas — limite.”
+20%: “Investimentos: primeiro reserva (3–6 meses). Depois, objetivos e aposentadoria.”
+Fecho: “Organização é liberdade.”
+CTA: “Salva pra usar no próximo salário e envia pra um amigo.”</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>{ toast.style.display = 'none'; }, 1600);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = script.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado.');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
