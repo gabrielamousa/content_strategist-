@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 24 — Design Gráfico — Plágio é crime</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1220;
+      --card:#0D1628;
+      --card2:#0B1324;
+      --border:rgba(255,255,255,.10);
+      --border2:rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:#B5C2E1;
+      --muted2:#8FA0C7;
+      --shadow: 0 18px 45px rgba(0,0,0,.45);
+      --r: 18px;
+      --r2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --grad: linear-gradient(90deg, #22c55e 0%, #3b82f6 45%, #f59e0b 100%);
+      --grad2: radial-gradient(1200px 500px at 10% -15%, rgba(34,197,94,.22), transparent 65%),
+               radial-gradient(900px 500px at 55% -25%, rgba(59,130,246,.22), transparent 60%),
+               radial-gradient(900px 500px at 105% 10%, rgba(245,158,11,.18), transparent 55%);
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --info:#3b82f6;
+      --bad:#ef4444;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--grad2), linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 54px;}
+
+    header{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: calc(var(--r) + 6px);
+      box-shadow: var(--shadow);
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: linear-gradient(120deg, rgba(34,197,94,.18), rgba(59,130,246,.12), rgba(245,158,11,.14));
+      filter: blur(18px);
+      opacity:.55;
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1;}
+
+    .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+    .chip{
+      font-family: var(--mono);
+      font-size:12px;
+      color: var(--muted);
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      padding:7px 10px;
+      border-radius: 999px;
+    }
+    .chip strong{color:var(--text); font-weight:700}
+
+    .titleRow{margin-top:12px; display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+    h1{
+      margin:0;
+      line-height:1.05;
+      font-size: clamp(22px, 3.4vw, 34px);
+      letter-spacing:-.02em;
+    }
+    .sub{
+      margin-top:8px;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 78ch;
+    }
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end;}
+    .btn{
+      appearance:none;
+      border:1px solid var(--border2);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:700;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      display:inline-flex;
+      gap:9px;
+      align-items:center;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.22)}
+    .btn.primary{
+      border: 1px solid rgba(255,255,255,.22);
+      background: linear-gradient(90deg, rgba(34,197,94,.16), rgba(59,130,246,.16), rgba(245,158,11,.14));
+    }
+    .btn small{font-family:var(--mono); font-size:12px; color:var(--muted)}
+
+    .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px; margin-top:14px;}
+    @media (max-width: 960px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+      border-radius: var(--r);
+      padding:16px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card .hd{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .card h2{
+      margin:0;
+      font-size: 15px;
+      letter-spacing:.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .kpi{
+      font-family: var(--mono);
+      font-size:12px;
+      color: var(--muted2);
+      border:1px solid var(--border);
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.18);
+    }
+
+    .list{margin:0; padding-left: 18px; color: var(--text);}
+    .list li{margin: 7px 0; color: var(--text)}
+    .muted{color: var(--muted)}
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius: var(--r2);
+      border:1px dashed rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .twoCol{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media (max-width: 720px){.twoCol{grid-template-columns:1fr}}
+
+    .bang{
+      display:inline-block;
+      font-family: var(--mono);
+      font-size:12px;
+      padding:2px 8px;
+      border-radius:999px;
+      background: rgba(239,68,68,.16);
+      border:1px solid rgba(239,68,68,.28);
+      color: #FFD3D3;
+    }
+
+    .codebox{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      border-radius: var(--r);
+      overflow:hidden;
+    }
+    .codebar{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+    }
+    .codebar .label{font-family:var(--mono); font-size:12px; color:var(--muted)}
+    pre{
+      margin:0;
+      padding:12px;
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.5;
+      color:#EAF0FF;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+    }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      font-size:12px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+    .dot{width:8px; height:8px; border-radius:99px; background: var(--info); box-shadow: 0 0 0 4px rgba(59,130,246,.12)}
+    .dot.g{background: var(--good); box-shadow: 0 0 0 4px rgba(34,197,94,.12)}
+    .dot.o{background: var(--warn); box-shadow: 0 0 0 4px rgba(245,158,11,.12)}
+
+    .table{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 900px){.table{grid-template-columns:1fr}}
+    .col{
+      border:1px solid var(--border);
+      border-radius: var(--r);
+      background: rgba(0,0,0,.16);
+      padding:12px;
+    }
+    .col h3{margin:0 0 8px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted)}
+    .col ul{margin:0; padding-left:18px}
+    .col li{margin:6px 0; color: var(--text)}
+
+    .footer{
+      margin-top:14px;
+      color: var(--muted2);
+      font-family: var(--mono);
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:10px;
+      opacity:.95;
+    }
+
+    .link{
+      display:inline-flex; gap:8px; align-items:center;
+      color: var(--text);
+      text-decoration: none;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      padding:8px 10px;
+      border-radius: 12px;
+    }
+    .link:hover{border-color: rgba(255,255,255,.22)}
+
+    .toast{
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.76);
+      border:1px solid rgba(255,255,255,.16);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 12px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 99;
+    }
+    .toast.show{opacity: 1; transform: translateX(-50%) translateY(-4px)}
+
+    .kbd{font-family:var(--mono); font-size:12px; padding:2px 6px; border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); border-radius:8px; color: var(--muted)}
+    .hr{height:1px; background: rgba(255,255,255,.10); margin:12px 0}
+
+    .gradText{
+      background: var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <span class="chip"><strong>Nicho</strong>: Design Gráfico</span>
+          <span class="chip"><strong>Dia</strong>: 24</span>
+          <span class="chip"><strong>Formato</strong>: Carrossel</span>
+          <span class="chip"><strong>Pilar</strong>: Mito vs Verdade</span>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DUtLyCIEdpP/" target="_blank" rel="noopener noreferrer">
+          <span style="font-family:var(--mono); font-size:12px; color:var(--muted)">Post original</span>
+          <span style="opacity:.9">↗</span>
+        </a>
+      </div>
+
+      <div class="titleRow">
+        <div>
+          <h1><span class="gradText">Plágio é crime</span>: roteiro-manifesto com retenção</h1>
+          <div class="sub">Estrutura reproduzível para criar um carrossel “poster/editorial”: 1 palavra-choque + sentença curta, com variação de cenários e sequência didática (definição → sinais → comparação → passos → CTA).</div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro <small>(texto)</small></button>
+          <button class="btn" id="copySlidesBtn" type="button">Copiar slides <small>(1..10)</small></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="kpi">Objetivo: atenção → posicionamento → salvamentos</span>
+        </div>
+        <ul class="list">
+          <li><strong>Ideia central:</strong> um manifesto visual (tipo pôster) que prende pelo contraste e pela repetição do título, enquanto educa com simplicidade.</li>
+          <li><strong>Mecânica de retenção:</strong> manter a mesma manchete em vários slides e mudar <em>apenas</em> o cenário/colagem/textura para gerar novidade sem perder consistência.</li>
+          <li><strong>O que o público leva:</strong> clareza (diferença entre inspiração vs referência vs cópia), um checklist e um processo prático para evitar o erro.</li>
+        </ul>
+        <div class="note"><span class="bang">Nota</span> Ajuste o nível de “polêmica” ao seu posicionamento: dá para fazer firme sem ser agressivo (ex.: “Copiar te custa caro” / “Isso pode dar problema”).</div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Metadados rápidos</h2>
+          <span class="kpi">Calendário</span>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <span class="pill"><span class="dot g"></span> 4:5 (1080×1350)</span>
+          <span class="pill"><span class="dot"></span> Editorial / manifesto</span>
+          <span class="pill"><span class="dot o"></span> 7–10 slides</span>
+        </div>
+        <div class="hr"></div>
+        <ul class="list">
+          <li><strong>Promessa:</strong> “Entenda a linha entre X e Y + como evitar.”</li>
+          <li><strong>Emoção:</strong> alerta + autoridade + proteção.</li>
+          <li><strong>Interação:</strong> comentários via pergunta de limite/experiência + pedido de palavra-chave.</li>
+        </ul>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Estrutura</h2>
+        <span class="kpi">Macro (reproduzível)</span>
+      </div>
+      <div class="twoCol">
+        <div>
+          <ul class="list">
+            <li><strong>1) Capa-impacto:</strong> 1 palavra-choque (1–3 palavras) + sentença curta (2–6 palavras).</li>
+            <li><strong>2) Definição curta:</strong> “O que é” em 1 frase + 1 exemplo rápido.</li>
+            <li><strong>3) Por que importa:</strong> 3–5 consequências (criador/cliente/mercado).</li>
+            <li><strong>4) Sinais:</strong> checklist objetivo (3–7 itens).</li>
+            <li><strong>5) Linha tênue:</strong> comparação em 3 colunas (Inspiração | Referência | Cópia).</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="list">
+            <li><strong>6) Como evitar:</strong> processo simple (4 passos com verbos).</li>
+            <li><strong>7) Como se proteger:</strong> provas/registro/arquivos/contrato/créditos.</li>
+            <li><strong>8) Se acontecer:</strong> roteiro de ação (sem promessa de resultado).</li>
+            <li><strong>9) Fechamento manifesto:</strong> frase memorável (3–7 palavras).</li>
+            <li><strong>10) CTA final:</strong> salvar + compartilhar + pergunta + seguir/keyword.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note"><strong>Regra de ouro de consistência:</strong> mantenha tipografia, posições e paleta; varie somente cenário, recortes e textura para “novidade visual” sem confundir.</div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Slides sugeridos (1..10)</h2>
+        <span class="kpi">Copiar e preencher</span>
+      </div>
+      <div class="codebox" id="slidesBox">
+        <div class="codebar">
+          <span class="label">Template de slides</span>
+          <span class="label">Dica: 70–85% do slide é título/visual; texto curto nos intermediários</span>
+        </div>
+        <pre id="slidesText">SLIDE 1 — CAPA (impacto)
+H1 (gigante): {PALAVRA-CHOQUE}
+Script (selo): {SENTENÇA CURTA}
+Topo (micro): {3 tags do tema} (ex.: DESIGN | MARKETING | ESTRATÉGIA)
+Visual: sujeito/objeto + repetição temática (clones/pattern/mosaico)
+
+SLIDE 2 — DEFINIÇÃO (1 frase)
+Título: O que é
+Texto: {Definição em 1 frase}.
+Exemplo: {1 exemplo em 1 linha}.
+
+SLIDE 3 — POR QUE IMPORTA (consequências)
+Título: O que isso causa
+Bullets (3–5): {consequência 1} | {2} | {3} | {4}
+
+SLIDE 4 — SINAIS (checklist)
+Título: É {TEMA} quando…
+Checklist (5–7):
+- {sinal 1}
+- {sinal 2}
+- {sinal 3}
+- {sinal 4}
+- {sinal 5}
+
+SLIDE 5 — LINHA TÊNUE (comparativo)
+3 colunas: Inspiração | Referência | Cópia
+Cada coluna: 2–3 bullets curtos
+
+SLIDE 6 — COMO EVITAR (processo)
+Título: Como evitar
+Passos (1→4): {verbo} → {verbo} → {verbo} → {verbo}
+
+SLIDE 7 — COMO SE PROTEGER (provas)
+Título: Como se proteger
+Bullets: {arquivos} | {versões} | {timestamps} | {contrato} | {créditos}
+
+SLIDE 8 — SE ACONTECER (ação)
+Título: Se acontecer
+Roteiro: 1) {reúna provas} 2) {notifique} 3) {registre} 4) {escale}
+
+SLIDE 9 — MANIFESTO (memorável)
+H1: {VERBO 1.}
+Script: {VERBO 2.}
+Rodapé: {assinatura/@ + frase}
+
+SLIDE 10 — CTA (interação)
+Título: Salva & compartilha
+Pergunta: {onde está a linha pra você?}
+CTA 2: Comenta “{PALAVRA-CHAVE}” que eu te mando {recurso}.</pre>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Roteiro</h2>
+        <span class="kpi">Texto mestre (publicação)</span>
+      </div>
+      <div class="codebox" id="scriptBox">
+        <div class="codebar">
+          <span class="label">Legenda + direção (adaptável para qualquer tema)</span>
+          <span class="label">Atalho: substitua {TEMA} e {PALAVRA-CHOQUE}</span>
+        </div>
+        <pre id="scriptText">ABERTURA (1ª linha da legenda)
+“{PALAVRA-CHOQUE}” + “{SENTENÇA CURTA}”.
+
+CONTEXTO (2–3 linhas)
+No {contexto do nicho}, {confusão comum}.
+Ex.: “Muita gente acha que {mito}. Mas na prática, {verdade}.”
+
+DEFINIÇÃO (1–2 linhas)
+{TEMA} é {definição objetiva}.
+
+POR QUE IMPORTA (3 bullets curtos)
+• Para você: {impacto 1}
+• Para o cliente: {impacto 2}
+• Para o mercado: {impacto 3}
+
+CHECKLIST (convite para salvar)
+Se tiver 2+ itens abaixo, acende o alerta:
+- {sinal 1}
+- {sinal 2}
+- {sinal 3}
+- {sinal 4}
+
+LINHA TÊNUE (frase síntese)
+Inspiração = direção. Referência = repertório. Cópia = replicar solução sem autoria/crédito.
+
+PROCESSO (4 passos)
+1) {pesquise} sem “colar” layout
+2) {extraia princípios} (hierarquia, ritmo, cor)
+3) {gere 3 variações} antes de decidir
+4) {documente} versões/arquivos
+
+PROTEÇÃO (1–2 linhas)
+Guarde arquivos editáveis, versões datadas e combine crédito/entregáveis em contrato.
+
+FECHAMENTO (manifesto curto)
+Crie. Credite. Respeite.
+
+CTA (2 linhas)
+Salva pra consultar e compartilha com alguém que precisa ver.
+Pergunta: onde você acha que começa {TEMA}? Comenta.
+Bônus: comenta “{PALAVRA-CHAVE}” que eu envio meu {recurso}.</pre>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Elementos visuais</h2>
+        <span class="kpi">Receita técnica (estilo editorial)</span>
+      </div>
+      <div class="twoCol">
+        <div>
+          <ul class="list">
+            <li><strong>Composição:</strong> título (40–60% da área) + script grande atravessando a base + microtextos laterais.</li>
+            <li><strong>Texturas:</strong> grain 8–20% + scanlines leves + vinheta sutil.</li>
+            <li><strong>Variação por slide:</strong> troque o cenário (claro/escuro/P&B/pattern) mantendo grid e tipografia.</li>
+            <li><strong>Metáfora visual:</strong> repetições (clones/mosaico/pattern) para “materializar” o tema.</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="list">
+            <li><strong>Tipografia:</strong>
+              <ul class="list">
+                <li>H1: condensed ultra bold, caixa alta (ex.: Anton/Bebas/Impact-like).</li>
+                <li>Script: caligráfica grande (ex.: Allura/Great Vibes-like).</li>
+                <li>Microcopy: serif/small caps (ex.: Playfair/Georgia-like).</li>
+              </ul>
+            </li>
+            <li><strong>Paleta (base):</strong> fundo escuro + 1 cor de alerta (vermelho no original). Para adaptar, troque a cor de alerta de acordo com o tema.</li>
+            <li><strong>Easter eggs:</strong> “Cód: 015”, data, carimbo @, avisos curtos para dar cara de pôster/colecionável.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note"><strong>Adaptação rápida de cor (mesmo impacto):</strong> alerta/urgência = vermelho/laranja; autoridade/lei = azul; saúde/segurança = verde; luxo/editorial = dourado/creme com preto.</div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Copy e ganchos</h2>
+        <span class="kpi">Modelos prontos</span>
+      </div>
+      <div class="twoCol">
+        <div>
+          <h3 style="margin:0 0 8px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted)">Ganchos de capa (H1 + sentença)</h3>
+          <ul class="list">
+            <li><strong>{PALAVRA-CHOQUE}</strong> — “{Isso dá problema.}”</li>
+            <li><strong>{MITO}</strong> — “{Parece certo.}”</li>
+            <li><strong>{ATALHO}</strong> — “{Sai caro.}”</li>
+            <li><strong>{ERRO}</strong> — “{Quase todo mundo comete.}”</li>
+            <li><strong>{ILUSÃO}</strong> — “{Não funciona.}”</li>
+          </ul>
+          <div class="note">Regra: 1 palavra forte + 1 sentença curta. O resto do slide é visual e microcopy.</div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted)">Frases de manifesto (slide 9)</h3>
+          <ul class="list">
+            <li>“Crie. Credite. Respeite.”</li>
+            <li>“Repertório não é ctrl+c.”</li>
+            <li>“Processo protege autoria.”</li>
+            <li>“Originalidade é método.”</li>
+            <li>“Sem atalho. Com assinatura.”</li>
+          </ul>
+          <div class="note">Se o tema for delicado, troque o tom: de acusação → orientação (“Evite”, “Cuidado”, “Atenção”).</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>CTA</h2>
+        <span class="kpi">Escolha 1 primário + 1 secundário</span>
+      </div>
+      <div class="twoCol">
+        <div>
+          <ul class="list">
+            <li><strong>CTA primário (salvamento):</strong> “Salva esse post pra consultar quando bater dúvida.”</li>
+            <li><strong>CTA primário (compartilhar):</strong> “Compartilha com alguém que confunde {A} com {B}.”</li>
+            <li><strong>CTA de comentário (pergunta):</strong> “Pra você, onde está a linha entre {A} e {B}?”</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="list">
+            <li><strong>CTA secundário (keyword):</strong> “Comenta ‘{PALAVRA-CHAVE}’ que eu envio {recurso}.”</li>
+            <li><strong>CTA secundário (prova social):</strong> “Você já viu isso acontecer? Conta (sem expor nomes).”</li>
+            <li><strong>CTA de follow:</strong> “Se você cria no {nicho}, segue pra mais guias práticos.”</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note"><strong>Boa prática:</strong> peça apenas 1 ação principal por slide final (salvar OU comentar). O restante fica como opção na legenda.</div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Checklist</h2>
+        <span class="kpi">Criação (design + conteúdo + publicação)</span>
+      </div>
+      <div class="twoCol">
+        <div>
+          <h3 style="margin:0 0 8px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted)">Design</h3>
+          <ul class="list">
+            <li>[ ] Frame 1080×1350 (4:5) + margens seguras</li>
+            <li>[ ] H1 condensed ultra bold (1 palavra) + cor de alerta</li>
+            <li>[ ] Script grande atravessando terço inferior (cortando bordas)</li>
+            <li>[ ] Microcopy editorial: tags no topo + créditos/código lateral</li>
+            <li>[ ] Overlay: grain + scanlines + vinheta leve</li>
+            <li>[ ] Variação por slide: mudar cenário/colagem mantendo grid</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted)">Conteúdo & publicação</h3>
+          <ul class="list">
+            <li>[ ] Definição em 1 frase + 1 exemplo</li>
+            <li>[ ] 3–5 consequências (curtas)</li>
+            <li>[ ] Checklist (5–7 itens) salvável</li>
+            <li>[ ] Comparativo em 3 colunas (clareza)</li>
+            <li>[ ] Processo em 4 passos (verbo no imperativo)</li>
+            <li>[ ] CTA: salvar + pergunta (e keyword opcional)</li>
+            <li>[ ] Revisão: evitar acusação direta/nomes; linguagem cuidadosa</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note"><span class="bang">Atenção</span> Se o tema tiver implicação legal (como “crime”, “processo”, “denúncia”), use linguagem de orientação geral e evite prometer resultado. Se necessário, inclua: “não é aconselhamento jurídico”.</div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Variações</h2>
+        <span class="kpi">Substituições com o mesmo impacto</span>
+      </div>
+      <div class="twoCol">
+        <div>
+          <h3 style="margin:0 0 8px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted)">Troque o tema sem perder a estrutura</h3>
+          <ul class="list">
+            <li><strong>Tema “alerta”:</strong> “GOLPE”, “FRAUDE”, “ARMADILHA”, “CILADA” + “Cuidado.”</li>
+            <li><strong>Tema “mercado”:</strong> “BRIEFING”, “PRAZO”, “ORÇAMENTO” + “É isso.” / “Funciona assim.”</li>
+            <li><strong>Tema “técnica”:</strong> “HIERARQUIA”, “GRID”, “CONTRASTE” + “Muda tudo.”</li>
+            <li><strong>Tema “comportamento”:</strong> “PERFECCIONISMO”, “PROCRASTINAÇÃO” + “Te trava.”</li>
+          </ul>
+          <div class="note">Se não quiser usar “crime”, troque por: “dá ruim”, “é antiético”, “te queima no mercado”, “pode dar dor de cabeça”.</div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; color: var(--muted)">Variações de formato (mesmo conceito)</h3>
+          <ul class="list">
+            <li><strong>Versão 7 slides (curta):</strong> 1 capa → 2 definição → 3 consequências → 4 checklist → 5 comparação → 6 processo → 7 CTA.</li>
+            <li><strong>Versão 12 slides (profunda):</strong> dividir checklist em 2 slides + adicionar “caso real (anonimizado)” + “erros ao se proteger”.</li>
+            <li><strong>Versão Reels (30–40s):</strong> 3 cenas com a mesma manchete em cenários diferentes + texto na tela para definição/checklist + CTA no final.</li>
+          </ul>
+          <div class="note">Mantenha a assinatura visual: repetição do título + cenários alternados + microtextos editoriais.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div>Atalho: para adaptar, substitua <span class="kbd">{PALAVRA-CHOQUE}</span>, <span class="kbd">{SENTENÇA CURTA}</span>, <span class="kbd">{TEMA}</span>.</div>
+      <div>Identidade: fundo escuro • cards • destaques em degradê verde/azul/laranja</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copiado.</div>
+
+  <script>
+    function showToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg || 'Copiado.';
+      t.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=>t.classList.remove('show'), 1300);
+    }
+
+    async function copyTextFrom(elId){
+      const el = document.getElementById(elId);
+      const text = el ? el.textContent : '';
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Roteiro copiado para a área de transferência.');
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Roteiro copiado (modo compatibilidade).');
+      }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', ()=>copyTextFrom('scriptText'));
+    document.getElementById('copySlidesBtn').addEventListener('click', ()=>copyTextFrom('slidesText'));
+  </script>
+</body>
+</html>
