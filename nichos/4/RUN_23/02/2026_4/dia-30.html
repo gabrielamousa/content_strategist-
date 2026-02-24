@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha reproduzível — Finanças (Dia 30)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.08);
+      --stroke: rgba(255,255,255,0.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,0.72);
+      --muted2: rgba(234,240,255,0.58);
+      --shadow: 0 20px 60px rgba(0,0,0,0.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --g1: linear-gradient(90deg, #28F59B 0%, #36A2FF 48%, #FF9F3A 100%);
+      --g2: linear-gradient(135deg, rgba(40,245,155,0.18), rgba(54,162,255,0.18), rgba(255,159,58,0.18));
+      --green:#28F59B;
+      --blue:#36A2FF;
+      --orange:#FF9F3A;
+      --danger:#FF4D6D;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(54,162,255,0.16), transparent 55%),
+        radial-gradient(900px 500px at 85% 20%, rgba(255,159,58,0.12), transparent 55%),
+        radial-gradient(900px 500px at 35% 85%, rgba(40,245,155,0.12), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{ color: inherit; text-decoration: none; }
+    .wrap{ max-width: 1120px; margin: 0 auto; padding: 28px 18px 56px; }
+
+    header{
+      border: 1px solid var(--stroke);
+      background: var(--g2);
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--radius) + 6px);
+      padding: 20px 20px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(600px 120px at 18% 0%, rgba(40,245,155,0.18), transparent 60%),
+                  radial-gradient(700px 160px at 70% 0%, rgba(255,159,58,0.16), transparent 60%);
+      pointer-events:none;
+    }
+    .toprow{ display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between; position:relative; }
+    .meta{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,0.18);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.2px;
+    }
+    .pill strong{ color: var(--text); font-weight: 700; }
+    .title{
+      margin: 12px 0 6px;
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      position:relative;
+    }
+    .subtitle{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      position:relative;
+      max-width: 80ch;
+    }
+    .linkrow{ margin-top: 14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; position:relative; }
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 650;
+      font-size: 13px;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      cursor:pointer;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.22); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(40,245,155,0.16), rgba(54,162,255,0.14), rgba(255,159,58,0.14));
+      border-color: rgba(255,255,255,0.18);
+    }
+    .btn .dot{
+      width:10px; height:10px; border-radius: 999px;
+      background: var(--g1);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
+    }
+    .btn code{ font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+    main{ margin-top: 18px; display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+    @media (max-width: 980px){ main{ grid-template-columns: 1fr; } }
+
+    .card{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(600px 120px at 20% 0%, rgba(54,162,255,0.10), transparent 60%),
+                  radial-gradient(520px 130px at 90% 20%, rgba(255,159,58,0.08), transparent 60%);
+      pointer-events:none;
+      z-index:0;
+    }
+    .card > *{ position:relative; z-index:1; }
+
+    h2{
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 800;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    h2 .bar{ height: 10px; width: 36px; border-radius: 999px; background: var(--g1); opacity: .95; }
+
+    .text{ color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .text strong{ color: var(--text); }
+
+    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 640px){ .grid2{ grid-template-columns: 1fr; } }
+
+    .mini{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.045);
+      border-radius: var(--radius2);
+      padding: 12px;
+    }
+    .mini h3{ margin: 0 0 6px; font-size: 14px; }
+    .mini p{ margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    .list{ margin: 0; padding-left: 18px; color: var(--muted); }
+    .list li{ margin: 6px 0; }
+
+    .kbd{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 2px 7px;
+      border-radius: 8px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,0.22);
+      color: var(--text);
+    }
+
+    textarea{
+      width:100%;
+      min-height: 420px;
+      resize: vertical;
+      border-radius: var(--radius);
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,0.25);
+      color: var(--text);
+      padding: 14px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      outline: none;
+    }
+
+    .callout{
+      border:1px solid rgba(40,245,155,0.24);
+      background: rgba(40,245,155,0.07);
+      border-radius: var(--radius2);
+      padding: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .callout strong{ color: var(--text); }
+
+    .tagrow{ display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px; }
+    .tag{ font-size: 12px; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--stroke); background: rgba(255,255,255,0.04); color: var(--muted); }
+    .tag.g{ border-color: rgba(40,245,155,0.30); }
+    .tag.b{ border-color: rgba(54,162,255,0.30); }
+    .tag.o{ border-color: rgba(255,159,58,0.30); }
+
+    .footerNote{ margin-top: 14px; color: var(--muted2); font-size: 12px; line-height: 1.5; }
+
+    .hr{ height:1px; background: rgba(255,255,255,0.10); margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="meta">
+          <div class="pill"><strong>Nicho</strong>: Finanças</div>
+          <div class="pill"><strong>Dia</strong>: 30</div>
+          <div class="pill"><strong>Formato</strong>: Carrossel (8 slides)</div>
+          <div class="pill"><strong>Pilar</strong>: Prova (com narrativa)</div>
+        </div>
+        <div class="meta">
+          <button class="btn primary" id="copyBtn" type="button"><span class="dot"></span>Copiar roteiro</button>
+          <a class="btn" href="https://www.instagram.com/p/DVEe9lrkmVP/" target="_blank" rel="noreferrer"><span class="dot"></span>Ver post original <code>↗</code></a>
+        </div>
+      </div>
+      <h1 class="title">Reduzi minha dívida e parei de voltar pro vermelho</h1>
+      <p class="subtitle">Carrossel em diálogo (estilo quadrinhos) com números diminuindo para gerar retenção, revelar o mecanismo no meio e converter no final com CTA por palavra-chave.</p>
+      <div class="tagrow">
+        <span class="tag g">Curiosidade numérica</span>
+        <span class="tag b">Micro-loops (pergunta → resposta)</span>
+        <span class="tag o">Revelação tardia do método</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2><span class="bar"></span>Resumo</h2>
+        <div class="text">
+          <p><strong>Ideia central:</strong> provar transformação com uma micro-história (diálogo) em que os números melhoram em etapas, antes de apresentar a solução.</p>
+          <div class="grid2">
+            <div class="mini">
+              <h3>Objetivo</h3>
+              <p>Gerar desejo por um método/ferramenta de organização (ex.: planilha, app, mentoria) usando prova simples e emocional.</p>
+            </div>
+            <div class="mini">
+              <h3>Por que funciona</h3>
+              <p>O cérebro “quer ver o próximo número”. A solução aparece só depois que a audiência já aceitou a história.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2><span class="bar"></span>Estrutura</h2>
+        <div class="text">
+          <ul class="list">
+            <li><strong>S1 Hook:</strong> pergunta curta + número alto (choque).</li>
+            <li><strong>S2 Amplificar:</strong> comparação que dá dimensão + validação (“eu sei…”).</li>
+            <li><strong>S3 Progresso 1:</strong> número menor (abre loop “como?”).</li>
+            <li><strong>S4 Progresso 2:</strong> quanto falta + consequência no cotidiano (mais esperança).</li>
+            <li><strong>S5 Mecanismo:</strong> “milagre?” → revelar método/ferramenta.</li>
+            <li><strong>S6 Objeção:</strong> “só isso resolve?” → método + 2 hábitos essenciais.</li>
+            <li><strong>S7 Identidade:</strong> não é só atingir o resultado; é não voltar ao problema.</li>
+            <li><strong>S8 Oferta + CTA:</strong> benefício + bônus + palavra-chave para comentário/DM.</li>
+          </ul>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2><span class="bar"></span>Slides sugeridos (1..8)</h2>
+        <div class="text">
+          <div class="grid2">
+            <div class="mini"><h3>Slide 1 — Hook</h3><p>Pergunta direta + número alto.</p></div>
+            <div class="mini"><h3>Slide 2 — Peso</h3><p>Comparação forte (tempo, salário, meta, vergonha).</p></div>
+            <div class="mini"><h3>Slide 3 — Melhorou?</h3><p>Número menor + pausa dramática.</p></div>
+            <div class="mini"><h3>Slide 4 — Falta pouco</h3><p>Número bem menor + detalhe cotidiano (mercado, contas, casa).</p></div>
+            <div class="mini"><h3>Slide 5 — O “segredo”</h3><p>Pergunta “milagre?” + nome do método.</p></div>
+            <div class="mini"><h3>Slide 6 — Ceticismo</h3><p>Objeção real + resposta prática (processo).</p></div>
+            <div class="mini"><h3>Slide 7 — Virada</h3><p>Frase de identidade: “não quero só X, quero Y”.</p></div>
+            <div class="mini"><h3>Slide 8 — Oferta</h3><p>Promessa + bônus + CTA por palavra-chave.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2><span class="bar"></span>Roteiro</h2>
+        <p class="text">Copie, troque os campos em <span class="kbd">[colchetes]</span> e publique.</p>
+        <textarea id="script" spellcheck="false">CARROSSEL (8 SLIDES) — DIÁLOGO + PROVA + CTA
+
+[S1 — HOOK | choque + curiosidade]
+Pessoa A: “Quanto você tá [DOR PRINCIPAL]?”
+Pessoa B: “R$ [VALOR ALTO]…”
+
+[S2 — AMPLIFICAR | dimensão emocional]
+Pessoa A: “Isso é tipo [COMPARAÇÃO FORTE: X meses de salário / um carro / aluguel de X meses]…”
+Pessoa B: “Eu sei. E o pior é que eu nem via pra onde ia.”
+
+[S3 — PROGRESSO 1 | abre o loop]
+Pessoa A: “Tá… e agora? Melhorou?”
+Pessoa B: “Caiu pra R$ [VALOR 2].”
+
+[S4 — PROGRESSO 2 | esperança + cotidiano]
+Pessoa A: “E quanto falta pra acabar?”
+Pessoa B: “R$ [VALOR 3]. E eu parei de [SINTOMA DO CAOS: comprar no impulso / viver no rotativo / atrasar boleto].”
+
+[S5 — REVELAÇÃO DO MECANISMO | nome da solução]
+Pessoa A: “Você fez milagre?”
+Pessoa B: “Não. Eu comecei a usar [NOME DO MÉTODO/FERRAMENTA].”
+
+[S6 — OBJEÇÃO | tira o ‘mágico’]
+Pessoa A: “Mas só isso resolve?”
+Pessoa B: “Resolve quando vira processo: [MÉTODO] + [HÁBITO 1] + [HÁBITO 2].”
+(Ex.: “planilha + registrar tudo 7 dias + pagar primeiro as dívidas caras”)
+
+[S7 — INSIGHT/IDENTIDADE | não voltar]
+Pessoa A: “E quando zerar?”
+Pessoa B: “Eu não quero só [RESULTADO: sair da dívida]. Eu quero [IDENTIDADE: ter controle / viver no azul / gastar com intenção] — pra não voltar.”
+
+[S8 — OFERTA + CTA | comando simples]
+Topo: “Comece hoje e GANHE [BÔNUS: aula / checklist / modelo]”
+Headline: “Sair do vermelho é o começo. [NOVO PADRÃO] é o que muda o jogo.”
+CTA: “Comente [PALAVRA-CHAVE] que eu te envio o link com [BENEFÍCIO: desconto / acesso / bônus].”
+
+LEGENDAS (3 opções)
+1) “Os números mudam quando o processo fica simples. Comente [PALAVRA] e eu te envio.”
+2) “Não é sobre ganhar mais. É sobre enxergar e decidir melhor. Quer o método? Comente [PALAVRA].”
+3) “Se você volta pro vermelho todo mês, falta sistema. Comente [PALAVRA] pra receber.”
+
+OBS: substitua os valores por números reais ou por faixas (ex.: “quase 25 mil → 17 mil → 8 mil”) para manter credibilidade.</textarea>
+        <div class="footerNote">Dica de retenção: mantenha cada slide com <strong>1 pergunta + 1 resposta</strong>. Evite explicações longas antes do Slide 5.</div>
+      </aside>
+
+      <section class="card">
+        <h2><span class="bar"></span>Elementos visuais</h2>
+        <div class="text">
+          <div class="grid2">
+            <div class="mini">
+              <h3>Linguagem</h3>
+              <p>Estilo quadrinhos/cartoon, 2 personagens fixos, <strong>balões grandes</strong> e expressões claras (ansiedade → alívio → confiança).</p>
+            </div>
+            <div class="mini">
+              <h3>Cenários (evitar monotonia)</h3>
+              <p>Alternar a cada 1–2 slides: cozinha/mesa de contas, mercado, ônibus, sala com notebook, rua no entardecer.</p>
+            </div>
+            <div class="mini">
+              <h3>“Objeto-prova”</h3>
+              <p>1 por slide: celular com banco, boleto, cartão, sacola do mercado, notebook com planilha.</p>
+            </div>
+            <div class="mini">
+              <h3>Hierarquia</h3>
+              <p>Números isolados e maiores. Slide 8 com cara de anúncio: contraste alto + moldura/textura leve.</p>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="callout"><strong>Regra simples:</strong> se o slide estiver “bonito”, mas o número não salta aos olhos em 1 segundo, volte e aumente o destaque do valor.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Copy e ganchos</h2>
+        <div class="text">
+          <div class="grid2">
+            <div class="mini">
+              <h3>Ganchos (substituíveis)</h3>
+              <p>
+                • “Quanto você tá [no vermelho / atrasado / travado]?”<br>
+                • “Isso é quase [X meses] do seu salário…”<br>
+                • “E agora, já caiu?”<br>
+                • “Você fez milagre?”
+              </p>
+            </div>
+            <div class="mini">
+              <h3>Frases-âncora (tese)</h3>
+              <p>
+                • “Sair do problema é o começo. Ter sistema é o jogo.”<br>
+                • “Não é força de vontade. É visibilidade + decisão.”<br>
+                • “O objetivo não é só chegar. É não voltar.”
+              </p>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="text"><strong>Banco de comparações fortes</strong> (use 1 no Slide 2): “um ano de aluguel”, “um carro usado”, “uma viagem que você adia”, “X meses de escola/creche”, “X parcelas do cartão”.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>CTA</h2>
+        <div class="text">
+          <div class="grid2">
+            <div class="mini">
+              <h3>Modelo (comentário)</h3>
+              <p><strong>Comente</strong> <span class="kbd">[PALAVRA]</span> para receber <strong>[entrega]</strong> com <strong>[benefício]</strong>.</p>
+            </div>
+            <div class="mini">
+              <h3>Modelo (DM)</h3>
+              <p>“Quer que eu te envie o <strong>[recurso]</strong>? Me chama no direct com <span class="kbd">[PALAVRA]</span>.”</p>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="callout"><strong>Escolha de palavra-chave:</strong> curta, óbvia e sem acento. Ex.: <span class="kbd">PLANILHA</span>, <span class="kbd">METODO</span>, <span class="kbd">CHECKLIST</span>, <span class="kbd">AULA</span>.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Checklist</h2>
+        <div class="text">
+          <ul class="list">
+            <li><strong>Definir</strong>: dor principal + transformação mensurável (número cai).</li>
+            <li><strong>Escolher 3 números</strong>: alto → médio → baixo (ou “faixas” verossímeis).</li>
+            <li><strong>Escrever</strong> 8 slides com 1 pergunta + 1 resposta (sem explicação longa).</li>
+            <li><strong>Segurar a revelação</strong> do método até o Slide 5.</li>
+            <li><strong>Inserir</strong> 1 objeto-prova por slide (celular/boleto/planilha).</li>
+            <li><strong>Padronizar</strong> personagens e balões (consistência aumenta memorização).</li>
+            <li><strong>Slide 8</strong>: promessa + bônus + CTA por palavra-chave (bem legível).</li>
+            <li><strong>Legenda</strong>: repetir CTA + 1 linha de reforço (“não é milagre, é processo”).</li>
+            <li><strong>Revisão final</strong>: leu em 10–12s? Valores “saltam”? CTA está explícito?</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Variações</h2>
+        <div class="text">
+          <div class="grid2">
+            <div class="mini">
+              <h3>Adaptação para outro tema (mantenha o impacto)</h3>
+              <p>
+                Troque “dívida” por <strong>[métrica de dor]</strong> e “Planilhão” por <strong>[mecanismo]</strong>.<br>
+                Exemplos de métricas: “kg”, “horas”, “dias”, “R$”, “leads”, “taxa %”, “nota”, “crises por semana”.
+              </p>
+            </div>
+            <div class="mini">
+              <h3>Substituições equivalentes (alta retenção)</h3>
+              <p>
+                • Números decrescentes → <strong>tempo economizado</strong> crescente<br>
+                • Dívida → <strong>ansiedade</strong> (escala 0–10)<br>
+                • Planilha → <strong>rotina, template, protocolo, app</strong>
+              </p>
+            </div>
+            <div class="mini">
+              <h3>Produtos diferentes (mesma estrutura)</h3>
+              <p>
+                • Curso/mentoria: revelar “método” no S5 e “processo” no S6<br>
+                • Ferramenta: mostrar “o que ela organiza” no S6<br>
+                • Serviço: “como foi a rotina de acompanhamento” no S6
+              </p>
+            </div>
+            <div class="mini">
+              <h3>Se você não tem números reais</h3>
+              <p>
+                Use <strong>faixas</strong> (“quase 25 mil”, “menos de 10 mil”) ou <strong>antes/depois percentual</strong> (“reduzi 65%”). Mantenha plausibilidade.
+              </p>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="callout"><strong>Modelo universal de campos:</strong> [DOR] → [comparação] → [três marcos] → [mecanismo] → [hábitos] → [identidade] → [oferta] → [CTA].</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ta = document.getElementById('script');
+      function setBtn(text){ btn.textContent = text; btn.prepend(Object.assign(document.createElement('span'), {className:'dot'})); }
+      btn.addEventListener('click', async () => {
+        try{
+          await navigator.clipboard.writeText(ta.value);
+          setBtn('Roteiro copiado');
+          setTimeout(() => setBtn('Copiar roteiro'), 1400);
+        }catch(e){
+          ta.select();
+          document.execCommand('copy');
+          setBtn('Copiado (modo alternativo)');
+          setTimeout(() => setBtn('Copiar roteiro'), 1600);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
