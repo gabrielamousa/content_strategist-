@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calendário de Conteúdo — Finanças (30 dias)</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0B1020;
+      --card:#0F1731;
+      --stroke:rgba(255,255,255,.08);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.68);
+      --shadow:0 18px 45px rgba(0,0,0,.45);
+      --r:18px;
+      --pad:18px;
+      --max:1120px;
+      --grad:linear-gradient(90deg,#22C55E 0%,#3B82F6 52%,#F59E0B 100%);
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(59,130,246,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% 0%, rgba(34,197,94,.18), transparent 60%),
+        radial-gradient(900px 650px at 70% 110%, rgba(245,158,11,.16), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:28px 16px 56px}
+    .topbar{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius:calc(var(--r) + 6px);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .hero{
+      padding:22px 18px 18px;
+      position:relative;
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0 0 auto 0;
+      height:6px;
+      background:var(--grad);
+    }
+    .hrow{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; justify-content:space-between}
+    .hleft{min-width:260px}
+    .kicker{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+    .title{margin:6px 0 0; font-size:28px; line-height:1.15}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+    .chip{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:7px 10px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      color:var(--muted);
+    }
+    .nav{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:14px 18px 18px;
+      border-top:1px solid var(--stroke);
+      background:rgba(0,0,0,.16);
+    }
+    .nav a{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+    }
+    .section{
+      margin-top:18px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--stroke);
+      border-radius:calc(var(--r) + 6px);
+      overflow:hidden;
+    }
+    .shead{
+      padding:16px 18px;
+      border-bottom:1px solid var(--stroke);
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .shead h2{margin:0; font-size:16px}
+    .sbody{padding:18px}
+    .grid2{display:grid; grid-template-columns:1.2fr .8fr; gap:14px}
+    @media (max-width: 980px){ .grid2{grid-template-columns:1fr} .title{font-size:24px} }
+    .card{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      padding:var(--pad);
+    }
+    .card h3{margin:0 0 10px; font-size:14px}
+    .card p, .card li{color:var(--muted); line-height:1.55}
+    .list{margin:0; padding-left:18px}
+    .filters{display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:12px;}
+    .group{display:flex; gap:8px; flex-wrap:wrap}
+    .btn{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:9px 11px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      cursor:pointer;
+    }
+    .btn.active{outline:2px solid rgba(59,130,246,.55); background:rgba(59,130,246,.10)}
+    .count{font-family:var(--mono); font-size:12px; color:var(--muted)}
+    .calgrid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width: 980px){ .calgrid{grid-template-columns:repeat(2, minmax(0,1fr))} }
+    @media (max-width: 640px){ .calgrid{grid-template-columns:1fr} }
+    .day{
+      display:block;
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      padding:16px;
+      transition:transform .12s ease, border-color .12s ease;
+    }
+    .day:hover{transform:translateY(-2px); border-color:rgba(255,255,255,.14)}
+    .daytop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .dnum{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--stroke);
+      color:var(--muted);
+    }
+    .dtitle{margin:10px 0 8px; font-size:14px; line-height:1.25}
+    .meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .small{font-size:12px; color:var(--muted); line-height:1.45}
+    .footer{
+      margin-top:18px;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.55);
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="hero">
+        <div class="hrow">
+          <div class="hleft">
+            <div class="kicker">Calendário de Conteúdo • 30 dias</div>
+            <h1 class="title">Finanças</h1>
+            <div class="chips">
+              <span class="chip">Nicho: Finanças</span>
+              <span class="chip">Run ID: FIN-30D-001</span>
+            </div>
+          </div>
+          <div class="chips">
+            <span class="chip">Formatos: Reels • Carrossel</span>
+            <span class="chip">Pilares: Passo a passo • Prova • Checklist • Mito vs Verdade • Dor • Erro comum</span>
+          </div>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Navegação">
+        <a href="#framework">#framework</a>
+        <a href="#calendario">#calendario</a>
+        <a href="#como-usar">#como-usar</a>
+      </nav>
+    </header>
+
+    <section id="framework" class="section">
+      <div class="shead">
+        <h2>Framework prático (Finanças)</h2>
+        <div class="count">Objetivo: consistência + clareza + ação</div>
+      </div>
+      <div class="sbody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Pilares editoriais (o que publicar e por quê)</h3>
+            <ul class="list">
+              <li><strong>Passo a passo:</strong> regras simples, métodos curtos, tutoriais e “faça comigo” para reduzir fricção.</li>
+              <li><strong>Prova:</strong> antes/depois, números, comparações e efeito composto para gerar confiança e credibilidade.</li>
+              <li><strong>Checklist:</strong> sinais, regras e habilidades em formato salvável para alcance orgânico por “salvos”.</li>
+              <li><strong>Mito vs Verdade:</strong> desmonta crenças e cria reframe com contraste claro (reativo vs estratégico).</li>
+              <li><strong>Dor:</strong> cenas do cotidiano + erro/acerto para gerar identificação e urgência.</li>
+              <li><strong>Erro comum:</strong> “parece X, mas causa Y” com correção simples para win rápido.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Ganchos e estruturas (copiar e adaptar)</h3>
+            <ul class="list">
+              <li><strong>Hook identitário:</strong> “Se você ganha X e mesmo assim…”.</li>
+              <li><strong>Contraste:</strong> “Reativo vs Estratégico”, “Impulso vs Controle”, “Caminho A vs B”.</li>
+              <li><strong>Número forte:</strong> tabela, regra (50-30-20 / 70-30), prazo, meta.</li>
+              <li><strong>Plot twist:</strong> 1 pausa antes da virada + conclusão simples.</li>
+              <li><strong>Roteiro modular:</strong> Hook → Valor → Prova → CTA (salvar/comentar/palavra-chave).</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Checklist de execução (antes de postar)</h3>
+            <ul class="list">
+              <li>O <strong>primeiro segundo</strong> diz o tema sem rodeios.</li>
+              <li>Tem <strong>1 mensagem principal</strong> e 1 ação prática.</li>
+              <li>Inclui <strong>exemplo numérico</strong> (mesmo simples) quando possível.</li>
+              <li>CTA único e específico: <strong>salvar</strong> ou <strong>comentar palavra-chave</strong>.</li>
+              <li>Legendas com termos claros e sem jargão desnecessário.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Erros a evitar (o que derruba performance)</h3>
+            <ul class="list">
+              <li>Reels sem contexto no início (o público não entende o porquê).</li>
+              <li>Promessa grande sem prova/ancoragem (perde confiança).</li>
+              <li>Carrossel sem ritmo (slides longos, sem contraste visual/ideia).</li>
+              <li>Vários CTAs no final (dilui a ação).</li>
+              <li>“Conteúdo palestra”: falta cena, exemplo e microdecisão.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="calendario" class="section">
+      <div class="shead">
+        <h2>Calendário (30 dias)</h2>
+        <div class="count"><span id="visibleCount">30</span>/30 visíveis</div>
+      </div>
+      <div class="sbody">
+        <div class="filters" aria-label="Filtros do calendário">
+          <div class="group" aria-label="Grupo Formato">
+            <button class="btn active" type="button" data-filter-formato="Todos">Formato: Todos</button>
+            <button class="btn" type="button" data-filter-formato="reels">Reels</button>
+            <button class="btn" type="button" data-filter-formato="carrossel">Carrossel</button>
+          </div>
+          <div class="group" id="pilarGroup" aria-label="Grupo Pilar">
+            <button class="btn active" type="button" data-filter-pilar="Todos">Pilar: Todos</button>
+          </div>
+        </div>
+
+        <div class="calgrid" id="calGrid">
+          <a class="day" href="./dia-01.html" data-formato="reels" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 01</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Diálogo: clichê + confronto + virada (“quer trocar?”)</div>
+            <div class="small">Grave um diálogo curto com clichê + confronto + “quer trocar?” + virada de perspectiva. Edite com cortes rápidos e 1 pausa antes do plot twist.</div>
+            <div class="meta">
+              <span class="badge">Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-02.html" data-formato="carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 02</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">3 escolhas minimalistas + aprofundamento + checklist</div>
+            <div class="small">Crie um carrossel minimalista em lista (3 escolhas) + 3 slides de aprofundamento + checklist + CTA para comentar 1/2/3 e salvar.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-03.html" data-formato="carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 03</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Carrossel estilo “nota”: atitudes financeiras contraintuitivas</div>
+            <div class="small">Crie um carrossel estilo “nota” com uma lista de atitudes financeiras contraintuitivas. Feche com pergunta + salvar/seguir.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-04.html" data-formato="carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 04</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Tese forte + lista numerada com microexplicações (7–9 slides)</div>
+            <div class="small">Crie um carrossel 7–9 slides com uma tese forte + lista numerada com microexplicações. Feche com pergunta objetiva e CTA por palavra-chave (ex.: “MAPA”).</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-05.html" data-formato="carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 05</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">10 sinais financeiros (dark) + CTA de comentário</div>
+            <div class="small">Crie um carrossel dark de lista com 10 sinais financeiros (1 por slide) e finalize com pergunta para comentar + pedido de salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-06.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 06</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Regra 50-30-20 em 20–35s (3 blocos + exemplos)</div>
+            <div class="small">Grave um Reel de 20–35s explicando a regra 50-30-20 com 3 blocos (50/30/20) + exemplos e finalize pedindo para salvar e enviar.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-07.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 07</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Desafio com tabela 1↔225 + lógica (450 depósitos)</div>
+            <div class="small">Grave um Reel de 30–45s com hook de meta+prazo, mostre a tabela 1↔225, explique a lógica (450 depósitos) e finalize com CTA para comentar “DESAFIO” e receber no direct.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-08.html" data-formato="reels" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 08</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">História de ascensão + conquista + prova + gratidão</div>
+            <div class="small">Grave um Reel de 25–45s com história de ascensão + conquista concreta + prova + gratidão. Use legenda grande, cortes rápidos e CTA com palavra-chave no final.</div>
+            <div class="meta">
+              <span class="badge">Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-09.html" data-formato="carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 09</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Carrossel “sistema simples” com microdecisões diárias</div>
+            <div class="small">Monte um carrossel escaneável com decisões diárias (custo fixo, variável, metas) e feche com um CTA por comentário para enviar um recurso.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-10.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 10</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Tutorial: “Desafio dos 400 depósitos” (25–40s)</div>
+            <div class="small">Grave um Reels tutorial de 25–40s explicando o “Desafio dos 400 depósitos” com tabela na tela e CTA: comentar “DESAFIO” para receber o material no direct.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-11.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 11</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Lista: 4 regras + exemplos reais + quebra de objeções</div>
+            <div class="small">Grave um Reels em lista (4 regras) com exemplos reais e quebra de objeções. Feche com mito forte + CTA de salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-12.html" data-formato="carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 12</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">11 slides: mindset → ação → prova (prints) + CTA planilha</div>
+            <div class="small">Monte um carrossel de 11 slides alternando mindset → ação → prova (prints). Feche com CTA por palavra-chave para enviar sua planilha/template.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-13.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 13</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Transformação + 5 passos de organização + dica comportamental</div>
+            <div class="small">Grave um Reel de 45–60s com hook de transformação + 5 passos de organização + dica comportamental e CTA por palavra-chave para enviar planilha no direct.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-14.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 14</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Confissão + analogia (dieta) + método 1-2-3 com exemplo</div>
+            <div class="small">Grave um Reel com confissão + analogia (dieta) e entregue o método 1-2-3 (contas, eu me pago, teto de mimos) com prova na planilha e exemplo numérico.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-15.html" data-formato="reels" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 15</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Analogia forte + 4 pontos (resultado, responsabilidade, consistência, julgamento)</div>
+            <div class="small">Grave um Reels de 35–45s com analogia forte + 4 pontos numerados (resultado, responsabilidade, consistência, julgamento) e feche com CTA de salvar/comentar.</div>
+            <div class="meta">
+              <span class="badge">Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-16.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 16</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Lista numerada (6–7 dicas) + hook identitário + regra de ouro</div>
+            <div class="small">Grave um Reel em lista numerada (6–7 dicas) com hook identitário + alerta + “regra de ouro” final. Finalize pedindo salvar e enviar para alguém.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-17.html" data-formato="carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 17</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">HQ: impulso vs controle (10 slides) + moral + lead magnet</div>
+            <div class="small">Crie um carrossel em 10 slides estilo HQ com contraste de personagens (impulso vs controle) e feche com moral + CTA via comentário para enviar um lead magnet.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-18.html" data-formato="carrossel" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 18</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Linha do tempo: “Pai Pobre x Pai Rico” (8 slides)</div>
+            <div class="small">Crie um carrossel comparativo em linha do tempo (8 slides) com “Pai Pobre x Pai Rico”, finalize com pergunta + CTA de comentário para entregar uma isca.</div>
+            <div class="meta">
+              <span class="badge">Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-19.html" data-formato="carrossel" data-pilar="Dor">
+            <div class="daytop">
+              <span class="dnum">Dia 19</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Erro vs acerto (7 slides) com microcenas do cotidiano</div>
+            <div class="small">Crie um carrossel 7 slides em comparação lado a lado (erro vs acerto), com microcenas do cotidiano e um CTA final por comentário para entregar um recurso.</div>
+            <div class="meta">
+              <span class="badge">Dor</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-20.html" data-formato="carrossel" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 20</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">50/50: reativo vs estratégico (5 slides) + 3 bullets salváveis</div>
+            <div class="small">Crie um carrossel 50/50 (esquerda reativo vs direita estratégico) com 5 slides e falas curtas. Feche com 3 bullets “salváveis” + CTA para salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-21.html" data-formato="carrossel" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 21</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Caminho A vs B por idade/marcos (6 slides) com consequências</div>
+            <div class="small">Crie um carrossel 6 slides comparando “Caminho A vs B” por idade (ou marcos). Repita o mesmo layout, escale as consequências e feche com síntese + CTA por palavra-chave.</div>
+            <div class="meta">
+              <span class="badge">Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-22.html" data-formato="carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 22</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Capa forte + reframe + 8 dicas + método 10 min + resultado 30 dias</div>
+            <div class="small">Crie um carrossel com capa forte + reframe + lista escaneável (8 dicas) + método de 10 min + resultado em 30 dias + CTA “Comente PALAVRA”.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-23.html" data-formato="reels" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 23</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Faça comigo: produto caro vs alternativa barata + conta anual</div>
+            <div class="small">Grave um “faça comigo” com um produto caro vs. alternativa barata + conta anual. Use 1 plot twist e feche com economia virando investimento/meta.</div>
+            <div class="meta">
+              <span class="badge">Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-24.html" data-formato="reels" data-pilar="Erro comum">
+            <div class="daytop">
+              <span class="dnum">Dia 24</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Parece X, mas causa Y (4–6 itens) + reframe por item</div>
+            <div class="small">Grave um Reels em lista (4–6 itens) com contraste “parece X, mas causa Y”, reframe prático por item e CTA pedindo o número do hábito nos comentários.</div>
+            <div class="meta">
+              <span class="badge">Erro comum</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-25.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 25</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Roteiro modular (Hook → Valor → Prova → CTA) com variações</div>
+            <div class="small">Preencha a ficha-base com a transcrição/cenas do seu Reel e siga o roteiro modular (Hook → Valor → Prova → CTA). Use as variações para adaptar o mesmo formato a outro tema.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-26.html" data-formato="carrossel" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 26</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Progressão (1, 5, 15, 30 anos) provando efeito composto</div>
+            <div class="small">Monte um carrossel com progressão (1, 5, 15, 30 anos) e números crescentes para provar o efeito composto. Feche com contraponto (R$0) e CTA por palavra-chave nos comentários.</div>
+            <div class="meta">
+              <span class="badge">Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-27.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 27</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Regra 70/30 + exemplo real do público + pergunta SIM/NÃO</div>
+            <div class="small">Grave um Reel curto explicando uma regra numérica (70/30) + aplique em um exemplo real do público + finalize com pergunta SIM/NÃO e pedido de seguir/salvar.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-28.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 28</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Hook + 2 regras simples com demonstração visual contínua (40–50s)</div>
+            <div class="small">Grave um Reel de 40–50s com hook + 2 regras simples e demonstração visual contínua. Feche com urgência real e um CTA único (comentário, link ou DM).</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-29.html" data-formato="carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 29</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Regras numeradas (1 por slide) + teaser de recurso</div>
+            <div class="small">Crie um carrossel com capa + regras numeradas (1 por slide) + fechamento com CTA e teaser de recurso. Use fotos reais e caixas de texto consistentes para leitura rápida.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-30.html" data-formato="carrossel" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 30</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Diálogo (8 slides): números em queda + método revelado no meio</div>
+            <div class="small">Crie um carrossel em formato de diálogo (8 slides) mostrando números em queda, revelando o método só no meio e fechando com oferta + CTA por palavra-chave.</div>
+            <div class="meta">
+              <span class="badge">Prova</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="como-usar" class="section">
+      <div class="shead">
+        <h2>Como usar (5 passos)</h2>
+        <div class="count">Ritmo: planejar → gravar → publicar → medir</div>
+      </div>
+      <div class="sbody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Passos</h3>
+            <ol class="list">
+              <li>Escolha o dia e mantenha <strong>1 objetivo</strong> (salvos, comentários ou directs).</li>
+              <li>Escreva o hook em <strong>uma frase</strong> e transforme em título do primeiro frame/primeiro segundo.</li>
+              <li>Inclua <strong>um exemplo numérico</strong> (mesmo simples) para ancorar a ideia.</li>
+              <li>Finalize com <strong>um CTA</strong> (palavra-chave, salvar ou comentário com número).</li>
+              <li>Reaproveite: transforme Reels em carrossel (roteiro → slides) e carrossel em Reels (slides → cenas).</li>
+            </ol>
+          </div>
+          <div class="card">
+            <h3>Regra de consistência</h3>
+            <p class="small">Mantenha o mesmo vocabulário (contas, metas, teto, regra, prazo), repita formatos vencedores e varie apenas o tema. Isso acelera compreensão, retenção e compartilhamento.</p>
+            <p class="small">Use os filtros para visualizar rapidamente o mix por formato e por pilar e equilibrar o calendário.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">© 2026</footer>
+  </div>
+
+  <script>
+    (function(){
+      const days = Array.from(document.querySelectorAll('.day'));
+      const pilarGroup = document.getElementById('pilarGroup');
+      const visibleCount = document.getElementById('visibleCount');
+
+      const norm = (s) => (s || '').toString().trim();
+
+      const pilares = Array.from(new Set(days.map(d => norm(d.dataset.pilar)).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+
+      pilares.forEach(p => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn';
+        b.setAttribute('data-filter-pilar', p);
+        b.textContent = p;
+        pilarGroup.appendChild(b);
+      });
+
+      let formatoSel = 'Todos';
+      let pilarSel = 'Todos';
+
+      function setActive(groupEl, attr, value){
+        Array.from(groupEl.querySelectorAll('.btn')).forEach(btn => {
+          const v = btn.getAttribute(attr);
+          if(v === value) btn.classList.add('active');
+          else btn.classList.remove('active');
+        });
+      }
+
+      function apply(){
+        let shown = 0;
+        days.forEach(card => {
+          const f = norm(card.dataset.formato).toLowerCase();
+          const p = norm(card.dataset.pilar);
+          const okFormato = (formatoSel === 'Todos') || (f === formatoSel);
+          const okPilar = (pilarSel === 'Todos') || (p === pilarSel);
+          const show = okFormato && okPilar;
+          card.style.display = show ? '' : 'none';
+          if(show) shown++;
+        });
+        visibleCount.textContent = String(shown);
+      }
+
+      const formatoBtns = Array.from(document.querySelectorAll('[data-filter-formato]'));
+      formatoBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          formatoSel = norm(btn.getAttribute('data-filter-formato'));
+          formatoSel = (formatoSel === 'Todos') ? 'Todos' : formatoSel.toLowerCase();
+          setActive(btn.parentElement, 'data-filter-formato', norm(btn.getAttribute('data-filter-formato')));
+          apply();
+        });
+      });
+
+      const allPilarBtns = () => Array.from(pilarGroup.querySelectorAll('[data-filter-pilar]'));
+      allPilarBtns().forEach(btn => {
+        btn.addEventListener('click', () => {
+          pilarSel = norm(btn.getAttribute('data-filter-pilar'));
+          setActive(pilarGroup, 'data-filter-pilar', pilarSel);
+          apply();
+        });
+      });
+
+      apply();
+    })();
+  </script>
+</body>
+</html>
