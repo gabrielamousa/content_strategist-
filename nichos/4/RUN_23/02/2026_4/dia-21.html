@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Roteiro Reproduzível — Carrossel (Finanças | Dia 21)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --card:#0E1630cc;
+      --card2:#0B1228cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:#AAB6DA;
+      --muted2:#8491B8;
+      --good:#35F2A6;
+      --bad:#FF5C7D;
+      --cyan:#35D3FF;
+      --orange:#FFB347;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 10%, rgba(53,242,166,.10), transparent 60%),
+        radial-gradient(900px 500px at 80% 20%, rgba(53,211,255,.10), transparent 60%),
+        radial-gradient(900px 500px at 70% 85%, rgba(255,179,71,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 44px}
+
+    header{
+      display:flex;gap:14px;align-items:stretch;justify-content:space-between;flex-wrap:wrap;
+      padding:18px;border:1px solid var(--stroke);border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      position:relative;overflow:hidden;
+    }
+    header:before{
+      content:"";position:absolute;inset:-2px;
+      background:linear-gradient(90deg, rgba(53,242,166,.18), rgba(53,211,255,.14), rgba(255,179,71,.14));
+      filter:blur(18px);opacity:.65;z-index:0;
+    }
+    .head-inner{position:relative;z-index:1;display:flex;gap:14px;flex:1;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .kpi{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{
+      padding:8px 10px;border-radius:999px;border:1px solid var(--stroke);
+      background:rgba(10,16,34,.45);
+      color:var(--muted);font-size:12px;letter-spacing:.2px
+    }
+    .pill strong{color:var(--text);font-weight:650}
+    .titleblock{min-width:260px;flex:1}
+    h1{margin:0;font-size:18px;line-height:1.2;letter-spacing:.2px}
+    .sub{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.35}
+    .link{
+      display:flex;gap:10px;align-items:center;justify-content:flex-end;flex:0 0 auto
+    }
+    .btn{
+      appearance:none;border:1px solid var(--stroke2);background:rgba(14,22,48,.55);
+      color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer;
+      font-weight:650;font-size:13px;
+      box-shadow:0 10px 28px rgba(0,0,0,.25);
+      transition:transform .12s ease, border-color .12s ease, background .12s ease;
+      text-decoration:none;display:inline-flex;gap:8px;align-items:center
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.22);background:rgba(14,22,48,.72)}
+    .btn:active{transform:translateY(0)}
+    .btn.primary{
+      border:1px solid rgba(53,242,166,.35);
+      background:linear-gradient(90deg, rgba(53,242,166,.20), rgba(53,211,255,.16), rgba(255,179,71,.14));
+    }
+
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:16px}
+    @media (min-width: 980px){
+      .grid{grid-template-columns:1.05fr .95fr}
+    }
+
+    .card{
+      padding:16px;border:1px solid var(--stroke);border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+    }
+    .card h2{margin:0 0 10px;font-size:14px;letter-spacing:.22px}
+    .card h2 .grad{
+      background:linear-gradient(90deg, var(--good), var(--cyan), var(--orange));
+      -webkit-background-clip:text;background-clip:text;color:transparent
+    }
+    .muted{color:var(--muted);font-size:13px;line-height:1.55}
+    .muted small{color:var(--muted2)}
+
+    .list{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+    .li{
+      border:1px solid var(--stroke);border-radius:var(--radius2);
+      background:rgba(10,16,34,.38);
+      padding:12px
+    }
+    .li .t{font-weight:700;font-size:13px;margin:0 0 4px}
+    .li .d{margin:0;color:var(--muted);font-size:12.8px;line-height:1.45}
+
+    .two{
+      display:grid;grid-template-columns:1fr;gap:12px
+    }
+    @media (min-width: 680px){
+      .two{grid-template-columns:1fr 1fr}
+    }
+    .col{
+      border:1px dashed rgba(255,255,255,.14);
+      border-radius:var(--radius2);
+      padding:12px;background:rgba(10,16,34,.25)
+    }
+    .badge{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:7px 10px;border-radius:999px;font-size:12px;
+      border:1px solid var(--stroke);
+      background:rgba(14,22,48,.55);
+      margin-bottom:10px
+    }
+    .dot{width:8px;height:8px;border-radius:50%}
+    .dot.good{background:var(--good)}
+    .dot.bad{background:var(--bad)}
+
+    .codebox{
+      margin-top:10px;
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      background:rgba(10,16,34,.45);
+      overflow:hidden
+    }
+    .codebar{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--stroke)}
+    .codebar .hint{color:var(--muted);font-size:12.5px}
+    textarea{
+      width:100%;min-height:420px;resize:vertical;
+      padding:14px;border:0;outline:none;
+      background:transparent;color:var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12.6px;line-height:1.45
+    }
+
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{font-size:12px;color:var(--muted);border:1px solid var(--stroke);background:rgba(10,16,34,.35);padding:7px 10px;border-radius:999px}
+
+    .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
+
+    .slides{display:grid;gap:10px;margin-top:10px}
+    .slide{
+      border:1px solid var(--stroke);
+      border-radius:var(--radius2);
+      background:rgba(10,16,34,.35);
+      padding:12px
+    }
+    .slide .num{font-weight:800;color:transparent;background:linear-gradient(90deg,var(--good),var(--cyan),var(--orange));-webkit-background-clip:text;background-clip:text}
+    .slide .st{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+
+    .footer-note{margin-top:14px;color:var(--muted2);font-size:12.5px;line-height:1.5}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-inner">
+        <div class="titleblock">
+          <div class="kpi">
+            <span class="pill"><strong>Nicho:</strong> Finanças</span>
+            <span class="pill"><strong>Dia:</strong> 21</span>
+            <span class="pill"><strong>Formato:</strong> Carrossel</span>
+            <span class="pill"><strong>Pilar:</strong> Prova</span>
+          </div>
+          <h1 style="margin-top:10px">Aos 18, 25, 30…: 2 escolhas, 2 futuros financeiros</h1>
+          <div class="sub">Modelo reproduzível: comparação “Caminho A vs Caminho B” em marcos de tempo, com escalada de consequências e fechamento em framework + CTA por palavra-chave.</div>
+        </div>
+        <div class="link">
+          <a class="btn" href="https://www.instagram.com/p/DUrc6CVEZXd/" target="_blank" rel="noopener">Abrir post original</a>
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="grad">Resumo</span></h2>
+        <p class="muted">Carrossel de 6 slides em que o mesmo personagem aparece em dois futuros paralelos. Cada slide mostra um marco (idade/etapa) e 3 bullets por lado: o que a pessoa fez (Caminho A) vs o que fez de errado (Caminho B). A repetição de layout acelera leitura, e a progressão temporal cria retenção (“e no próximo marco?”). O fechamento entrega a moral (em 3–5 palavras), um mini-framework de 3 pilares e um CTA de comentário com palavra-chave (ex.: “PLANILHA”).</p>
+        <div class="chips">
+          <span class="chip">Mecânica: A vs B</span>
+          <span class="chip">Retenção: progressão temporal</span>
+          <span class="chip">Clareza: 3 bullets fixos</span>
+          <span class="chip">Conversão: palavra-chave nos comentários</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="grad">Estrutura</span></h2>
+        <ul class="list">
+          <li class="li"><p class="t">Slides 1–5: repetição do molde</p><p class="d">Dividir em 2 colunas (A vs B). Topo com “Aos [marco]” + lista curta; metade inferior com ilustração/props e contraste de clima (prosperidade vs pressão).</p></li>
+          <li class="li"><p class="t">Escalada de stakes</p><p class="d">Comece com hábitos (baixo risco), avance para números (concretude) e finalize em consequências (liberdade vs prisão).</p></li>
+          <li class="li"><p class="t">Slide 6: síntese + oferta</p><p class="d">Moral forte + subheadline em 2 frases + 3 pilares práticos + CTA “Comente [PALAVRA]” + benefício imediato.</p></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <h2><span class="grad">Slides sugeridos (1..6)</span></h2>
+      <div class="slides">
+        <div class="slide"><div class="num">Slide 1 — Marco inicial</div><div class="st"><strong>Gancho:</strong> “Aos 18” (ou “No começo”, “No 1º ano”, “No primeiro salário”).<br><strong>Função:</strong> estabelecer a decisão (“equilíbrio e disciplina” vs “descontrole”).</div></div>
+        <div class="slide"><div class="num">Slide 2 — Primeiros sinais</div><div class="st"><strong>Gancho:</strong> “Aos 25…”.<br><strong>Função:</strong> mostrar benefício inicial do composto (reserva, estabilidade, oportunidades) vs estagnação.</div></div>
+        <div class="slide"><div class="num">Slide 3 — A assimetria aparece</div><div class="st"><strong>Gancho:</strong> “Aos 30…”.<br><strong>Função:</strong> introduzir ✅/❌ e números (patrimônio/dívida), acelerando contraste.</div></div>
+        <div class="slide"><div class="num">Slide 4 — Consolidação</div><div class="st"><strong>Gancho:</strong> “Aos 40…”.<br><strong>Função:</strong> reforçar consequências de longo prazo (renda passiva vs negativação/pressão).</div></div>
+        <div class="slide"><div class="num">Slide 5 — Desfecho emocional</div><div class="st"><strong>Gancho:</strong> “Aos 50…”.<br><strong>Função:</strong> fechar a história (liberdade/tempo vs continuar preso no ciclo).</div></div>
+        <div class="slide"><div class="num">Slide 6 — Moral + CTA</div><div class="st"><strong>Headline:</strong> “EQUILÍBRIO É A CHAVE!” (substituível).<br><strong>Framework:</strong> 3 pilares práticos.<br><strong>CTA:</strong> “Comente [PALAVRA]” + promessa do que a pessoa recebe.</div></div>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:14px">
+      <section class="card">
+        <h2><span class="grad">Roteiro (template copiável)</span></h2>
+        <p class="muted">Use este roteiro como “molde” e apenas substitua: <small>[MARCOS]</small>, <small>[BULLETS]</small>, <small>[NÚMEROS]</small>, <small>[PILARES]</small> e <small>[PALAVRA-CHAVE]</small>.</p>
+
+        <div class="codebox">
+          <div class="codebar">
+            <div class="hint">Texto-base para legendas e slides (adaptável para qualquer tema)</div>
+          </div>
+          <textarea id="script" spellcheck="false">
+CARROSSEL (6 SLIDES) — “2 CAMINHOS, 2 FUTUROS”
+
+PROMESSA (1 linha):
+Pequenas escolhas em [PERÍODO] mudam seu resultado em [PRAZO].
+
+REGRAS DO MOLDE (para todos os slides 1–5):
+- Tela 4:5, dividida em 2 colunas (A x B) com linha central.
+- Título grande repetido: “Aos [MARCO]” (ou “Depois de [X] meses”).
+- 3 bullets por lado (máx. 6 palavras cada).
+- 1 número por bullet quando usar números.
+- Slide 3 em diante: trocar bullets por ✅ (A) e ❌ (B).
+
+SLIDE 1 — AOS [MARCO 1] (decisão)
+A (lado bom):
+• [HÁBITO/DECISÃO 1]
+• [HÁBITO/DECISÃO 2]
+• [HÁBITO/DECISÃO 3]
+B (lado ruim):
+• [ERRO/DECISÃO 1]
+• [ERRO/DECISÃO 2]
+• [ERRO/DECISÃO 3]
+
+SLIDE 2 — AOS [MARCO 2] (primeiros resultados)
+A:
+• [RESULTADO 1]
+• [RESULTADO 2]
+• [RESULTADO 3]
+B:
+• [CONSEQUÊNCIA 1]
+• [CONSEQUÊNCIA 2]
+• [CONSEQUÊNCIA 3]
+
+SLIDE 3 — AOS [MARCO 3] (assimetria / números) ✅❌
+A:
+✅ [NÚMERO + PROGRESSO]
+✅ [OPORTUNIDADE / RENDA]
+✅ [SEGURANÇA / ALAVANCA]
+B:
+❌ [NÚMERO + PROBLEMA]
+❌ [ESTRESSE / LIMITES]
+❌ [SENSAÇÃO: “correndo atrás”]
+
+SLIDE 4 — AOS [MARCO 4] (consolidação) ✅❌
+A:
+✅ [VIDA MAIS LEVE]
+✅ [PATRIMÔNIO / PROCESSO]
+✅ [OPÇÃO / LIBERDADE]
+B:
+❌ [RESTRIÇÃO]
+❌ [NOME SUJO / DÍVIDA]
+❌ [SEM MARGEM]
+
+SLIDE 5 — AOS [MARCO 5] (desfecho) ✅❌
+A:
+✅ [CENA DE LIBERDADE]
+✅ [TEMPO / AUTONOMIA]
+✅ [TRANQUILIDADE]
+B:
+❌ [CENA DE PRESSÃO]
+❌ [TRABALHO OBRIGATÓRIO]
+❌ [CONTAS / ARREPENDIMENTO]
+
+SLIDE 6 — FECHAMENTO (síntese + oferta)
+HEADLINE (3–5 palavras):
+“[MORAL FORTE]!”
+
+SUBHEADLINE (2 frases curtas):
+“[FRASE 1]. [FRASE 2].”
+
+3 PILARES (mini-framework):
+1) [PILAR 1] — [4–7 palavras]
+2) [PILAR 2] — [4–7 palavras]
+3) [PILAR 3] — [4–7 palavras]
+
+CTA (comentário com palavra-chave):
+“Comente [PALAVRA-CHAVE] que eu te envio [LEAD MAGNET/RECURSO] + um passo a passo rápido.”
+
+LEGENDA (pronta e curta):
+Você não precisa escolher entre “viver” e “construir”.
+Precisa de um plano simples e repetível.
+
+Quer que eu te envie o [RECURSO]? Comente “[PALAVRA-CHAVE]”.
+          </textarea>
+        </div>
+
+        <div class="footer-note">Dica de adaptação rápida: se seu tema não for “idade”, substitua “Aos 18/25/…” por “No mês 1/3/6/12/24” ou “No nível iniciante/intermediário/avançado”. Mantém o mesmo efeito de progressão.</div>
+      </section>
+
+      <section class="card">
+        <h2><span class="grad">Elementos visuais</span></h2>
+        <div class="two">
+          <div class="col">
+            <span class="badge"><span class="dot good"></span>Coluna A (desejável)</span>
+            <div class="muted">
+              <ul style="margin:0;padding-left:18px;display:grid;gap:8px">
+                <li>Luz/cores mais quentes e claras; sensação de espaço.</li>
+                <li>Props: gráfico ↑, check ✅, viagem, casa, reserva.</li>
+                <li>Expressão: calma/confiante.</li>
+                <li>Textos: verbos de ação ("investe", "organiza", "negocia").</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col">
+            <span class="badge"><span class="dot bad"></span>Coluna B (indesejável)</span>
+            <div class="muted">
+              <ul style="margin:0;padding-left:18px;display:grid;gap:8px">
+                <li>Tons frios/escuros; sensação de aperto/caos.</li>
+                <li>Props: boleto, cartão, gráfico ↓, notificações, “nome sujo”.</li>
+                <li>Expressão: ansiedade/cansaço.</li>
+                <li>Textos: consequências ("vive no limite", "atrasos", "juros").</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2><span class="grad">Copy e ganchos</span></h2>
+        <ul class="list">
+          <li class="li"><p class="t">Gancho 1 (comparação instantânea)</p><p class="d">“Duas pessoas. Mesma idade. Resultados opostos.”</p></li>
+          <li class="li"><p class="t">Gancho 2 (curiosidade por progressão)</p><p class="d">“Aos 18 parece pouco… aos 30 vira um abismo.”</p></li>
+          <li class="li"><p class="t">Gancho 3 (moral simples)</p><p class="d">“Equilíbrio hoje. Liberdade amanhã.”</p></li>
+          <li class="li"><p class="t">Linguagem de bullets (fácil de trocar de tema)</p><p class="d">Use estruturas: “Verbo + objeto curto” (ex.: “Organiza gastos”, “Cria reserva”, “Aumenta renda”). Evite frases longas.</p></li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="grid" style="margin-top:14px">
+      <section class="card">
+        <h2><span class="grad">CTA</span></h2>
+        <div class="muted">
+          <p style="margin:0 0 10px"><strong>Modelo principal (comentário com palavra-chave):</strong><br>
+            “Comente <strong>PLANILHA</strong> que eu te envio a planilha + um passo a passo para começar hoje.”</p>
+          <div class="two">
+            <div class="col">
+              <div class="muted"><strong>Variações de palavra-chave</strong>
+                <ul style="margin:8px 0 0;padding-left:18px;display:grid;gap:7px">
+                  <li>“MAPA” (mapa financeiro)</li>
+                  <li>“CHECKLIST” (organização rápida)</li>
+                  <li>“AULA” (miniaula/guia)</li>
+                  <li>“GUIA” (PDF curto)</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col">
+              <div class="muted"><strong>Variações de CTA com o mesmo impacto</strong>
+                <ul style="margin:8px 0 0;padding-left:18px;display:grid;gap:7px">
+                  <li>“Comente X e eu te mando no direct.”</li>
+                  <li>“Salva este post e comenta X para receber o modelo.”</li>
+                  <li>“Quer a versão editável? Comenta X.”</li>
+                  <li>“Comenta X que eu te envio o template + exemplos.”</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p style="margin:10px 0 0;color:var(--muted2)">Recomendação: CTA sempre no último slide + 1 repetição na legenda. Evite 2 CTAs diferentes no mesmo post.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="grad">Checklist de criação (reproduzível)</span></h2>
+        <ul class="list">
+          <li class="li"><p class="t">1) Definição do tema e dos “marcos”</p><p class="d">Escolha 5 marcos (idades, meses, etapas, níveis). Ex.: 18/25/30/40/50 ou M1/M3/M6/M12/M24.</p></li>
+          <li class="li"><p class="t">2) Conteúdo dos bullets</p><p class="d">3 bullets por coluna, por slide. Cada bullet com até 6 palavras. Se usar números: 1 número por bullet.</p></li>
+          <li class="li"><p class="t">3) Escalada</p><p class="d">Slide 1: hábitos. Slide 2: primeiros resultados. Slides 3–4: números/consequências. Slide 5: emoção/identidade.</p></li>
+          <li class="li"><p class="t">4) Visual consistente</p><p class="d">Mesmo personagem/estilo; A claro e “aberto”, B escuro e “apertado”. Use ✅/❌ a partir do slide 3.</p></li>
+          <li class="li"><p class="t">5) Slide final com framework</p><p class="d">Moral (3–5 palavras) + subheadline (2 frases) + 3 pilares + CTA palavra-chave + benefício.</p></li>
+          <li class="li"><p class="t">6) Qualidade e publicação</p><p class="d">Revisão de legibilidade (celular), consistência de termos, contraste de cor, e último slide com CTA grande.</p></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <h2><span class="grad">Variações</span></h2>
+      <div class="two">
+        <div class="col">
+          <div class="muted"><strong>Trocas para outro tema (mesmo efeito)</strong>
+            <ul style="margin:8px 0 0;padding-left:18px;display:grid;gap:8px">
+              <li><strong>Tempo:</strong> “Aos 18/25…” → “Em 7/30/90 dias…”</li>
+              <li><strong>Personagem:</strong> “mesmo personagem” → “mesma empresa/projeto” (antes vs depois)</li>
+              <li><strong>Conflito:</strong> “disciplina vs descontrole” → “consistência vs atalhos”</li>
+              <li><strong>Concretude:</strong> “R$” → “kg”, “clientes”, “horas livres”, “ranking”, “nota”</li>
+              <li><strong>Framework final:</strong> “3 pilares” → “3 regras”, “3 hábitos”, “3 decisões”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col">
+          <div class="muted"><strong>Modelos de “moral” (substituições)</strong>
+            <ul style="margin:8px 0 0;padding-left:18px;display:grid;gap:8px">
+              <li>“EQUILÍBRIO É A CHAVE!” → “CONSISTÊNCIA VENCE!”</li>
+              <li>“Viva hoje. Construa amanhã.” → “Curto prazo com plano. Longo prazo com paz.”</li>
+              <li>“Pequenas escolhas…” → “O que você repete, você vira.”</li>
+              <li>“Dois caminhos…” → “Duas rotas. Um destino por escolha.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">Se você quiser adaptar para um produto/serviço: faça o “Caminho A” incluir um passo que só é fácil com sua solução (sem parecer propaganda), e o CTA oferecer um recurso que leve naturalmente ao seu funil.</div>
+    </section>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ta = document.getElementById('script');
+      btn.addEventListener('click', async () => {
+        const text = ta.value;
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>btn.textContent = old, 1400);
+        }catch(e){
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>btn.textContent = old, 1400);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
