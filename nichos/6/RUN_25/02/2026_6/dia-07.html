@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 7 — Quanto peso usar em cada faixa de repetição</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.09);
+    --stroke:rgba(255,255,255,.12);
+    --text:#EAF0FF;
+    --muted:#A9B4D0;
+    --muted2:#7F8AAD;
+    --good:#28F0A4;
+    --blue:#4AA3FF;
+    --orange:#FF9A3C;
+    --danger:#FF4D6D;
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --radius:18px;
+    --radius2:14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(74,163,255,.22), transparent 55%),
+      radial-gradient(900px 500px at 90% 0%, rgba(255,154,60,.16), transparent 55%),
+      radial-gradient(900px 600px at 55% 105%, rgba(40,240,164,.16), transparent 60%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{color:inherit}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 44px}
+
+  header{
+    display:flex;flex-direction:column;gap:14px;
+    padding:18px 18px;
+    border:1px solid var(--stroke);
+    border-radius:var(--radius);
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;inset:-2px;
+    background:linear-gradient(90deg, rgba(40,240,164,.14), rgba(74,163,255,.14), rgba(255,154,60,.14));
+    filter:blur(20px);
+    opacity:.9;
+    pointer-events:none;
+  }
+  .headgrid{position:relative;display:grid;grid-template-columns:1.2fr .8fr;gap:14px;align-items:start}
+  @media (max-width:880px){.headgrid{grid-template-columns:1fr}}
+  .kicker{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .pill{
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:8px 10px;
+    border:1px solid var(--stroke);
+    border-radius:999px;
+    background:rgba(0,0,0,.22);
+    color:var(--muted);
+  }
+  .pill strong{color:var(--text)}
+  .title{
+    font-size:24px;
+    font-weight:800;
+    line-height:1.15;
+    margin:2px 0 0;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    line-height:1.5;
+    font-size:14px;
+  }
+  .actions{
+    position:relative;
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+  @media (max-width:880px){.actions{justify-content:flex-start}}
+  .btn{
+    cursor:pointer;
+    border:none;
+    border-radius:12px;
+    padding:10px 12px;
+    background:rgba(255,255,255,.10);
+    color:var(--text);
+    font-weight:700;
+    border:1px solid rgba(255,255,255,.14);
+    transition:.15s transform ease, .15s background ease, .15s border-color ease;
+  }
+  .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.22)}
+  .btn.primary{
+    background:linear-gradient(90deg, rgba(40,240,164,.95), rgba(74,163,255,.85), rgba(255,154,60,.85));
+    color:#061018;
+    border:0;
+  }
+  .btn.primary:hover{transform:translateY(-1px) scale(1.01)}
+  .link{
+    display:flex;gap:8px;align-items:center;
+    padding:10px 12px;border-radius:12px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(0,0,0,.18);
+    text-decoration:none;
+    color:var(--muted);
+    font-weight:650;
+  }
+  .link:hover{background:rgba(0,0,0,.28);color:var(--text)}
+
+  main{margin-top:18px;display:grid;grid-template-columns:1fr;gap:14px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:980px){.grid2{grid-template-columns:1fr}}
+
+  .card{
+    border:1px solid var(--stroke);
+    border-radius:var(--radius);
+    background:rgba(255,255,255,.05);
+    box-shadow: 0 14px 40px rgba(0,0,0,.35);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 16px;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .card h2{margin:0;font-size:14px;letter-spacing:.10em;text-transform:uppercase;color:var(--muted)}
+  .badge{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--muted);
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(0,0,0,.22);
+    white-space:nowrap;
+  }
+  .card .bd{padding:14px 16px}
+
+  .list{margin:0;padding-left:18px;color:var(--text)}
+  .list li{margin:8px 0;color:var(--text)}
+  .muted{color:var(--muted)}
+  .small{font-size:13px;line-height:1.55;color:var(--muted)}
+
+  .callout{
+    border:1px solid rgba(255,255,255,.10);
+    background:linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.20));
+    border-radius:var(--radius2);
+    padding:12px 12px;
+    margin-top:10px;
+  }
+  .callout strong{color:var(--text)}
+
+  .gradline{
+    height:2px;
+    width:100%;
+    background:linear-gradient(90deg, var(--good), var(--blue), var(--orange));
+    opacity:.9;
+    border-radius:999px;
+  }
+
+  .scriptbox{
+    border-radius:var(--radius2);
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(0,0,0,.20);
+    padding:12px;
+  }
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.55;
+    color:#DDE6FF;
+  }
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{
+    font-size:12px;
+    padding:7px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.06);
+    color:var(--muted);
+  }
+  .chip b{color:var(--text)}
+
+  .table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    overflow:hidden;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.10);
+  }
+  .table th,.table td{
+    padding:10px 10px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    vertical-align:top;
+    font-size:13px;
+  }
+  .table th{
+    text-align:left;
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    background:rgba(255,255,255,.06);
+  }
+  .table tr:last-child td{border-bottom:none}
+
+  .accent{
+    background:linear-gradient(90deg, rgba(40,240,164,.18), rgba(74,163,255,.16), rgba(255,154,60,.14));
+    border:1px solid rgba(255,255,255,.10);
+    padding:10px 12px;
+    border-radius:14px;
+  }
+  .accent .big{font-weight:900;letter-spacing:.02em}
+
+  .ok{color:var(--good);font-weight:800}
+  .warn{color:var(--orange);font-weight:800}
+  .bad{color:var(--danger);font-weight:800}
+
+  .footer{
+    margin-top:16px;
+    color:var(--muted2);
+    font-size:12px;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headgrid">
+        <div>
+          <div class="kicker">
+            <span class="pill"><strong>Nicho</strong>: Educador Físico</span>
+            <span class="pill"><strong>Dia</strong>: 7</span>
+            <span class="pill"><strong>Formato</strong>: Carrossel</span>
+            <span class="pill"><strong>Pilar</strong>: Passo a passo</span>
+          </div>
+          <h1 class="title">Quanto peso usar em cada faixa de repetição</h1>
+          <p class="sub">Carrossel didático estilo infográfico: 3 objetivos (força/hipertrofia/resistência) + regra rápida de reps, carga e descanso. Finalize com ajuste por RIR/RPE e erros comuns.</p>
+          <div class="gradline" style="margin-top:12px"></div>
+        </div>
+        <div class="actions">
+          <a class="link" href="https://www.instagram.com/p/DURTaQ7EQ5U/" target="_blank" rel="noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="copyCaptionBtn">Copiar copy (legenda)</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge">Objetivo: clareza + salváveis</span>
+        </div>
+        <div class="bd">
+          <div class="accent">
+            <div class="big">Ideia central:</div>
+            <div class="small">A carga certa não é “um número fixo”. Ela depende do <b>objetivo da série</b> (força, hipertrofia ou resistência) e deve bater com uma faixa de <b>repetições</b>, <b>intensidade</b> e <b>descanso</b> coerentes.</div>
+          </div>
+          <div class="grid2" style="margin-top:12px">
+            <div class="callout">
+              <strong>Promessa do post:</strong>
+              <div class="small">Em 30 segundos você entende como escolher o peso para cada faixa de reps e para de “chutar a carga”.</div>
+            </div>
+            <div class="callout">
+              <strong>O que faz funcionar:</strong>
+              <div class="small">Comparação em 3 colunas + números grandes + cores por variável (reps/carga/descanso) = conteúdo “consultável”.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura (sequência reproduzível)</h2>
+          <span class="badge">6–8 slides</span>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><b>Capa (gancho):</b> “Quanto peso usar nas repetições?” + subtítulo: “FORÇA | HIPERTROFIA | RESISTÊNCIA”.</li>
+            <li><b>Mapa geral (infográfico):</b> 3 colunas + 3 linhas: Repetições (verde), Peso/Carga (vermelho/laranja), Descanso (azul).</li>
+            <li><b>Zoom Força:</b> faixa de reps baixa + descanso longo + exemplo prático.</li>
+            <li><b>Zoom Hipertrofia:</b> faixa média + descanso médio + exemplo.</li>
+            <li><b>Zoom Resistência:</b> reps altas + descanso curto + exemplo.</li>
+            <li><b>Como escolher o peso (regra de ouro):</b> use <b>RIR/RPE</b> (terminar com 1–3 reps “na reserva” na maioria das séries de hipertrofia).</li>
+            <li><b>Erros comuns:</b> trocar objetivo toda série; descanso errado; leve demais; falhar toda série; etc.</li>
+            <li><b>CTA:</b> “Salve para consultar no treino” + pergunta nos comentários + convite pro direct/avaliação.</li>
+          </ol>
+          <div class="chips">
+            <span class="chip"><b>Regra:</b> 1 ideia por slide</span>
+            <span class="chip"><b>Texto:</b> curto + números grandes</span>
+            <span class="chip"><b>Design:</b> comparativo (3 colunas)</span>
+            <span class="chip"><b>CTA:</b> salvar &rarr; comentar &rarr; direct</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Slides sugeridos (1..8)</h2>
+          <span class="badge">pronto para Canva/Figma</span>
+        </div>
+        <div class="bd">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width:70px">Slide</th>
+                <th>Texto (on-screen)</th>
+                <th>Detalhe de valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>1</b></td>
+                <td>
+                  <b>QUANTO PESO USAR</b><br>
+                  <span class="muted">nas repetições?</span><br>
+                  <span class="muted">FORÇA | HIPERTROFIA | RESISTÊNCIA</span>
+                </td>
+                <td class="muted">Promessa: “pare de chutar a carga”. Use 1 frase de contexto: “depende do objetivo”.</td>
+              </tr>
+              <tr>
+                <td><b>2</b></td>
+                <td>
+                  <b>O MAPA RÁPIDO</b><br>
+                  <span class="muted">Objetivo → Reps → Carga → Descanso</span>
+                </td>
+                <td class="muted">Infográfico 3 colunas + setas. Números grandes como âncoras visuais.</td>
+              </tr>
+              <tr>
+                <td><b>3</b></td>
+                <td>
+                  <b>FORÇA</b><br>
+                  <span class="ok">1–5 reps</span> · <span class="warn">carga alta</span> · <span style="color:var(--blue);font-weight:800">3–5 min</span>
+                </td>
+                <td class="muted">Exemplo: “Supino: 4×3 com descanso completo para manter performance”.</td>
+              </tr>
+              <tr>
+                <td><b>4</b></td>
+                <td>
+                  <b>HIPERTROFIA</b><br>
+                  <span class="ok">6–12 reps</span> · <span class="warn">carga moderada</span> · <span style="color:var(--blue);font-weight:800">2–3 min</span>
+                </td>
+                <td class="muted">Exemplo: “Agacho: 3–4×8 com execução sólida e progressão semanal”.</td>
+              </tr>
+              <tr>
+                <td><b>5</b></td>
+                <td>
+                  <b>RESISTÊNCIA</b><br>
+                  <span class="ok">12–20+ reps</span> · <span class="warn">carga leve</span> · <span style="color:var(--blue);font-weight:800">1–2 min</span>
+                </td>
+                <td class="muted">Exemplo: “Remada: 2–3×15–20 focando controle e tempo sob tensão”.</td>
+              </tr>
+              <tr>
+                <td><b>6</b></td>
+                <td>
+                  <b>COMO AJUSTAR O PESO</b><br>
+                  <span class="muted">Use RIR/RPE (reps na reserva)</span>
+                </td>
+                <td class="muted">Regra prática: “Termine com 1–3 RIR em quase todas as séries (principalmente hipertrofia)”.</td>
+              </tr>
+              <tr>
+                <td><b>7</b></td>
+                <td>
+                  <b>ERROS COMUNS</b><br>
+                  <span class="muted">Descanso curto na força / leve demais na hipertrofia / falhar toda série</span>
+                </td>
+                <td class="muted">Formato checklist rápido com ícones (X) e correção (✓).</td>
+              </tr>
+              <tr>
+                <td><b>8</b></td>
+                <td>
+                  <b>SALVE PARA O TREINO</b><br>
+                  <span class="muted">Comente: seu objetivo hoje é qual?</span>
+                </td>
+                <td class="muted">Convite: “Quer um treino ajustado? manda ‘MAPA’ no direct”.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="grid2">
+        <section class="card">
+          <div class="hd">
+            <h2>Roteiro (texto pronto)</h2>
+            <span class="badge">on-screen + legenda curta</span>
+          </div>
+          <div class="bd">
+            <div class="scriptbox" id="scriptText">
+              <pre>CARROSSEL — “QUANTO PESO USAR EM CADA FAIXA DE REPETIÇÃO”
+
+SLIDE 1 (CAPA)
+QUANTO PESO USAR
+NAS REPETIÇÕES?
+FORÇA | HIPERTROFIA | RESISTÊNCIA
+
+SLIDE 2 (MAPA)
+OBJETIVO → REPS → CARGA → DESCANSO
+(3 colunas: Força / Hipertrofia / Resistência)
+
+SLIDE 3 (FORÇA)
+FORÇA
+1–5 REPS | CARGA ALTA | 3–5 MIN DESCANSO
+Frase pequena: “Descanso longo = mantém performance.”
+
+SLIDE 4 (HIPERTROFIA)
+HIPERTROFIA
+6–12 REPS | CARGA MODERADA | 2–3 MIN
+Frase pequena: “Progressão + consistência vence o ‘peso aleatório’.”
+
+SLIDE 5 (RESISTÊNCIA)
+RESISTÊNCIA
+12–20+ REPS | CARGA LEVE | 1–2 MIN
+Frase pequena: “Controle e volume são o foco.”
+
+SLIDE 6 (AJUSTE FINO)
+COMO SABER SE O PESO TÁ CERTO?
+Use RIR/RPE:
+• Se sobraram 5+ reps → aumente a carga.
+• Se falhou cedo → reduza ou aumente o descanso.
+• Alvo comum (hipertrofia): 1–3 reps na reserva.
+
+SLIDE 7 (ERROS)
+ERROS COMUNS
+✗ Descanso curto na força
+✗ “Levinho” demais na hipertrofia
+✗ Falhar toda série toda semana
+✓ Escolha o objetivo do bloco e mantenha por semanas.
+
+SLIDE 8 (CTA)
+SALVE PRA CONSULTAR NO TREINO.
+Comente: FORÇA, HIPERTROFIA ou RESISTÊNCIA?
+Quer que eu ajuste seu treino? Manda “MAPA” no direct.</pre>
+            </div>
+            <div class="callout">
+              <strong>Observação de segurança/precisão:</strong>
+              <div class="small">As faixas variam por exercício, nível e método. Você pode escrever “faixas mais comuns” para evitar promessa absoluta.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <h2>Elementos visuais (identidade)</h2>
+            <span class="badge">high-tech + infográfico</span>
+          </div>
+          <div class="bd">
+            <ul class="list">
+              <li><b>Canvas:</b> 1080×1350 (4:5). Margem: 80–120px.</li>
+              <li><b>Grid:</b> 3 colunas iguais + divisórias verticais pontilhadas.</li>
+              <li><b>Cores por variável:</b> <span class="ok">Reps (verde)</span>, <span style="color:var(--orange);font-weight:800">Carga (laranja/vermelho)</span>, <span style="color:var(--blue);font-weight:800">Descanso (azul)</span>.</li>
+              <li><b>Números grandes:</b> 1–5 / 6–12 / 12–20+; tempos 3–5, 2–3, 1–2 min.</li>
+              <li><b>Ícones:</b> halter (força), bíceps (hipertrofia), ampulheta (resistência).</li>
+              <li><b>Setas longas:</b> reps aumentam →; carga “pesado” ←→ “leve”; descanso longo → curto.</li>
+              <li><b>Tipografia:</b> título impactante (ex.: Roboto Slab/Playfair Display Black) + apoio em Inter/Montserrat em CAIXA ALTA.</li>
+            </ul>
+            <div class="chips">
+              <span class="chip"><b>Layout:</b> limpo</span>
+              <span class="chip"><b>Contraste:</b> alto</span>
+              <span class="chip"><b>Leitura:</b> 3 segundos</span>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="grid2">
+        <section class="card">
+          <div class="hd">
+            <h2>Copy e ganchos (para legenda e capa)</h2>
+            <span class="badge">salvável</span>
+          </div>
+          <div class="bd">
+            <div class="callout">
+              <strong>Ganchos (escolha 1):</strong>
+              <ul class="list">
+                <li>“Se você sempre ‘chuta a carga’, isso aqui vai destravar teu treino.”</li>
+                <li>“Mais peso ≠ mais resultado. Peso certo = objetivo certo.”</li>
+                <li>“O erro não é a carga: é o <b>descanso</b> que você tá usando.”</li>
+                <li>“Quer força? Então pare de descansar 45s.”</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <strong>Legenda curta (modelo):</strong>
+              <div class="scriptbox" id="captionText" style="margin-top:10px">
+                <pre>Quanto peso usar nas repetições?
+
+A resposta certa começa aqui: QUAL é o objetivo da sua série?
+
+FORÇA → 1–5 reps | carga alta | 3–5 min
+HIPERTROFIA → 6–12 reps | carga moderada | 2–3 min
+RESISTÊNCIA → 12–20+ reps | carga leve | 1–2 min
+
+Dica prática: ajuste pela sensação (RIR/RPE).
+Se sobrou muita repetição, aumente. Se você morre antes do alvo, reduza ou descanse mais.
+
+Salve pra consultar no treino.
+Comente: FORÇA, HIPERTROFIA ou RESISTÊNCIA?</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <h2>CTA</h2>
+            <span class="badge">1 primário + 1 secundário</span>
+          </div>
+          <div class="bd">
+            <ul class="list">
+              <li><b>CTA primário (salvável):</b> “Salve para consultar no treino.”</li>
+              <li><b>CTA secundário (comentário):</b> “Comente seu objetivo: força, hipertrofia ou resistência?”</li>
+              <li><b>CTA conversão (direct):</b> “Manda ‘MAPA’ no direct que eu te digo como ajustar no seu treino.”</li>
+              <li><b>Compartilhamento:</b> “Envie pra quem treina sempre na dúvida da carga.”</li>
+            </ul>
+            <div class="callout">
+              <strong>Regra:</strong>
+              <div class="small">Se o objetivo é alcance: foque em “compartilhe”. Se é lead: foque em palavra-chave no direct.</div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação (produção rápida)</h2>
+          <span class="badge">pré / durante / pós</span>
+        </div>
+        <div class="bd">
+          <div class="grid2">
+            <div>
+              <div class="callout">
+                <strong>Pré (estratégia)</strong>
+                <ul class="list">
+                  <li>Definir objetivo do post: <b>salvamento</b> (consultável).</li>
+                  <li>Escolher 3 categorias comparáveis (aqui: força/hipertrofia/resistência).</li>
+                  <li>Definir 3 variáveis fixas: reps, carga, descanso.</li>
+                  <li>Validar termos: usar “faixas mais comuns” para evitar absolutismo.</li>
+                </ul>
+              </div>
+              <div class="callout">
+                <strong>Durante (design)</strong>
+                <ul class="list">
+                  <li>Aplicar grid de 3 colunas + divisórias pontilhadas.</li>
+                  <li>Números âncora gigantes e pouca frase por slide.</li>
+                  <li>Cores consistentes: verde/laranja/azul em todos os slides.</li>
+                  <li>Ícones no mesmo estilo e tamanho.</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <div class="callout">
+                <strong>Pós (publicação)</strong>
+                <ul class="list">
+                  <li>Legenda com 1 gancho + mapa resumido + CTA salvar.</li>
+                  <li>Fixar comentário com a pergunta: “Qual seu objetivo hoje?”</li>
+                  <li>Stories: repost + enquete (força/hipertrofia/resistência).</li>
+                  <li>Responder comentários com micro-auditoria: “qual exercício e quantas reps você fez?”</li>
+                </ul>
+              </div>
+              <div class="callout">
+                <strong>Checklist técnico</strong>
+                <ul class="list">
+                  <li>Arquivo 1080×1350; exportar PNG.</li>
+                  <li>Contraste AA (texto claro no escuro, sem cinza fraco).</li>
+                  <li>Espaço de respiro: não encostar texto nas bordas.</li>
+                  <li>Revisar: ortografia + unidades (min) + consistência.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações (para repetir sem ficar igual)</h2>
+          <span class="badge">5 ideias</span>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><b>Variação temática:</b> “Qual descanso usar entre séries?” (mesma estética: 3 colunas por objetivo).</li>
+            <li><b>Variação por músculo:</b> “Reps e descanso para glúteo vs costas vs peito” (3 colunas por grupo muscular).</li>
+            <li><b>Variação por nível:</b> iniciante/intermediário/avançado (ajustando RIR e volume).</li>
+            <li><b>Variação por método:</b> “Quando usar falha, drop-set e rest-pause” (colunas = métodos; linhas = quando/como/risco).</li>
+            <li><b>Variação ‘erro comum’:</b> capa: “Seu treino não evolui por causa disso: descanso errado”.</li>
+          </ol>
+        </div>
+      </section>
+
+      <div class="footer">Arquivo interno — roteiro e página de produção (fundo escuro + visual high-tech).</div>
+    </main>
+  </div>
+
+<script>
+  function copyFrom(elId){
+    const el = document.getElementById(elId);
+    const text = el ? el.innerText : "";
+    if(!text) return;
+    navigator.clipboard.writeText(text).then(()=>{
+      const btn = document.getElementById('copyBtn');
+      if(btn && elId==='scriptText'){
+        const old = btn.textContent;
+        btn.textContent = 'Copiado!';
+        setTimeout(()=>btn.textContent = old, 1200);
+      }
+      const btn2 = document.getElementById('copyCaptionBtn');
+      if(btn2 && elId==='captionText'){
+        const old2 = btn2.textContent;
+        btn2.textContent = 'Copiado!';
+        setTimeout(()=>btn2.textContent = old2, 1200);
+      }
+    });
+  }
+  document.getElementById('copyBtn').addEventListener('click', ()=>copyFrom('scriptText'));
+  document.getElementById('copyCaptionBtn').addEventListener('click', ()=>copyFrom('captionText'));
+</script>
+</body>
+</html>
