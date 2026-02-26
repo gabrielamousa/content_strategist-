@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 13 — Carrossel reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card:#0C1426cc;
+      --card2:#0B1222;
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --line:rgba(255,255,255,.10);
+      --shadow: 0 12px 30px rgba(0,0,0,.45);
+      --r16:16px;
+      --r12:12px;
+      --g1: linear-gradient(135deg, #21E6A6 0%, #2E7DFF 45%, #FF8A2A 100%);
+      --g2: linear-gradient(135deg, rgba(33,230,166,.22), rgba(46,125,255,.18), rgba(255,138,42,.16));
+      --g3: radial-gradient(900px 420px at 15% 10%, rgba(46,125,255,.18), transparent 60%),
+            radial-gradient(800px 420px at 90% 15%, rgba(33,230,166,.14), transparent 60%),
+            radial-gradient(800px 420px at 70% 90%, rgba(255,138,42,.12), transparent 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g3), linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+
+    header{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(12,20,38,.70), rgba(12,20,38,.35));
+      box-shadow: var(--shadow);
+      border-radius: 20px;
+      padding: 18px 18px;
+      position: relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(18px);
+      opacity:.9;
+      z-index:0;
+    }
+    header > *{position:relative;z-index:1}
+
+    .topline{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+    .badges{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .badge{
+      border:1px solid var(--line);
+      background: rgba(7,10,15,.55);
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing:.2px;
+    }
+    .badge strong{color:var(--text);font-weight:650}
+
+    h1{
+      margin: 12px 0 8px;
+      font-size: clamp(22px, 3.2vw, 34px);
+      line-height:1.12;
+      letter-spacing:-.02em;
+    }
+    .sub{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height:1.5;
+      max-width: 82ch;
+    }
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{
+      appearance:none;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:650;
+      font-size: 14px;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    }
+    .btn:hover{background: rgba(255,255,255,.09);border-color: rgba(255,255,255,.16)}
+    .btn:active{transform: translateY(1px)}
+    .btnPrimary{
+      border: none;
+      background: var(--g1);
+      color: #081018;
+    }
+    .btnPrimary:hover{filter:saturate(1.05) brightness(1.02)}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+    @media(min-width: 920px){
+      .grid{grid-template-columns: 1.05fr .95fr}
+    }
+
+    .card{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(12,20,38,.72), rgba(12,20,38,.38));
+      box-shadow: var(--shadow);
+      border-radius: var(--r16);
+      padding: 16px;
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(700px 260px at 20% 0%, rgba(46,125,255,.13), transparent 60%),
+                  radial-gradient(700px 260px at 90% 10%, rgba(33,230,166,.10), transparent 60%),
+                  radial-gradient(700px 260px at 50% 120%, rgba(255,138,42,.08), transparent 60%);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .card > *{position:relative;z-index:1}
+
+    h2{
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing:.02em;
+      text-transform: uppercase;
+      color: rgba(234,240,255,.88);
+    }
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .pill{
+      border: 1px solid var(--line);
+      background: rgba(7,10,15,.45);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .pill .t{color: var(--muted);font-size:12px}
+    .pill .v{margin-top:4px;font-weight:700}
+
+    .list{margin: 0;padding-left: 18px;color: rgba(234,240,255,.92)}
+    .list li{margin: 7px 0;line-height:1.45}
+    .muted{color: var(--muted)}
+    .hr{height:1px;background: var(--line);margin: 12px 0}
+
+    .script{
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.55;
+      background: rgba(7,10,15,.55);
+      border: 1px solid rgba(255,255,255,.12);
+      border-left: 3px solid rgba(46,125,255,.7);
+      padding: 12px;
+      border-radius: 12px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .tag{
+      display:inline-block;
+      font-size:12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(234,240,255,.88);
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .slides{counter-reset: s}
+    .slide{
+      border:1px solid var(--line);
+      background: rgba(7,10,15,.40);
+      border-radius: 14px;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    .slide h3{
+      margin:0;
+      font-size: 14px;
+      color: rgba(234,240,255,.95);
+      letter-spacing:.01em;
+    }
+    .slide h3:before{
+      counter-increment: s;
+      content: "Slide " counter(s) " — ";
+      color: rgba(169,180,208,.95);
+      font-weight:650;
+    }
+    .slide p{margin:6px 0 0;color: var(--muted);line-height:1.5;font-size: 13.5px}
+
+    .footerNote{
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      border:1px dashed rgba(255,255,255,.16);
+      color: var(--muted);
+      background: rgba(7,10,15,.35);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badges">
+          <div class="badge"><strong>Nicho:</strong> Educador Físico</div>
+          <div class="badge"><strong>Dia:</strong> 13</div>
+          <div class="badge"><strong>Formato:</strong> Carrossel</div>
+          <div class="badge"><strong>Pilar:</strong> Passo a passo</div>
+        </div>
+        <div class="badge" style="max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+          <strong>Original:</strong> <a href="https://www.instagram.com/p/DPFkNEXjftX/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DPFkNEXjftX/</a>
+        </div>
+      </div>
+      <h1>Carrossel “dump” de treino: 11 fotos que contam a história</h1>
+      <p class="sub">Versão reproduzível do carrossel fotográfico (sem texto na arte): transforma fotos soltas em narrativa com retenção + CTA, mantendo estética clean/high-tech. Ideal para mostrar bastidores/rotina de treino, alunos, eventos, avaliações, ou “um dia de atendimento”.</p>
+      <div class="actions">
+        <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+        <a class="btn" href="#slides">Ver slides sugeridos</a>
+        <a class="btn" href="#checklist">Ir para checklist</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="resumo">
+        <h2>Resumo</h2>
+        <div class="kpi">
+          <div class="pill"><div class="t">Objetivo</div><div class="v">Narrativa visual + conexão</div></div>
+          <div class="pill"><div class="t">Quantidade</div><div class="v">8–12 slides (ideal: 11)</div></div>
+          <div class="pill"><div class="t">Regra de retenção</div><div class="v">Trocar plano a cada 2–3 slides</div></div>
+          <div class="pill"><div class="t">Pico</div><div class="v">1 “foto assinatura” (clímax)</div></div>
+        </div>
+        <div class="hr"></div>
+        <ul class="list">
+          <li><strong>O que esse formato faz:</strong> entrega um “resumo do dia” (emocional/aspiracional) sem precisar de texto grande.</li>
+          <li><strong>Como adaptar para Educador Físico:</strong> treino em si (ação), bastidores (rotina), pessoas (alunos/equipe), prova do contexto (equipamentos/ambiente), e fechamento (resultado/sensação).</li>
+          <li><strong>CTA de baixo atrito:</strong> comentário com número do slide favorito ou “quer a lista do treino/rotina?”</li>
+        </ul>
+      </section>
+
+      <section class="card" id="estrutura">
+        <h2>Estrutura (sequência)</h2>
+        <div class="tag">Gancho visual</div><div class="tag">Ritmo</div><div class="tag">Prova social</div><div class="tag">Clímax</div><div class="tag">Fechamento leve</div>
+        <div class="hr"></div>
+        <ol class="list">
+          <li><strong>Abertura (hero shot):</strong> melhor foto do cenário/ação do dia.</li>
+          <li><strong>Ação:</strong> movimento (execução, salto, sprint, corda, sled, etc.).</li>
+          <li><strong>Rosto/conexão:</strong> você ou aluno (selfie/close natural).</li>
+          <li><strong>Detalhe inesperado:</strong> objeto, detalhe do setup, suplemento, cronômetro, playlist, planilha.</li>
+          <li><strong>Contexto/experiência:</strong> ambiente (academia, box, parque, consultório, evento).</li>
+          <li><strong>Clímax emocional:</strong> foto “assinatura” (pós-treino, pôr do sol corrida, conquista, PR, abraço).</li>
+          <li><strong>Cartão postal:</strong> plano aberto do local (com pessoas pequenas no frame).</li>
+          <li><strong>Companhia:</strong> aluno/equipe/família (humaniza).</li>
+          <li><strong>Encerramento contemplativo:</strong> fim do dia (calma).</li>
+          <li><strong>Extra (1):</strong> refeição/lanche/recuperação (sem papo de dieta milagrosa).</li>
+          <li><strong>Extra (2/humor):</strong> espontâneo/erro/bastidor.</li>
+        </ol>
+      </section>
+
+      <section class="card" id="roteiro">
+        <h2>Roteiro (reproduzível)</h2>
+        <p class="muted" style="margin-top:-4px">Use isso como template fixo. Troque apenas o conteúdo (fotos) e 1 linha de legenda por slide (opcional).</p>
+        <div class="script" id="scriptText">CARROSSEL (9:16) — “DUMP DE TREINO”
+
+[CAPA / S1]
+• Foto: melhor imagem do dia (ação ou ambiente bonito).
+• Texto (opcional, 3–6 palavras): “Treino em 11 fotos” / “Meu dia de atendimentos” / “Dump do treino”.
+
+[S2 — AÇÃO]
+• Foto: movimento (execução real, sem pose travada).
+• Microtexto (opcional): “hoje teve intensidade”.
+
+[S3 — ROSTO / CONEXÃO]
+• Foto: selfie/close (você ou aluno).
+• Microtexto: “energia lá em cima”.
+
+[S4 — DETALHE INESPERADO]
+• Foto: detalhe (timer, caderno, halter, tênis, piso, suor, mapa da corrida).
+• Microtexto: “o detalhe que muda tudo”.
+
+[S5 — CONTEXTO]
+• Foto: ambiente (academia/box/parque/evento).
+• Microtexto: “onde acontece”.
+
+[S6 — CLÍMAX]
+• Foto: seu “frame assinatura” (PR, pós-treino, pôr do sol, conquista).
+• Microtexto: “meu momento favorito”.
+
+[S7 — PLANO ABERTO]
+• Foto: local/cenário (perspectiva ampla).
+• Microtexto: “não é só treino”.
+
+[S8 — COMPANHIA]
+• Foto: aluno/equipe/família (prova social + afeto).
+• Microtexto: “com quem eu construo isso”.
+
+[S9 — FECHAMENTO]
+• Foto: final do dia (calmo/contém respiro).
+• Microtexto: “fim”.
+
+[S10 — EXTRA 1 (RECUPERAÇÃO)]
+• Foto: refeição/ou descanso/rotina de recuperação.
+• Microtexto: “recuperar também é treino”.
+
+[S11 — EXTRA 2 (LEVEZA)]
+• Foto: espontâneo/humor/bastidor.
+• Microtexto: “vida real”.
+
+LEGENDA (3 blocos)
+1) 1 frase de contexto: “Resumo do meu dia em 11 fotos.”
+2) 1 frase de valor: “Quer que eu poste o treino completo/rotina por trás?”
+3) CTA: “Comenta o número do slide que você mais curtiu + ‘TREINO’ que eu mando o modelo.”</div>
+      </section>
+
+      <section class="card" id="elementos-visuais">
+        <h2>Elementos visuais</h2>
+        <ul class="list">
+          <li><strong>Unidade estética:</strong> escolha 1 preset (mesma temperatura/contraste) para todos os slides.</li>
+          <li><strong>Ritmo:</strong> alterne <em>plano aberto</em> → <em>ação</em> → <em>close</em> → <em>detalhe</em>.</li>
+          <li><strong>“Foto assinatura”:</strong> reserve o melhor frame para o Slide 6 (pico emocional).</li>
+          <li><strong>Texto mínimo (se usar):</strong> branco com sombra suave ou tarja preta 20–30% (para não “matar” a foto).</li>
+          <li><strong>Guides:</strong> mantenha rostos fora das áreas de UI (topo e base do IG).</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="footerNote"><strong>Dica pró:</strong> se o post for 100% fotos, deixe a narrativa acontecer na legenda e use texto na arte só na capa (ou em 2–3 microlegendas no máximo).</div>
+      </section>
+
+      <section class="card" id="copy-ganchos">
+        <h2>Copy e ganchos</h2>
+        <p class="muted" style="margin-top:-4px">Ganchos curtos para a legenda/capa, sem parecer anúncio.</p>
+        <div class="hr"></div>
+        <ul class="list">
+          <li><strong>Gancho 1 (curiosidade):</strong> “Um dia de treino em 11 frames (o 6º é meu favorito).”</li>
+          <li><strong>Gancho 2 (rotina real):</strong> “Bastidores do que quase ninguém vê: aquecimento, detalhe, recuperação.”</li>
+          <li><strong>Gancho 3 (prova social):</strong> “O melhor do dia foi ver a evolução acontecendo ao vivo.”</li>
+          <li><strong>Gancho 4 (microtransformação):</strong> “Não foi o treino perfeito. Foi o treino feito.”</li>
+          <li><strong>Gancho 5 (educação leve):</strong> “Detalhe do dia: por que eu sempre fotografo esse ‘pedacinho’ do treino.”</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="muted"><strong>Comentários que puxam conversa:</strong> “Qual slide você repetiu?” • “Você é mais time ação (2) ou time detalhe (4)?”</p>
+      </section>
+
+      <section class="card" id="cta">
+        <h2>CTA</h2>
+        <ul class="list">
+          <li><strong>Comentário (padrão):</strong> “Qual foto você mais curtiu: 1, 6 ou 9? Comenta o número.”</li>
+          <li><strong>Comentário (captura de lead leve):</strong> “Quer o treino/rotina por trás desse dia? Comenta ‘TREINO’.”</li>
+          <li><strong>Salvamento:</strong> “Salva pra usar de referência quando você for registrar seu treino.”</li>
+          <li><strong>Compartilhamento:</strong> “Envia pra alguém que precisa voltar a treinar sem complicar.”</li>
+        </ul>
+      </section>
+
+      <section class="card" id="checklist">
+        <h2>Checklist de criação</h2>
+        <ul class="list">
+          <li><strong>Formato:</strong> 9:16 (1080×1920), fotos verticais.</li>
+          <li><strong>Quantidade:</strong> 8–12 slides (ideal 11).</li>
+          <li><strong>Seleção:</strong> 1 hero + 1 ação + 1 close + 1 detalhe + 1 contexto + 1 pico + 1 aberto + 1 companhia + 1 fechamento + 2 extras.</li>
+          <li><strong>Ritmo:</strong> trocar assunto/ângulo a cada 2–3 slides.</li>
+          <li><strong>Qualidade:</strong> luz coerente (evite misturar noite amarela com dia azul sem correção).</li>
+          <li><strong>Texto na arte:</strong> opcional; se usar, só capa + 2–3 microfrases.</li>
+          <li><strong>Legenda:</strong> 3 blocos (contexto → valor → CTA).</li>
+          <li><strong>Acessibilidade:</strong> adicionar texto alternativo (descrição breve das fotos) no IG.</li>
+        </ul>
+      </section>
+
+      <section class="card" id="variacoes">
+        <h2>Variações (para repetir sem ficar igual)</h2>
+        <ul class="list">
+          <li><strong>Variação A — “Dia de alunos”:</strong> capa com o ambiente + slides de evolução + depoimento curto na legenda.</li>
+          <li><strong>Variação B — “Treino + técnica”:</strong> coloque microtexto em 3 slides com dicas (ex.: “erro comum”, “cue”, “respiração”).</li>
+          <li><strong>Variação C — “Antes/Depois do dia”:</strong> S1 “antes” (setup) e S9 “depois” (fim, sensação, rotina de recuperação).</li>
+          <li><strong>Variação D — “Evento/viagem de trabalho”:</strong> bastidores + networking + palco/aula + pós-evento.</li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card" id="slides" style="margin-top:14px">
+      <h2>Slides sugeridos (1..11)</h2>
+      <div class="slides">
+        <div class="slide"><h3>Gancho (hero)</h3><p>Melhor foto do dia. Se quiser texto: “Dump do treino” / “Dia de atendimentos”.</p></div>
+        <div class="slide"><h3>Ação</h3><p>Movimento real (execução, corrida, salto, corda, sled). Aumenta retenção.</p></div>
+        <div class="slide"><h3>Close / pessoa</h3><p>Rosto cria conexão. Pode ser você, aluno (com autorização) ou equipe.</p></div>
+        <div class="slide"><h3>Detalhe</h3><p>Timer, carga, tênis, planilha, mão no giz, suor. “O detalhe que muda tudo”.</p></div>
+        <div class="slide"><h3>Contexto</h3><p>Ambiente (academia/box/parque). Reforça identidade e consistência.</p></div>
+        <div class="slide"><h3>Clímax</h3><p>Seu frame assinatura. O “slide salvável/compartilhável”.</p></div>
+        <div class="slide"><h3>Plano aberto</h3><p>Local com respiro. Ajuda a não ficar repetitivo.</p></div>
+        <div class="slide"><h3>Companhia / prova social</h3><p>Aluno/equipe/família. Humaniza e aumenta permanência.</p></div>
+        <div class="slide"><h3>Fechamento</h3><p>Fim de dia mais contemplativo. Dá sensação de história completa.</p></div>
+        <div class="slide"><h3>Extra 1 (recuperação)</h3><p>Refeição/sono/mobilidade. Sem promessas extremas.</p></div>
+        <div class="slide"><h3>Extra 2 (vida real)</h3><p>Humor/erro/bastidor. Fecha leve e autêntico.</p></div>
+      </div>
+      <div class="footerNote"><strong>Observação:</strong> se você não quiser aparecer, substitua os slides de “rosto/companhiа” por detalhe + contexto (mas mantenha pelo menos 1 elemento humano: mão, sombra, silhueta).</div>
+    </section>
+
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+      function copy(){
+        const value = text.innerText;
+        if(navigator.clipboard && window.isSecureContext){
+          navigator.clipboard.writeText(value);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = value;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          ta.style.top = '-9999px';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          try{ document.execCommand('copy'); }catch(e){}
+          document.body.removeChild(ta);
+        }
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
