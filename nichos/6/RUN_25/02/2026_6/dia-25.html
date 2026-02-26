@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 25 — Educador Físico</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --panel:#0f1622;
+      --panel2:#0c1320;
+      --text:#e7eefc;
+      --muted:#9fb0cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --g1: linear-gradient(90deg, #21d07a, #2aa6ff, #ff8a2a);
+      --g2: linear-gradient(135deg, rgba(33,208,122,.16), rgba(42,166,255,.16), rgba(255,138,42,.14));
+      --ok:#21d07a;
+      --warn:#ff8a2a;
+      --info:#2aa6ff;
+      --danger:#ff4d6d;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(900px 500px at 20% -10%, rgba(42,166,255,.22), transparent 55%),
+        radial-gradient(800px 520px at 90% 0%, rgba(255,138,42,.18), transparent 55%),
+        radial-gradient(900px 520px at 30% 110%, rgba(33,208,122,.16), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family:var(--sans);
+      line-height:1.45;
+    }
+
+    .wrap{max-width:1100px; margin:0 auto; padding:24px 18px 56px;}
+
+    header{
+      position:relative;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      padding:18px;
+    }
+
+    header:before{
+      content:"";
+      position:absolute; inset:0;
+      background: var(--g2);
+      opacity:.9;
+      pointer-events:none;
+      mask-image: radial-gradient(600px 220px at 20% 0%, black 35%, transparent 70%);
+    }
+
+    .head-grid{display:grid; grid-template-columns: 1.4fr .9fr; gap:14px; position:relative;}
+    @media (max-width: 900px){ .head-grid{grid-template-columns:1fr;}}
+
+    .kicker{
+      display:flex; flex-wrap:wrap; gap:10px;
+      align-items:center;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .pill{
+      border:1px solid var(--stroke2);
+      background: rgba(15,22,34,.55);
+      padding:6px 10px;
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+    }
+
+    h1{
+      margin:10px 0 6px;
+      font-size: clamp(20px, 3.2vw, 30px);
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle{margin:0; color:var(--muted); font-size:14px; max-width:60ch;}
+
+    .actions{
+      display:flex; gap:10px; justify-content:flex-end; align-items:flex-start; flex-wrap:wrap;
+    }
+    @media (max-width: 900px){ .actions{justify-content:flex-start;}}
+
+    a.btn, button.btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:10px 12px;
+      border-radius: 12px;
+      color:var(--text);
+      background: rgba(15,22,34,.7);
+      border:1px solid var(--stroke2);
+      text-decoration:none;
+      font-weight:600;
+      font-size:14px;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      box-shadow: 0 10px 28px rgba(0,0,0,.35);
+    }
+    a.btn:hover, button.btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.22); background: rgba(15,22,34,.85);}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(33,208,122,.18), rgba(42,166,255,.18), rgba(255,138,42,.16));
+      border-color: rgba(255,255,255,.18);
+    }
+
+    main{margin-top:16px; display:grid; grid-template-columns: 1fr 1fr; gap:14px;}
+    @media (max-width: 980px){ main{grid-template-columns:1fr;} }
+
+    section.card{
+      border:1px solid var(--stroke);
+      background: rgba(15,22,34,.55);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .card .hd h2{margin:0; font-size:15px; letter-spacing:.02em; text-transform:uppercase; color:rgba(231,238,252,.92);}
+
+    .tag{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background: rgba(10,15,20,.35);
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    .card .bd{padding:14px 16px; color:rgba(231,238,252,.92)}
+    .muted{color:var(--muted)}
+
+    ul, ol{margin:10px 0 0 18px; padding:0}
+    li{margin:6px 0}
+
+    .grid-1{grid-column: 1 / -1;}
+
+    .script{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,15,20,.35);
+      border-radius: 16px;
+      padding:14px;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow:auto;
+    }
+
+    .accent{
+      background: var(--g1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media (max-width: 700px){ .cols{grid-template-columns:1fr;} }
+
+    .callout{
+      border:1px solid var(--stroke);
+      background: rgba(12,19,32,.55);
+      border-radius: 16px;
+      padding:12px 12px;
+    }
+    .callout strong{display:block; margin-bottom:6px;}
+
+    .checklist{list-style:none; margin:0; padding:0;}
+    .checklist li{
+      margin:8px 0;
+      padding:10px 10px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(10,15,20,.28);
+      display:flex; gap:10px; align-items:flex-start;
+    }
+    .box{width:18px; height:18px; border-radius:5px; border:1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.04); flex: 0 0 auto; margin-top:1px;}
+
+    .footer-note{margin-top:10px; color:var(--muted); font-size:12px;}
+
+    .mini{font-size:12px; color:var(--muted)}
+    .divider{height:1px; background: rgba(255,255,255,.08); margin:12px 0;}
+
+    .toast{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(15,22,34,.92);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .18s ease, transform .18s ease;
+      pointer-events:none;
+      font-size: 13px;
+    }
+    .toast.show{opacity:1; transform: translateY(0);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-grid">
+        <div>
+          <div class="kicker">
+            <span class="pill"><strong>Nicho:</strong> Educador Físico</span>
+            <span class="pill"><strong>Dia:</strong> 25</span>
+            <span class="pill"><strong>Formato:</strong> Reels</span>
+            <span class="pill"><strong>Pilar:</strong> Erro comum</span>
+          </div>
+          <h1><span class="accent">5 ajustes</span> no supino inclinado pra pegar peito (não ombro)</h1>
+          <p class="subtitle">Roteiro reproduzível com hook de risco + promessa clara + passo a passo numerado com medidas/ângulos. Editável para qualquer exercício.</p>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DUipou3kQ9X/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">DNA do engajamento</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="callout">
+              <strong class="accent">Por que funciona</strong>
+              <ul>
+                <li><strong>Hook polêmico + medo</strong> (risco imediato) prende atenção.</li>
+                <li><strong>Promessa prática</strong>: mais resultado + menos dor no mesmo vídeo.</li>
+                <li><strong>5 passos numerados</strong> mantêm retenção (a pessoa espera o próximo).</li>
+                <li><strong>Medidas claras</strong> (ângulo/dedos/referência) passam autoridade e são testáveis na hora.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <strong class="accent">Quando usar esse modelo</strong>
+              <ul>
+                <li>Exercício popular com execução “quase certa”, mas que vira outro músculo.</li>
+                <li>Erro comum que gera dor (ombro, lombar, joelho) ou trava progresso.</li>
+                <li>Conteúdo que precisa ser <em>demonstrado</em> em cortes rápidos.</li>
+              </ul>
+              <div class="divider"></div>
+              <p class="mini"><strong>Duração:</strong> 25–40s • <strong>Cortes:</strong> a cada 1–2 frases • <strong>Meta:</strong> pessoa salvar para testar no treino.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="tag">sequência fixa</span>
+        </div>
+        <div class="bd">
+          <ol>
+            <li><strong>Hook (1–2s)</strong>: risco + acusação leve (“você tá fazendo virar X”).</li>
+            <li><strong>Promessa (1–2s)</strong>: “em 5 ajustes” + benefício duplo (“mais A, menos B”).</li>
+            <li><strong>Passos 1–5 (18–30s)</strong>: numerados, cada um com demonstração e medida.</li>
+            <li><strong>Confirmação (1–2s)</strong>: “agora sim você tá sentindo no lugar certo”.</li>
+            <li><strong>Fechamento (2–4s)</strong>: energia + bordão + CTA (salvar/comentar/marcar).</li>
+          </ol>
+          <div class="divider"></div>
+          <p class="muted"><strong>Regra de ouro:</strong> do ajuste “grande” (setup/posicionamento) para o “fino” (trajeto, punho, cotovelo), para dar sensação de evolução.</p>
+        </div>
+      </section>
+
+      <section class="card grid-1">
+        <div class="hd">
+          <h2>Roteiro</h2>
+          <span class="tag">falas + texto na tela</span>
+        </div>
+        <div class="bd">
+          <div class="script" id="scriptText">ROTEIRO (Reels 25–40s) — “5 ajustes”
+
+[0:00–0:02 | HOOK | texto grande na tela]
+Fala: “Ah sim… desse jeito você vai machucar o ombro.”
+Fala: “E o pior: tá trabalhando mais ombro do que peito sem perceber.”
+Texto na tela (2 linhas):
+1) “Vai machucar o ombro”
+2) “Supino inclinado virando ombro”
+
+[0:02–0:04 | PROMESSA]
+Fala: “Quer pegar peito no supino inclinado? Faz esses 5 ajustes rápidos.”
+Fala: “Mais peito, menos ombro e menos chance de dor.”
+
+[0:04–0:09 | PASSO 1/5 — Setup grande]
+Fala: “Passo 1: inclinação do banco. Não passa de 30 graus.”
+Fala: “45° normalmente rouba pro deltoide.”
+Texto: “PASSO 1/5 • Banco: até 30° (evite 45°)”
+Visual: close no ângulo do banco; corte rápido mostrando 30° vs 45°.
+
+[0:09–0:14 | PASSO 2/5 — Centralização]
+Fala: “Passo 2: centraliza o corpo no banco.”
+Fala: “Deixa tipo 4 dedos de cada lado pra ficar simétrico.”
+Texto: “PASSO 2/5 • Banco centralizado • 4 dedos de cada lado”
+Visual: close no tronco/ombros alinhados no banco; setas laterais.
+
+[0:14–0:20 | PASSO 3/5 — Ponto de toque]
+Fala: “Passo 3: a barra desce num ponto consistente.”
+Fala: “Pensa em 2 dedos acima do mamilo — não confirma lá em cima no ombro.”
+Texto: “PASSO 3/5 • Barra: 2 dedos acima do mamilo”
+Visual: marcação rápida com linha/seta no ponto de toque.
+
+[0:20–0:26 | PASSO 4/5 — Punho/pegada]
+Fala: “Passo 4: punho reto. Não deixa quebrar pra trás.”
+Fala: “Polegar fechado pra dar estabilidade.”
+Texto: “PASSO 4/5 • Punho reto • Polegar fechado”
+Visual: close no punho alinhado com o antebraço; comparação 1s certo/errado.
+
+[0:26–0:33 | PASSO 5/5 — Cotovelo]
+Fala: “Passo 5: cotovelo levemente à frente.”
+Fala: “Não deixa ele vir pra trás, senão o ombro assume.”
+Texto: “PASSO 5/5 • Cotovelo: levemente à frente”
+Visual: close no cotovelo com seta indicando direção; corte rápido do erro.
+
+[0:33–0:38 | CONFIRMAÇÃO + FECHAMENTO]
+Fala: “Pronto. Agora sim você tá no peito.”
+Fala: “Bora colocar peso.”
+Texto: “Agora sim: PEITO.”
+
+[0:38–0:40 | BORDÃO + CTA]
+Fala: “E lembra: passou de 15 é cardio.”
+Fala: “Salva esse vídeo pra testar no próximo treino.”
+Texto: “Salva pra testar no treino ✅”
+
+CTA de comentários (opcional): “Comenta ‘SUPINO’ que eu te mando os erros mais comuns.”</div>
+          <p class="footer-note">Dica de performance: fale como se estivesse corrigindo um aluno (frases curtas, imperativas: “repara”, “olha isso”, “faz assim”).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="tag">edição high-retention</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Abertura</strong>: texto gigante + zoom leve no rosto/barra (0,5s).</li>
+            <li><strong>Cada passo</strong>: corte seco + “PASSO X/5” grande + close do detalhe.</li>
+            <li><strong>Setas/linhas</strong>: simples (2–3 por cena), apontando ângulo, punho e cotovelo.</li>
+            <li><strong>Comparação</strong>: 1 segundo “errado vs certo” (sem humilhar, só mostrar).</li>
+            <li><strong>SFX</strong>: “click/pop” discreto a cada passo (opcional).</li>
+            <li><strong>Legenda dinâmica</strong>: destaque em cor para medidas (“30°”, “4 dedos”, “2 dedos”).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">substituível por tema</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="callout">
+              <strong class="accent">Modelos de hook (1–2s)</strong>
+              <ul>
+                <li>“Desse jeito você vai <strong>[dor/lesão]</strong>.”</li>
+                <li>“Você acha que tá treinando <strong>[músculo alvo]</strong>, mas tá jogando tudo em <strong>[músculo errado]</strong>.”</li>
+                <li>“Se seu <strong>[exercício]</strong> não evolui, provavelmente é por <strong>um detalhe</strong> aqui.”</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <strong class="accent">Promessas que mantêm o impacto</strong>
+              <ul>
+                <li>“Em <strong>5 ajustes</strong>: mais <strong>[resultado]</strong>, menos <strong>[compensação]</strong>, sem dor.”</li>
+                <li>“Checklist rápido pra você <strong>sentir no lugar certo</strong> hoje.”</li>
+                <li>“Corrige isso e seu <strong>[exercício]</strong> muda na hora.”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <p class="muted"><strong>Palavras-chave que aumentam retenção:</strong> “repara”, “olha isso”, “não faz assim”, “agora sim”, “na hora”, “2 dedos”, “30 graus”, “linha reta”.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="tag">1 primário + 1 secundário</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>CTA primário (melhor para esse formato):</strong> “Salva esse vídeo pra usar no treino.”</li>
+            <li><strong>CTA secundário (comentário):</strong> “Comenta ‘SUPINO’ que eu mando uma lista de erros comuns.”</li>
+            <li><strong>CTA social:</strong> “Marca o amigo que vive reclamando do ombro.”</li>
+            <li><strong>CTA de pesquisa:</strong> “Quer o próximo: supino reto ou desenvolvimento?”</li>
+          </ul>
+          <div class="divider"></div>
+          <p class="muted"><strong>Regra:</strong> peça só 1 ação principal. O resto é opcional e rápido.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist</h2>
+          <span class="tag">produção</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <strong class="accent">Pré-roteiro</strong>
+              <ul class="checklist">
+                <li><span class="box"></span><span>Escolher <strong>1 exercício comum</strong> + <strong>1 erro</strong> que causa dor ou rouba resultado.</span></li>
+                <li><span class="box"></span><span>Definir promessa em 1 frase: “mais <strong>A</strong>, menos <strong>B</strong>, sem dor”.</span></li>
+                <li><span class="box"></span><span>Listar <strong>5 passos</strong> com medidas/referências (ângulo, dedos, linha, ponto de toque).</span></li>
+                <li><span class="box"></span><span>Decidir 1 bordão/fecho curto (compartilhável).</span></li>
+              </ul>
+            </div>
+            <div>
+              <strong class="accent">Gravação + edição</strong>
+              <ul class="checklist">
+                <li><span class="box"></span><span>Gravar em cortes: <strong>1 passo = 1 take</strong> (mais fácil de editar).</span></li>
+                <li><span class="box"></span><span>Em cada passo: <strong>close do detalhe</strong> + 1s “certo vs errado”.</span></li>
+                <li><span class="box"></span><span>Inserir texto: “PASSO X/5” + medida destacada (ex.: “30°”).</span></li>
+                <li><span class="box"></span><span>Manter ritmo: sem pausas longas; cortar respirações.</span></li>
+                <li><span class="box"></span><span>Final: 1 frase de confirmação + bordão + CTA de salvar.</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card grid-1">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="tag">adaptações com o mesmo impacto</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="callout">
+              <strong class="accent">Trocas rápidas (template)</strong>
+              <ul>
+                <li><strong>[Exercício]</strong>: qualquer movimento popular (agachamento, elevação lateral, puxada, rosca, remada, leg press).</li>
+                <li><strong>[Consequência ruim]</strong>: dor/irritação (lombar, joelho, ombro) ou “não sente no músculo alvo”.</li>
+                <li><strong>[Músculo alvo]</strong> vs <strong>[compensação]</strong>: “quer X, mas vira Y”.</li>
+                <li><strong>[5 passos]</strong>: setup → posicionamento → trajeto → estabilidade → alavanca/ângulo.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <strong class="accent">Exemplos prontos para outros temas</strong>
+              <ul>
+                <li><strong>Elevação lateral</strong>: “tá virando trapézio” → 5 ajustes (cotovelo, punho, plano escapular, amplitude, tronco).</li>
+                <li><strong>Agachamento</strong>: “vai judiar do joelho/lombar” → 5 ajustes (base, respiração/bracing, joelho, tronco, profundidade).</li>
+                <li><strong>Puxada na barra</strong>: “tá virando bíceps” → 5 ajustes (depressão escapular, peito alto, cotovelo, pegada, ritmo).</li>
+                <li><strong>Prancha</strong>: “tá só esmagando a lombar” → 5 ajustes (pelve, costelas, ombros, respiração, tensão global).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <p class="muted"><strong>Se quiser manter o mesmo ‘DNA’:</strong> 1 hook de risco + 1 promessa em números + 5 passos demonstráveis + 1 bordão + CTA de salvar.</p>
+        </div>
+      </section>
+
+    </main>
+
+    <div class="toast" id="toast">Roteiro copiado.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        window.clearTimeout(window.__t);
+        window.__t = window.setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      btn.addEventListener('click', async ()=>{
+        const text = script.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
+          catch(err){ showToast('Não foi possível copiar.'); }
+          document.body.removeChild(ta);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
