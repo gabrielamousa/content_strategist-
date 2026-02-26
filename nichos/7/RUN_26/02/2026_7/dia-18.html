@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 18 — Estética — Roteiro reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.70);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --grad: linear-gradient(90deg, #2EF2A3 0%, #48A7FF 48%, #FFB14A 100%);
+      --grad2: radial-gradient(1200px 500px at 15% -10%, rgba(46,242,163,.22), transparent 60%),
+               radial-gradient(900px 500px at 85% 0%, rgba(72,167,255,.20), transparent 62%),
+               radial-gradient(900px 500px at 50% 110%, rgba(255,177,74,.16), transparent 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--grad2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:inherit; text-decoration:none;}
+    .wrap{max-width:1080px; margin:0 auto; padding:28px 16px 64px;}
+
+    header{
+      position:relative;
+      padding:18px 18px 16px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.04);
+      border-radius:var(--r20);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: conic-gradient(from 180deg, rgba(46,242,163,.22), rgba(72,167,255,.18), rgba(255,177,74,.20), rgba(46,242,163,.22));
+      filter: blur(18px);
+      opacity:.55;
+      z-index:0;
+    }
+    .head-inner{position:relative; z-index:1; display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;}
+    .kicker{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .pill{
+      font-size:12px;
+      letter-spacing:.25px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.18);
+      color:rgba(234,240,255,.86);
+    }
+    .pill strong{font-weight:650;}
+    .title{
+      margin:10px 0 0;
+      font-weight:760;
+      line-height:1.08;
+      font-size: clamp(22px, 3.3vw, 34px);
+    }
+    .sub{
+      margin:8px 0 0;
+      color:var(--muted);
+      line-height:1.45;
+      max-width:72ch;
+    }
+    .actions{display:flex; gap:10px; align-items:center;}
+    .btn{
+      cursor:pointer;
+      border-radius:12px;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      font-weight:650;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.085); border-color: rgba(255,255,255,.22);}
+    .btn.primary{
+      border: none;
+      background: var(--grad);
+      color:#061018;
+    }
+    .btn .icon{font-family:var(--mono); font-weight:800; opacity:.9;}
+    .link{
+      font-size:12.5px;
+      color: rgba(234,240,255,.78);
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px dashed rgba(255,255,255,.22);
+      background: rgba(0,0,0,.14);
+    }
+
+    .grid{display:grid; grid-template-columns: 1.05fr .95fr; gap:14px; margin-top:14px;}
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: var(--card);
+      border-radius: var(--r16);
+      box-shadow: 0 16px 46px rgba(0,0,0,.28);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:.35px; text-transform:uppercase; color: rgba(234,240,255,.78);}
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: rgba(234,240,255,.82);
+    }
+    .card .bd{padding:14px 16px 16px;}
+    .card p{margin:0 0 10px; color: var(--muted); line-height:1.55;}
+
+    .list{margin:0; padding:0; list-style:none; display:grid; gap:10px;}
+    .li{
+      padding:12px 12px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+    }
+    .li .t{font-weight:720; color: rgba(234,240,255,.92); margin-bottom:6px;}
+    .li .d{color: var(--muted2); line-height:1.5;}
+
+    .callout{
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,.10));
+      position:relative;
+      overflow:hidden;
+    }
+    .callout:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: var(--grad);
+      opacity:.10;
+      filter: blur(0px);
+      pointer-events:none;
+    }
+    .callout > *{position:relative; z-index:1;}
+
+    .code{
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color: rgba(234,240,255,.88);
+      background: rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media (max-width: 720px){ .cols{grid-template-columns:1fr;} }
+
+    .check{display:grid; gap:8px;}
+    .check label{display:flex; gap:10px; align-items:flex-start; color: var(--muted); line-height:1.45;}
+    .check input{margin-top:2px; accent-color: #48A7FF;}
+
+    .tiny{font-size:12px; color: rgba(234,240,255,.62); line-height:1.45;}
+    .hr{height:1px; background: rgba(255,255,255,.10); margin:10px 0 0;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-inner">
+        <div>
+          <div class="kicker">
+            <span class="pill"><strong>Nicho:</strong> Estética</span>
+            <span class="pill"><strong>Dia:</strong> 18</span>
+            <span class="pill"><strong>Formato:</strong> Reels</span>
+            <span class="pill"><strong>Pilar:</strong> Passo a passo</span>
+          </div>
+          <h1 class="title">Se você tem esse sinal na pele/cabelo… não é “normal”</h1>
+          <p class="sub">Roteiro reproduzível para transformar um sinal bem específico em diagnóstico (com autoridade), expandir o problema (lista), entregar causas simples, e concluir com solução prática + números + CTA orgânico.</p>
+          <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <a class="link" href="https://www.instagram.com/p/DTQ3hHwEadG/" target="_blank" rel="noopener noreferrer">Post original: https://www.instagram.com/p/DTQ3hHwEadG/</a>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn" type="button"><span class="icon">⧉</span>Copiar roteiro</button>
+          <button class="btn" id="toggleChecks" type="button"><span class="icon">⌁</span>Alternar checkboxes</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge">Objetivo: retenção + ação</span>
+        </div>
+        <div class="bd">
+          <div class="callout">
+            <p><strong>Ideia central:</strong> “Isso que parece detalhe/normalidade do dia a dia é um quadro comum e tratável.”</p>
+            <p><strong>Por que funciona:</strong> imagem mental forte (sinal específico) + lista que amplia identificação + nome técnico (autoridade) + números (credibilidade) + CTA alinhado ao alívio (“tem solução”).</p>
+          </div>
+          <div class="hr"></div>
+          <p style="margin-top:12px;"><strong>Use quando:</strong> você quer explicar um sintoma comum (pele/cabelo) de forma direta, sem aula, e conduzir para rotina/produto/avaliação.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="badge">15–35s</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><div class="t">1) Hook (0–2s)</div><div class="d">Sinal específico + curiosidade (“eu tenho uma notícia”). Sem introdução.</div></li>
+            <li class="li"><div class="t">2) Diagnóstico curto (2–6s)</div><div class="d">1 frase com causa provável/explicação simples (sem prometer diagnóstico médico).</div></li>
+            <li class="li"><div class="t">3) Expansão (6–12s)</div><div class="d">Lista rápida: onde mais aparece / quando piora / sinais associados.</div></li>
+            <li class="li"><div class="t">4) Autoridade (12–15s)</div><div class="d">Dê o nome técnico ou categoria (“isso é compatível com…”).</div></li>
+            <li class="li"><div class="t">5) Gatilhos (15–22s)</div><div class="d">2–4 causas do dia a dia (oleosidade, atrito, estresse, clima, produtos).</div></li>
+            <li class="li"><div class="t">6) Solução + números + CTA (22–35s)</div><div class="d">Rotina simples, frequência, custo/tempo/quantidade e chamada (comentar/DM/link/cupom).</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Roteiro</h2>
+          <span class="badge">Template + falas</span>
+        </div>
+        <div class="bd">
+          <div class="code" id="roteiroText">ROTEIRO (substituível por qualquer tema)
+
+[0–2s | HOOK]
+"Se você percebe [SINAL MUITO ESPECÍFICO] quando [SITUAÇÃO], presta atenção: eu tenho uma notícia pra te dar."
+
+[2–6s | DIAGNÓSTICO CURTO]
+"Na maioria das vezes, isso é [EXPLICAÇÃO SIMPLES] — e dá pra controlar com rotina certa."
+
+[6–12s | EXPANSÃO (LISTA RÁPIDA)]
+"E não aparece só em [LOCAL 1]. Pode aparecer também em: [LOCAL 2], [LOCAL 3], [LOCAL 4]…"
+
+[12–15s | AUTORIDADE]
+"O nome que a gente usa pra isso é [NOME TÉCNICO/CATEGORIA]."
+
+[15–22s | GATILHOS]
+"Normalmente piora com: (1) [GATILHO 1], (2) [GATILHO 2], (3) [GATILHO 3]…"
+
+[22–35s | SOLUÇÃO + NÚMEROS + CTA]
+"O que ajuda é: [PASSO 1] [FREQUÊNCIA], + [PASSO 2] por [PRAZO].
+Se você fizer direito, em [TEMPO REALISTA] já dá pra notar [BENEFÍCIO].
+Quer um passo a passo pro seu caso? Comenta '[PALAVRA-CHAVE]' ou me chama no direct."
+
+ON-SCREEN (texto curto por cena)
+1) "Se você tem [SINAL]…"
+2) "Pode ser [CAUSA SIMPLES]"
+3) "Onde aparece: [LISTA]"
+4) "Nome: [TERMO]"
+5) "Gatilhos: [3 itens]"
+6) "Rotina: [FREQUÊNCIA]"
+7) "Números: [R$/tempo/quantidade]"
+8) "CTA: comente '[PALAVRA]'"</div>
+          <p class="tiny" style="margin-top:10px;">Nota: use linguagem de “compatível com”/“muito comum” e ajuste números para o seu cenário real (ética + confiança).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="badge">Edição simples</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="li">
+              <div class="t">Captação (fácil)</div>
+              <div class="d">Plano médio + close rápido do “sinal” (ilustrativo). Se for sensível, use gráfico/texto + gesto apontando.</div>
+            </div>
+            <div class="li">
+              <div class="t">Edição que retém</div>
+              <div class="d">Jump cuts a cada frase; punch-in em “nome técnico”, “gatilhos”, “3x/semana”, “R$…”.</div>
+            </div>
+            <div class="li">
+              <div class="t">Texto na tela</div>
+              <div class="d">2–5 palavras por linha; destaque em cor para: causa, nome, números e CTA.</div>
+            </div>
+            <div class="li">
+              <div class="t">B-roll de apoio</div>
+              <div class="d">Produto/rotina (aplicação), banheiro/consultório, lista em tela, antes/depois (se tiver autorização).</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">Substituições prontas</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li"><div class="t">Hook “notícia” (principal)</div><div class="d">“Se você percebe <strong>[SINAL]</strong>, eu tenho uma notícia…”</div></li>
+            <li class="li"><div class="t">Hook “quebra-normal”</div><div class="d">“Isso que parece <strong>[ALGO INOFENSIVO]</strong> pode ser <strong>[EXPLICAÇÃO]</strong>.”</div></li>
+            <li class="li"><div class="t">Hook “pós-situação”</div><div class="d">“Se depois de <strong>[DEPILAÇÃO/BASE/SOL/PROCEDIMENTO]</strong> aparece <strong>[SINAL]</strong>, presta atenção.”</div></li>
+            <li class="li"><div class="t">Frase de retenção (lista)</div><div class="d">“E não é só em <strong>[LOCAL]</strong>… pode aparecer também em…”</div></li>
+            <li class="li"><div class="t">Autoridade sem soar “aula”</div><div class="d">“O nome que a gente usa pra isso é…” / “Isso é compatível com…”</div></li>
+            <li class="li"><div class="t">Números que aumentam confiança</div><div class="d">Frequência (3x/semana), prazo (7–14 dias), custo por uso, quantidade (1 pump), janela (24h de cupom).</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="badge">Orgânico</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div class="callout">
+              <p><strong>CTA de comentário (alto alcance):</strong><br>“Quer a rotina certinha? Comenta <strong>‘ROTINA’</strong> que eu te mando.”</p>
+              <p><strong>CTA de palavra-chave por tema:</strong><br>foliculite = “PELINHO” | acne = “OLEOSIDADE” | melasma = “MANCHAS” | sensibilidade = “ARDE”</p>
+            </div>
+            <div class="callout">
+              <p><strong>CTA de direct (qualificação):</strong><br>“Me chama no direct com <strong>‘EU TENHO’</strong> e me diz: há quanto tempo e onde aparece.”</p>
+              <p><strong>CTA de oferta (se fizer sentido):</strong><br>“Cupom <strong>[CUPOM]</strong> por 24h no link da bio.”</p>
+            </div>
+          </div>
+          <p class="tiny" style="margin-top:10px;">Dica: use 1 CTA principal + 1 secundário (salvar/compartilhar). Evite múltiplas ações no mesmo final.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist</h2>
+          <span class="badge">Criação → gravação → edição</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="li"><div class="t">Antes de gravar</div>
+                <div class="check" id="checksA">
+                  <label><input type="checkbox"> Escolhi 1 sinal muito específico e comum (visual/sensorial).</label>
+                  <label><input type="checkbox"> Escrevi 1 explicação curta em 1 frase (sem enrolar).</label>
+                  <label><input type="checkbox"> Listei 3–6 lugares/situações onde também aparece.</label>
+                  <label><input type="checkbox"> Separei 2–4 gatilhos do dia a dia.</label>
+                  <label><input type="checkbox"> Defini 1 solução simples + frequência + prazo.</label>
+                  <label><input type="checkbox"> Incluí 1 número real (tempo/custo/quantidade).</label>
+                  <label><input type="checkbox"> Defini CTA (comentário/DM/link/cupom) + palavra-chave.</label>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="li"><div class="t">Gravação + edição</div>
+                <div class="check" id="checksB">
+                  <label><input type="checkbox"> Hook nos 2 primeiros segundos (sem “oi, gente”).</label>
+                  <label><input type="checkbox"> Troquei a informação a cada 1–2s (principalmente na lista).</label>
+                  <label><input type="checkbox"> Usei texto na tela com palavras-chave + cor nos números.</label>
+                  <label><input type="checkbox"> Fiz punch-in em: causa, nome técnico, números, CTA.</label>
+                  <label><input type="checkbox"> Deixei tela final de CTA por 1–2s.</label>
+                  <label><input type="checkbox"> Revisei promessas (realista + alinhado ao serviço/produto).</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="tiny" style="margin-top:10px;">Se você atende clínica/estética: finalize com “Se persistir/piorar, procure avaliação profissional”.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="badge">Mesmo impacto, outro tema</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li">
+              <div class="t">Variação 1 — Foliculite pós-depilação</div>
+              <div class="d"><strong>Sinal:</strong> “pontinho vermelho que coça” • <strong>Lista:</strong> virilha, axila, pernas • <strong>Gatilhos:</strong> lâmina/atrito/suor • <strong>Solução:</strong> higienizar + esfoliação química leve em dias alternados + evitar roupa apertada (ajuste ao seu protocolo) • <strong>CTA:</strong> “Comenta ‘PELINHO’”.</div>
+            </li>
+            <li class="li">
+              <div class="t">Variação 2 — Descamação na sobrancelha/asa do nariz</div>
+              <div class="d"><strong>Sinal:</strong> “pelinhas que parecem ressecamento” • <strong>Lista:</strong> sobrancelha, canto do nariz, couro cabeludo • <strong>Nome:</strong> “dermatite/descamação” (conforme abordagem) • <strong>Números:</strong> frequência semanal • <strong>CTA:</strong> “Comenta ‘DESCAMA’”.</div>
+            </li>
+            <li class="li">
+              <div class="t">Variação 3 — Acne por oleosidade (sem demonizar)</div>
+              <div class="d"><strong>Sinal:</strong> “bolinhas na base/maquiagem craquelando” • <strong>Lista:</strong> testa, queixo, lateral do rosto • <strong>Gatilhos:</strong> sono/estresse/produtos comedogênicos • <strong>Solução:</strong> limpeza + ativo + protetor adequado • <strong>CTA:</strong> “Comenta ‘OLEOSIDADE’”.</div>
+            </li>
+            <li class="li">
+              <div class="t">Substituições rápidas (copiar/colar)</div>
+              <div class="d"><strong>[SINAL]</strong>: bolinhas, ardor, coceira, descamação, mancha recente, cravinhos “persistentes”, vermelhidão pós-sol.<br><strong>[SITUAÇÃO]</strong>: após banho, ao passar base, depois da depilação, no fim do dia, no frio, após procedimento.<br><strong>[NÚMEROS]</strong>: 3x/sem, 7 dias, 14 dias, 1 pump, 1 minuto, R$ por uso (real).</div>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const copyBtn = document.getElementById('copyBtn');
+    const roteiroText = document.getElementById('roteiroText');
+    copyBtn.addEventListener('click', async () => {
+      const text = roteiroText.innerText.trim();
+      try{
+        await navigator.clipboard.writeText(text);
+        const old = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<span class="icon">✓</span>Roteiro copiado';
+        setTimeout(() => copyBtn.innerHTML = old, 1400);
+      }catch(e){
+        const range = document.createRange();
+        range.selectNodeContents(roteiroText);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+      }
+    });
+
+    const toggleBtn = document.getElementById('toggleChecks');
+    let checksOn = true;
+    toggleBtn.addEventListener('click', () => {
+      checksOn = !checksOn;
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.style.display = checksOn ? 'inline-block' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>
