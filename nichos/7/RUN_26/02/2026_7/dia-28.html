@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roteiro Reproduzível — Carrossel Favoritos + Mini-review</title>
+  <style>
+    :root{
+      --bg0:#070A10;
+      --bg1:#0B1020;
+      --card:#0E1630cc;
+      --card2:#0B1228cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --ok:#20E3B2;
+      --blue:#2D8CFF;
+      --orange:#FF8A3D;
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 10% 0%, rgba(45,140,255,.20), transparent 55%),
+        radial-gradient(900px 700px at 80% 10%, rgba(255,138,61,.18), transparent 58%),
+        radial-gradient(900px 700px at 35% 100%, rgba(32,227,178,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+
+    header{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:var(--shadow);
+      border-radius: calc(var(--radius) + 6px);
+      padding:18px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background:
+        linear-gradient(90deg, rgba(32,227,178,.55), rgba(45,140,255,.55), rgba(255,138,61,.55));
+      filter: blur(26px);
+      opacity:.22;
+      pointer-events:none;
+    }
+    .head-grid{display:grid;gap:14px;grid-template-columns: 1.2fr .8fr;align-items:start;position:relative}
+    .kicker{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      padding:7px 10px;
+      border-radius:999px;
+      backdrop-filter: blur(10px);
+    }
+    .dot{
+      width:9px;height:9px;border-radius:50%;
+      background:linear-gradient(180deg, var(--ok), var(--blue));
+      box-shadow: 0 0 18px rgba(32,227,178,.45);
+    }
+    h1{margin:8px 0 6px;font-size:22px;line-height:1.18;letter-spacing:.2px}
+    .sub{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+
+    .actions{
+      display:flex;gap:10px;justify-content:flex-end;align-items:center;flex-wrap:wrap;
+    }
+    .btn{
+      border:1px solid var(--stroke2);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+      cursor:pointer;
+      transition: transform .08s ease, border-color .16s ease, background .16s ease;
+      user-select:none;
+    }
+    .btn:hover{border-color:rgba(255,255,255,.26);background:rgba(255,255,255,.05)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      border:0;
+      background: linear-gradient(90deg, rgba(32,227,178,.95), rgba(45,140,255,.90), rgba(255,138,61,.90));
+      color:#081022;
+      box-shadow: 0 18px 45px rgba(45,140,255,.18);
+    }
+    .btn.small{padding:9px 11px;font-size:14px}
+
+    .grid{display:grid;gap:14px;margin-top:16px;grid-template-columns: 1fr 1fr}
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: var(--radius);
+      padding:16px 16px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .card.compact{padding:14px 14px}
+    .card:after{
+      content:"";
+      position:absolute;inset:auto -30% -55% -30%;height:220px;
+      background: radial-gradient(closest-side, rgba(45,140,255,.18), transparent 70%);
+      pointer-events:none;
+    }
+    .title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+    h2{margin:0;font-size:16px;letter-spacing:.2px}
+    .badge{
+      font-size:12px;color:var(--muted);
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.22);
+      padding:6px 10px;border-radius:999px;
+      display:inline-flex;align-items:center;gap:8px
+    }
+    .gradline{
+      height:1px;background: linear-gradient(90deg, rgba(32,227,178,.75), rgba(45,140,255,.55), rgba(255,138,61,.65));
+      opacity:.65;border-radius:999px;margin:10px 0 12px
+    }
+    p{margin:0 0 10px;color:var(--muted);line-height:1.6;font-size:14px}
+    ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.6;font-size:14px}
+    li{margin:6px 0}
+
+    .code{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      border-radius: var(--radius2);
+      padding:12px 12px;
+      font-family:var(--mono);
+      color:#DCE6FF;
+      font-size:12.8px;
+      line-height:1.55;
+      overflow:auto;
+      white-space:pre-wrap;
+    }
+    .kbd{
+      font-family:var(--mono);
+      font-size:12px;
+      color:#DCE6FF;
+      border:1px solid var(--stroke);
+      padding:2px 6px;
+      border-radius:8px;
+      background:rgba(0,0,0,.35);
+    }
+
+    .full{grid-column: 1 / -1}
+
+    .two-col{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+
+    .hint{display:flex;gap:10px;align-items:flex-start}
+    .hint b{color:var(--text)}
+    .spark{
+      width:10px;height:10px;border-radius:50%;
+      background:linear-gradient(180deg, var(--orange), var(--blue));
+      margin-top:6px;flex:0 0 auto;
+      box-shadow:0 0 18px rgba(255,138,61,.25)
+    }
+
+    .footer-note{margin-top:14px;color:var(--muted);font-size:13px}
+
+    @media (max-width: 900px){
+      .head-grid{grid-template-columns:1fr}
+      .actions{justify-content:flex-start}
+      .grid{grid-template-columns:1fr}
+      .two-col{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-grid">
+        <div>
+          <div class="kicker">
+            <div class="pill"><span class="dot"></span><span><b>Nicho:</b> Estética</span></div>
+            <div class="pill"><span><b>Dia:</b> 28</span></div>
+            <div class="pill"><span class="kbd">Formato</span> Carrossel</div>
+            <div class="pill"><span class="kbd">Pilar</span> Prova</div>
+          </div>
+          <h1>Carrossel “Lista de favoritos + mini-review” (reproduzível)</h1>
+          <p class="sub">Objetivo: entregar curadoria rápida (1 item por slide) + indicação “pra quem é” → aumentar salvamentos, comentários e DMs.</p>
+        </div>
+        <div class="actions">
+          <a class="btn small" href="https://www.instagram.com/p/DRk-xbOjdlV/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <div class="title-row">
+          <h2>Resumo</h2>
+          <span class="badge">Curadoria + opinião + “pra quem é”</span>
+        </div>
+        <div class="gradline"></div>
+        <p><b>Ideia central:</b> você lista seus favoritos (produtos/serviços/procedimentos/itens de rotina) e faz uma microavaliação objetiva por slide.</p>
+        <div class="hint"><span class="spark"></span><p><b>Por que funciona:</b> lista reduz esforço mental, cria curiosidade (“quais são os próximos?”) e cada slide entrega um micro-benefício (perfil/uso).</p></div>
+      </div>
+
+      <div class="card">
+        <div class="title-row">
+          <h2>Estrutura (sequência)</h2>
+          <span class="badge">8–10 slides</span>
+        </div>
+        <div class="gradline"></div>
+        <ul>
+          <li><b>Slide 1:</b> Capa (hook + promessa de curadoria).</li>
+          <li><b>Slides 2–6:</b> Itens #1–#5 (1 item/slide).</li>
+          <li><b>Slide 7 (opcional):</b> Comparativo / “se você é X, escolha Y”.</li>
+          <li><b>Slide 8:</b> Fechamento + CTA explícito (salvar/comentar/DM/agendar).</li>
+          <li><b>Extras (opcional):</b> “Menções honrosas”, “Top 3 por orçamento”, “Erros ao escolher”.</li>
+        </ul>
+      </div>
+
+      <div class="card full" id="roteiroCard">
+        <div class="title-row">
+          <h2>Roteiro (copiável e preenchível)</h2>
+          <span class="badge">Use como template para qualquer tema</span>
+        </div>
+        <div class="gradline"></div>
+        <div class="two-col">
+          <div>
+            <p><b>Regra por item (fórmula):</b> <span class="kbd">Característica</span> → <span class="kbd">Benefício</span> → <span class="kbd">Pra quem</span> → <span class="kbd">Quando/como usar</span>.</p>
+            <p><b>Rótulos prontos:</b> “o mais pedido”, “o mais suave”, “o coringa”, “o mais potente”, “o melhor custo-benefício”.</p>
+          </div>
+          <div>
+            <p><b>Texto por slide:</b> 2–4 linhas, frases curtas, uma ideia por frase.</p>
+            <p><b>Tom:</b> pessoal + objetivo (mini-review), sem parecer catálogo.</p>
+          </div>
+        </div>
+        <div class="code" id="roteiroText">SLIDE 1 — CAPA (HOOK + PROMESSA)
+Título: MEUS(AS) [TOP 5/7] [CATEGORIA] FAVORITOS(AS) PARA [OBJETIVO]
+Sub (opcional): do mais [leve] ao mais [potente] | para [perfil]
+Selo (opcional): “salva pra consultar depois”
+
+SLIDE 2 — ITEM #1 (o mais [X])
+Rótulo: Meu #1 para [perfil]
+Característica: [o que ele é/como se comporta]
+Benefício: [o que a pessoa sente/ganha]
+Quando usar: [dia/noite/frequência/rotina]
+Observação curta: [1 frase de experiência/resultado]
+
+SLIDE 3 — ITEM #2 (o melhor para [benefício])
+Se você busca: [benefício principal]
+Por que eu gosto: [característica + sensação]
+Pra quem é: [perfil]
+
+SLIDE 4 — ITEM #3 (o coringa)
+Rótulo: O mais versátil
+Funciona quando: [situação A] e [situação B]
+Atenção: [limite/observação ética]
+
+SLIDE 5 — ITEM #4 (o delicado)
+Rótulo: O mais suave/confortável
+Indicação: para [pele/rotina/primeira vez]
+Ideal se você não gosta de: [sensação/excesso]
+
+SLIDE 6 — ITEM #5 (o potente/premium)
+Rótulo: O “uau”
+Entrega: [resultado percebido]
+Pra quem é: [perfil]
+Observação: [possível sensibilidade/necessidade de avaliação]
+
+SLIDE 7 — COMPARATIVO (OPCIONAL)
+Resumo rápido:
+• Perfil 1: [descrição] → Item [#]
+• Perfil 2: [descrição] → Item [#]
+• Perfil 3: [descrição] → Item [#]
+
+SLIDE 8 — FECHAMENTO + CTA
+Pergunta: Qual você escolheria: [A] ou [B]?
+Ação 1 (salvar): Salva esse post pra consultar na próxima [compra/sessão].
+Ação 2 (DM): Quer indicação do melhor pra você? Me chama no direct com: [idade] + [tipo de pele] + [objetivo/queixa].
+Ação 3 (agendamento, opcional): Se quiser uma avaliação, envia “AVALIAÇÃO” no direct.</div>
+        <p class="footer-note">Dica de consistência: repita a mesma estrutura de texto em todos os itens (muda só o rótulo e o conteúdo). Isso aumenta leitura “automática”.</p>
+      </div>
+
+      <div class="card">
+        <div class="title-row">
+          <h2>Slides sugeridos (1..10)</h2>
+          <span class="badge">Sugestão padrão</span>
+        </div>
+        <div class="gradline"></div>
+        <ul>
+          <li><b>1:</b> Capa: “Meus Top 5 [categoria] para [objetivo]”.</li>
+          <li><b>2:</b> #1 — O mais pedido (pra quem é + quando usar).</li>
+          <li><b>3:</b> #2 — Melhor custo-benefício (pra quem é).</li>
+          <li><b>4:</b> #3 — O coringa (situações A/B).</li>
+          <li><b>5:</b> #4 — O mais suave (sensíveis/primeira vez).</li>
+          <li><b>6:</b> #5 — O mais potente (resultado “uau”).</li>
+          <li><b>7:</b> Comparativo por perfil (3 perfis → 3 escolhas).</li>
+          <li><b>8:</b> “Como eu escolhi” (seu critério: textura, durabilidade, recuperação, conforto).</li>
+          <li><b>9:</b> Menções honrosas (2 itens em 1 slide).</li>
+          <li><b>10:</b> CTA final (pergunta + salvar + DM/agendar).</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="title-row">
+          <h2>Elementos visuais (UX do carrossel)</h2>
+          <span class="badge">Limpo + high-tech</span>
+        </div>
+        <div class="gradline"></div>
+        <ul>
+          <li><b>Foto base:</b> real (clínica/bancada/prateleira/mão segurando) + fundo levemente desfocado.</li>
+          <li><b>Tarja fixa:</b> “pill” arredondada no rodapé, mesma posição em todos os slides.</li>
+          <li><b>Cores:</b> capa com cor quente (laranja/rosa) e miolo com cor assinatura (verde/azul).</li>
+          <li><b>Hierarquia:</b> título grande na capa; nos itens, 1 destaque + 2 linhas de apoio.</li>
+          <li><b>Ritmo:</b> enquadramento parecido (ex.: sempre produto central ou equipamento em close).</li>
+          <li><b>Legibilidade:</b> alto contraste, 2 pesos (Bold/Regular), sem parágrafos longos.</li>
+        </ul>
+      </div>
+
+      <div class="card full">
+        <div class="title-row">
+          <h2>Copy e ganchos (substituíveis por qualquer tema)</h2>
+          <span class="badge">Pronto para preencher</span>
+        </div>
+        <div class="gradline"></div>
+        <div class="two-col">
+          <div>
+            <p><b>Fórmulas de capa (ganchos):</b></p>
+            <ul>
+              <li>“Meus Top [5/7] [CATEGORIA] para [OBJETIVO]”</li>
+              <li>“Se você quer [BENEFÍCIO], esses são meus favoritos”</li>
+              <li>“Do mais leve ao mais potente: [CATEGORIA]”</li>
+              <li>“Favoritos do mês: [CATEGORIA] que eu realmente indico”</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Frases curtas por item (mini-review):</b></p>
+            <ul>
+              <li>“Entrega [sensação/resultado] sem pesar.”</li>
+              <li>“Perfeito pra quem tem [perfil] e quer [benefício].”</li>
+              <li>“Eu uso quando preciso de [situação].”</li>
+              <li>“Se sua prioridade é [X], vai nesse.”</li>
+              <li>“Ponto de atenção: [limite/contraindicação/avaliação].”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="title-row">
+          <h2>CTA (escolha 1–2)</h2>
+          <span class="badge">Aumenta comentários e DMs</span>
+        </div>
+        <div class="gradline"></div>
+        <ul>
+          <li><b>Comentário:</b> “Qual combina mais com você: [A] ou [B]? Me conta.”</li>
+          <li><b>Salvar:</b> “Salva pra consultar na próxima [compra/sessão].”</li>
+          <li><b>Direct (triagem):</b> “Me chama no direct com: idade + tipo de pele + queixa.”</li>
+          <li><b>Agendamento:</b> “Quer avaliação? Envia ‘AVALIAÇÃO’ no direct.”</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="title-row">
+          <h2>Checklist de criação (antes de postar)</h2>
+          <span class="badge">Qualidade + consistência</span>
+        </div>
+        <div class="gradline"></div>
+        <ul>
+          <li>[ ] A capa promete <b>lista + objetivo</b> (sem enrolar).</li>
+          <li>[ ] Cada item responde claramente <b>“pra quem é”</b>.</li>
+          <li>[ ] Texto por slide: <b>2–4 linhas</b>, fonte grande, alto contraste.</li>
+          <li>[ ] Mesma tarja/padrão visual em todos os slides (ritmo).</li>
+          <li>[ ] Existe <b>comparativo ou resumo</b> (opcional) para facilitar decisão.</li>
+          <li>[ ] Último slide tem <b>CTA explícito</b> (salvar + comentar/DM).</li>
+          <li>[ ] Se for estética/procedimento: incluiu <b>observação ética</b> (varia por pessoa; avaliação necessária; sem promessas absolutas).</li>
+        </ul>
+      </div>
+
+      <div class="card full">
+        <div class="title-row">
+          <h2>Variações (para manter o mesmo impacto em outros temas)</h2>
+          <span class="badge">Trocas “plug and play”</span>
+        </div>
+        <div class="gradline"></div>
+        <div class="two-col">
+          <div>
+            <p><b>1) Troque “favoritos” por:</b></p>
+            <ul>
+              <li>“Top escolhas para [perfil]” (mais técnico/autoridade)</li>
+              <li>“Os mais pedidos no consultório” (prova social)</li>
+              <li>“Meu kit essencial” (minimalista)</li>
+              <li>“O que recomendo por orçamento” (decisão fácil)</li>
+            </ul>
+            <p><b>2) Troque “produto” por:</b> procedimentos, protocolos, equipamentos, hábitos, etapas de rotina, cuidados pós, suplementos (com cautela), serviços.</p>
+          </div>
+          <div>
+            <p><b>3) Eixos de comparação (substituições):</b></p>
+            <ul>
+              <li><b>Intensidade:</b> leve → forte</li>
+              <li><b>Tempo:</b> imediato → progressivo</li>
+              <li><b>Conforto:</b> suave → mais ativo</li>
+              <li><b>Praticidade:</b> rápido → completo</li>
+              <li><b>Ocasião:</b> pré-evento → manutenção</li>
+            </ul>
+            <p><b>4) Fechamentos alternativos:</b> “Quer parte 2?”, “Quer versão para [pele madura/oleosa/sensível]?”, “Quer que eu monte uma rotina com 3 passos?”</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('roteiroText');
+      function copy(){
+        const content = text.innerText.trim();
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(content).then(()=>{
+            const old = btn.textContent;
+            btn.textContent = 'Roteiro copiado';
+            setTimeout(()=>btn.textContent = old, 1400);
+          }).catch(()=>fallbackCopy(content));
+        } else {
+          fallbackCopy(content);
+        }
+      }
+      function fallbackCopy(content){
+        const ta = document.createElement('textarea');
+        ta.value = content;
+        ta.style.position='fixed';
+        ta.style.left='-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try{document.execCommand('copy');}catch(e){}
+        document.body.removeChild(ta);
+        const old = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.textContent = old, 1400);
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
