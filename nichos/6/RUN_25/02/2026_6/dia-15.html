@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dia 15 — 3 ângulos que mostram o shape de verdade</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.08);
+      --stroke: rgba(255,255,255,0.10);
+      --stroke2: rgba(255,255,255,0.14);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,0.72);
+      --muted2: rgba(234,240,255,0.55);
+      --shadow: 0 18px 55px rgba(0,0,0,0.55);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg,#32FFB5 0%, #3AA9FF 45%, #FFB347 100%);
+      --g2: radial-gradient(1200px 500px at 15% 0%, rgba(50,255,181,0.14), transparent 60%),
+            radial-gradient(900px 450px at 85% 15%, rgba(58,169,255,0.18), transparent 60%),
+            radial-gradient(800px 520px at 55% 105%, rgba(255,179,71,0.14), transparent 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
+      min-height:100vh;
+    }
+
+    a{color:inherit; text-decoration:none}
+    a:hover{opacity:.92}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      padding:18px 18px;
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .topbar:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:0.10;
+      filter: blur(20px);
+      pointer-events:none;
+    }
+
+    .meta{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      position:relative;
+      z-index:1;
+      min-width: 260px;
+    }
+
+    .kicker{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background: rgba(0,0,0,0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .title{
+      font-size: 22px;
+      line-height:1.15;
+      letter-spacing:-0.02em;
+      margin:0;
+    }
+
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 70ch;
+    }
+
+    .actions{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:flex-end;
+      position:relative;
+      z-index:1;
+      min-width: 220px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      font-size: 13px;
+      white-space:nowrap;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.20)}
+
+    .btnPrimary{
+      background: linear-gradient(90deg, rgba(50,255,181,0.16), rgba(58,169,255,0.14), rgba(255,179,71,0.14));
+      border-color: rgba(255,255,255,0.18);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .actions{align-items:flex-start}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .cardHead{
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .cardHead h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      color: rgba(234,240,255,0.82);
+    }
+
+    .badge{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(234,240,255,0.75);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.18);
+    }
+
+    .cardBody{padding: 14px 16px 16px}
+
+    .list{margin:0; padding-left: 18px; color: var(--muted); font-size:14px; line-height:1.6}
+    .list li{margin: 6px 0}
+
+    .para{margin:0; color: var(--muted); font-size:14px; line-height:1.65}
+
+    .hr{height:1px; background: rgba(255,255,255,0.08); margin: 14px 0}
+
+    .highlight{
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
+      border-radius: var(--radius2);
+      padding: 12px 12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .highlight:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:0.12;
+      filter: blur(16px);
+      pointer-events:none;
+    }
+    .highlight > *{position:relative; z-index:1}
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 680px){
+      .twoCol{grid-template-columns:1fr}
+    }
+
+    .code{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: rgba(234,240,255,0.86);
+      background: rgba(0,0,0,0.30);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .small{color: var(--muted2); font-size: 12.5px; line-height:1.55; margin: 0}
+
+    .footerNote{
+      margin-top: 14px;
+      color: var(--muted2);
+      font-size: 12.5px;
+      line-height:1.6;
+      text-align:center;
+    }
+
+    .link{
+      color: rgba(234,240,255,0.88);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="meta">
+        <div class="kicker">
+          <span class="pill"><strong>Nicho</strong>: Educador Físico</span>
+          <span class="pill"><strong>Dia</strong>: 15</span>
+          <span class="pill"><strong>Formato</strong>: Carrossel (foto-only)</span>
+          <span class="pill"><strong>Pilar</strong>: Prova</span>
+        </div>
+        <h1 class="title">3 ângulos que mostram o shape de verdade</h1>
+        <p class="sub">Carrossel de fotos sem texto no criativo, usando progressão visual (aberto → médio → close) + legenda com narrativa curta e CTA para comentários/salvamentos.</p>
+        <p class="small">Post original: <a class="link" href="https://www.instagram.com/p/DVHVTvDkloP/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DVHVTvDkloP/</a></p>
+      </div>
+      <div class="actions">
+        <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+        <a class="btn" href="https://www.instagram.com/p/DVHVTvDkloP/" target="_blank" rel="noreferrer">Abrir post original</a>
+        <span class="badge" id="copyStatus">pronto para copiar</span>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="cardHead">
+          <h2>Resumo</h2>
+          <span class="badge">objetivo: prova + estética</span>
+        </div>
+        <div class="cardBody">
+          <div class="highlight">
+            <p class="para"><strong>Ideia central:</strong> “Sem texto no criativo”, a retenção vem da <strong>progressão visual</strong> e da <strong>comparação implícita</strong> (frente vs costas vs close). A legenda faz o trabalho de promessa, contexto e CTA.</p>
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Você vende</strong>: consistência (shape real) + lifestyle (cenário) + credibilidade (ângulos honestos).</li>
+            <li><strong>Você prova</strong>: definição e postura em 3 planos (aberto → médio → close).</li>
+            <li><strong>Você captura leads</strong>: comentário com palavra-chave (ex.: “ROTINA”, “AVALIAÇÃO”).</li>
+          </ul>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardHead">
+          <h2>Metadados do calendário</h2>
+          <span class="badge">para planilha</span>
+        </div>
+        <div class="cardBody">
+          <div class="code" id="metaBlock">titulo: 3 ângulos que mostram o shape de verdade
+instrucao_curta: Carrossel foto-only com progressão aberto→médio→close e legenda com CTA “1/2/3”.
+pilar: Prova
+formato: carrossel</div>
+          <p class="small" style="margin-top:10px">Dica: se quiser padronizar na grade do Instagram, repita a mesma estrutura 1x por semana (check-in do físico/rotina) mantendo paleta e padrão de enquadramento.</p>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Estrutura</h2>
+          <span class="badge">reproduzível</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p class="para"><strong>Tipo de carrossel:</strong> lifestyle/shape “foto-only” (sem texto no design).</p>
+              <ul class="list">
+                <li><strong>Qtd. ideal:</strong> 3 a 6 slides (o mínimo que funciona: 3).</li>
+                <li><strong>Motor de retenção:</strong> progressão de planos + variação de ângulo + elemento âncora no cenário.</li>
+                <li><strong>Promessa:</strong> “mostrar o shape sem truque” (honestidade + consistência).</li>
+              </ul>
+            </div>
+            <div class="highlight">
+              <p class="para"><strong>Regra de ouro:</strong> se não há texto na imagem, <strong>cada slide precisa ser autoexplicativo</strong> e diferente o bastante para justificar o swipe (plano, ângulo, distância, luz ou expressão).</p>
+              <div class="hr"></div>
+              <p class="small"><strong>Ordem recomendada:</strong> Aberto (aspiração) → Médio (comparação) → Close (prova).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Slides sugeridos (1..5)</h2>
+          <span class="badge">use 3–6</span>
+        </div>
+        <div class="cardBody">
+          <ol class="list">
+            <li><strong>Slide 1 (Hook / plano aberto):</strong> cenário amplo + corpo em destaque. Postura confiante. Respiro no céu/ambiente.</li>
+            <li><strong>Slide 2 (Continuidade / plano médio):</strong> mesmo local, novo ângulo. Troque frente → 3/4 ou costas para contraste.</li>
+            <li><strong>Slide 3 (Close / prova):</strong> selfie no espelho ou corte mais fechado no tronco/abdômen (luz “honesta”).</li>
+            <li><strong>Slide 4 (Bônus opcional):</strong> detalhe técnico (ex.: pose que evidencia dorsal/postura) OU bastidor do treino (equipamento, tênis, tapete).</li>
+            <li><strong>Slide 5 (Bônus opcional):</strong> foto mais “real” (sem pose perfeita) para reforçar autenticidade + fechar com humanidade.</li>
+          </ol>
+          <div class="hr"></div>
+          <p class="small"><strong>Opcional (microtexto minimalista):</strong> “Frente / Costas / Close” bem discreto no canto (se decidir sair do 100% foto-only).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Roteiro</h2>
+          <span class="badge">produção + legenda</span>
+        </div>
+        <div class="cardBody">
+          <div class="code" id="roteiroBlock">ROTEIRO — CARROSSEL FOTO-ONLY (3 a 6 SLIDES)
+
+1) PRÉ-PRODUÇÃO (10 min)
+- Defina 1 cenário (praia/lago/parque/academia com boa luz natural).
+- Escolha 1 "âncora" visual para repetição (pier/placa/paredão/árvore).
+- Determine a ordem: ABERTO → MÉDIO → CLOSE.
+
+2) CAPTAÇÃO (15–30 min)
+SLIDE 1 (ABERTO / ASPIRAÇÃO)
+- Enquadramento: corpo + cenário grande (respiro no céu/ambiente).
+- Pose: postura alta, peito aberto, abdômen neutro (sem exageros).
+
+SLIDE 2 (MÉDIO / CONTRASTE)
+- Mesmo ponto/cenário.
+- Troque o ângulo: frente → costas ou 3/4.
+- Objetivo: mostrar estrutura (dorsal, linha de cintura, glúteo, pernas).
+
+SLIDE 3 (CLOSE / PROVA)
+- Selfie no espelho ou plano fechado (peito/abdômen/braço).
+- Luz: natural, sem filtro pesado. Nitidez > efeitos.
+
+(OPTIONAL) SLIDE 4 (BASTIDOR)
+- Um detalhe real: tênis, relógio, refeição simples, caminhada.
+
+(OPTIONAL) SLIDE 5 (HUMANO)
+- Foto espontânea (sem pose perfeita) para reforçar autenticidade.
+
+3) EDIÇÃO (5–12 min)
+- Padronize exposição e temperatura (não invente cores diferentes por slide).
+- Corte com consistência (mesma proporção, horizonte alinhado).
+
+4) LEGENDA (modelo)
+Linha 1 (título/promessa):
+“3 ângulos que mostram o shape de verdade.”
+
+Contexto rápido (1–2 linhas):
+“Sem filtro e sem truque: só luz natural e constância.”
+
+Valor (bullets curtos):
+- Frente: postura + cintura
+- Costas: densidade + V-shape
+- Close: detalhe de definição
+
+CTA:
+“Qual ficou mais real: 1, 2 ou 3? Comenta o número.”
++ (opcional) “Quer minha rotina quando viajo? Comenta ‘ROTINA’.”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Elementos visuais</h2>
+          <span class="badge">identidade + retenção</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><strong>Paleta:</strong> azul (céu/água) + neutros (areia/cimento) + branco/preto (roupa). Consistência &gt; “cor da moda”.</li>
+            <li><strong>Planos:</strong> aberto → médio → close (sensação de progressão).</li>
+            <li><strong>Âncoras:</strong> repita um elemento do cenário para “colar” a narrativa.</li>
+            <li><strong>Luz:</strong> natural e direta funciona, desde que a exposição esteja controlada (sem estourar pele/céu).</li>
+            <li><strong>Composição:</strong> use terços; horizonte alinhado; deixe respiro (céu) no slide 1.</li>
+            <li><strong>Vestuário:</strong> escolha 1 cor dominante (ex.: branco/preto) para “limpar” o visual.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="highlight">
+            <p class="para"><strong>Truque de retenção:</strong> faça o slide 2 “conversar” com o 1 (mesmo fundo) e o slide 3 “puxar” a atenção (close com textura/definição). A pessoa fica curiosa para ver o próximo nível de detalhe.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">para legenda</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p class="para"><strong>Ganchos (1ª linha):</strong></p>
+              <ul class="list">
+                <li>“3 ângulos que mostram o shape de verdade.”</li>
+                <li>“Sem filtro: frente, costas e close.”</li>
+                <li>“O que a constância faz quando ninguém vê.”</li>
+                <li>“Check-in real: onde estou hoje.”</li>
+                <li>“Pare de se comparar por 1 ângulo só.”</li>
+              </ul>
+            </div>
+            <div>
+              <p class="para"><strong>Linhas de valor (curtas e diretas):</strong></p>
+              <ul class="list">
+                <li>“Ângulo muda tudo. Processo muda mais.”</li>
+                <li>“Postura conta. Rotina decide.”</li>
+                <li>“Sem truque: luz natural e consistência.”</li>
+                <li>“Frente é estética. Costas é estrutura.”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="para"><strong>Comentário fixado (padrão):</strong> “Quer que eu poste a rotina de treino/alimentação quando estou viajando? Comenta <strong>ROTINA</strong> 👇 (eu respondo com o passo a passo).”</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>CTA</h2>
+          <span class="badge">1 primário + 1 secundário</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><strong>CTA primário (comentário):</strong> “Qual ângulo ficou mais real: 1, 2 ou 3? Comenta o número.”</li>
+            <li><strong>CTA secundário (palavra-chave):</strong> “Quer minha rotina de viagem? Comenta ‘ROTINA’.”</li>
+            <li><strong>CTA de salvamento:</strong> “Salva pra usar como check-in (frente/costas/close) daqui 30 dias.”</li>
+            <li><strong>CTA de conversão (Educador Físico):</strong> “Se quer uma avaliação, me chama no direct com ‘AVALIAÇÃO’.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Checklist</h2>
+          <span class="badge">antes de postar</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p class="para"><strong>Captura &amp; edição</strong></p>
+              <ul class="list">
+                <li>Mesma paleta/temperatura nos slides</li>
+                <li>Horizonte alinhado (principalmente no slide 1)</li>
+                <li>Diferença clara entre slides (plano/ângulo)</li>
+                <li>Nitidez no close (sem blur excessivo)</li>
+                <li>Sem distrações óbvias no fundo</li>
+              </ul>
+            </div>
+            <div>
+              <p class="para"><strong>Legenda &amp; publicação</strong></p>
+              <ul class="list">
+                <li>1ª linha com promessa forte</li>
+                <li>Contexto em 1–2 linhas (sem textão)</li>
+                <li>Bullets curtos com o que observar em cada slide</li>
+                <li>CTA “1/2/3” + palavra-chave (“ROTINA”)</li>
+                <li>Comentário fixado pronto</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Variações</h2>
+          <span class="badge">para repetir sem enjoar</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><strong>Variação A (técnica):</strong> 3 ângulos + 1 slide “postura” (mostre ajuste de escápula/coluna).</li>
+            <li><strong>Variação B (mito sutil):</strong> “Não é pump/iluminação: é consistência” (sem virar textão).</li>
+            <li><strong>Variação C (cliente):</strong> aluno(a) com 3 ângulos (com autorização) + legenda “o que mudou em 8 semanas”.</li>
+            <li><strong>Variação D (treino do dia):</strong> slide 4 com print simples da divisão (ex.: “Upper/Lower”) na legenda, sem colocar texto na foto.</li>
+            <li><strong>Variação E (viagem):</strong> “como manter o físico viajando” (slide 4 com refeição simples + passos na legenda).</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <p class="footerNote">Identidade: fundo escuro + cards suaves + destaques em degradê (verde/azul/laranja). Use este template para criar carrosséis de “prova” semanais com consistência visual.</p>
+  </div>
+
+  <script>
+    (function(){
+      const copyBtn = document.getElementById('copyBtn');
+      const status = document.getElementById('copyStatus');
+      const roteiro = document.getElementById('roteiroBlock');
+
+      function setStatus(text){
+        status.textContent = text;
+      }
+
+      async function copyText(){
+        const text = roteiro.innerText;
+        try{
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            await navigator.clipboard.writeText(text);
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+          setStatus('roteiro copiado');
+          setTimeout(()=>setStatus('pronto para copiar'), 1800);
+        } catch(e){
+          setStatus('falha ao copiar');
+          setTimeout(()=>setStatus('pronto para copiar'), 2200);
+        }
+      }
+
+      copyBtn.addEventListener('click', copyText);
+    })();
+  </script>
+</body>
+</html>
