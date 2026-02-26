@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 27 — Roteiro reproduzível (Estética)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card: rgba(255,255,255,0.06);
+    --card2: rgba(255,255,255,0.08);
+    --stroke: rgba(255,255,255,0.12);
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,0.72);
+    --muted2: rgba(234,240,255,0.58);
+    --good:#2DE38D;
+    --blue:#3AA0FF;
+    --orange:#FF8A3A;
+    --shadow: 0 10px 30px rgba(0,0,0,.45);
+    --r: 18px;
+    --r2: 14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background:
+      radial-gradient(1200px 600px at 18% 8%, rgba(58,160,255,0.22), transparent 55%),
+      radial-gradient(900px 520px at 78% 18%, rgba(45,227,141,0.18), transparent 52%),
+      radial-gradient(900px 520px at 62% 96%, rgba(255,138,58,0.16), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height: 100vh;
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 42px}
+  header{
+    display:grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 14px;
+    align-items: stretch;
+    margin-bottom: 16px;
+  }
+  .hero{
+    border: 1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+    border-radius: var(--r);
+    padding: 18px 18px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow:hidden;
+  }
+  .hero:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background:
+      radial-gradient(600px 240px at 18% 20%, rgba(45,227,141,0.22), transparent 55%),
+      radial-gradient(540px 220px at 68% 30%, rgba(58,160,255,0.20), transparent 55%),
+      radial-gradient(520px 220px at 65% 92%, rgba(255,138,58,0.16), transparent 55%);
+    opacity:.7;
+    pointer-events:none;
+  }
+  .hero > *{position:relative; z-index:1}
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom: 10px;
+  }
+  .pill{
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14);
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .pill b{color: var(--text)}
+  .title{
+    font-size: 22px;
+    line-height: 1.2;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+  .subtitle{margin:0; color: var(--muted); font-size: 13.5px}
+  .actions{
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,0.05);
+    border-radius: var(--r);
+    padding: 14px;
+    box-shadow: var(--shadow);
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    justify-content: space-between;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:100%;
+    border-radius: 14px;
+    padding: 12px 12px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: linear-gradient(90deg, rgba(45,227,141,0.18), rgba(58,160,255,0.18), rgba(255,138,58,0.16));
+    color: var(--text);
+    cursor:pointer;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+  }
+  .btn:active{transform: translateY(1px)}
+  .link{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding: 12px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.04);
+    border-radius: 14px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .link span{font-family: var(--mono); font-size: 12px; color: var(--muted2)}
+  main{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 900px){
+    header{grid-template-columns:1fr;}
+    .grid{grid-template-columns:1fr;}
+  }
+  .card{
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,0.05);
+    border-radius: var(--r);
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  h2{
+    margin:0 0 10px;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+  .k{
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    margin-bottom: 10px;
+  }
+  .dot{
+    width:10px; height:10px; border-radius: 99px;
+    background: linear-gradient(90deg, var(--good), var(--blue), var(--orange));
+    box-shadow: 0 0 0 6px rgba(255,255,255,0.03);
+  }
+  p{margin:8px 0; color: var(--muted); font-size: 13.5px; line-height: 1.5}
+  ul{margin:8px 0 0 18px; color: var(--muted); font-size: 13.5px; line-height: 1.55}
+  li{margin:6px 0}
+  .hr{height:1px; background: rgba(255,255,255,0.10); margin: 12px 0}
+  .code{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: rgba(234,240,255,0.78);
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--r2);
+    padding: 12px;
+    white-space: pre-wrap;
+  }
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+  .chip{
+    padding:7px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.04);
+    color: rgba(234,240,255,0.72);
+    font-size: 12px;
+  }
+  .chip strong{color: var(--text)}
+  .twoCol{display:grid; grid-template-columns: 1fr 1fr; gap: 12px}
+  @media (max-width: 900px){.twoCol{grid-template-columns:1fr;}}
+  .badge{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .02em;
+    color: rgba(234,240,255,0.70);
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    border-radius: 999px;
+    padding: 6px 10px;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+  }
+  .badge i{display:inline-block; width:8px; height:8px; border-radius:99px; background: rgba(45,227,141,0.9)}
+  .small{font-size: 12.5px; color: var(--muted2)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hero">
+        <div class="meta">
+          <span class="pill"><b>Nicho:</b> Estética</span>
+          <span class="pill"><b>Dia:</b> 27</span>
+          <span class="pill"><b>Formato:</b> Carrossel</span>
+          <span class="pill"><b>Pilar:</b> Mito vs Verdade</span>
+        </div>
+        <h1 class="title">Roteiro: “Ninguém acredita, mas… dá efeito de clínica”</h1>
+        <p class="subtitle">Estrutura replicável para produto/ativo/protocolo (com quebra de expectativa + comparação aspiracional + prova objetiva).</p>
+        <div class="chips">
+          <span class="chip"><strong>Objetivo:</strong> retenção + salvamentos</span>
+          <span class="chip"><strong>Entrega:</strong> 3 benefícios + 3 erros + ajuste por perfil</span>
+          <span class="chip"><strong>CTA:</strong> salvar + comentar palavra-chave</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="copyBtn">Copiar roteiro</button>
+        <a class="link" href="https://www.instagram.com/p/DSlv7MSjbG3/" target="_blank" rel="noreferrer">
+          <div>
+            <div style="font-weight:650;color:var(--text);">Post original</div>
+            <span>instagram.com/p/DSlv7MSjbG3</span>
+          </div>
+          <div class="badge"><i></i>abrir</div>
+        </a>
+        <div class="small">Dica: troque apenas os campos [ENTRE COLCHETES] e mantenha a mesma sequência para repetir o impacto.</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="grid">
+        <div class="card">
+          <div class="k"><span class="dot"></span><h2>Resumo</h2></div>
+          <p><b>Ideia:</b> usar um hook de surpresa (“Ninguém acredita, mas…”), comparar com uma referência desejada (“efeito de clínica/importado”), explicar rapidamente <b>por que funciona</b>, ensinar <b>como usar</b>, listar <b>erros comuns</b> e fechar com CTA simples.</p>
+          <p><b>Quando funciona melhor:</b> temas com muita dúvida/mito (ativos, skincare, pós-procedimentos, tecnologias) e itens com “cara” de caro/complexo.</p>
+        </div>
+        <div class="card">
+          <div class="k"><span class="dot"></span><h2>Estrutura (sequência persuasiva)</h2></div>
+          <ul>
+            <li><b>Quebra de expectativa</b> → cria curiosidade.</li>
+            <li><b>Comparação aspiracional</b> → atalho mental (“efeito de clínica”).</li>
+            <li><b>Prova/critério</b> (3 bullets) → dá segurança e reduz “achismo”.</li>
+            <li><b>Como usar</b> → transforma em ação (salvável).</li>
+            <li><b>Erros comuns</b> → aumenta autoridade e evita comentários negativos.</li>
+            <li><b>Personalização</b> → sensação de atendimento individual.</li>
+            <li><b>Recap + CTA</b> → fecha com objetivo (salvar/comentar/direct).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="k"><span class="dot"></span><h2>Slides sugeridos (1..8)</h2></div>
+        <div class="twoCol">
+          <div>
+            <p><b>Slide 1 — Hook (promessa + surpresa)</b></p>
+            <div class="code">NINGUÉM ACREDITA, MAS…
+[COISA SIMPLES/ACESSÍVEL] DÁ EFEITO DE [REFERÊNCIA DESEJADA]
+
+(1 linha opcional): [benefício] em [prazo/condição realista]</div>
+            <p class="small">Substituições de impacto: “Parece mentira, mas…”, “Isso aqui é SUBESTIMADO…”, “O que ninguém te conta sobre…”</p>
+          </div>
+          <div>
+            <p><b>Slide 2 — Contexto (dor + relevância)</b></p>
+            <div class="code">Se você quer [DESEJO], mas sofre com:
+• [DOR 1]
+• [DOR 2]
+• [DOR 3]
+Salva isso.</div>
+            <p><b>Slide 3 — O que é / Para quem é</b></p>
+            <div class="code">O que é: [definição em 1 frase]
+Indicado para: [perfil]
+Evite se: [contraindicação/limite]</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="twoCol">
+          <div>
+            <p><b>Slide 4 — Prova (por que funciona)</b></p>
+            <div class="code">Por que funciona (3 critérios):
+1) [benefício mensurável/observável]
+2) [benefício sensorial/percepção]
+3) [benefício de segurança/previsibilidade]
+
+(Nota curta): [condição de uso/expectativa realista]</div>
+            <p class="small">Modelos de “prova”: duração, conforto, previsibilidade, tolerância, custo-benefício, aderência à rotina, redução de risco.</p>
+          </div>
+          <div>
+            <p><b>Slide 5 — Como usar (passo a passo)</b></p>
+            <div class="code">Como usar:
+Passo 1: [quando/ordem na rotina]
+Passo 2: [quantidade/tempo]
+Passo 3: [finalização: protetor/pós]
+
+Se fizer [algo], faça por [X dias] antes de avaliar.</div>
+            <p class="small">Se for procedimento: “preparo / sessão (alto nível) / pós 48–72h”.</p>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="twoCol">
+          <div>
+            <p><b>Slide 6 — Erros comuns + correção</b></p>
+            <div class="code">Erros que fazem NÃO funcionar:
+✗ [erro 1] → faça: [correção]
+✗ [erro 2] → faça: [correção]
+✗ [erro 3] → faça: [correção]</div>
+          </div>
+          <div>
+            <p><b>Slide 7 — Personalização / alternativa</b></p>
+            <div class="code">Se você é [perfil A], ajuste assim: [ajuste]
+Se você é [perfil B], prefira: [alternativa]
+
+Se você gosta de [referência X], vai amar [opção Y].</div>
+            <p class="small">Substituições: “pele oleosa/sensível”, “pós-procedimento”, “manchas/acne”, “rotina corrida”, “orçamento”.</p>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div>
+          <p><b>Slide 8 — Recap + CTA</b></p>
+          <div class="code">Resumo: [1 frase com promessa + condição].
+
+Quer que eu adapte pro seu caso?
+Comenta “LISTA” (ou “AVALIAÇÃO”) que eu te mando:
+• [opção 1]
+• [opção 2]
+
+Salva e envia pra alguém que quer [benefício].</div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <div class="k"><span class="dot"></span><h2>Roteiro (texto-base para legenda)</h2></div>
+          <div class="code" id="script">HOOK (1ª linha): Ninguém acredita, mas [TEMA] dá um efeito de [REFERÊNCIA] — quando você faz do jeito certo.
+
+Por que isso importa:
+Se você quer [DESEJO], mas vive travando em [DOR], isso vai te poupar tempo e dinheiro.
+
+O que é:
+[TEMA] = [definição simples].
+
+Por que funciona (3 motivos):
+1) [motivo/benefício mensurável]
+2) [motivo/benefício de aparência/sensação]
+3) [motivo/benefício de segurança/preditibilidade]
+
+Como usar (bem prático):
+• Passo 1: [ordem/horário]
+• Passo 2: [quantidade/tempo]
+• Passo 3: [finalização]
+
+Erros comuns que sabotam:
+• [erro] → faça: [correção]
+• [erro] → faça: [correção]
+• [erro] → faça: [correção]
+
+Ajuste por perfil:
+Se você é [perfil], use assim: [ajuste].
+Se você é [perfil], evite: [evitar] e troque por: [alternativa].
+
+CTA:
+Comenta “LISTA” que eu te mando as opções por [tipo de pele/objetivo].
+Salva pra consultar na hora de usar e envia pra alguém que quer [benefício].</div>
+          <p class="small">Dica de reprodutibilidade: mantenha o mesmo número (3 motivos / 3 passos / 3 erros). Isso fixa a estrutura na cabeça do público.</p>
+        </div>
+        <div class="card">
+          <div class="k"><span class="dot"></span><h2>Elementos visuais (padrão high-retention)</h2></div>
+          <ul>
+            <li><b>Imagem base:</b> foto real (mão segurando produto / bancada / antes-depois autorizados). “Prova de vida”.</li>
+            <li><b>Overlay:</b> texto grande no topo (2–3 linhas), alto contraste (branco + sombra).</li>
+            <li><b>Hierarquia:</b> Hook gigante → sublinha curta → bullets curtos.</li>
+            <li><b>Padronização:</b> mesmos espaçamentos e posição do título em todos os slides.</li>
+            <li><b>Legibilidade:</b> margens de 6–10% e no máximo 10–14 palavras por bloco.</li>
+            <li><b>Detalhe de credibilidade:</b> selo pequeno: “testado na rotina”, “para [perfil]”, “pós: 48h”.</li>
+          </ul>
+          <div class="hr"></div>
+          <p><b>Paleta sugerida (no texto/destaques):</b> degradê verde → azul → laranja para palavras-chave: “EFEITO”, “CLÍNICA”, “EM X DIAS”, “NÃO FAÇA”.</p>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <div class="k"><span class="dot"></span><h2>Copy e ganchos (substituições prontas)</h2></div>
+          <p><b>Ganchos equivalentes ao “Ninguém acredita, mas…”</b></p>
+          <ul>
+            <li>“Parece exagero, mas [X] é o atalho pra [Y].”</li>
+            <li>“O erro que faz [X] NÃO funcionar (e quase todo mundo comete).”</li>
+            <li>“Se você quer [Y], faça isso antes de [Z].”</li>
+            <li>“3 sinais de que sua pele está pedindo [X].”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><b>Comparações aspiracionais (sem prometer milagre)</b></p>
+          <ul>
+            <li>“efeito de clínica” → “acabamento de consultório” → “resultado de rotina bem feita”</li>
+            <li>“importado caro” → “premium” → “textura/resultado sofisticado”</li>
+          </ul>
+          <p class="small">Evite termos absolutos (“100%”, “cura”). Prefira: “ajuda”, “tende a”, “em muitos casos”, “quando bem indicado”.</p>
+        </div>
+        <div class="card">
+          <div class="k"><span class="dot"></span><h2>CTA (escolha 1 primário + 1 secundário)</h2></div>
+          <p><b>Primário (comentário com palavra-chave)</b></p>
+          <ul>
+            <li>“Comenta <b>LISTA</b> que eu te mando as opções por tipo de pele.”</li>
+            <li>“Comenta <b>ROTINA</b> que eu te digo a ordem certinha.”</li>
+            <li>“Comenta <b>SIM</b> se você quer parte 2 (com [tema]).”</li>
+          </ul>
+          <p><b>Secundário (salvar + enviar)</b></p>
+          <ul>
+            <li>“Salva pra aplicar hoje à noite.”</li>
+            <li>“Envia pra alguém que vive reclamando de [dor].”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><b>Conversão (direct)</b></p>
+          <ul>
+            <li>“Me chama no direct com <b>AVALIAÇÃO</b>.”</li>
+            <li>“Agenda aberta: manda <b>AGENDA</b>.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="k"><span class="dot"></span><h2>Checklist de criação (para repetir o padrão)</h2></div>
+        <ul>
+          <li>[ ] O hook é entendido em <b>1 segundo</b> (máx. 2–3 linhas)?</li>
+          <li>[ ] A promessa está <b>específica</b> (o que melhora) e com <b>condição</b> (quando acontece)?</li>
+          <li>[ ] A comparação aspiracional não vira promessa médica (sem “milagre/garantia”).</li>
+          <li>[ ] Existem <b>3 motivos</b> (prova) e são observáveis?</li>
+          <li>[ ] O “como usar” tem <b>3 passos</b> (ordem, quantidade/tempo, finalização)?</li>
+          <li>[ ] Os erros comuns já respondem as principais objeções?</li>
+          <li>[ ] Existe 1 ajuste por perfil (oleosa/sensível/pós-procedimento etc.)?</li>
+          <li>[ ] CTA tem <b>uma ação simples</b> (comentar/salvar/direct) e 1 palavra-chave?</li>
+          <li>[ ] Texto legível no celular (contraste, sombra, margens)?</li>
+          <li>[ ] Visual com “prova de vida” (foto real) + consistência de layout?</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="k"><span class="dot"></span><h2>Variações (para trocar o tema sem perder impacto)</h2></div>
+        <div class="twoCol">
+          <div>
+            <p><b>1) Troca de referência (comparação)</b></p>
+            <ul>
+              <li>“efeito de clínica” → “efeito filtro”, “acabamento de make”, “pele de editorial”, “glow de verão”.</li>
+              <li>“importado” → “dermocosmético premium”, “protocolo caro”, “queridinho das gringas”.</li>
+            </ul>
+            <p><b>2) Troca de ângulo (pilar)</b></p>
+            <ul>
+              <li><b>Erro comum:</b> “Você está fazendo [X] errado — por isso não vê resultado.”</li>
+              <li><b>Passo a passo:</b> “Ordem correta pra [objetivo] em 3 passos.”</li>
+              <li><b>Objeção:</b> “Funciona em pele sensível? Sim, se…”</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>3) Campos substituíveis (copiar/colar)</b></p>
+            <div class="code">[TEMA] = ativo/produto/hábito/procedimento
+[DESEJO] = resultado (viço, textura, manchas, acne, firmeza)
+[DOR] = obstáculo (sensibilidade, oleosidade, efeito rebote, “não vejo resultado”)
+[REFERÊNCIA] = clínica/importado/protocolo caro/tecnologia
+[PROVA] = duração/conforto/previsibilidade/custo-benefício
+[PASSOS] = ordem/quantidade/tempo + finalização
+[ERROS] = 3 sabotadores + correção
+[PERFIS] = oleosa, seca, sensível, acneica, pós-procedimento
+[PALAVRA-CHAVE] = LISTA/ROTINA/AVALIAÇÃO/AGENDA</div>
+            <p class="small">Regra de impacto: manter “surpresa + comparação + 3/3/3 + personalização + CTA”.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const script = document.getElementById('script');
+    btn.addEventListener('click', async () => {
+      const text = script.innerText.trim();
+      try{
+        await navigator.clipboard.writeText(text);
+        const orig = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.textContent = orig, 1300);
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const orig = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.textContent = orig, 1300);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
