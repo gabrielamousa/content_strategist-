@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 11 — Carrossel (Educador Físico)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.56);
+      --accentG: linear-gradient(90deg,#22c55e,#16a34a);
+      --accentB: linear-gradient(90deg,#38bdf8,#2563eb);
+      --accentO: linear-gradient(90deg,#fb923c,#f97316);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(900px 680px at 85% 25%, rgba(34,197,94,.16), transparent 58%),
+        radial-gradient(900px 680px at 50% 95%, rgba(249,115,22,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{max-width:1100px; margin:0 auto; padding:32px 18px 56px;}
+
+    header{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 20px 20px 16px;
+      position: relative;
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(700px 240px at 25% 15%, rgba(56,189,248,.22), transparent 60%),
+        radial-gradient(700px 260px at 75% 30%, rgba(34,197,94,.20), transparent 62%),
+        radial-gradient(600px 260px at 60% 120%, rgba(249,115,22,.18), transparent 62%);
+      filter: blur(14px);
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    header > *{position:relative; z-index:1;}
+
+    .topline{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;}
+    .chips{display:flex; flex-wrap:wrap; gap:10px;}
+
+    .chip{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+    }
+
+    h1{
+      margin: 14px 0 8px;
+      font-size: clamp(22px, 2.6vw, 34px);
+      letter-spacing: -0.02em;
+      line-height:1.1;
+    }
+
+    .subtitle{margin:0; color: var(--muted); font-size: 14px; line-height:1.45;}
+
+    .linkrow{margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+    a{color:#bfe7ff; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor:pointer;
+      transition: transform .08s ease, background .12s ease;
+      user-select:none;
+      font-weight:600;
+    }
+    .btn:hover{background: rgba(255,255,255,.09)}
+    .btn:active{transform: translateY(1px)}
+
+    .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:16px;}
+    @media (min-width: 880px){
+      .grid{grid-template-columns: 1.2fr .8fr; align-items:start;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.12);
+    }
+
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:.02em; text-transform:uppercase; color: var(--muted);}
+    .badge{height:10px; width:76px; border-radius:999px; border:1px solid rgba(255,255,255,.14);}
+    .g{background: var(--accentG)}
+    .b{background: var(--accentB)}
+    .o{background: var(--accentO)}
+
+    .card .bd{padding:16px;}
+
+    .kvs{display:grid; gap:10px;}
+    .kv{display:flex; justify-content:space-between; gap:12px; padding:10px 12px; border:1px solid rgba(255,255,255,.10); border-radius: var(--radius2); background: rgba(0,0,0,.14)}
+    .kv .k{color: var(--muted2); font-size:12px; font-family: var(--mono)}
+    .kv .v{color: var(--text); font-size:13px; font-weight:650; text-align:right}
+
+    .section{margin-top:14px;}
+    .section h3{margin:0 0 10px; font-size:16px; letter-spacing:-0.01em;}
+
+    ul{margin:10px 0 0 18px; padding:0; color: var(--muted);}
+    li{margin:6px 0;}
+
+    ol{margin:10px 0 0 18px; padding:0; color: var(--muted);}
+    .muted{color: var(--muted)}
+
+    .hr{height:1px; background: rgba(255,255,255,.10); margin: 14px 0;}
+
+    .codebox{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.24);
+      border-radius: var(--radius);
+      padding: 14px;
+      overflow:auto;
+      position: relative;
+    }
+
+    pre{
+      margin:0;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.5;
+      color: rgba(234,240,255,.92);
+      white-space: pre-wrap;
+    }
+
+    .row{display:flex; gap:10px; flex-wrap:wrap;}
+
+    .pill{
+      display:inline-flex; align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size:12px;
+    }
+
+    .hint{font-size:12px; color: var(--muted2); margin-top:8px;}
+
+    .twoCol{display:grid; grid-template-columns:1fr; gap:12px;}
+    @media(min-width:880px){.twoCol{grid-template-columns:1fr 1fr;}}
+
+    .callout{
+      border: 1px solid rgba(255,255,255,.12);
+      border-left: 4px solid rgba(56,189,248,.7);
+      padding: 12px 12px;
+      border-radius: var(--radius2);
+      background: rgba(0,0,0,.12);
+      color: var(--muted);
+    }
+
+    .footer{margin-top:16px; color: var(--muted2); font-size:12px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <span class="chip">Nicho: Educador Físico</span>
+          <span class="chip">Dia: 11</span>
+          <span class="chip">Formato: Carrossel</span>
+          <span class="chip">Pilar: Passo a passo</span>
+        </div>
+        <div class="row">
+          <button class="btn" id="copyBtn" type="button">Copiar roteiro</button>
+          <a class="btn" href="https://www.instagram.com/p/DTxfi4LEQlC/" target="_blank" rel="noopener">Abrir post original</a>
+        </div>
+      </div>
+      <h1>5 coisas que destravam a hipertrofia (guia rápido)</h1>
+      <p class="subtitle">Carrossel reproduzível para listar pilares práticos (comida, suplementos e exercícios) e converter no último slide com comentário por palavra-chave.</p>
+      <div class="linkrow">
+        <span class="chip">URL: <a href="https://www.instagram.com/p/DTxfi4LEQlC/" target="_blank" rel="noopener">https://www.instagram.com/p/DTxfi4LEQlC/</a></span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd"><h2>Ficha melhorada (reproduzível)</h2><span class="badge b"></span></div>
+        <div class="bd">
+          <div class="twoCol">
+            <div>
+              <div class="section">
+                <h3>Resumo</h3>
+                <div class="callout">
+                  Promessa em lista + entrega em pilares (nutrição → suplementos → execução no treino) + CTA final simples (comentar palavra) para liberar app/material.
+                </div>
+              </div>
+
+              <div class="section">
+                <h3>Estrutura (sequência lógica)</h3>
+                <ol>
+                  <li><b>Hook claro</b> (número + resultado) para induzir swipe.</li>
+                  <li><b>Base</b> (alimentação) com lista aplicável hoje.</li>
+                  <li><b>Acelerador</b> (suplementos) com curadoria curta (3 itens).</li>
+                  <li><b>Execução</b> (treino) com “Top 3 exercícios” por grupo muscular.</li>
+                  <li><b>Conversão</b>: prova + comando de comentário + benefício.</li>
+                </ol>
+              </div>
+
+              <div class="section">
+                <h3>Regras de copy (para ficar consistente)</h3>
+                <ul>
+                  <li>1 ideia por slide; leitura em <b>1–2 segundos</b>.</li>
+                  <li>Títulos no padrão: <b>“Melhores X para Y”</b> (1 palavra destacada).</li>
+                  <li>Evite prometer “5 coisas” e entregar 9 tópicos soltos: trate como <b>5 pilares</b> e dentro de alguns pilares use “Top 3”.</li>
+                  <li>Último slide: <b>somente 1 CTA</b> (comentar palavra-chave).</li>
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              <div class="section">
+                <h3>Metas de criação (check rápido)</h3>
+                <div class="kvs">
+                  <div class="kv"><div class="k">Tamanho</div><div class="v">1080×1350 (4:5)</div></div>
+                  <div class="kv"><div class="k">Slides</div><div class="v">7</div></div>
+                  <div class="kv"><div class="k">Promessa</div><div class="v">5 pilares para hipertrofia</div></div>
+                  <div class="kv"><div class="k">Padrão</div><div class="v">Repetição de layout nos slides de treino</div></div>
+                  <div class="kv"><div class="k">Conversão</div><div class="v">Comentário com palavra (APP/TREINO/MASSA)</div></div>
+                </div>
+
+                <div class="hr"></div>
+
+                <div class="section">
+                  <h3>Elementos visuais (identidade sugerida)</h3>
+                  <div class="row">
+                    <span class="pill">Fundo: claro (no IG) / aqui: guia dark</span>
+                    <span class="pill">Acentos: laranja (palavra-chave)</span>
+                    <span class="pill">Grifo: amarelo marca-texto</span>
+                    <span class="pill">Assinatura: @seuperfil no topo</span>
+                    <span class="pill">Imagens: recortes + anatomia</span>
+                  </div>
+                  <p class="hint">Para replicar: 1 palavra colorida por título + 1 grifo por slide (máx.).</p>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><span class="badge o"></span></div>
+        <div class="bd">
+          <div class="section">
+            <h3>Variações de título (capa)</h3>
+            <ul>
+              <li><b>5 pilares</b> pra ganhar massa (sem complicar)</li>
+              <li><b>7 ajustes</b> que mais turbina a hipertrofia</li>
+              <li><b>3 coisas</b> que todo treino de massa precisa ter</li>
+            </ul>
+          </div>
+          <div class="section">
+            <h3>Ganchos curtos (subtítulo da capa)</h3>
+            <ul>
+              <li>Se você só “treina forte” mas não cresce, começa aqui.</li>
+              <li>Hipertrofia é previsível quando você acerta o básico.</li>
+              <li>Use isso por 4 semanas e me diga o resultado.</li>
+            </ul>
+          </div>
+          <div class="section">
+            <h3>Frases de direção (meio do carrossel)</h3>
+            <ul>
+              <li>Salva pra montar sua rotina hoje.</li>
+              <li>Escolhe 1 item por semana e evolui sem travar.</li>
+              <li>Quer que eu personalize pra você? (CTA no final)</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Slides sugeridos (1..7)</h2><span class="badge g"></span></div>
+      <div class="bd">
+        <ol>
+          <li><b>Capa</b> — “5 pilares para ganhar <span class='muted'>(massa)</span>” + número grande + imagem de atleta.</li>
+          <li><b>Pilar 1: Alimentação</b> — lista 2 colunas (6–10 itens) + 3–4 recortes de alimentos.</li>
+          <li><b>Pilar 2: Suplementos</b> — “Top 3 (com o porquê)” + mockups (Creatina / Whey / Multivitamínico ou Ômega-3 conforme público).</li>
+          <li><b>Pilar 3: Treino (Pernas)</b> — Top 3 exercícios + mini-ilustrações (ex.: agachamento, leg press, stiff).</li>
+          <li><b>Pilar 4: Treino (Costas)</b> — Top 3 (ex.: barra fixa/puxada, remada curvada, remada baixa).</li>
+          <li><b>Pilar 5: Treino (Ombros)</b> — Top 3 (ex.: desenvolvimento, elevação lateral, face pull).</li>
+          <li><b>Fechamento + CTA</b> — prova (prints/planilha) + “Comenta APP e eu te envio o acesso” + slogan/posicionamento.</li>
+        </ol>
+        <p class="hint">Observação de retenção: o “5 pilares” permite ter 3 slides de treino sem parecer quebra de promessa, pois são subitens dentro do pilar “Treino”.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Roteiro (texto copiável)</h2><span class="badge b"></span></div>
+      <div class="bd">
+        <div class="codebox">
+          <pre id="roteiroText">CARROSSEL — HIPERTROFIA (7 SLIDES) — TEMPLATE
+
+SLIDE 1 (CAPA)
+@seuperfil
+TÍTULO: 5 pilares para ganhar MASSA muscular
+SUB: Se você treina e não cresce, começa por aqui.
+VISUAL: número “5” grande + recorte de atleta. Grifo no “5 pilares”.
+
+SLIDE 2 (PILAR 1 — ALIMENTAÇÃO)
+TÍTULO: Alimentação para ganhar MASSA
+SUB: Priorize o básico e repita por semanas.
+LISTA (2 colunas | 6–10 itens):
+- Ovos
+- Arroz
+- Feijão
+- Frango/Carne magra
+- Iogurte/Leite
+- Aveia
+- Banana
+- Abacate
+- Azeite
+- Batata
+OBS: escolha itens que seu público realmente consome.
+
+SLIDE 3 (PILAR 2 — SUPLEMENTOS)
+TÍTULO: Melhores SUPLEMENTOS (Top 3)
+1) Creatina — constância & desempenho
+2) Whey — praticidade pra bater proteína
+3) Multivitamínico (ou Ômega-3) — suporte (se fizer sentido)
+RODAPÉ: suplemento não compensa dieta/treino mal feitos.
+
+SLIDE 4 (PILAR 3 — TREINO PERNAS)
+TÍTULO: Melhores exercícios para PERNAS
+- Agachamento
+- Leg press
+- Stiff (ou levantamento terra romeno)
+DICA CURTA: progrida carga/reps toda semana (controlado).
+
+SLIDE 5 (PILAR 4 — TREINO COSTAS)
+TÍTULO: Melhores exercícios para COSTAS
+- Barra fixa (ou puxada)
+- Remada curvada
+- Remada baixa
+DICA CURTA: amplitude completa + escapula no lugar.
+
+SLIDE 6 (PILAR 5 — TREINO OMBROS)
+TÍTULO: Melhores exercícios para OMBROS
+- Desenvolvimento
+- Elevação lateral
+- Face pull
+DICA CURTA: menos ego, mais técnica.
+
+SLIDE 7 (FECHAMENTO + CTA)
+PROVA: 2–3 prints do app/planilha/resultados (se tiver).
+HEADLINE: Comenta APP que eu te envio o acesso aos treinos
+SUB: para ganhar massa com consistência, sem adivinhação.
+SLOGAN: O app pra quem leva o treino a sério!
+
+CTA EXTRA (opcional no texto da legenda):
+Salva esse post e manda pra quem está travado na hipertrofia.</pre>
+        </div>
+        <p class="hint">Dica: mantenha o mesmo “molde” de frase nos slides 4–6 para leitura rápida (padrão previsível = mais retenção).</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>CTA</h2><span class="badge o"></span></div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <div class="section">
+              <h3>CTA principal (último slide)</h3>
+              <ul>
+                <li><b>Comenta APP</b> e eu te envio o acesso aos treinos.</li>
+              </ul>
+            </div>
+            <div class="section">
+              <h3>Variações prontas (trocar palavra-chave)</h3>
+              <ul>
+                <li>Comenta <b>TREINO</b> que eu te envio o protocolo.</li>
+                <li>Comenta <b>PLANILHA</b> e receba o modelo.</li>
+                <li>Quer o completo? Comenta <b>MASSA</b>.</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="section">
+              <h3>Legenda sugerida (curta e objetiva)</h3>
+              <ul>
+                <li>“Hipertrofia não é sorte: é processo. Use os 5 pilares do carrossel por 4 semanas.”</li>
+                <li>“Quer que eu te mande um treino pronto pra sua rotina? Comenta <b>APP</b>.”</li>
+                <li>“Salva pra consultar no próximo treino.”</li>
+              </ul>
+              <p class="hint">Evite 3 CTAs diferentes na legenda. Priorize: comentar palavra + salvar.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Checklist de criação</h2><span class="badge g"></span></div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <div class="section">
+              <h3>Conteúdo</h3>
+              <ul>
+                <li>Promessa coerente: “5 pilares” (não “5 coisas” soltas).</li>
+                <li>Slide 2: lista com 6–10 itens (sem explicações longas).</li>
+                <li>Slide 3: 3 suplementos com 1 linha de motivo cada.</li>
+                <li>Slides 4–6: repetir layout + 3 exercícios por slide.</li>
+                <li>Slide 7: prova + 1 CTA + benefício explícito.</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="section">
+              <h3>Design</h3>
+              <ul>
+                <li>Formato 1080×1350, margem de respiro consistente.</li>
+                <li>1 palavra destacada por título (laranja) + 1 grifo (amarelo) por slide.</li>
+                <li>Imagens recortadas limpas (sem poluição de fundo).</li>
+                <li>@handle no topo em todos os slides.</li>
+                <li>Verificar legibilidade em tela pequena (zoom 100%).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Variações (para postar mais vezes sem trocar a lógica)</h2><span class="badge b"></span></div>
+      <div class="bd">
+        <ul>
+          <li><b>Variação 1 (dor):</b> “Por que você não ganha massa: 5 travas comuns” (cada slide vira um erro + correção).</li>
+          <li><b>Variação 2 (método):</b> “Hipertrofia em 4 semanas: o que ajustar semana a semana” (slide 2–6 viram semanas).</li>
+          <li><b>Variação 3 (objeção):</b> “Dá pra ganhar massa treinando 3x/semana?” (pilares adaptados + exemplo de divisão).</li>
+          <li><b>Variação 4 (prova):</b> trocar slide 7 por mini-estudo de caso + CTA “comenta AVALIAÇÃO”.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="footer">Página gerada para organização e produção. Copie o roteiro e adapte exercícios/itens ao seu público e à sua abordagem profissional.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const pre = document.getElementById('roteiroText');
+      function copyText(text){
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          return navigator.clipboard.writeText(text);
+        }
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly','');
+        ta.style.position = 'absolute';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        return Promise.resolve();
+      }
+      btn.addEventListener('click', async function(){
+        const text = pre.innerText;
+        try{
+          await copyText(text);
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado!';
+          setTimeout(()=>btn.textContent = old, 1200);
+        }catch(e){
+          const old = btn.textContent;
+          btn.textContent = 'Falha ao copiar';
+          setTimeout(()=>btn.textContent = old, 1200);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
