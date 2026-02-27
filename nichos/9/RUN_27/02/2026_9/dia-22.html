@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 22 — Compra ou não compra? Ranking sincero (Dermato Edition)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,0.04);
+      --card2:rgba(255,255,255,0.06);
+      --stroke:rgba(255,255,255,0.10);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,0.72);
+      --muted2:rgba(234,240,255,0.56);
+      --shadow: 0 18px 60px rgba(0,0,0,0.55);
+
+      --g1: linear-gradient(90deg, #34D399 0%, #60A5FA 45%, #FB923C 100%);
+      --g2: radial-gradient(1200px 700px at 10% 0%, rgba(96,165,250,0.22), transparent 55%),
+            radial-gradient(900px 600px at 90% 10%, rgba(52,211,153,0.18), transparent 55%),
+            radial-gradient(900px 700px at 50% 100%, rgba(251,146,60,0.14), transparent 50%);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height: 100vh;
+    }
+
+    a{color:inherit}
+
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 44px;
+    }
+
+    .top{
+      display:flex;
+      gap: 14px;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      flex:1;
+    }
+
+    .metaRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      align-items:center;
+    }
+
+    .pill{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--stroke);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.2px;
+      color: var(--muted);
+      backdrop-filter: blur(8px);
+    }
+
+    .pill strong{color:var(--text)}
+
+    h1{
+      font-size: clamp(22px, 3.2vw, 34px);
+      line-height:1.15;
+      margin: 0;
+      letter-spacing: -0.6px;
+    }
+
+    .sub{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 72ch;
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+      transition: transform .12s ease, background .12s ease;
+      font-weight: 650;
+      font-size: 13px;
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      user-select:none;
+      backdrop-filter: blur(8px);
+    }
+
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.08); }
+
+    .btn.primary{
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn.primary::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity: 0.18;
+      filter: blur(18px);
+      transform: translate3d(0,0,0);
+      pointer-events:none;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    @media (min-width: 940px){
+      .grid{ grid-template-columns: 1.05fr 0.95fr; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--stroke);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .cardHeader{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    h2{
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+    }
+
+    .tag{
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.04);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    .hr{
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin: 12px 0;
+    }
+
+    .list{
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .list li{ margin: 8px 0; }
+
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: rgba(234,240,255,0.82);
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+      white-space: pre-wrap;
+    }
+
+    .callout{
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(52,211,153,0.08), rgba(96,165,250,0.06) 55%, rgba(251,146,60,0.06));
+      color: rgba(234,240,255,0.86);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 640px){
+      .cols{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .small{
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: rgba(234,240,255,0.9);
+    }
+
+    .footer{
+      margin-top: 16px;
+      color: var(--muted2);
+      font-size: 12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content: space-between;
+    }
+
+    .link{
+      color: rgba(234,240,255,0.86);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(255,255,255,0.25);
+    }
+    .link:hover{ border-bottom-color: rgba(52,211,153,0.6); }
+
+    .toast{
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10,14,28,0.86);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+      color: rgba(234,240,255,0.92);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-2px); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="metaRow">
+          <div class="pill"><strong>Nicho:</strong> Harmonização e dermatologia</div>
+          <div class="pill"><strong>Dia:</strong> 22</div>
+          <div class="pill"><strong>Formato:</strong> Reels</div>
+          <div class="pill"><strong>Pilar:</strong> Erro comum</div>
+        </div>
+        <h1>Compra ou não compra? Ranking sincero (Dermato Edition)</h1>
+        <p class="sub">Roteiro reproduzível para Reels com alta retenção: veredito binário (VALE/NÃO VALE), justificativa técnica curta e CTA para “parte 2” + lista do público.</p>
+        <p class="sub">Post original: <a class="link" href="https://www.instagram.com/p/DVE1PyTE4pm/" target="_blank" rel="noreferrer noopener">https://www.instagram.com/p/DVE1PyTE4pm/</a></p>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn" type="button">Copiar roteiro <span class="kbd">Ctrl</span><span class="kbd">C</span></button>
+        <a class="btn" href="https://www.instagram.com/p/DVE1PyTE4pm/" target="_blank" rel="noreferrer noopener">Abrir referência</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo + promessa</span>
+        </div>
+        <div class="callout">
+          <strong>Promessa central:</strong> “Vou te poupar tempo e dinheiro: o que vale a pena de verdade vs. o que é só marketing.”<br/>
+          <strong>Por que funciona:</strong> curiosidade (veredito), formato em lista (binge), autoridade sem aula longa, quebra de expectativa (derruba promessas) e personalização por perfil/queixa.
+        </div>
+        <div class="hr"></div>
+        <div class="cols">
+          <div>
+            <p class="small"><strong>Tempo ideal:</strong> 20–35s (até 45s se a edição estiver muito rápida).</p>
+            <p class="small"><strong>Itens:</strong> 8–12 (misture populares + polêmicos).</p>
+          </div>
+          <div>
+            <p class="small"><strong>Cadência:</strong> 1 item a cada 2–4s.</p>
+            <p class="small"><strong>Regra de ouro:</strong> 1 motivo técnico curto, sem “palestra”.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Estrutura</h2>
+          <span class="tag">Sequência fixa (reproduzível)</span>
+        </div>
+        <ol class="list">
+          <li><strong>Hook (0–2s):</strong> pergunta + promessa de julgamento rápido.</li>
+          <li><strong>Contexto (0–1s opcional):</strong> “Vou ser sincera e direta.”</li>
+          <li><strong>Blocos repetíveis (2–25s):</strong> Item → Veredito → Motivo → (Opcional) para quem/alternativa.</li>
+          <li><strong>Fechamento (últimos 2–4s):</strong> CTA “PARTE 2” + convite para mandar itens.</li>
+        </ol>
+        <div class="hr"></div>
+        <p class="small"><strong>Dica de retenção:</strong> alterne VALE/NÃO VALE ao longo da lista para evitar monotonia.</p>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader">
+          <h2>Roteiro (template copiável)</h2>
+          <span class="tag">Pronto para gravar</span>
+        </div>
+        <pre class="mono" id="roteiroText">TÍTULO NA TELA: “COMPRA OU NÃO COMPRA? (edição: [tema])”
+
+0:00–0:02 (HOOK)
+Você: “Vai, doutora: compra ou não compra? [tema da lista]”
+(legenda grande: “COMPRA OU NÃO COMPRA?” + barra 1/10)
+
+0:02–0:25 (LISTA — repita o bloco)
+ITEM 1 — [nome curto]
+Veredito: “VALE.” / “NÃO vale.”
+Motivo (1 frase): “[entrega X], mas não faz [Z].”
+Opcional: “Pra [perfil/queixa], ok. Pra [outra], não.” / “Pra isso, melhor [alternativa real].”
+
+ITEM 2 — ...
+ITEM 3 — ...
+(continue até 8–12 itens)
+
+0:25–0:35 (FECHAMENTO)
+Você: “Quer parte 2? Comenta ‘PARTE 2’ e me diz o que você quer que eu avalie.”
+Extra (1 escolha): “Salva pra usar na próxima compra.” / “Manda pra quem cai em trend.”</pre>
+        <div class="hr"></div>
+        <div class="cols">
+          <div class="callout">
+            <strong>Fórmulas de motivo técnico (substituíveis):</strong><br/>
+            • “Ajuda em [efeito leve], mas não resolve [promessa grande].”<br/>
+            • “Funciona quando o problema é [causa A]; se for [causa B], não.”<br/>
+            • “Tem evidência para [uso], não para [promessa].”
+          </div>
+          <div class="callout">
+            <strong>Alavancas de autoridade (sem soar pedante):</strong><br/>
+            • “Na prática do consultório, eu vejo…”<br/>
+            • “Isso aqui é ótimo para [X], péssimo para [Y].”<br/>
+            • “Se a sua queixa é [Z], o caminho é outro.”
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Elementos visuais</h2>
+          <span class="tag">Edição high-retention</span>
+        </div>
+        <ul class="list">
+          <li><strong>Cortes secos</strong> a cada item (sem respiro).</li>
+          <li><strong>Texto grande</strong>: “ITEM” + carimbo “VALE / NÃO VALE”.</li>
+          <li><strong>Barra de progresso</strong> (ex.: 1/10, 2/10...).</li>
+          <li><strong>SFX</strong> leve (pop/click) ou troca de beat por item.</li>
+          <li><strong>Zoom</strong> discreto ou mudança de enquadramento a cada 2–3 itens.</li>
+          <li><strong>B-roll</strong> 0,5–1s (produto/print/close do item) se ajudar a compreensão.</li>
+          <li><strong>Legendas completas</strong> (muita gente assiste sem áudio).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">Opções plug-and-play</span>
+        </div>
+        <div class="cols">
+          <div>
+            <p class="small"><strong>Hooks (escolha 1):</strong></p>
+            <ul class="list">
+              <li>“Você quer que eu seja sincera? Vale ou não vale?”</li>
+              <li>“Isso aqui é dinheiro jogado fora ou funciona?”</li>
+              <li>“3 coisas que eu compraria e 3 que eu não compraria.”</li>
+              <li>“Se você tem [queixa], não compra isso antes de ver.”</li>
+            </ul>
+          </div>
+          <div>
+            <p class="small"><strong>Texto na tela (modelos):</strong></p>
+            <ul class="list">
+              <li>“COMPRA OU NÃO COMPRA? ( [tema] edition )”</li>
+              <li>“Lista sincera: vale × não vale”</li>
+              <li>“Promessa gigante ≠ resultado real”</li>
+              <li>“Pra [perfil], ok. Pra [perfil], não.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="small"><strong>Legenda sugerida (curta):</strong> “Sem terrorismo e sem marketing: só o que entrega de verdade. Quer parte 2? Comenta ‘PARTE 2’ + o item que você quer que eu avalie.”</p>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>CTA</h2>
+          <span class="tag">Escolha 1–2</span>
+        </div>
+        <ul class="list">
+          <li><strong>Comentários (cresce + dá pauta):</strong> “Comenta ‘PARTE 2’ e manda sua lista.”</li>
+          <li><strong>Salvar (intenção alta):</strong> “Salva pra lembrar na próxima compra.”</li>
+          <li><strong>Compartilhar (alcance):</strong> “Manda pra alguém que ama ‘trend’.”</li>
+          <li><strong>DM (triagem leve):</strong> “Me chama no DM com seu <em>tipo de pele</em> e o item (sem foto).”</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="callout"><strong>Fixar comentário:</strong> “Escreve aqui o próximo produto/procedimento que você quer no ‘compra ou não compra’.”</div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader">
+          <h2>Checklist</h2>
+          <span class="tag">Criação do zero (sem travar)</span>
+        </div>
+        <div class="cols">
+          <div>
+            <p class="small"><strong>Pré-produção</strong></p>
+            <ul class="list">
+              <li>Defina o <strong>tema da lista</strong>: produtos, gadgets, procedimentos, tendências.</li>
+              <li>Selecione <strong>8–12 itens</strong> (misture “queridinhos” + “polêmicos”).</li>
+              <li>Para cada item, escreva: <strong>VALE/NÃO VALE</strong> + <strong>1 motivo</strong> + (opcional) <strong>pra quem</strong> / <strong>alternativa real</strong>.</li>
+              <li>Prepare o layout do texto: <strong>ITEM</strong> + carimbo <strong>VALE/NÃO VALE</strong> + <strong>1/10</strong>.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="small"><strong>Gravação + edição</strong></p>
+            <ul class="list">
+              <li>Hook em até <strong>2s</strong> (sem introdução longa).</li>
+              <li>Item a cada <strong>2–4s</strong> (frases com 7–10 palavras).</li>
+              <li>Corte entre itens sem pausa; inclua SFX/beat.</li>
+              <li>Legendas completas + barra de progresso.</li>
+              <li>Feche com CTA “PARTE 2” + pedido de lista.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader">
+          <h2>Variações</h2>
+          <span class="tag">Adapte para qualquer tema (mesmo impacto)</span>
+        </div>
+        <div class="cols">
+          <div class="callout">
+            <strong>Variação A — “Procedimento: vale pra você?”</strong><br/>
+            Substitua “compra” por “faz ou não faz”.<br/>
+            Hook: “Faz ou não faz: [procedimento]?”<br/>
+            Motivo: “Funciona quando a indicação é [X]. Se você quer [Y], não é ele.”
+          </div>
+          <div class="callout">
+            <strong>Variação B — “Escolha inteligente do consultório”</strong><br/>
+            Em vez de VALE/NÃO VALE, use: “PRIORIDADE” / “DEIXA PRA DEPOIS”.<br/>
+            Motivo: “Primeiro resolve [base]; depois pensa em [extra].”
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="cols">
+          <div>
+            <p class="small"><strong>Substituições prontas (use como Lego):</strong></p>
+            <ul class="list">
+              <li><strong>Objeto avaliado:</strong> produto → procedimento → hábito → “trend” → suplemento.</li>
+              <li><strong>Veredito:</strong> VALE/NÃO VALE → INDICO/NÃO INDICO → PRIORIDADE/NÃO É PRIORIDADE.</li>
+              <li><strong>Motivo:</strong> “não volumiza” → “não reestrutura” → “não trata a causa” → “efeito é temporário” → “depende da indicação”.</li>
+              <li><strong>Personalização:</strong> “pra melasma/rosácea/gestante” → “pra flacidez/olheira/poros” → “pra lábio/mandíbula/queixo”.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="small"><strong>Temas que tendem a performar nesse formato:</strong></p>
+            <ul class="list">
+              <li>“Clareadores do melasma: quais valem?”</li>
+              <li>“Rosácea: o que piora e o que ajuda?”</li>
+              <li>“Procedimentos superestimados vs. os que entregam”</li>
+              <li>“Skincare caro: onde faz sentido gastar?”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">
+      <div>Identidade: fundo escuro, cards com borda suave, destaques em degradê (verde/azul/laranja), layout limpo e high-tech.</div>
+      <div>Dica de execução: grave em 9:16, texto grande e contraste alto.</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('roteiroText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = textEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
+          catch(err){ showToast('Não foi possível copiar. Selecione e copie manualmente.'); }
+          document.body.removeChild(ta);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
