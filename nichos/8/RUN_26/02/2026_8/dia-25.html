@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Ficha reproduzível — Carrossel (Marketing e Posicionamento)</title>
+  <style>
+    :root{
+      --bg0:#07080c;
+      --bg1:#0b0d14;
+      --card:#0e1220cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#eaf0ff;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 10px 30px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --g1: linear-gradient(90deg, #BDFB66 0%, #39ffb7 35%, #59a9ff 68%, #ffb15a 100%);
+      --g2: linear-gradient(135deg, rgba(189,251,102,.22), rgba(89,169,255,.18), rgba(255,177,90,.16));
+      --green:#BDFB66;
+      --blue:#59a9ff;
+      --orange:#ffb15a;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 600px at 20% 0%, rgba(89,169,255,.14), transparent 60%),
+        radial-gradient(800px 600px at 85% 10%, rgba(189,251,102,.12), transparent 55%),
+        radial-gradient(900px 700px at 60% 120%, rgba(255,177,90,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:var(--radius2);
+      padding:18px 18px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;inset:-1px;
+      background: var(--g2);
+      opacity:.7;
+      pointer-events:none;
+      mask: linear-gradient(#000, transparent 75%);
+    }
+    .topRow{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;position:relative}
+    .badgeRow{display:flex;gap:10px;flex-wrap:wrap}
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.25);
+      color: var(--muted);
+      letter-spacing:.2px;
+    }
+    .badge strong{color:var(--text);font-weight:650}
+
+    h1{margin:8px 0 0;font-size:22px;line-height:1.2;letter-spacing:-.3px;position:relative}
+    .sub{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      max-width:80ch;
+      position:relative;
+    }
+    .link{
+      display:inline-flex;align-items:center;gap:9px;
+      text-decoration:none;
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.25);
+      padding:10px 12px;
+      border-radius:12px;
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      transition:.2s ease;
+      position:relative;
+    }
+    .link:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.25);color:var(--text)}
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background: var(--g1);
+      box-shadow:0 0 0 4px rgba(255,255,255,.05);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media(min-width: 960px){
+      .grid{grid-template-columns: 1fr 1fr;}
+      .span2{grid-column: 1 / -1;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(10,12,18,.55);
+      border-radius:var(--radius2);
+      padding:16px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute;inset:0;
+      background: radial-gradient(900px 160px at 10% 0%, rgba(189,251,102,.10), transparent 55%),
+                  radial-gradient(900px 160px at 90% 0%, rgba(89,169,255,.10), transparent 55%),
+                  radial-gradient(900px 200px at 50% 115%, rgba(255,177,90,.08), transparent 60%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .card > *{position:relative}
+
+    .card h2{margin:0 0 10px;font-size:14px;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
+    .card p, .card li{color:var(--muted);line-height:1.55;font-size:14px}
+    .card ul{margin:10px 0 0;padding-left:18px}
+    .card li{margin:6px 0}
+
+    .hr{
+      height:1px;background:linear-gradient(90deg, rgba(189,251,102,.0), rgba(189,251,102,.35), rgba(89,169,255,.35), rgba(255,177,90,.28), rgba(255,177,90,.0));
+      margin:12px 0;
+    }
+
+    .k{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.22);
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      margin:4px 6px 0 0;
+      white-space:nowrap;
+    }
+    .k b{color:var(--text);font-weight:650}
+    .k i{font-style:normal;background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media(min-width: 960px){
+      .twoCol{grid-template-columns: 1fr 1fr;}
+    }
+
+    .scriptBox{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.30);
+      border-radius:16px;
+      padding:14px;
+      font-family:var(--mono);
+      font-size:12.5px;
+      color: rgba(234,240,255,.78);
+      line-height:1.6;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+    button{
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      font-family:var(--mono);
+      font-size:12px;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+    button:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.28)}
+    .primary{
+      background: linear-gradient(180deg, rgba(189,251,102,.20), rgba(89,169,255,.14));
+      border-color: rgba(189,251,102,.25);
+    }
+    .status{color:var(--muted2);font-family:var(--mono);font-size:12px}
+
+    .miniGrid{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width: 680px){
+      .miniGrid{grid-template-columns:1fr 1fr}
+    }
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.24);
+      border-radius:14px;
+      padding:12px;
+    }
+    .pill h3{margin:0 0 6px;font-size:13px;color:var(--text);font-family:var(--mono)}
+    .pill p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+
+    footer{margin-top:18px;color:var(--muted2);font-family:var(--mono);font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topRow">
+        <div>
+          <div class="badgeRow">
+            <div class="badge"><strong>Nicho:</strong> Marketing e Posicionamento</div>
+            <div class="badge"><strong>Dia:</strong> 25</div>
+            <div class="badge"><strong>Formato:</strong> Carrossel</div>
+            <div class="badge"><strong>Pilar:</strong> Prova</div>
+          </div>
+          <h1>Stack não óbvio: 9 slides que viram prova e leads</h1>
+          <p class="sub">Fórmula reproduzível: <span style="background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;">Lista prática</span> + <span style="background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;">bastidores</span> + <span style="background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;">prova</span> + <span style="background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;">CTA por palavra-chave</span>.</p>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DT8g6GiDxho/" target="_blank" rel="noreferrer">
+          <span class="dot"></span>
+          Abrir post original
+        </a>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="card span2">
+        <h2>Resumo</h2>
+        <div class="twoCol">
+          <div>
+            <p><b>Objetivo do post:</b> entregar valor rápido (itens acionáveis) e converter com comentário/DM via palavra-chave.</p>
+            <p><b>Por que funciona:</b> cada slide é uma “pílula” (1 item + 1 motivo) com estética de bastidor (prints) e finaliza com prova + autoridade + CTA.</p>
+          </div>
+          <div>
+            <div class="miniGrid">
+              <div class="pill">
+                <h3>Quando usar</h3>
+                <p>Para ganhar alcance e leads com curadoria: ferramentas, prompts, frameworks, checklists, rotinas, templates.</p>
+              </div>
+              <div class="pill">
+                <h3>Resultado esperado</h3>
+                <p>Retenção (passar slides), salvamentos (lista) e comentários (palavra-chave).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div>
+          <span class="k"><i>Hook</i> <b>“não óbvio”</b></span>
+          <span class="k"><i>Cadência</i> <b>1 item/slide</b></span>
+          <span class="k"><i>Prova</i> <b>métricas/print</b></span>
+          <span class="k"><i>Conversão</i> <b>comente palavra</b></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Estrutura</h2>
+        <ul>
+          <li><b>Capa (Hook + promessa):</b> curadoria + resultado em 1 frase.</li>
+          <li><b>Itens (5–6 slides):</b> verbo no infinitivo + nome do recurso + 1 microbenefício + visual de bastidor.</li>
+          <li><b>Diferencial (1 slide):</b> “pulo do gato” / método proprietário / regra pessoal.</li>
+          <li><b>Prova (1 slide):</b> métricas, antes/depois, depoimento curto ou case.</li>
+          <li><b>Fechamento (1 slide):</b> CTA por palavra-chave + autoridade + próximo passo.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Elementos visuais</h2>
+        <ul>
+          <li><b>Fundo escuro</b> + tipografia grande (entender em 1 segundo).</li>
+          <li><b>Stickers/etiquetas</b> para notas rápidas (“uso assim”, “evita X”, “pulo do gato”).</li>
+          <li><b>Prints/recortes</b> (interfaces, trechos de planilha, trechos de copy, mapa mental).</li>
+          <li><b>Anotações guiando o olhar:</b> setas, contornos, marca-texto, números 1–5.</li>
+          <li><b>Ritmo visual:</b> alternar cor de destaque (verde/azul/laranja) a cada 1–2 slides.</li>
+        </ul>
+      </div>
+
+      <div class="card span2">
+        <h2>Roteiro</h2>
+        <p>Use o bloco abaixo como “texto base” (troque apenas os campos entre colchetes). Mantém o mesmo impacto para qualquer tema.</p>
+        <div class="btnRow">
+          <button class="primary" id="copyBtn" type="button">Copiar roteiro</button>
+          <span class="status" id="copyStatus">Pronto para copiar.</span>
+        </div>
+        <div class="hr"></div>
+        <div class="scriptBox" id="script">TÍTULO (capa)
+“[CATEGORIA] não óbvios que você precisa ter para [RESULTADO]”
+Sub: “Se você é [PERSONA], salva isso.”
+
+SLIDE 1 — CAPA (Hook + promessa)
+Sticker: “[CATEGORIA] não óbvios”
+Headline grande: “O que você precisa ter”
+Sub: “para [RESULTADO] em [CONTEXTO]”
+Visual: 1 foto/elemento humano OU 1 print grande desfocado ao fundo.
+
+SLIDE 2 — ITEM #1
+Headline (verbo): “[VERBO] [OBJETO]”
+Sub: “[FERRAMENTA/FRAMEWORK #1]”
+1 linha: “Eu uso pra [BENEFÍCIO DIRETO].”
+Sticker: “Evita: [ERRO/COISA CHATA].”
+Visual: print/mini diagrama/checklist.
+
+SLIDE 3 — ITEM #2
+Headline: “[VERBO] [OBJETO]”
+Sub: “[FERRAMENTA/FRAMEWORK #2]”
+Bullets (2):
+• “Config: [AJUSTE/REGRA].”
+• “Aplicação: [COMO EU FAÇO].”
+Visual: print com setas/números.
+
+SLIDE 4 — ITEM #3
+Headline: “[VERBO] [OBJETO]”
+Sub: “[FERRAMENTA/FRAMEWORK #3]”
+1 linha: “Dá pra fazer em [TEMPO] e melhora [MÉTRICA/RESULTADO].”
+Sticker-opinião: “Isso destrava [TRAVA COMUM].”
+Visual: antes/depois simples (2 caixas) OU exemplo preenchido.
+
+SLIDE 5 — ITEM #4 (passo numerado)
+Headline: “Faz assim (1–3)”
+1) “[Passo 1]”
+2) “[Passo 2]”
+3) “[Passo 3]”
+Sub: “Se você fizer só isso, já melhora [RESULTADO].”
+Visual: números em círculo + setas.
+
+SLIDE 6 — ITEM #5 (exemplo aplicado)
+Headline: “Exemplo real”
+Sub: “[MODELO/OUTPUT]”
+Mostre:
+• “Antes: [FRASE/ESTADO].”
+• “Depois: [FRASE/ESTADO].”
+Sticker: “Copie e adapte.”
+Visual: recorte de texto/print de doc.
+
+SLIDE 7 — O PULO DO GATO (diferencial)
+Headline: “Eu faço diferente:”
+Bullets (3):
+• “[Regra 1 do meu método]”
+• “[Regra 2 do meu método]”
+• “[Regra 3 do meu método]”
+Sub: “Isso funciona porque [MOTIVO CURTO].”
+Visual: mini framework (3 blocos) ou mapa.
+
+SLIDE 8 — PROVA
+Headline: “Isso gerou:”
+Indicadores (2–4):
+• “[Métrica 1]”
+• “[Métrica 2]”
+• “[Prova 3: print/depoimento]”
+Rodapé: “Sem [OBJEÇÃO: ads/equipe/tempo].”
+
+SLIDE 9 — CTA + AUTORIDADE
+CTA: “Comente ‘[PALAVRA]’ que eu te envio [RECURSO].”
+Autoridade: “Eu sou [SEU TÍTULO] e ajudo [PÚBLICO] a [RESULTADO] com [MECANISMO].”
+Próximo passo (opcional): “Quer aplicar comigo? [convite curto: aula/mentoria/diagnóstico].”</div>
+      </div>
+
+      <div class="card">
+        <h2>Copy e ganchos</h2>
+        <ul>
+          <li><b>Hooks de capa (escolha 1):</b>
+            <ul>
+              <li>“[X] não óbvios que [PERSONA] deveria usar”</li>
+              <li>“Meu kit de [CATEGORIA] para [RESULTADO] (sem enrolação)”</li>
+              <li>“O stack que eu uso pra [OBJETIVO] (e por quê)”</li>
+              <li>“Se você faz [TAREFA], isso vai te poupar [TEMPO/DOR]”</li>
+            </ul>
+          </li>
+          <li><b>Microcopy (stickers):</b> “isso muda o jogo”, “não faz do jeito comum”, “2 min por dia”, “pare de [erro]”, “salva pra usar depois”.</li>
+          <li><b>Regra de ouro:</b> 70% entendimento instantâneo (headline + visual) + 30% detalhe para quem fica.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>CTA</h2>
+        <ul>
+          <li><b>Melhor CTA (alcance + leads):</b> comentário com palavra-chave + entrega clara.</li>
+          <li><b>Templates prontos:</b>
+            <ul>
+              <li>“Comente <b>‘MAPA’</b> que eu envio o <b>checklist</b>.”</li>
+              <li>“Quer o <b>template</b>? Comente <b>‘TEMPLATE’</b>.”</li>
+              <li>“Se você quer o passo a passo, comente <b>‘PASSO’</b>.”</li>
+              <li>“Comente <b>‘DIAGNÓSTICO’</b> e eu te mando as perguntas.”</li>
+            </ul>
+          </li>
+          <li><b>Entrega sugerida:</b> PDF, link do Notion, checklist, modelo de copy, planilha, prompt pack.</li>
+        </ul>
+      </div>
+
+      <div class="card span2">
+        <h2>Slides sugeridos (1..9)</h2>
+        <div class="miniGrid">
+          <div class="pill"><h3>Slide 1 — Capa</h3><p>Curadoria + promessa + público. Visual limpo; 1 elemento forte.</p></div>
+          <div class="pill"><h3>Slide 2 — Item #1</h3><p>Verbo + recurso + benefício. Print/diagrama.</p></div>
+          <div class="pill"><h3>Slide 3 — Item #2</h3><p>Mesmo padrão + 2 bullets de aplicação.</p></div>
+          <div class="pill"><h3>Slide 4 — Item #3</h3><p>Inclua sticker de opinião (“destrava X”).</p></div>
+          <div class="pill"><h3>Slide 5 — Item #4</h3><p>Passo numerado (1–3). Guia o olhar com setas.</p></div>
+          <div class="pill"><h3>Slide 6 — Item #5</h3><p>Exemplo aplicado (antes/depois ou modelo preenchido).</p></div>
+          <div class="pill"><h3>Slide 7 — Diferencial</h3><p>“Eu faço diferente” + 3 regras do método.</p></div>
+          <div class="pill"><h3>Slide 8 — Prova</h3><p>Métricas/print/case curto + “sem [objeção]”.</p></div>
+          <div class="pill"><h3>Slide 9 — CTA + Autoridade</h3><p>Palavra-chave + entrega + quem você ajuda + convite opcional.</p></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Checklist (criação)</h2>
+        <ul>
+          <li><b>Definição:</b> [persona] + [resultado] + [tema da lista].</li>
+          <li><b>Itens:</b> 5–6 (cada um com 1 benefício mensurável ou evitável).</li>
+          <li><b>Diferencial:</b> 1 regra proprietária (o “jeito que você faz”).</li>
+          <li><b>Prova:</b> 1 print, 1 número, ou 1 antes/depois.</li>
+          <li><b>CTA:</b> palavra-chave + entrega + prazo (“te envio hoje”, se fizer sentido).</li>
+          <li><b>Design:</b> 1080×1350; headline gigante; 1 cor de destaque por slide; consistência de margens.</li>
+          <li><b>Revisão rápida:</b> dá pra entender cada slide em 1 segundo? se não, corte texto.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Variações (adaptações e substituições)</h2>
+        <ul>
+          <li><b>Troque “apps” por:</b> frameworks, perguntas, prompts, rotinas, templates, scripts, indicadores, auditorias.</li>
+          <li><b>Troque “prints” por:</b> trechos de copy, mapa mental, planilha, quadro Kanban, checklist, matriz (2×2).</li>
+          <li><b>Troque “métricas de views” por:</b> leads, respostas no direct, taxa de conversão, agenda preenchida, tempo economizado, clareza da oferta.</li>
+          <li><b>Troque “pulo do gato” por:</b> regra anti-erro (“não faço X”), critério de decisão, ordem correta, heurística (se A então B).</li>
+          <li><b>Variação de CTA com mesmo impacto:</b>
+            <ul>
+              <li>“Comente ‘[PALAVRA]’ e eu respondo com o link.”</li>
+              <li>“Quer que eu personalize pra você? Comente ‘[PALAVRA]’ + seu nicho.”</li>
+              <li>“Se você quiser a versão em Notion, comenta ‘[PALAVRA]’.”</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      Identidade sugerida: fundo #0B0B0F | destaques em degradê (verde/azul/laranja) | tipografia grande + stickers | bastidores com prints.
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const status = document.getElementById('copyStatus');
+      const el = document.getElementById('script');
+
+      async function copy(){
+        const text = el.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          status.textContent = 'Roteiro copiado para a área de transferência.';
+          btn.textContent = 'Copiado';
+          setTimeout(()=>{ btn.textContent='Copiar roteiro'; status.textContent='Pronto para copiar.'; }, 1800);
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); status.textContent='Roteiro copiado.'; }
+          catch(err){ status.textContent='Não foi possível copiar automaticamente. Selecione e copie manualmente.'; }
+          document.body.removeChild(ta);
+        }
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
