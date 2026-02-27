@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dia 25 — Procedimento A x B</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 18px 40px rgba(0,0,0,.45);
+      --r16: 16px;
+      --r20: 20px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --g1: linear-gradient(90deg, #1AE6A5 0%, #4AA3FF 45%, #FFB34A 100%);
+      --g2: radial-gradient(900px 360px at 15% 0%, rgba(26,230,165,.22), transparent 60%),
+            radial-gradient(900px 360px at 85% 0%, rgba(74,163,255,.18), transparent 60%),
+            radial-gradient(900px 520px at 50% 120%, rgba(255,179,74,.14), transparent 60%);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1) 70%);
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+    .header{
+      position:relative;
+      padding:22px 20px;
+      border:1px solid var(--stroke);
+      border-radius: var(--r20);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.12;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .toprow{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .pill{
+      font-size:12px;
+      padding:7px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      backdrop-filter: blur(8px);
+      letter-spacing:.2px;
+    }
+    .pill strong{color: var(--text); font-weight:700}
+    .title{
+      margin:14px 0 6px;
+      font-size:22px;
+      line-height:1.15;
+      letter-spacing:-.2px;
+    }
+    .subtitle{margin:0; color: var(--muted); font-size:14px; line-height:1.45}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      border-radius: 12px;
+      padding:10px 12px;
+      font-size:13px;
+      color: var(--text);
+      background: rgba(255,255,255,.05);
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn:hover{background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.18)}
+    .btn:active{transform: translateY(1px)}
+    .btnPrimary{
+      border:0;
+      background: var(--g1);
+      color:#061018;
+      font-weight:700;
+      box-shadow: 0 10px 28px rgba(26,230,165,.10);
+    }
+    .btnPrimary:hover{filter: saturate(1.04) brightness(1.02)}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      border:1px solid var(--stroke);
+      border-radius: var(--r20);
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 14px 34px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .cardHead{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+    .cardHead h2{margin:0; font-size:14px; letter-spacing:.8px; text-transform:uppercase; color: rgba(234,240,255,.86)}
+    .tag{
+      font-family: var(--mono);
+      font-size:12px;
+      color: rgba(234,240,255,.70);
+      border:1px solid rgba(255,255,255,.14);
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.18);
+      white-space:nowrap;
+    }
+    .cardBody{padding:16px}
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:10px;
+      margin-bottom:12px;
+    }
+    @media (max-width: 520px){
+      .kpi{grid-template-columns:1fr}
+    }
+    .k{
+      padding:12px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+    }
+    .k .l{font-size:11px; color: var(--muted2); margin-bottom:6px; text-transform:uppercase; letter-spacing:.8px}
+    .k .v{font-size:13px; color: var(--text); line-height:1.35}
+    .list{margin:0; padding-left:18px; color: var(--muted); line-height:1.55}
+    .list li{margin:8px 0}
+    .hr{height:1px; background: rgba(255,255,255,.10); margin:14px 0}
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      padding:12px 12px;
+      background: linear-gradient(135deg, rgba(26,230,165,.09), rgba(74,163,255,.06) 55%, rgba(255,179,74,.06));
+    }
+    .callout b{color: var(--text)}
+    .mono{
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color: rgba(234,240,255,.78);
+      background: rgba(0,0,0,.24);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding:14px;
+      overflow:auto;
+      white-space:pre-wrap;
+    }
+    .grad{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight:800;
+    }
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width: 760px){.twoCol{grid-template-columns:1fr}}
+    .mini{font-size:13px; color: var(--muted); line-height:1.55}
+    .checklist{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width: 760px){.checklist{grid-template-columns:1fr}}
+    .chk{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+      padding:12px;
+    }
+    .chk h3{margin:0 0 8px; font-size:13px; letter-spacing:.5px}
+    .chk ul{margin:0; padding-left:18px; color: var(--muted); line-height:1.55}
+    .chk li{margin:7px 0}
+    .footerNote{margin-top:14px; color: rgba(234,240,255,.58); font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <section class="header">
+      <div class="toprow">
+        <div class="meta">
+          <span class="pill"><strong>Nicho:</strong> Harmonização e dermatologia</span>
+          <span class="pill"><strong>Dia:</strong> 25</span>
+          <span class="pill"><strong>Formato:</strong> Reels</span>
+          <span class="pill"><strong>Pilar:</strong> Mito vs Verdade</span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DVETLkWjSxs/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <h1 class="title"><span class="grad">Procedimento A x B</span>: a diferença que muda o resultado</h1>
+      <p class="subtitle">Template reproduzível para comparar dois tratamentos, corrigir uma expectativa errada e concluir com indicação (sem polarizar). Ideal para reduzir confusão e gerar comentários qualificados.</p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardHead">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo: clareza + autoridade + comentários</span>
+        </div>
+        <div class="cardBody">
+          <div class="kpi">
+            <div class="k">
+              <div class="l">Duração</div>
+              <div class="v">35–60s (falas curtas + cortes rápidos)</div>
+            </div>
+            <div class="k">
+              <div class="l">Estrutura</div>
+              <div class="v">Hook → A → mito → B → analogia → conclusão</div>
+            </div>
+            <div class="k">
+              <div class="l">Promessa</div>
+              <div class="v">Entender o efeito real de cada um e evitar expectativa errada</div>
+            </div>
+          </div>
+
+          <div class="callout mini">
+            <b>Por que performa:</b> compara (A vs B), mostra algo concreto (objeto/texture/ilustração), derruba um mito em frase forte e termina com “depende do objetivo” (persuasivo sem parecer venda).
+          </div>
+
+          <div class="hr"></div>
+          <ul class="list">
+            <li><b>Melhor quando:</b> existem dúvidas comuns na clínica (“qual é melhor?”, “serve pra levantar?”, “dá volume?”).</li>
+            <li><b>O que não pode faltar:</b> 1 frase de negação ("não faz X") + 1 analogia cotidiana + 1 pergunta para comentário.</li>
+            <li><b>Tom:</b> clínico, simples, sem jargão (ou jargão imediatamente traduzido).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Estrutura (sequência)</h2>
+          <span class="tag">Ritmo por blocos</span>
+        </div>
+        <div class="cardBody">
+          <ol class="list">
+            <li><b>Hook (0–5s):</b> “Diferença entre A e B” + “muita gente confunde”.</li>
+            <li><b>Promessa (5–8s):</b> “Em menos de 1 minuto, você vai saber o que cada um entrega.”</li>
+            <li><b>Bloco A (8–25s):</b> o que é → como age → resultado → limite (o que NÃO faz).</li>
+            <li><b>Bloco B (25–45s):</b> o que é → como age → resultado → analogia visual.</li>
+            <li><b>Conclusão (45–55s):</b> “não é melhor/pior; é indicação; às vezes combina”.</li>
+            <li><b>CTA (55–60s):</b> comentário com objetivo/parte 2/“A ou B”.</li>
+          </ol>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="cardHead">
+        <h2>Roteiro (template reproduzível)</h2>
+        <span class="tag">Substitua [A], [B], [resultado], [mito]</span>
+      </div>
+      <div class="cardBody">
+        <div class="mono" id="roteiroText">ROTEIRO — REELS A vs B (35–60s)
+
+[0–2s | Texto na tela]
+“[A] x [B]: qual a diferença?”
+
+[0–5s | Hook — fale olhando para a câmera]
+“Parece óbvio, mas muita gente confunde [A] com [B]. E isso muda totalmente a expectativa do resultado.”
+
+[5–8s | Promessa]
+“Em menos de 1 minuto, eu vou te mostrar o que cada um faz — e o que NÃO faz — pra você escolher com mais segurança.”
+
+[8–25s | Bloco A — o que é + como age + efeito + limite]
+“[A] é [definição simples em 1 frase].”
+“Ele age assim: [mecanismo leigo em 1 frase].”
+“O que você costuma perceber é: [resultado final A em 1 frase].”
+“Mas atenção: [A] NÃO faz [mito/expectativa errada].”
+
+[25–45s | Bloco B — o que é + como age + efeito + analogia]
+“Já o [B] é [definição simples em 1 frase].”
+“Ele funciona como [analogia do cotidiano], porque [explicação simples].”
+“Na prática, ele entrega: [resultado final B em 1 frase].”
+
+[45–55s | Fechamento sem polarizar]
+“Então não é sobre ‘qual é melhor’. É sobre objetivo.”
+“Muita gente, inclusive, se beneficia de combinar [A] e [B] em momentos diferentes do plano.”
+
+[55–60s | CTA — escolha 1]
+1) “Seu objetivo é mais [objetivo A] ou [objetivo B]? Comenta aqui: ‘[objetivo A]’ ou ‘[objetivo B]’.”
+2) “Quer que eu faça uma parte 2 mostrando ONDE cada um costuma ser usado? Comenta ‘PARTE 2’.”
+3) “Se você achava que era a mesma coisa, comenta ‘EU’ que eu te mando uma orientação geral do que considerar.”
+
+NOTAS DE PERFORMANCE
+- Frases curtas (1–2 linhas). Sem parágrafos.
+- Corte a cada 1,5–3s.
+- Texto na tela apenas com palavras-chave.
+- Zoom-in leve na frase de mito: “NÃO faz [X]”.</div>
+        <p class="footerNote">Dica: escreva as respostas de [A] e [B] antes de gravar em 4 frases cada (definição, mecanismo, resultado, limite). Isso acelera e mantém didático.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="cardHead">
+        <h2>Elementos visuais</h2>
+        <span class="tag">Didática tátil + credibilidade</span>
+      </div>
+      <div class="cardBody">
+        <div class="twoCol">
+          <div class="mini">
+            <b>O que mostrar (escolha 2–3):</b>
+            <ul class="list">
+              <li>Objeto: embalagem/seringa sem agulha/modelo anatômico.</li>
+              <li>Close do produto (quando aplicável): textura/densidade/consistência.</li>
+              <li>Ilustração rápida: linhas no rosto indicando “volume/suporte” vs “qualidade da pele”.</li>
+              <li>Gestos: “firmar” (mão pressionando) vs “sustentar” (mão elevando).</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <b>Edição (padrão high-retention):</b>
+            <ul class="list">
+              <li>Cortes rápidos removendo respiros.</li>
+              <li>Palavras-chave sincronizadas (não legenda completa).</li>
+              <li>Zoom-in leve no mito/verdade.</li>
+              <li>B-roll de 0,3–0,8s em partes técnicas.</li>
+              <li>Áudio de fundo baixo (não competir com voz).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="cardHead">
+        <h2>Copy e ganchos (prontos para substituir)</h2>
+        <span class="tag">Hooks + frases de impacto</span>
+      </div>
+      <div class="cardBody">
+        <div class="twoCol">
+          <div>
+            <p class="mini"><b>Hooks (0–3s):</b></p>
+            <ul class="list">
+              <li>“Diferença entre <b>[A]</b> e <b>[B]</b> (parece óbvio, mas não é).”</li>
+              <li>“Se você quer <b>[resultado]</b>, cuidado pra não escolher <b>[A]</b> achando que é <b>[B]</b>.”</li>
+              <li>“Isso aqui evita 90% das frustrações com <b>[tema]</b>.”</li>
+            </ul>
+
+            <p class="mini" style="margin-top:12px"><b>Frases de autoridade (sem soar venda):</b></p>
+            <ul class="list">
+              <li>“O problema não é o procedimento. É a expectativa errada.”</li>
+              <li>“Os dois podem ser ótimos — em objetivos diferentes.”</li>
+              <li>“O plano certo costuma ser sequência, não ‘milagre’.”</li>
+            </ul>
+          </div>
+          <div>
+            <p class="mini"><b>Negação estratégica (derruba mito):</b></p>
+            <ul class="list">
+              <li>“<b>[A]</b> não faz <b>[X]</b>.”</li>
+              <li>“<b>[B]</b> não é para <b>[Y]</b> quando a queixa é <b>[Z]</b>.”</li>
+              <li>“Não confunda <b>[efeito]</b> com <b>[expectativa]</b>.”</li>
+            </ul>
+
+            <p class="mini" style="margin-top:12px"><b>Analogias (escolha 1):</b></p>
+            <ul class="list">
+              <li>“É como <b>mala e organizador</b>: um dá estrutura, o outro dá acabamento.”</li>
+              <li>“Pensa em <b>tinta vs massa corrida</b>: um finaliza, o outro corrige base.”</li>
+              <li>“É como <b>barraca e estacas</b>: sem sustentação, não fica de pé.”</li>
+              <li>“É como <b>hidratar vs dar suporte</b>: funções diferentes.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="cardHead">
+        <h2>CTA</h2>
+        <span class="tag">Comentário qualificado</span>
+      </div>
+      <div class="cardBody">
+        <ul class="list">
+          <li><b>Enquete (alto comentário):</b> “Seu objetivo é <b>[objetivo A]</b> ou <b>[objetivo B]</b>? Escreve nos comentários.”</li>
+          <li><b>Parte 2 (serialização):</b> “Quer que eu mostre onde cada um costuma entrar no plano? Comenta <b>PARTE 2</b>.”</li>
+          <li><b>Diagnóstico indireto (sem prometer consulta):</b> “Me diz sua queixa principal: <b>[queixa 1]</b>, <b>[queixa 2]</b> ou <b>[queixa 3]</b>?”</li>
+          <li><b>DM (se usar):</b> “Se quiser, me manda <b>‘A x B’</b> no direct com seu objetivo. (Sem avaliação por aqui; é só para eu te orientar sobre o tema do próximo vídeo).”</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="cardHead">
+        <h2>Checklist de criação</h2>
+        <span class="tag">Pré → Roteiro → Gravação → Edição</span>
+      </div>
+      <div class="cardBody">
+        <div class="checklist">
+          <div class="chk">
+            <h3>Pré-produção</h3>
+            <ul>
+              <li>Escolher 2 temas que geram confusão (<b>A vs B</b>).</li>
+              <li>Definir <b>resultado final</b> de A e de B em <b>1 frase</b> cada.</li>
+              <li>Escolher <b>1 mito</b> para derrubar (frase: “não faz X”).</li>
+              <li>Escolher <b>1 analogia</b> simples e memorável.</li>
+              <li>Separar <b>objeto visual</b> (produto, embalagem, modelo, imagem).</li>
+            </ul>
+          </div>
+          <div class="chk">
+            <h3>Roteiro (bullets)</h3>
+            <ul>
+              <li>Hook: “Diferença entre A e B” + “parece óbvio…”</li>
+              <li>Promessa: “em 1 minuto…”</li>
+              <li>A: definição → mecanismo → resultado → <b>NÃO faz</b></li>
+              <li>B: definição → mecanismo → resultado → <b>analogia</b></li>
+              <li>Conclusão: “depende do objetivo / pode combinar”</li>
+              <li>CTA: comentário (objetivo A ou B / parte 2)</li>
+            </ul>
+          </div>
+          <div class="chk">
+            <h3>Gravação</h3>
+            <ul>
+              <li>Plano médio + luz frontal + fundo clean (consultório).</li>
+              <li>Mostrar o objeto exatamente no momento que citar.</li>
+              <li>Gesto do efeito (firmar / sustentar / volumizar / uniformizar).</li>
+              <li>Falas em frases curtas (1–2 linhas).</li>
+            </ul>
+          </div>
+          <div class="chk">
+            <h3>Edição</h3>
+            <ul>
+              <li>Cortes a cada 1,5–3s.</li>
+              <li>Texto na tela: somente palavras-chave.</li>
+              <li>Zoom-in leve na frase do mito (impacto).</li>
+              <li>B-roll/close do produto nas partes técnicas.</li>
+              <li>Tela final: “Não é melhor/pior. É indicação.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="cardHead">
+        <h2>Variações (mesmo impacto, outros temas)</h2>
+        <span class="tag">Substituições inteligentes</span>
+      </div>
+      <div class="cardBody">
+        <div class="twoCol">
+          <div class="mini">
+            <b>Variação 1 — “Função vs Função”</b>
+            <ul class="list">
+              <li>Estrutura igual, mas a comparação é por <b>função principal</b>: “textura/qualidade” vs “volume/suporte”.</li>
+              <li>Bom para: skinbooster vs preenchedor; laser vs peeling; toxina vs preenchimento.</li>
+            </ul>
+
+            <b>Variação 2 — “Candidato ideal”</b>
+            <ul class="list">
+              <li>Troque “o que é” por “pra quem é”: “se sua queixa é X, tende a ir melhor em A”.</li>
+              <li>Mantenha o mito e a analogia.</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <b>Variação 3 — “Expectativa errada (foco no mito)”</b>
+            <ul class="list">
+              <li>Abra com o mito: “Se te prometeram que [A] faz [X], atenção.”</li>
+              <li>Depois compare A e B rapidamente e feche em indicação.</li>
+            </ul>
+
+            <b>Substituições que mantêm a força do roteiro</b>
+            <ul class="list">
+              <li><b>Objeto</b> pode virar: gráfico simples, overlay de setas, modelo anatômico.</li>
+              <li><b>Analogia</b> pode virar: “base vs acabamento”, “estrutura vs volume”, “hidratação vs sustentação”.</li>
+              <li><b>CTA</b> pode virar: “comenta sua queixa” ou “parte 2”, mantendo binário (A ou B) para facilitar resposta.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('roteiroText');
+
+      async function copyText(){
+        const txt = textEl ? textEl.innerText : '';
+        try{
+          await navigator.clipboard.writeText(txt);
+          btn.innerText = 'Roteiro copiado';
+          setTimeout(() => btn.innerText = 'Copiar roteiro', 1400);
+        } catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          btn.innerText = 'Roteiro copiado';
+          setTimeout(() => btn.innerText = 'Copiar roteiro', 1400);
+        }
+      }
+
+      btn.addEventListener('click', copyText);
+    })();
+  </script>
+</body>
+</html>
