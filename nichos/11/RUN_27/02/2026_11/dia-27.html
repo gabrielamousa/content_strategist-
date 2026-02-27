@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 27 — Roteiro de Carrossel (Produtividade)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1221;
+    --card:#0E1930;
+    --card2:#0B152A;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.14);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.58);
+    --shadow: 0 18px 50px rgba(0,0,0,.55);
+
+    --g1: linear-gradient(135deg, #2BFF88 0%, #29B6F6 46%, #FF8A3D 100%);
+    --g2: linear-gradient(135deg, rgba(43,255,136,.18), rgba(41,182,246,.16), rgba(255,138,61,.14));
+    --green:#2BFF88;
+    --blue:#29B6F6;
+    --orange:#FF8A3D;
+
+    --radius: 18px;
+    --radius2: 14px;
+    --max: 1120px;
+
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:
+      radial-gradient(900px 420px at 15% -10%, rgba(41,182,246,.22), transparent 55%),
+      radial-gradient(800px 380px at 80% 0%, rgba(255,138,61,.20), transparent 55%),
+      radial-gradient(900px 520px at 40% 105%, rgba(43,255,136,.16), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100dvh;
+  }
+
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:var(--max); margin:0 auto; padding:28px 18px 64px}
+
+  header{
+    position:relative;
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(14,25,48,.72), rgba(11,21,42,.62));
+    box-shadow: var(--shadow);
+    border-radius: calc(var(--radius) + 6px);
+    padding:20px 18px;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g2);
+    filter: blur(18px);
+    opacity:.9;
+    pointer-events:none;
+  }
+  header > *{position:relative; z-index:1}
+
+  .topline{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .badge{
+    border:1px solid var(--stroke2);
+    background: rgba(255,255,255,.05);
+    padding:6px 10px;
+    border-radius: 999px;
+    font-size:12px;
+    color: var(--muted);
+    letter-spacing:.2px;
+  }
+  .badge strong{color:var(--text); font-weight:650}
+
+  .title{
+    margin:14px 0 6px;
+    font-size: clamp(20px, 3.2vw, 34px);
+    line-height:1.08;
+    letter-spacing:-.5px;
+  }
+  .subtitle{
+    margin:0;
+    color: var(--muted);
+    font-size:14px;
+    line-height:1.45;
+  }
+
+  .linkRow{margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .postlink{
+    display:inline-flex;
+    gap:10px;
+    align-items:center;
+    padding:10px 12px;
+    border-radius: 12px;
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    color: var(--muted);
+    max-width:100%;
+  }
+  .postlink .url{font-family:var(--mono); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:min(620px, 80vw)}
+  .dot{
+    width:8px;height:8px;border-radius:50%;
+    background: var(--g1);
+    box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+  }
+
+  .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  button{
+    font: inherit;
+    cursor:pointer;
+    border-radius: 12px;
+    padding:10px 12px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+  }
+  button.primary{
+    border-color: rgba(41,182,246,.35);
+    background: linear-gradient(180deg, rgba(41,182,246,.20), rgba(43,255,136,.10));
+  }
+  button:active{transform: translateY(1px)}
+  .hint{font-size:12px; color: var(--muted2)}
+
+  main{margin-top:18px; display:grid; gap:14px}
+  .grid{
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap:14px;
+  }
+  @media (max-width: 980px){
+    .grid{grid-template-columns:1fr}
+  }
+
+  .card{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(14,25,48,.72), rgba(11,21,42,.62));
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 16px;
+    border-bottom:1px solid var(--stroke);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .card .hd h2{
+    margin:0;
+    font-size:14px;
+    color: var(--text);
+    letter-spacing:.2px;
+  }
+  .chip{
+    font-size:12px;
+    color: var(--muted);
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    padding:6px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .card .bd{padding:14px 16px}
+
+  .kpi{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:10px;
+  }
+  @media (max-width: 560px){
+    .kpi{grid-template-columns:1fr}
+  }
+  .kpi .box{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    border-radius: var(--radius2);
+    padding:12px;
+  }
+  .kpi .box .t{font-size:12px; color: var(--muted2)}
+  .kpi .box .v{margin-top:6px; font-size:13px; color: var(--text); line-height:1.35}
+  .grad{
+    background: var(--g1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 750;
+  }
+
+  ul{margin:10px 0 0 18px; padding:0}
+  li{margin:8px 0; color: var(--muted); line-height:1.5}
+  .muted{color:var(--muted)}
+  .small{font-size:12px; color: var(--muted2); line-height:1.5}
+
+  .callout{
+    border:1px solid rgba(41,182,246,.28);
+    background: rgba(41,182,246,.08);
+    border-radius: var(--radius2);
+    padding:12px;
+    margin-top:12px;
+  }
+  .callout strong{color:var(--text)}
+
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-break:break-word;
+    font-family: var(--mono);
+    font-size:12.5px;
+    line-height:1.55;
+    color: rgba(234,240,255,.86);
+  }
+
+  .twoCol{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+  @media (max-width: 720px){.twoCol{grid-template-columns:1fr}}
+
+  .legend{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .pill{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    padding:8px 10px;
+    border-radius:999px;
+    font-size:12px;
+    color: var(--muted);
+  }
+  .pill b{color:var(--text)}
+  .pill .c{
+    display:inline-block;
+    width:10px;height:10px;border-radius:50%;
+    margin-right:8px;
+    vertical-align: -1px;
+  }
+
+  .copyBox{
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    border-radius: var(--radius);
+    padding:14px;
+  }
+  textarea{
+    width:100%;
+    min-height: 460px;
+    resize: vertical;
+    border-radius: 14px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.03);
+    color: rgba(234,240,255,.90);
+    padding:12px;
+    font-family: var(--mono);
+    font-size:12.5px;
+    line-height:1.55;
+    outline:none;
+  }
+  textarea:focus{border-color: rgba(43,255,136,.35); box-shadow: 0 0 0 3px rgba(43,255,136,.10)}
+
+  .footerNote{margin-top:12px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center}
+  .status{font-size:12px; color: var(--muted2)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badgeRow">
+          <span class="badge"><strong>Nicho</strong>: Produtividade</span>
+          <span class="badge"><strong>Dia</strong>: 27</span>
+          <span class="badge"><strong>Formato</strong>: Carrossel</span>
+          <span class="badge"><strong>Pilar</strong>: Passo a passo</span>
+        </div>
+        <div class="badgeRow">
+          <span class="badge"><strong>Objetivo</strong>: retenção + comentário com palavra-chave</span>
+        </div>
+      </div>
+
+      <h1 class="title">Leia isto antes de definir suas metas <span class="grad">(sem cair na fantasia)</span></h1>
+      <p class="subtitle">Roteiro reproduzível: reframe + mini-método em 4 passos + “peça que falta” + CTA. Use perguntas guiadas e um exemplo real de rotina para transformar desejo em ação.</p>
+
+      <div class="linkRow">
+        <a class="postlink" href="https://www.instagram.com/p/DSnxXgFElAA/" target="_blank" rel="noopener noreferrer">
+          <span class="dot"></span>
+          <span>Post original:</span>
+          <span class="url">https://www.instagram.com/p/DSnxXgFElAA/</span>
+        </a>
+        <div class="actions">
+          <button class="primary" id="copyBtn" type="button">Copiar roteiro</button>
+          <button id="selectBtn" type="button">Selecionar texto</button>
+        </div>
+      </div>
+      <div class="hint" id="copyHint">Dica: ajuste os campos entre colchetes para adaptar a qualquer tema.</div>
+    </header>
+
+    <main>
+      <section class="grid">
+        <div class="card">
+          <div class="hd"><h2>Resumo</h2><span class="chip">O que este post entrega</span></div>
+          <div class="bd">
+            <div class="kpi">
+              <div class="box">
+                <div class="t">Promessa</div>
+                <div class="v">Antes de fazer <span class="grad">[AÇÃO]</span>, faça isto: conecte com rotina real.</div>
+              </div>
+              <div class="box">
+                <div class="t">Mecanismo</div>
+                <div class="v">Mini-método em 4 passos: sonhos → validação → dia ideal → comparação + micro-ações.</div>
+              </div>
+              <div class="box">
+                <div class="t">Conversão</div>
+                <div class="v">Cria “gap” (falta um sistema) e fecha com CTA por comentário: <span class="grad">palavra-chave</span>.</div>
+              </div>
+            </div>
+
+            <div class="callout">
+              <strong>Regra-mãe (reproduzível):</strong> a pessoa precisa sair com <strong>1 decisão prática</strong> e <strong>1 próximo passo de baixa fricção</strong> (comentar/salvar).
+            </div>
+
+            <ul>
+              <li><strong>Para Produtividade:</strong> transforme metas abstratas em rotina (tempo, contexto, gatilhos e energia).</li>
+              <li><strong>Para outros nichos:</strong> substitua “metas/rotina” por “plano/estratégia/processo” mantendo a mesma lógica.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd"><h2>Estrutura</h2><span class="chip">Sequência & intenção</span></div>
+          <div class="bd">
+            <ul>
+              <li><strong>Slide 1:</strong> Hook de interrupção (“Leia isto antes de…”) + palavra central gigante.</li>
+              <li><strong>Slide 2:</strong> Contrato de leitura + micro-CTA de retenção (salvar).</li>
+              <li><strong>Slide 3:</strong> Diagnóstico (dor) + reframe (não é falta de força de vontade).</li>
+              <li><strong>Slides 4–7:</strong> Método em 4 passos (executável).</li>
+              <li><strong>Slide 8:</strong> Benefícios (o que ela ganha agora).</li>
+              <li><strong>Slide 9:</strong> Gap + solução (sistema que transforma visão em execução).</li>
+              <li><strong>Slide 10:</strong> CTA única (comentar palavra) + promessa direta.</li>
+            </ul>
+
+            <div class="legend">
+              <span class="pill"><span class="c" style="background:var(--orange)"></span><b>Laranja</b>: dor/insight</span>
+              <span class="pill"><span class="c" style="background:var(--blue)"></span><b>Azul</b>: labels/CTA</span>
+              <span class="pill"><span class="c" style="background:var(--green)"></span><b>Verde</b>: ação/próximo passo</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Slides sugeridos (1..10)</h2><span class="chip">Template preenchível</span></div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="copyBox">
+              <pre><strong>Slide 1 — CAPA (hook)</strong>
+Linha pequena: “Leia isto antes de [AÇÃO]”
+Palavra gigante: “[TEMA CENTRAL]”
+Complemento: “em [PRAZO]”
+
+<strong>Slide 2 — CONTRATO + RETENÇÃO</strong>
+Título: “Mas antes…”
+→ Esqueça: [ABORDAGEM COMUM QUE FALHA]
+→ Leia quando tiver [TEMPO] livres. Se não for agora, <strong>salve</strong>.
+Fecho: “Pra [RESULTADO], você precisa [REFRAME].”
+
+<strong>Slide 3 — DIAGNÓSTICO (dor + reframe)</strong>
+“Se [RESULTADO] não acontece, o problema não é você.”
+“Provavelmente não tem conexão com sua <strong>rotina real</strong>.”
+Perguntas: “Onde isso entra no seu dia? Que horas? Com qual gatilho? Com qual energia?”
+
+<strong>Slide 4 — PASSO 1 (inventário do desejo)</strong>
+Label: “Passo 1”
+“Liste seus [DESEJOS/OBJETIVOS] para [PRAZO].”
+“Divida por áreas: [ÁREA 1], [ÁREA 2], [ÁREA 3]…”
+
+<strong>Slide 5 — PASSO 2 (validação emocional)</strong>
+Label: “Passo 2”
+“Se imagine vivendo isso como se fosse real.”
+Perguntas: “Como é o cenário? Qual sensação? O que muda no corpo?”
+Regra: “Se anima → é seu. Se não mexe → talvez não seja.”
+              </pre>
+            </div>
+            <div class="copyBox">
+              <pre><strong>Slide 6 — PASSO 3 (dia ideal)</strong>
+Label: “Passo 3”
+“Como seria um bom dia para mim em [PRAZO]?”
+Exemplo: “Acordo às 7h, 1 bloco de foco, treino, trabalho profundo 2h, pausa, tarefas leves…”
+“Isso transforma imaginação em intenção.”
+
+<strong>Slide 7 — PASSO 4 (pulo do gato: ponte para execução)</strong>
+Label: “Pulo do gato”
+→ Compare rotina atual vs ideal
+→ Encontre 1–3 mudanças reais (não 12)
+→ Escolha micro-ações que cabem na semana
+Fecho: “É aqui que [TEMA] vira prática.”
+
+<strong>Slide 8 — RESULTADO (benefícios)</strong>
+“A partir daqui, você tem:”
+• Clareza do que é seu (vs desejo emprestado)
+• Direção (o que entra no dia)
+• Prioridades (menos ansiedade)
+• Metas sustentáveis (sem fantasia)
+
+<strong>Slide 9 — GAP + SOLUÇÃO</strong>
+Label: “Falta uma peça”
+“Visão sem sistema vira frustração.”
+“Você precisa de um [SISTEMA] (diário/semanal/mensal) pra virar execução.”
+
+<strong>Slide 10 — CTA (uma ação)</strong>
+“Quer [RESULTADO]? Comenta ‘[PALAVRA]’.”
+“Eu te envio [RECURSO] / te explico como montar seu sistema.”
+              </pre>
+            </div>
+          </div>
+          <div class="small" style="margin-top:10px">
+            Padrão de ritmo: 1 ideia por slide; alternar “slide clean (texto)” ↔ “slide com exemplo/caixa/foto full”.
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <div class="hd"><h2>Roteiro</h2><span class="chip">Texto pronto (editável)</span></div>
+          <div class="bd">
+            <textarea id="roteiro" spellcheck="false">ROTEIRO — CARROSSEL (10 SLIDES)
+
+[CONFIGURAÇÃO RÁPIDA]
+Tema central: [TEMA CENTRAL]
+Ação que a pessoa quer fazer: [AÇÃO]
+Prazo: [PRAZO]
+Resultado prometido: [RESULTADO]
+Palavra-chave do CTA: [PALAVRA]
+Recurso/oferta: [RECURSO OU PRÓXIMO PASSO]
+
+SLIDE 1 — CAPA
+Leia isto antes de [AÇÃO]
+[TEMA CENTRAL]
+em [PRAZO]
+
+SLIDE 2 — CONTRATO + RETENÇÃO
+Mas antes…
+→ Esqueça [ABORDAGEM COMUM QUE FALHA].
+→ Leia quando tiver [TEMPO] livres. Se não for agora, SALVE.
+Pra [RESULTADO], você precisa [REFRAME].
+
+SLIDE 3 — DIAGNÓSTICO (DOR)
+Se [RESULTADO] não acontece, o problema não é você.
+Provavelmente não tem conexão com sua rotina real.
+Onde isso entra no seu dia?
+Que horas?
+Com qual gatilho?
+
+SLIDE 4 — PASSO 1 (INVENTÁRIO)
+Passo 1
+Liste seus [DESEJOS/OBJETIVOS] para [PRAZO].
+Divida por áreas:
+[ÁREA 1] / [ÁREA 2] / [ÁREA 3] / [ÁREA 4]
+
+SLIDE 5 — PASSO 2 (VALIDAÇÃO)
+Passo 2
+Se imagine vivendo isso como se fosse real.
+Como é o cenário?
+Qual a sensação?
+O que muda no seu corpo?
+Regra:
+Se anima → é seu.
+Se não mexe → talvez não seja.
+
+SLIDE 6 — PASSO 3 (DIA IDEAL)
+Passo 3
+Como seria um bom dia para mim em [PRAZO]?
+Exemplo: “[EXEMPLO CONCRETO EM 1–2 LINHAS]”
+
+SLIDE 7 — PASSO 4 (PONTE PRA EXECUÇÃO)
+Pulo do gato:
+→ Compare sua rotina atual com a ideal.
+→ Identifique o que realmente precisa mudar.
+→ Escolha 1–3 micro-ações que cabem nesta semana.
+
+SLIDE 8 — BENEFÍCIOS
+A partir daqui, você tem:
+• Clareza do que é importante de verdade
+• Direção do que entra no seu dia
+• Metas sustentáveis (sem fantasia)
+• Menos ansiedade e mais execução
+
+SLIDE 9 — GAP + SOLUÇÃO
+Mas ainda falta uma peça.
+Visão sem sistema vira frustração.
+Pra transformar isso em execução, você precisa de um [SISTEMA] (diário/semanal/mensal).
+É isso que o [NOME DO MÉTODO/PRODUTO] faz.
+
+SLIDE 10 — CTA
+Quer [RESULTADO]?
+Comenta “[PALAVRA]”
+que eu te envio [RECURSO] / te explico o passo a passo do sistema.</textarea>
+            <div class="footerNote">
+              <div class="status" id="status">Pronto para copiar. Ajuste os [colchetes] e publique.</div>
+              <div class="status">Atalho: mantenha o CTA como “1 ação” (comentar OU salvar).</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd"><h2>Elementos visuais</h2><span class="chip">Identidade & componentes</span></div>
+          <div class="bd">
+            <ul>
+              <li><strong>Fundo:</strong> escuro high-tech (use gradientes suaves e ruído leve).</li>
+              <li><strong>Cards:</strong> borda suave (1px), raio 16–20px, sombra profunda.</li>
+              <li><strong>Destaques:</strong> degrade em títulos/1–2 palavras por slide (verde → azul → laranja).</li>
+              <li><strong>Grid consistente:</strong> margens amplas; 1 bloco de informação por tela.</li>
+              <li><strong>Componentes fixos:</strong> label “Passo 1/2/3”; caixa “Exemplo”; caixa “Pulo do gato”; rodapé com @perfil.</li>
+              <li><strong>Alternância:</strong> 70% slides tipográficos + 30% slides com foto full (lifestyle) e overlay escuro.</li>
+            </ul>
+            <div class="callout">
+              <strong>Tipografia sugerida:</strong> 1 fonte sans moderna (títulos) + mono para detalhes (ou 1 família com pesos 400/600/800). Priorize legibilidade em mobile.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <div class="hd"><h2>Copy e ganchos</h2><span class="chip">Frases substituíveis</span></div>
+          <div class="bd">
+            <ul>
+              <li><strong>Hook (capa):</strong> “Leia isto antes de [AÇÃO]” / “Não faça [AÇÃO] antes de…” / “O erro que te faz recomeçar toda semana…”</li>
+              <li><strong>Reframe:</strong> “Não é preguiça. É falta de encaixe na sua rotina.”</li>
+              <li><strong>Perguntas que prendem:</strong> “Onde isso entra no seu dia?” “Que horas?” “O que você precisa parar de fazer?”</li>
+              <li><strong>Viradas:</strong> “Percebe?” “Agora vem o pulo do gato.” “Mas ainda falta uma peça.”</li>
+              <li><strong>Anti-fantasia:</strong> “Menos metas bonitas, mais metas sustentáveis.”</li>
+            </ul>
+            <div class="callout">
+              <strong>Fórmula de bullets:</strong> Verbo no imperativo + objeto + restrição realista.
+              <div class="small">Ex.: “Escolha 1 prioridade por período do dia” / “Crie um bloco de 25 min antes do WhatsApp”.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd"><h2>CTA</h2><span class="chip">Baixa fricção</span></div>
+          <div class="bd">
+            <ul>
+              <li><strong>CTA principal (slide 10):</strong> “Comenta ‘[PALAVRA]’ e eu te envio [RECURSO].”</li>
+              <li><strong>CTA de retenção (slide 2):</strong> “Se não for agora, salva.”</li>
+            </ul>
+            <div class="callout">
+              <strong>Boas palavras-chave (produtividade):</strong>
+              <div class="small">ROTINA / FOCO / SISTEMA / SEMANA / PRIORIDADES / ENERGIA</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <div class="hd"><h2>Checklist</h2><span class="chip">Criação + publicação</span></div>
+          <div class="bd">
+            <ul>
+              <li><strong>Definir:</strong> [AÇÃO], [TEMA CENTRAL], [RESULTADO], [PRAZO], [PALAVRA], [RECURSO].</li>
+              <li><strong>Roteiro:</strong> escrever 1 frase principal por slide (máx. 2–4 linhas).</li>
+              <li><strong>Exemplo:</strong> incluir 1 mini-rotina real (Slide 6) com horas/blocos.</li>
+              <li><strong>Design:</strong> 3 cores de destaque (verde/azul/laranja) + 1 estilo de card + 1 estilo de label.</li>
+              <li><strong>Legibilidade:</strong> testar em 100% no celular (zoom zero), especialmente Slide 7–9.</li>
+              <li><strong>Ritmo:</strong> inserir 2 micro-viradas (“pulo do gato”, “falta uma peça”).</li>
+              <li><strong>CTA:</strong> 1 ação apenas (comentar) + reforço “salvar” no Slide 2.</li>
+              <li><strong>Legenda:</strong> repetir promessa (1ª linha), explicar em 3 bullets, fechar com CTA.</li>
+              <li><strong>Publicação:</strong> fixar comentário com a palavra-chave e entrega do recurso (se houver).</li>
+              <li><strong>Métrica:</strong> saves + comentários + conclusão (retenção por slide).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd"><h2>Variações</h2><span class="chip">Adaptações com mesmo impacto</span></div>
+          <div class="bd">
+            <ul>
+              <li><strong>Troca do tema:</strong> “metas” → [dieta/estudos/finanças/conteúdo/vendas]. Mantenha a estrutura: desejo → validação → dia ideal → ponte.</li>
+              <li><strong>Troca do passo 3:</strong> “dia ideal” → “semana ideal” (para projetos maiores) sem perder concretude.</li>
+              <li><strong>Troca do passo 2:</strong> validação emocional → validação por custo (tempo/dinheiro/energia): “o que você está disposto a bancar?”</li>
+              <li><strong>Troca do gap:</strong> “falta um sistema” → “falta um ambiente” (hábitos) / “falta um processo” (negócios) / “falta um plano de estudo” (educação).</li>
+              <li><strong>Troca do CTA:</strong> comentário → DM (“me chama com ‘[PALAVRA]’”) ou link na bio (“pega o [RECURSO]”).</li>
+            </ul>
+            <div class="callout">
+              <strong>Substituições prontas (use como bloco):</strong>
+              <div class="small">
+                • “Leia isto antes de [AÇÃO]” → “Antes de [AÇÃO], responde isso.”<br/>
+                • “rotina real” → “agenda real” / “semana real” / “contexto real”<br/>
+                • “micro-ações” → “próxima ação” / “1 compromisso mínimo”
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+<script>
+  const roteiro = document.getElementById('roteiro');
+  const statusEl = document.getElementById('status');
+  const copyHint = document.getElementById('copyHint');
+
+  function setStatus(msg){
+    statusEl.textContent = msg;
+    copyHint.textContent = msg;
+    setTimeout(()=>{
+      copyHint.textContent = 'Dica: ajuste os campos entre colchetes para adaptar a qualquer tema.';
+    }, 2400);
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    try{
+      await navigator.clipboard.writeText(roteiro.value);
+      setStatus('Roteiro copiado para a área de transferência.');
+    }catch(e){
+      roteiro.select();
+      document.execCommand('copy');
+      setStatus('Roteiro copiado (modo compatível).');
+    }
+  });
+
+  document.getElementById('selectBtn').addEventListener('click', () => {
+    roteiro.focus();
+    roteiro.select();
+    setStatus('Texto selecionado.');
+  });
+</script>
+</body>
+</html>
