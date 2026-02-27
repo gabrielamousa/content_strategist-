@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 5 — Anuncie o novo professor (com suspense + prova + reveal)</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1626;
+      --panel2:#0c1322;
+      --text:#e7eefc;
+      --muted:#a8b3cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --g1: linear-gradient(90deg, #2cffb1 0%, #2aa3ff 52%, #ff9a2a 100%);
+      --g2: linear-gradient(135deg, rgba(44,255,177,.18), rgba(42,163,255,.14), rgba(255,154,42,.14));
+      --green:#2cffb1;
+      --blue:#2aa3ff;
+      --orange:#ff9a2a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 15% 0%, rgba(42,163,255,.14) 0%, rgba(0,0,0,0) 55%),
+                  radial-gradient(1000px 600px at 90% 10%, rgba(44,255,177,.12) 0%, rgba(0,0,0,0) 60%),
+                  radial-gradient(900px 700px at 70% 110%, rgba(255,154,42,.10) 0%, rgba(0,0,0,0) 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.35;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:22px 16px 44px}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(15,22,38,.86), rgba(12,19,34,.72));
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .headTop{
+      padding:18px 18px 14px;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .badgeRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .badge{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .badge strong{color:var(--text);font-weight:650}
+    h1{
+      margin:10px 0 4px;
+      font-size:22px;
+      letter-spacing:.2px;
+    }
+    .subtitle{color:var(--muted);margin:0;font-size:13px}
+    .headActions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btn{
+      appearance:none;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:650;
+      font-size:13px;
+      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+      text-decoration:none;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+    }
+    .btn:hover{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06)}
+    .btn:active{transform: translateY(1px)}
+    .btnPrimary{
+      border:0;
+      background: var(--g1);
+      color:#07111b;
+    }
+    .btnPrimary:hover{filter:saturate(1.05) brightness(1.02)}
+    .divider{height:1px;background:linear-gradient(90deg, rgba(44,255,177,.0), rgba(44,255,177,.32), rgba(42,163,255,.32), rgba(255,154,42,.32), rgba(255,154,42,0));}
+    .headBottom{padding:12px 18px 16px;display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap;align-items:center}
+    .metaLine{font-size:13px;color:var(--muted)}
+    .metaLine a{color:var(--text); text-decoration:underline; text-decoration-color:rgba(255,255,255,.25)}
+
+    main{margin-top:16px;display:grid;grid-template-columns: 1.1fr .9fr;gap:14px}
+    @media (max-width: 920px){main{grid-template-columns:1fr}}
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(15,22,38,.78), rgba(12,19,34,.66));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .in{padding:16px 16px 14px}
+    .card h2{margin:0 0 10px;font-size:15px;letter-spacing:.2px}
+    .card p{margin:0 0 10px;color:var(--muted);font-size:13px}
+
+    .chipRow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+    .chip{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+    }
+    .chip.g{border-color: rgba(44,255,177,.35)}
+    .chip.b{border-color: rgba(42,163,255,.35)}
+    .chip.o{border-color: rgba(255,154,42,.35)}
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 540px){.grid2{grid-template-columns:1fr}}
+
+    .list{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
+    .list li{margin:6px 0}
+
+    .highlight{
+      border:1px solid rgba(255,255,255,.12);
+      background: var(--g2);
+      border-radius:14px;
+      padding:12px;
+      margin-top:10px;
+    }
+    .highlight .k{font-size:12px;color:rgba(231,238,252,.85);letter-spacing:.3px;text-transform:uppercase}
+    .highlight .v{margin-top:6px;color:var(--text);font-weight:700}
+
+    pre{
+      margin:0;
+      border:1px solid var(--stroke);
+      background: rgba(4,8,14,.55);
+      border-radius:14px;
+      padding:14px;
+      color:var(--text);
+      overflow:auto;
+      font-size:12.5px;
+      line-height:1.45;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .small{font-size:12px;color:var(--muted)}
+    .hr{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+
+    .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 720px){.twoCol{grid-template-columns:1fr}}
+
+    .footerNote{margin-top:14px;color:var(--muted);font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headTop">
+        <div>
+          <div class="badgeRow">
+            <div class="badge"><strong>Nicho</strong>: Professores</div>
+            <div class="badge"><strong>Dia</strong>: 5</div>
+            <div class="badge"><strong>Formato</strong>: Reels</div>
+            <div class="badge"><strong>Pilar</strong>: Bastidores</div>
+          </div>
+          <h1>Anuncie o novo professor (com suspense + prova + reveal)</h1>
+          <p class="subtitle">Modelo reproduzível para anúncio de professor/parceria/módulo com retenção alta: suspense → prova → microclipe → revelação → CTA.</p>
+        </div>
+        <div class="headActions">
+          <a class="btn" href="https://www.instagram.com/p/DUB0dIuESk4/" target="_blank" rel="noreferrer">Abrir post original</a>
+          <button class="btn btnPrimary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="headBottom">
+        <div class="metaLine">Link original: <a href="https://www.instagram.com/p/DUB0dIuESk4/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DUB0dIuESk4/</a></div>
+        <div class="metaLine">Duração sugerida: <strong>20–30s</strong> (revelação até <strong>12–15s</strong>)</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="in">
+          <h2>Resumo</h2>
+          <p>Você vai anunciar um(a) novo(a) professor(a) (ou novo módulo/mentor) usando um <strong>gancho de suspense</strong>, <strong>provas rápidas</strong> antes do nome, uma <strong>quebra de padrão</strong> com microclipe e uma <strong>revelação direta</strong>. Fecha com <strong>CTA único</strong> para comentário, Direct ou link da bio.</p>
+          <div class="chipRow">
+            <span class="chip g">Suspense no 0–3s</span>
+            <span class="chip b">Prova antes do reveal</span>
+            <span class="chip o">Microclipe (1–2s)</span>
+            <span class="chip">CTA 1 frase</span>
+          </div>
+
+          <div class="hr"></div>
+          <h2>Estrutura (sequência replicável)</h2>
+          <ol class="list">
+            <li><strong>Hook (0–3s):</strong> promessa + mistério (“chegou a hora de revelar…”).</li>
+            <li><strong>Empilha 3 provas (3–10s):</strong> bagagem, didática, resultados/carisma, “você já viu na internet”.</li>
+            <li><strong>Quebra de padrão (10–12s):</strong> “Roda aí!” + corte/zoom + SFX.</li>
+            <li><strong>Microclipe (1–2s):</strong> bordão/demonstração que gera reconhecimento.</li>
+            <li><strong>Revelação (12–18s):</strong> nome + papel + onde vai atuar.</li>
+            <li><strong>Benefício (18–24s):</strong> para quem é + o que melhora.</li>
+            <li><strong>CTA (24–30s):</strong> uma ação (comentar / link / direct).</li>
+          </ol>
+
+          <div class="highlight">
+            <div class="k">Regra de ouro da retenção</div>
+            <div class="v">Se o reveal passar de 15s, encurte a lista de provas (2 bullets) ou acelere os cortes.</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="in">
+          <h2>Metadados rápidos (para execução)</h2>
+          <div class="grid2">
+            <div class="highlight">
+              <div class="k">O que anunciar</div>
+              <div class="v">Novo(a) professor(a) / parceria / módulo</div>
+            </div>
+            <div class="highlight">
+              <div class="k">1 CTA (escolha)</div>
+              <div class="v">Comentário OU link na bio OU Direct</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <h2>Campos para preencher</h2>
+          <ul class="list">
+            <li>[MATÉRIA]</li>
+            <li>[NOME DO(A) PROFESSOR(A)]</li>
+            <li>[PÚBLICO/PROVA: ENEM, vestibular, concursos, reforço escolar]</li>
+            <li>[PROMESSA: melhorar nota, clareza, redação, mapa de questões, etc.]</li>
+            <li>[PALAVRA-CHAVE do comentário: “AULA”, “CRONOGRAMA”, “MAPA”]</li>
+          </ul>
+          <p class="footerNote">Dica: escolha uma palavra-chave curta e fácil de digitar para o CTA.</p>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="in">
+          <h2>Roteiro (pronto para gravar) — 25s</h2>
+          <pre id="roteiroText">[CENA 1 — CLOSE | 0–3s]
+“Chegou a hora de revelar o(a) novo(a) professor(a) de [MATÉRIA] aqui.”
+(TEXTO NA TELA: “NOVA CONTRATAÇÃO” + “Reforço em: [MATÉRIA]”)
+
+[CENA 2 — LISTA RÁPIDA | 3–10s]
+“Ele(a) tem muita bagagem em [TEMA/ÁREA].”
+“Didática que deixa [PROMESSA] mais simples.”
+“E é do tipo que você provavelmente já viu na internet.”
+(TEXTO NA TELA: “+ didática • + resultado” + “Você vai reconhecer…”) 
+
+[CENA 3 — QUEBRA | 10–12s]
+“Roda aí. Olha isso.”
+(SFX leve + zoom/punch-in)
+
+[CENA 4 — MICROCLIPE | 12–14s]
+[CLIP DO(A) PROFESSOR(A) com bordão/demonstração (1–2s)]
+
+[CENA 5 — REVEAL | 14–20s]
+“Surpresa: eu sou [NOME DO(A) PROFESSOR(A)], novo(a) professor(a) de [MATÉRIA] da [SUA ESCOLA/PLATAFORMA].”
+“Aqui você vai estudar pra [PÚBLICO/PROVA] com foco em [PROMESSA].”
+(TEXTO NA TELA: “É ELE(A): [NOME]” + “Aulas para: [PÚBLICO/PROVA]”)
+
+[CENA 6 — CTA | 20–25s]
+“Comenta ‘[PALAVRA]’ que eu te mando o cronograma/aula 1.”
+“E me diz: qual tema você quer na primeira aula?”
+(TELA FINAL 1–2s: @ + “Comente: [PALAVRA]”)</pre>
+          <p class="small">Ajuste o roteiro para 15s removendo 1 bullet da lista e encurtando a frase do benefício.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="in">
+          <h2>Elementos visuais (edição e tela)</h2>
+          <div class="twoCol">
+            <div>
+              <h2 style="margin-top:0">Captação</h2>
+              <ul class="list">
+                <li>Close no apresentador (energia alta, olho na lente).</li>
+                <li>Iluminação frontal + fundo simples (ou cenário escolar).</li>
+                <li>Áudio limpo (microfone de lapela ou ambiente controlado).</li>
+                <li>Grave em takes curtos para facilitar jump cuts.</li>
+              </ul>
+            </div>
+            <div>
+              <h2 style="margin-top:0">Edição</h2>
+              <ul class="list">
+                <li>Cortes a cada 1–2s (retirar respirações).</li>
+                <li>Punch-in no “Roda aí!” e no reveal.</li>
+                <li>Legenda dinâmica com palavras-chave em cor.</li>
+                <li>SFX discreto (“whoosh” na troca / “pop” no reveal).</li>
+                <li>Tela final 1–2s com @ + CTA.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <h2>Texto na tela (blocos)</h2>
+          <ul class="list">
+            <li>“NOVA CONTRATAÇÃO”</li>
+            <li>“Reforço em: [MATÉRIA]”</li>
+            <li>“+ didática • + resultado”</li>
+            <li>“Você vai reconhecer…”</li>
+            <li>“RODA AÍ”</li>
+            <li>“É ELE(A): [NOME]”</li>
+            <li>“Aulas para: [PÚBLICO/PROVA]”</li>
+            <li>“Comente: [PALAVRA]”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="in">
+          <h2>Copy e ganchos (modelos prontos)</h2>
+          <div class="twoCol">
+            <div>
+              <h2 style="margin-top:0">Hooks (0–3s)</h2>
+              <ul class="list">
+                <li>“Chegou a hora de revelar o novo nome de [MATÉRIA] aqui.”</li>
+                <li>“Esse reforço vai mudar sua preparação em [PROVA].”</li>
+                <li>“Trouxemos alguém MUITO forte pra te levar a [RESULTADO].”</li>
+              </ul>
+            </div>
+            <div>
+              <h2 style="margin-top:0">Provas (3–10s)</h2>
+              <ul class="list">
+                <li>“Bagagem real em [ÁREA] (anos / aprovações / turmas).”</li>
+                <li>“Didática prática: do básico ao avançado sem enrolação.”</li>
+                <li>“Resultados: [ex.: notas, aprovações, depoimentos].”</li>
+                <li>“Presença na internet (você já viu um corte dele(a)).”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <h2>Legenda (template)</h2>
+          <pre>🚨 NOVIDADE em [MATÉRIA]
+
+A gente trouxe um reforço que vai te ajudar a [PROMESSA] em [PROVA/PÚBLICO].
+
+✅ Didática prática
+✅ Conteúdo direto ao ponto
+✅ Aulas focadas em [OBJETIVO]
+
+Comenta “[PALAVRA]” que eu te mando o cronograma/aula 1.
+
+#professores #enem #vestibular #[materia]</pre>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="in">
+          <h2>CTA (escolha 1 e mantenha até o fim)</h2>
+          <ul class="list">
+            <li><strong>Captação:</strong> “Comenta ‘[PALAVRA]’ que eu te envio a aula 1 + cronograma.”</li>
+            <li><strong>Link:</strong> “Link na bio pra assistir a primeira aula agora.”</li>
+            <li><strong>Pesquisa:</strong> “Qual tema você quer na primeira aula? Comenta aqui.”</li>
+            <li><strong>Engajamento:</strong> “Comenta seu ano/série e qual prova você vai fazer.”</li>
+          </ul>
+          <div class="highlight">
+            <div class="k">Critério para escolher CTA</div>
+            <div class="v">Se você quer leads, use comentário/Direct. Se quer tráfego imediato, use link na bio.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="in">
+          <h2>Checklist de criação (produção rápida)</h2>
+          <div class="twoCol">
+            <div>
+              <h2 style="margin-top:0">Pré-produção</h2>
+              <ul class="list">
+                <li>[ ] Definir o anúncio: professor/parceria/módulo.</li>
+                <li>[ ] Listar 3 provas de valor (autoridade, didática, resultados/carisma).</li>
+                <li>[ ] Separar 1 microclipe (1–2s) com bordão/demonstração.</li>
+                <li>[ ] Definir 1 CTA + 1 palavra-chave.</li>
+              </ul>
+            </div>
+            <div>
+              <h2 style="margin-top:0">Gravação e edição</h2>
+              <ul class="list">
+                <li>[ ] Hook gravado em 1 take (0–3s).</li>
+                <li>[ ] Lista de provas em frases curtas (3–10s).</li>
+                <li>[ ] Quebra “Roda aí!” + corte rápido para clipe.</li>
+                <li>[ ] Reveal com nome + função + benefício (até 15s).</li>
+                <li>[ ] Cortes a cada 1–2s + legendas dinâmicas.</li>
+                <li>[ ] Tela final 1–2s com @ + CTA.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="in">
+          <h2>Variações (3 versões prontas)</h2>
+          <div class="twoCol">
+            <div>
+              <h2 style="margin-top:0">V1 — 15s (direto)</h2>
+              <pre>“Chegou a hora de revelar o reforço de [MATÉRIA].
+Didática pra [PROMESSA]. Você vai reconhecer…
+Roda aí!”
+[CLIP 1–2s]
+“Eu sou [NOME], novo(a) professor(a) de [MATÉRIA].
+Comenta ‘[PALAVRA]’ que eu mando a aula 1.”</pre>
+            </div>
+            <div>
+              <h2 style="margin-top:0">V2 — 25s (padrão)</h2>
+              <pre>Use o roteiro principal desta página.
+Foco: 3 provas + microclipe + reveal até 15s + 1 CTA.</pre>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <h2>V3 — 35s (com mini-história)</h2>
+          <pre>“Hoje eu vou revelar um nome que vocês pediram MUITO pra [MATÉRIA].
+Porque a gente queria alguém com: (1) bagagem em [ÁREA], (2) didática prática, (3) compromisso com qualidade.
+E sim… você já viu esse(a) prof na internet.
+Roda aí!”
+[CLIP 1–2s]
+“Eu sou [NOME], novo(a) professor(a) de [MATÉRIA].
+Aqui você vai estudar pra [PÚBLICO/PROVA] com foco em [PROMESSA].
+Comenta ‘[PALAVRA]’ que eu te mando o cronograma + aula 1.”</pre>
+          <p class="footerNote">Se passar de 35s, transforme em série: Parte 1 (suspense + provas) e Parte 2 (reveal + proposta + CTA).</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('roteiroText');
+      function copyText(str){
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          return navigator.clipboard.writeText(str);
+        }
+        const ta = document.createElement('textarea');
+        ta.value = str;
+        ta.setAttribute('readonly','');
+        ta.style.position='absolute';
+        ta.style.left='-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        return Promise.resolve();
+      }
+      btn.addEventListener('click', async function(){
+        const content = textEl ? textEl.innerText : '';
+        try{
+          await copyText(content);
+          const old = btn.innerText;
+          btn.innerText = 'Roteiro copiado';
+          setTimeout(()=> btn.innerText = old, 1400);
+        }catch(e){
+          const old = btn.innerText;
+          btn.innerText = 'Falhou ao copiar';
+          setTimeout(()=> btn.innerText = old, 1400);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
