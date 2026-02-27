@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Roteiro Reproduzível — Produtividade (Dia 1)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:#0F1730;
+    --card2:#0C1328;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.16);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.58);
+    --shadow: 0 18px 45px rgba(0,0,0,.45);
+    --radius:18px;
+    --radius2:22px;
+
+    --g1: linear-gradient(90deg, #22c55e 0%, #38bdf8 42%, #fb923c 100%);
+    --g2: linear-gradient(135deg, rgba(34,197,94,.22) 0%, rgba(56,189,248,.18) 45%, rgba(251,146,60,.18) 100%);
+    --g3: linear-gradient(90deg, rgba(34,197,94,.95), rgba(56,189,248,.92), rgba(251,146,60,.92));
+
+    --ok:#22c55e;
+    --warn:#fb923c;
+    --info:#38bdf8;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--text);
+    background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,.18), transparent 60%),
+      radial-gradient(1100px 700px at 90% 10%, rgba(34,197,94,.16), transparent 55%),
+      radial-gradient(900px 600px at 80% 90%, rgba(251,146,60,.12), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1) 40%, #070A12 100%);
+    line-height:1.45;
+  }
+
+  a{color:inherit; text-decoration:none}
+  a.underline{text-decoration:underline; text-decoration-color:rgba(234,240,255,.45)}
+
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 70px}
+
+  header{
+    border:1px solid var(--stroke);
+    border-radius: var(--radius2);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .headTop{
+    padding:18px 18px 0;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .badgeRow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+  .badge{
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background: rgba(15,23,48,.45);
+    color:rgba(234,240,255,.82);
+    white-space:nowrap;
+  }
+  .badge strong{color:var(--text); font-weight:650}
+
+  .titleBox{padding:10px 18px 18px}
+  h1{
+    margin:10px 0 6px;
+    font-size: clamp(22px, 3.2vw, 34px);
+    line-height:1.15;
+    letter-spacing:-.02em;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    font-size:14px;
+  }
+  .linkRow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:12px;
+  }
+  .chipLink{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    border:1px solid var(--stroke);
+    background: rgba(12,19,40,.55);
+    padding:10px 12px;
+    border-radius: 999px;
+    color:rgba(234,240,255,.86);
+    font-size:13px;
+  }
+  .dot{
+    width:8px; height:8px; border-radius:10px;
+    background: var(--g3);
+    box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+  }
+
+  .headBar{
+    padding:14px 18px 18px;
+    border-top:1px solid var(--stroke);
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    background: var(--g2);
+  }
+
+  .btns{display:flex; gap:10px; flex-wrap:wrap}
+  button{
+    cursor:pointer;
+    border:1px solid var(--stroke2);
+    background: rgba(15,23,48,.55);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius: 12px;
+    font-weight:600;
+    letter-spacing:.01em;
+  }
+  button:hover{border-color:rgba(255,255,255,.26)}
+  .primary{
+    background: linear-gradient(90deg, rgba(34,197,94,.18), rgba(56,189,248,.16), rgba(251,146,60,.16));
+  }
+
+  main{margin-top:18px; display:grid; grid-template-columns: 1.1fr .9fr; gap:14px}
+  @media (max-width: 920px){ main{grid-template-columns:1fr} }
+
+  .card{
+    border:1px solid var(--stroke);
+    border-radius: var(--radius2);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+
+  .cardHeader{
+    padding:16px 16px 10px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:10px;
+    border-bottom:1px solid var(--stroke);
+    background: rgba(12,19,40,.35);
+  }
+  .cardHeader h2{
+    margin:0;
+    font-size:16px;
+    letter-spacing:.02em;
+  }
+  .cardHeader .hint{margin:0; color:var(--muted2); font-size:12px}
+
+  .cardBody{padding:16px}
+
+  .kpiGrid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  @media (max-width: 520px){ .kpiGrid{grid-template-columns:1fr} }
+
+  .kpi{
+    border:1px solid var(--stroke);
+    background: rgba(15,23,48,.35);
+    border-radius: 16px;
+    padding:12px;
+  }
+  .kpi .label{font-size:12px; color:var(--muted2); margin:0 0 6px}
+  .kpi .value{margin:0; font-size:14px; color:rgba(234,240,255,.92)}
+
+  .hr{height:1px; background: var(--stroke); margin:14px 0}
+
+  ul{margin:10px 0 0; padding-left:18px; color:rgba(234,240,255,.86)}
+  li{margin:6px 0}
+  .muted{color:var(--muted)}
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 10px;
+    border-radius: 999px;
+    background: rgba(15,23,48,.35);
+    border:1px solid var(--stroke);
+    font-size:12px;
+    color:rgba(234,240,255,.84);
+  }
+  .swatch{width:10px; height:10px; border-radius:999px; background: var(--g3)}
+
+  .script{
+    border:1px solid var(--stroke);
+    background: rgba(8,12,26,.55);
+    border-radius: 16px;
+    padding:14px;
+    overflow:auto;
+  }
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size:13px;
+    color: rgba(234,240,255,.9);
+    line-height:1.5;
+  }
+
+  .callout{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(34,197,94,.10), rgba(56,189,248,.08) 50%, rgba(251,146,60,.08));
+    border-radius: 16px;
+    padding:12px;
+    color: rgba(234,240,255,.88);
+  }
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media (max-width: 760px){ .grid2{grid-template-columns:1fr} }
+
+  .tag{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:7px 10px;
+    border-radius: 999px;
+    border:1px solid var(--stroke);
+    background: rgba(15,23,48,.30);
+    margin: 0 8px 8px 0;
+  }
+
+  .ok{color:rgba(34,197,94,.98)}
+  .info{color:rgba(56,189,248,.98)}
+  .warn{color:rgba(251,146,60,.98)}
+
+  .footerNote{margin-top:14px; color:var(--muted2); font-size:12px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headTop">
+        <div class="badgeRow">
+          <span class="badge"><strong>Nicho</strong>: Produtividade</span>
+          <span class="badge"><strong>Dia</strong>: 1</span>
+          <span class="badge"><strong>Formato</strong>: Carrossel</span>
+          <span class="badge"><strong>Pilar</strong>: Passo a passo</span>
+        </div>
+        <div class="badgeRow">
+          <span class="pill"><span class="swatch"></span> Destaques em degradê</span>
+        </div>
+      </div>
+
+      <div class="titleBox">
+        <h1>4 prompts para organizar sua semana em 15 minutos</h1>
+        <p class="sub">Arquitetura: Hook (capa) → prompts numerados (copiar/colar) → fechamento reflexivo + CTA de salvar/comentar.</p>
+        <div class="linkRow">
+          <a class="chipLink underline" href="https://www.instagram.com/p/DSs1BCcEUOR/" target="_blank" rel="noopener noreferrer">
+            <span class="dot"></span>
+            Post original (referência)
+          </a>
+        </div>
+      </div>
+
+      <div class="headBar">
+        <div class="muted">Use este roteiro como template: troque [RESULTADO], [PRAZO] e [CATEGORIAS] e publique.</div>
+        <div class="btns">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="copyPromptsBtn">Copiar só os prompts</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Resumo</h2>
+            <p class="hint">O que este post entrega (e por que funciona)</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="kpiGrid">
+            <div class="kpi">
+              <p class="label">Promessa</p>
+              <p class="value">Planejar a semana com clareza e execução (sem sobrecarga).</p>
+            </div>
+            <div class="kpi">
+              <p class="label">Mecânica de retenção</p>
+              <p class="value">Numeração progressiva + texto “copiar e colar”.</p>
+            </div>
+            <div class="kpi">
+              <p class="label">CTA primário</p>
+              <p class="value">Salvar (conteúdo de referência).</p>
+            </div>
+            <div class="kpi">
+              <p class="label">CTA secundário</p>
+              <p class="value">Comentar palavra-chave para receber versão copiável no direct.</p>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="callout">
+            <strong>Ideia central:</strong> antes de “montar um plano”, faça as perguntas certas → descubra conflitos/prioridades → estruture → transforme em ações mínimas com antifalhas.
+          </div>
+
+          <p class="footerNote">Dica de consistência: mantenha o mesmo layout em todos os slides (foto/ilustração de fundo + card de texto com cantos arredondados + destaques em degradê).</p>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Metadados (calendário)</h2>
+            <p class="hint">Campos prontos para organizar a produção</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="tag">Título curto</div>
+          <div class="muted">4 prompts para organizar sua semana em 15 minutos</div>
+          <div class="hr"></div>
+          <div class="tag">Instrução curta</div>
+          <div class="muted">Crie 6 slides: capa + 4 prompts + fechamento com CTA. Destaque palavras-chave e incentive salvar/comentar.</div>
+          <div class="hr"></div>
+          <div class="grid2">
+            <div>
+              <div class="tag">Pilar</div>
+              <div class="muted">Passo a passo</div>
+            </div>
+            <div>
+              <div class="tag">Formato</div>
+              <div class="muted">Carrossel</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Estrutura</h2>
+            <p class="hint">Sequência recomendada (reproduzível)</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <ul>
+            <li><strong>Slide 1 (Capa):</strong> Promessa + prazo + ferramenta (ex.: ChatGPT) + selo “4 prompts”</li>
+            <li><strong>Slides 2–5:</strong> 1 prompt por slide (Diagnóstico → Clareza/Foco → Estrutura → Execução/Antifalhas)</li>
+            <li><strong>Slide 6 (Fecho):</strong> síntese (1–2 frases) + CTA (Salvar + comentar palavra-chave)</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="grid2">
+            <div class="callout">
+              <strong class="info">Regra de texto:</strong> 1 ideia por slide. Prompt em blocos curtos (quebras de linha) + 2–4 palavras destacadas.
+            </div>
+            <div class="callout">
+              <strong class="warn">Regra de design:</strong> fundo escuro + card com borda suave; use o degradê só para guiar o olhar (não para poluir).</n            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Slides sugeridos (1–6)</h2>
+            <p class="hint">Texto base pronto para Canva/CapCut</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="script" id="fullScript">
+<pre>SLIDE 1 — CAPA (HOOK)
+Título:
+Como organizar sua semana em 15 min
+com ajuda do ChatGPT
+
+Sub (selo): 4 prompts (copiar e colar)
+
+Nota visual: fundo escuro “high-tech” + card com borda suave; destaque em degradê nas palavras ORGANIZAR / 15 MIN / 4 PROMPTS.
+
+
+SLIDE 2 — PROMPT #1 (DIAGNÓSTICO)
+Topo: PROMPT #1 — O diagnóstico
+Texto (copiar e colar):
+“Quero organizar minha semana de forma clara e realista.
+Antes de sugerir qualquer solução, faça todas as perguntas necessárias para entender:
+• meu contexto atual
+• minhas prioridades
+• minhas limitações
+• meu tempo disponível
+Conduza passo a passo e espere minhas respostas antes de avançar.”
+
+Destaques (2–4): “perguntas necessárias”, “prioridades”, “tempo disponível”.
+
+
+SLIDE 3 — PROMPT #2 (CLAREZA E FOCO)
+Topo: PROMPT #2 — Clareza e foco
+Texto (copiar e colar):
+“Com base nas minhas respostas, identifique:
+• padrões do meu comportamento que me atrapalham
+• conflitos entre o que faço hoje e o que digo que é prioridade
+• os 3 focos de maior impacto para eu organizar minha semana
+Explique de forma prática e sem romantizar.”
+
+Destaques: “padrões”, “conflitos”, “3 focos”.
+
+
+SLIDE 4 — PROMPT #3 (ESTRUTURA DO PLANO)
+Topo: PROMPT #3 — Estruture o plano
+Texto (copiar e colar):
+“Crie um plano organizado por CATEGORIAS (ex.: Trabalho/Projetos, Casa, Saúde, Estudos).
+Para cada categoria, inclua:
+• objetivo principal
+• 2–5 ações de suporte
+• critério claro de sucesso (como vou medir)
+Mantenha ambicioso, mas compatível com minha realidade.”
+
+Destaques: “categorias”, “critério de sucesso”, “minha realidade”.
+
+
+SLIDE 5 — PROMPT #4 (EXECUÇÃO SEM TRAVAR)
+Topo: PROMPT #4 — Execução sem travar
+Texto (copiar e colar):
+“Transforme o plano em ações executáveis. Para cada objetivo, traga:
+• a ação mínima (menor passo possível)
+• o que devo começar, parar e manter
+• obstáculos/erros comuns e como contornar
+Foque em consistência, não perfeição.”
+
+Destaques: “ação mínima”, “começar/parar/manter”, “consistência”.
+
+
+SLIDE 6 — FECHAMENTO (SÍNTESE + CTA)
+Texto curto:
+“No fim, produtividade é sobre decidir melhor no presente.
+Quando você faz as perguntas certas, a semana vira um plano possível — com clareza e direção.”
+
+CTA:
+• Salva pra usar no seu próximo planejamento.
+• Comenta “SEMANA” que eu te mando a versão copiável no direct.</pre>
+          </div>
+          <p class="footerNote">Se quiser variar para 7–8 slides: quebre o Prompt #4 em “Execução” e “Antifalhas”; ou adicione um slide “Exemplo preenchido”.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Roteiro (legenda + direção de leitura)</h2>
+            <p class="hint">Copy pronta para acompanhar o carrossel</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="script">
+<pre>LEGENDA (MODELO)
+
+Você não precisa de mais um “método perfeito”.
+Você precisa de clareza + um plano que caiba na sua vida.
+
+Aqui vão 4 prompts (copiar e colar) para organizar sua semana em 15 minutos:
+
+1) Diagnóstico (perguntas antes de soluções)
+2) Clareza e foco (padrões + conflitos + top 3)
+3) Estrutura (categorias + critérios de sucesso)
+4) Execução (ação mínima + começar/parar/manter + contorno de erros)
+
+Se fizer hoje, você entra na semana com:
+• prioridades explícitas
+• menos decisões no meio do caos
+• mais consistência
+
+CTA:
+Salva este carrossel pra usar no seu planejamento.
+Comenta “SEMANA” que eu te mando a versão copiável no direct.</pre>
+          </div>
+          <div class="hr"></div>
+          <div class="grid2">
+            <div>
+              <span class="tag">Tom</span>
+              <div class="muted">Direto, prático, sem romantizar, com sensação de “alívio + direção”.</div>
+            </div>
+            <div>
+              <span class="tag">Ritmo</span>
+              <div class="muted">Linhas curtas, listas, e 1 frase de impacto no final.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Elementos visuais</h2>
+            <p class="hint">Identidade escura + high-tech (fácil de replicar)</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="grid2">
+            <div class="kpi">
+              <p class="label">Fundo</p>
+              <p class="value">Escuro com gradientes suaves (radiais) para profundidade.</p>
+              <ul>
+                <li>Evite fotos muito claras (perde o contraste).</li>
+                <li>Prefira texturas discretas: blur, noise leve, grid fino.</li>
+              </ul>
+            </div>
+            <div class="kpi">
+              <p class="label">Cards</p>
+              <p class="value">Borda suave + vidro (transparência leve) + padding generoso.</p>
+              <ul>
+                <li>Raio 20–28</li>
+                <li>Stroke 1px branco com 10–16% de opacidade</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="grid2">
+            <div class="kpi">
+              <p class="label">Destaques (degradê)</p>
+              <p class="value">Verde → Azul → Laranja (só em palavras-chave).</p>
+              <ul>
+                <li>2–4 destaques por slide</li>
+                <li>Use como sublinhado/tarja fina, não como bloco gigante</li>
+              </ul>
+            </div>
+            <div class="kpi">
+              <p class="label">Tipografia</p>
+              <p class="value">Sans (Inter/Montserrat) + monoespaçada para “prompt”.</p>
+              <ul>
+                <li>Título: 48–64 (no 1080×1350)</li>
+                <li>Corpo: 28–34 (com espaçamento)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Copy e ganchos</h2>
+            <p class="hint">Opções para capa + 1ª linha da legenda</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div>
+            <span class="tag">Ganchos de capa</span>
+            <ul>
+              <li>“4 prompts pra sair do modo reativo e planejar a semana”</li>
+              <li>“Planeje sua semana em 15 min (sem lista infinita)”</li>
+              <li>“Se a semana sempre ‘estoura’, usa isso aqui”</li>
+            </ul>
+          </div>
+          <div class="hr"></div>
+          <div>
+            <span class="tag">1ª linha da legenda</span>
+            <ul>
+              <li>“O problema não é falta de tempo. É falta de decisões claras.”</li>
+              <li>“Se você só reage, sua semana decide por você.”</li>
+              <li>“Antes de montar um plano, faça as perguntas certas.”</li>
+            </ul>
+          </div>
+          <div class="hr"></div>
+          <div class="callout"><strong>Heurística:</strong> promessa simples + especificidade (tempo/quantidade) + “copiar e colar” = mais salvamentos.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>CTA</h2>
+            <p class="hint">Pronto para slide final + legenda</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="grid2">
+            <div class="kpi">
+              <p class="label">CTA primário (slide final)</p>
+              <p class="value"><strong>“Salva pra usar quando for planejar.”</strong></p>
+              <p class="muted">Objetivo: aumentar salvamentos.</p>
+            </div>
+            <div class="kpi">
+              <p class="label">CTA secundário (comentário)</p>
+              <p class="value"><strong>“Comenta ‘SEMANA’ que eu mando a versão copiável.”</strong></p>
+              <p class="muted">Objetivo: gerar conversa + distribuição.</p>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="kpi">
+            <p class="label">Variações de palavra-chave</p>
+            <p class="value">SEMANA • PROMPT • PLANO • FOCO</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Checklist de criação</h2>
+            <p class="hint">Para produzir sem travar (conteúdo + design + publicação)</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="grid2">
+            <div class="kpi">
+              <p class="label">Antes de escrever</p>
+              <ul>
+                <li><strong>Tema:</strong> Planejamento semanal</li>
+                <li><strong>Resultado:</strong> clareza + execução</li>
+                <li><strong>Público:</strong> pessoa ocupada/empreendedora/CLT</li>
+                <li><strong>Prazo:</strong> 7 dias (semana)</li>
+                <li><strong>Ferramenta:</strong> ChatGPT (ou “IA”, se preferir genérico)</li>
+              </ul>
+            </div>
+            <div class="kpi">
+              <p class="label">Escrita (slides 2–5)</p>
+              <ul>
+                <li>Prompt com <strong>blocos curtos</strong> e bullets</li>
+                <li><strong>2–4 destaques</strong> em degradê por slide</li>
+                <li>Sem jargão: “faça / liste / escolha / transforme”</li>
+                <li>Releia: dá pra “copiar e colar” sem ajuste?</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="grid2">
+            <div class="kpi">
+              <p class="label">Design (Canva)</p>
+              <ul>
+                <li>Canvas: <strong>1080×1350</strong></li>
+                <li>Fundo escuro + textura leve (noise/grid)</li>
+                <li>Card com raio 24–32 + padding 40–56</li>
+                <li>Fonte: Inter/Montserrat; prompt em mono (opcional)</li>
+              </ul>
+            </div>
+            <div class="kpi">
+              <p class="label">Publicação</p>
+              <ul>
+                <li>Título forte na capa (resultado + prazo)</li>
+                <li>Legenda com: dor → promessa → lista dos 4 prompts → CTA</li>
+                <li>Fixar comentário: “Escreve SEMANA que eu envio”</li>
+                <li>Responder comentários em até 2h (impulso inicial)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <h2>Variações</h2>
+            <p class="hint">Mesma estrutura, novos temas (para semana 2+)</p>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="grid2">
+            <div class="kpi">
+              <p class="label">Variação por dor</p>
+              <ul>
+                <li>Procrastinação: “4 prompts pra destravar o que você evita”</li>
+                <li>Sobrecarga: “4 prompts pra reduzir tarefas sem culpa”</li>
+                <li>Distrações: “4 prompts pra recuperar foco no trabalho”</li>
+              </ul>
+            </div>
+            <div class="kpi">
+              <p class="label">Variação por contexto</p>
+              <ul>
+                <li>Estudos: categorias = matérias, revisões, simulados</li>
+                <li>Freela: categorias = clientes, prospecção, entrega, financeiro</li>
+                <li>Liderança: categorias = 1:1, projetos, alinhamentos, pessoas</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Upgrade simples:</strong> adicione um Slide 7 com “Exemplo preenchido” (1 categoria pronta) para aumentar compreensão e salvar.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+  function copyText(text){
+    if (navigator.clipboard && window.isSecureContext){
+      return navigator.clipboard.writeText(text);
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try{ document.execCommand('copy'); } catch(e){}
+    ta.remove();
+    return Promise.resolve();
+  }
+
+  const fullScript = document.getElementById('fullScript').innerText.trim();
+
+  const promptsOnly = [
+`PROMPT #1 — O diagnóstico\n\nQuero organizar minha semana de forma clara e realista.\nAntes de sugerir qualquer solução, faça todas as perguntas necessárias para entender:\n• meu contexto atual\n• minhas prioridades\n• minhas limitações\n• meu tempo disponível\nConduza passo a passo e espere minhas respostas antes de avançar.\n`,
+`PROMPT #2 — Clareza e foco\n\nCom base nas minhas respostas, identifique:\n• padrões do meu comportamento que me atrapalham\n• conflitos entre o que faço hoje e o que digo que é prioridade\n• os 3 focos de maior impacto para eu organizar minha semana\nExplique de forma prática e sem romantizar.\n`,
+`PROMPT #3 — Estruture o plano\n\nCrie um plano organizado por CATEGORIAS (ex.: Trabalho/Projetos, Casa, Saúde, Estudos).\nPara cada categoria, inclua:\n• objetivo principal\n• 2–5 ações de suporte\n• critério claro de sucesso (como vou medir)\nMantenha ambicioso, mas compatível com minha realidade.\n`,
+`PROMPT #4 — Execução sem travar\n\nTransforme o plano em ações executáveis. Para cada objetivo, traga:\n• a ação mínima (menor passo possível)\n• o que devo começar, parar e manter\n• obstáculos/erros comuns e como contornar\nFoque em consistência, não perfeição.\n`
+  ].join('\n---\n\n');
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    await copyText(fullScript);
+    const btn = document.getElementById('copyBtn');
+    const old = btn.textContent;
+    btn.textContent = 'Roteiro copiado';
+    setTimeout(()=>btn.textContent=old, 1200);
+  });
+
+  document.getElementById('copyPromptsBtn').addEventListener('click', async () => {
+    await copyText(promptsOnly);
+    const btn = document.getElementById('copyPromptsBtn');
+    const old = btn.textContent;
+    btn.textContent = 'Prompts copiados';
+    setTimeout(()=>btn.textContent=old, 1200);
+  });
+</script>
+</body>
+</html>
