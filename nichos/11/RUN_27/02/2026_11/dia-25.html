@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Ficha Reproduzível — EU vs. EU</title>
+  <style>
+    :root{
+      --bg0:#070A10;
+      --bg1:#0B1220;
+      --card:#0E172A;
+      --card2:#0B1324;
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --line:rgba(255,255,255,.08);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r:18px;
+      --g1: linear-gradient(90deg, #22C55E 0%, #38BDF8 35%, #FB923C 75%, #F59E0B 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.22), rgba(56,189,248,.18), rgba(251,146,60,.18));
+      --g3: linear-gradient(90deg, rgba(34,197,94,.9), rgba(56,189,248,.9), rgba(251,146,60,.9));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 900px at 20% 10%, rgba(56,189,248,.10), transparent 55%),
+        radial-gradient(1000px 800px at 85% 20%, rgba(251,146,60,.10), transparent 55%),
+        radial-gradient(900px 700px at 45% 90%, rgba(34,197,94,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 60%);
+      min-height:100vh;
+    }
+
+    .wrap{max-width:1120px; margin:0 auto; padding:26px 18px 70px;}
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius: calc(var(--r) + 6px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .topbar{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      padding:18px 18px 14px;
+    }
+
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .badge{
+      font-size:12px;
+      letter-spacing:.2px;
+      color:var(--text);
+      opacity:.95;
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background: rgba(255,255,255,.03);
+    }
+    .badge strong{font-weight:650}
+
+    .title{
+      padding:0 18px 18px;
+      border-top:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.02), transparent);
+    }
+    .title h1{margin:14px 0 8px; font-size:22px; line-height:1.18;}
+    .title p{margin:0; color:var(--muted); max-width:72ch;}
+
+    .link{
+      display:inline-flex; gap:10px; align-items:center;
+      color:var(--text);
+      text-decoration:none;
+      font-size:13px;
+      padding:9px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      transition:.18s ease;
+      white-space:nowrap;
+    }
+    .link:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.16)}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:16px;
+    }
+
+    @media (min-width: 920px){
+      .grid{grid-template-columns: 1.15fr .85fr; align-items:start;}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .cardHeader{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), transparent);
+    }
+    .cardHeader h2{margin:0; font-size:14px; letter-spacing:.2px; text-transform:uppercase;}
+    .chip{
+      font-size:12px;
+      font-family:var(--mono);
+      color:rgba(234,240,255,.9);
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+
+    .cardBody{padding:14px 16px 16px;}
+
+    .accentLine{
+      height:2px; width:100%;
+      background: var(--g1);
+      opacity:.9;
+    }
+
+    .k{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 10px;
+    }
+
+    .list{margin:10px 0 0; padding:0 0 0 18px; color:var(--text)}
+    .list li{margin:8px 0; color:rgba(234,240,255,.93)}
+    .muted{color:var(--muted)}
+
+    .callout{
+      margin-top:12px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background: var(--g2);
+      padding:12px 12px;
+    }
+    .callout strong{font-weight:650}
+
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-size:13px;
+      transition:.18s ease;
+    }
+    button:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.18)}
+    .primary{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      position:relative;
+      overflow:hidden;
+    }
+    .primary:before{
+      content:"";
+      position:absolute; inset:0;
+      background: var(--g3);
+      opacity:.16;
+      pointer-events:none;
+    }
+
+    .code{
+      font-family: var(--mono);
+      font-size:12.5px;
+      white-space: pre-wrap;
+      line-height:1.55;
+      background: rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding:12px;
+      margin:12px 0 0;
+      color: rgba(234,240,255,.95);
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 720px){
+      .twoCol{grid-template-columns: 1fr 1fr;}
+    }
+
+    .miniCard{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.02);
+      padding:12px;
+    }
+    .miniCard h3{margin:0 0 8px; font-size:13px}
+    .miniCard p{margin:0; color:var(--muted); font-size:13px; line-height:1.45}
+
+    .checklist{list-style:none; padding:0; margin:10px 0 0}
+    .checklist li{
+      padding:10px 10px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      margin:10px 0;
+      background: rgba(255,255,255,.02);
+      display:flex; gap:10px;
+      align-items:flex-start;
+    }
+    .box{
+      width:16px; height:16px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,.20);
+      margin-top:2px;
+      flex: 0 0 auto;
+      background: rgba(0,0,0,.25);
+    }
+
+    .footerNote{margin-top:14px; color:var(--muted); font-size:12.5px}
+
+    textarea{
+      width:100%;
+      min-height: 360px;
+      resize: vertical;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      color: rgba(234,240,255,.95);
+      padding: 12px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      outline:none;
+    }
+    textarea:focus{border-color: rgba(56,189,248,.35); box-shadow: 0 0 0 4px rgba(56,189,248,.08)}
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      background: rgba(10,16,30,.92);
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{opacity: 1; transform: translateX(-50%) translateY(-2px)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header>
+      <div class="topbar">
+        <div class="badgeRow">
+          <span class="badge"><strong>Nicho</strong>: Produtuvidade</span>
+          <span class="badge"><strong>Dia</strong>: 25</span>
+          <span class="badge"><strong>Formato</strong>: carrossel</span>
+          <span class="badge"><strong>Pilar</strong>: Mito vs Verdade</span>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DU_Uu6sEcO_/" target="_blank" rel="noopener">Abrir post original →</a>
+      </div>
+      <div class="accentLine"></div>
+      <div class="title">
+        <h1>EU vs. EU: rotina ideal vs. rotina possível</h1>
+        <p>Template reproduzível para carrossel que usa conflito interno + identificação + reframe acolhedor para aumentar retenção e gerar salvamentos/comentários.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Resumo</h2>
+          <span class="chip">o que faz funcionar</span>
+        </div>
+        <div class="cardBody">
+          <p class="muted" style="margin:0 0 10px; line-height:1.55">Mecanismo principal: <strong>conflito interno + frases de pensamento real + virada sem culpa</strong>. Em vez de “te ensinar um método”, o carrossel <strong>espelha</strong> a contradição (parte consciente vs parte automática) e fecha com <strong>integração</strong>: você não precisa escolher um lado — precisa de um sistema que caiba na sua vida.</p>
+          <div class="callout">
+            <strong>Promessa emocional:</strong> “Você não é quebrada. Você está tentando existir inteira.”<br/>
+            <span class="muted">(Adapte para qualquer tema trocando a palavra-chave da tese.)</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardHeader">
+          <h2>Instrução rápida</h2>
+          <span class="chip">execução</span>
+        </div>
+        <div class="cardBody">
+          <ol class="list">
+            <li>Defina o <strong>conflito</strong> (A vs B) em 6 palavras.</li>
+            <li>Escreva <strong>4 pares</strong> de pensamentos (um “maduro”, um “automático”).</li>
+            <li>Crie uma <strong>tese-manifesto</strong> que tira a culpa.</li>
+            <li>Feche com <strong>proposta mínima</strong> (pequeno passo) + CTA no tom certo.</li>
+          </ol>
+          <div class="btnRow" style="margin-top:12px">
+            <button class="primary" onclick="copyRoteiro()">Copiar roteiro</button>
+            <button onclick="selectRoteiro()">Selecionar texto</button>
+          </div>
+          <p class="footerNote">Dica: este formato performa bem para <strong>salvar</strong> (tese) e <strong>comentar</strong> (qual “eu” venceu hoje?).</p>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Estrutura</h2>
+          <span class="chip">3 atos</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div class="miniCard">
+              <h3>Ato 1 — Hook (Slide 1)</h3>
+              <p><strong>Headline curta + conflito</strong> + subtexto situacional (parênteses) + indicação de swipe.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Ato 2 — Espelho (Slides 2–5)</h3>
+              <p><strong>4 comparações</strong> em split 50/50. Padrão repetível = retenção.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Ato 3 — Virada (Slides 6–9)</h3>
+              <p><strong>Tese</strong> (alívio) → <strong>integração</strong> (estrutura e liberdade) → <strong>proposta mínima</strong> + CTA.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Regra de ouro</h3>
+              <p>Sem vilão. O “eu sabotador” é <strong>proteção</strong> (cansaço, medo, perfeccionismo, fuga). Isso reduz resistência.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Slides sugeridos (1..9)</h2>
+          <span class="chip">carrossel</span>
+        </div>
+        <div class="cardBody">
+          <ol class="list">
+            <li><strong>Slide 1 (Hook)</strong>: “EU vs. EU” + (situação) + “>>”</li>
+            <li><strong>Slide 2</strong>: Eu A (intenção) vs Eu B (automático) — par 1</li>
+            <li><strong>Slide 3</strong>: par 2</li>
+            <li><strong>Slide 4</strong>: par 3</li>
+            <li><strong>Slide 5</strong>: par 4</li>
+            <li><strong>Slide 6 (Tese)</strong>: “Você não é ____ . Você tá tentando ____.”</li>
+            <li><strong>Slide 7 (Integração)</strong>: “Uma coisa é ____. Outra coisa é ____.” + “não precisa escolher”</li>
+            <li><strong>Slide 8 (Síntese)</strong>: “rotina viva não ‘conserta’ você, ela acolhe” + ponte</li>
+            <li><strong>Slide 9 (Proposta + CTA)</strong>: pergunta-ação + passo mínimo + salvar/comentar/DM</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Roteiro</h2>
+          <span class="chip">preenchível</span>
+        </div>
+        <div class="cardBody">
+          <p class="k">Preencha os campos entre {chaves}. Mantenha frases curtas e com “cara de pensamento interno”.</p>
+          <textarea id="roteiro" spellcheck="false">CARROSSEL — “EU vs. EU” (adaptável para qualquer tema)
+
+[SLIDE 1 — HOOK]
+TÍTULO: EU vs. EU
+(Situação): (toda vez que eu tento {mudança/objetivo} em {momento específico})
+Elemento: “>> arrasta”
+
+[SLIDE 2 — COMPARAÇÃO 1]
+Lado A (rótulo-pílula): Eu {madura/realista/consciente}:
+Frase (aspas): “{pensamento que puxa para o possível}”
+Lado B (rótulo-pílula): Eu {automática/perfeccionista/fugindo}:
+Frase (aspas): “{pensamento que puxa para o 8 ou 80}”
+
+[SLIDE 3 — COMPARAÇÃO 2]
+Eu {A}:
+“{frase}”
+Eu {B}:
+“{frase}”
+
+[SLIDE 4 — COMPARAÇÃO 3]
+Eu {A}:
+“{frase}”
+Eu {B}:
+“{frase}”
+
+[SLIDE 5 — COMPARAÇÃO 4]
+Eu {A}:
+“{frase}”
+Eu {B}:
+“{frase}”
+
+[SLIDE 6 — TESE (ALÍVIO)]
+Linha pequena: Você não é {defeito/fracasso/preguiçosa/sem disciplina}.
+PALAVRA GIGANTE: Você tá tentando {EXISTIR INTEIRA / RESPIRAR / VIVER EM PAZ / SER HUMANA}
+Linha pequena: numa rotina que {não foi feita pra vida real / não te comporta / te cobra o tempo todo}.
+
+[SLIDE 7 — INTEGRAÇÃO]
+Texto curto:
+Uma coisa é querer {estrutura/constância/resultado}.
+Outra coisa é precisar de {liberdade/descanso/leveza}.
+Frase grande:
+E você não precisa escolher entre elas.
+
+[SLIDE 8 — SÍNTESE + PONTE]
+Linha curta: Quando {A} e {B} param de competir…
+Frase grande: Uma rotina viva não “{conserta}” você. Ela {acolhe}.
+Etiqueta: Então, uma proposta pra você:
+
+[SLIDE 9 — PROPOSTA + CTA]
+Pergunta grande: E se, dessa vez, você não {tentasse se consertar / recomeçasse do zero / se punisse}?
+Texto de apoio: E se você começasse com {o que você tem} — do jeito que dá — por {3|5|7} dias?
+CTA (escolha 1):
+- Suave: Salva pra reler quando bater o 8 ou 80.
+- Médio: Comenta “POSSÍVEL” que eu te mando um plano de 7 dias.
+- Direto: Me chama no direct com “ROTINA” pra receber o template.</textarea>
+          <div class="callout">
+            <strong>Como manter o impacto:</strong> 1) repetição previsível (slides 2–5), 2) frases-curtas em aspas, 3) tese que alivia, 4) proposta mínima (sem heroísmo).
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Elementos visuais</h2>
+          <span class="chip">design replicável</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><strong>Slides 2–5</strong>: layout split 50/50 + “VS.” central + rótulos em pílula (“Eu X:”).</li>
+            <li><strong>Código de cor</strong>: um lado em verde/azul (consciente) e outro em laranja (automático). Mantenha o mesmo código em todos os pares.</li>
+            <li><strong>Imagens</strong>: mood “vida real” (baixa saturação + leve escurecimento para legibilidade).</li>
+            <li><strong>Slides 6–9</strong>: menos ruído visual, tipografia maior, 1 palavra-chave gigante (momento print/salvar).</li>
+            <li><strong>Textura</strong>: detalhes high-tech suaves (linhas finas, brilho leve) + 1 elemento handmade (sublinhar/marker) para calor humano.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Copy e ganchos</h2>
+          <span class="chip">biblioteca</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div class="miniCard">
+              <h3>Fórmulas de título</h3>
+              <p class="muted" style="margin:0 0 10px">Use 1:</p>
+              <div class="code">EU vs. EU: {situação}
+{Qualidade} vs. {padrão}
+{Rotina ideal} vs. {rotina possível}
+{Planejadora} vs. {procrastinadora}
+{Focada} vs. {distraída}</div>
+            </div>
+            <div class="miniCard">
+              <h3>Ganchos (subtexto do slide 1)</h3>
+              <p class="muted" style="margin:0 0 10px">Escolha o que mais parece “vida real”:</p>
+              <div class="code">(toda vez que eu decido que agora vai)
+(quando eu abro o celular “só 5 min”)
+(na segunda-feira, 08:03)
+(quando eu tento organizar a vida em 1 noite)
+(quando eu prometo que dessa vez vai ser diferente)</div>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top:12px">
+            <strong>Banco de pensamentos (para as comparações)</strong>
+            <div class="code" style="margin-top:10px">Lado “consciente” (A)
+- “Se eu fizer só o básico hoje, já conta.”
+- “Eu preciso de um plano que eu consigo repetir.”
+- “Eu posso terminar isso em 20 minutos.”
+- “Consistência é feia, mas funciona.”
+
+Lado “automático” (B)
+- “Já que não vai ficar perfeito, melhor nem começar.”
+- “Vou reorganizar tudo antes (aí eu faço).”
+- “Se eu não fizer agora e tudo, eu falhei.”
+- “Quando eu estiver com motivação, eu volto.”</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>CTA</h2>
+          <span class="chip">3 níveis</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div class="miniCard">
+              <h3>Suave (salvar)</h3>
+              <p class="code">Se isso te pegou, salva pra reler quando bater o 8 ou 80.
+Qual “eu” apareceu mais hoje? Comenta: {A} ou {B}.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Médio (conversa)</h3>
+              <p class="code">Quer que eu transforme isso num plano de {3|5|7} dias (bem possível)?
+Comenta “POSSÍVEL”.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Direto (conversão)</h3>
+              <p class="code">Me chama no direct com “{PALAVRA}” que eu te envio o template.
+Ou baixa o material no link da bio.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Regra de tom</h3>
+              <p>Se o carrossel é acolhedor, o CTA precisa manter a mesma energia: <strong>convite</strong> &gt; cobrança. Evite “basta ter disciplina”.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Checklist</h2>
+          <span class="chip">criação sem travar</span>
+        </div>
+        <div class="cardBody">
+          <ul class="checklist">
+            <li><span class="box"></span><div><strong>Conflito claro</strong>: consigo dizer em 1 linha (A vs B) e ele é comum no meu público.</div></li>
+            <li><span class="box"></span><div><strong>4 exemplos específicos</strong>: pensamentos reais, curtos, com vocabulário do dia a dia.</div></li>
+            <li><span class="box"></span><div><strong>Sem vilão</strong>: o “eu B” é proteção (medo, cansaço, ansiedade, perfeccionismo), não “falta de caráter”.</div></li>
+            <li><span class="box"></span><div><strong>Tese com alívio</strong>: uma frase-printável que tira culpa e dá nome ao que acontece.</div></li>
+            <li><span class="box"></span><div><strong>Integração</strong>: mostrei que A e B têm necessidades diferentes (estrutura e liberdade).</div></li>
+            <li><span class="box"></span><div><strong>Proposta mínima</strong>: um passo pequeno (20 min, 1 tarefa, 3 dias) que não exige “recomeçar a vida”.</div></li>
+            <li><span class="box"></span><div><strong>CTA alinhado</strong>: suave/médio/direto, mas coerente com o tom do texto.</div></li>
+            <li><span class="box"></span><div><strong>Design consistente</strong>: mesma grade, mesma cor por lado, “VS.” sempre no mesmo lugar.</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Variações</h2>
+          <span class="chip">adaptação para outros temas</span>
+        </div>
+        <div class="cardBody">
+          <p class="muted" style="margin:0 0 10px; line-height:1.55">Para reutilizar o formato em qualquer nicho, mantenha a <strong>mesma engenharia</strong> (conflito → exemplos → tese → integração → micro-ação) e troque apenas os “blocos substituíveis” abaixo.</p>
+          <div class="twoCol">
+            <div class="miniCard">
+              <h3>Substituições que mantêm impacto</h3>
+              <div class="code">A vs B (conflitos universais)
+- Consistência vs intensidade
+- Realista vs idealista
+- Corajosa vs evitativa
+- Estrutura vs liberdade
+- Progresso vs perfeição
+
+Tese (palavras gigantes)
+- INTEIRA
+- EM PAZ
+- HUMANA
+- RESPIRAR
+- RECOMEÇAR (sem se punir)</div>
+            </div>
+            <div class="miniCard">
+              <h3>Mapeamento rápido por tema</h3>
+              <div class="code">Saúde: “treinar” vs “se punir”
+Finanças: “planejar” vs “compensar emocionalmente”
+Estudos: “aprender” vs “provar valor”
+Negócios: “vender” vs “parecer perfeita”
+Relacionamentos: “limites” vs “agradar”</div>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:12px">
+            <strong>Atalho de adaptação:</strong> se você conseguir responder “o que o meu público faz quando está ansioso/culpado?”, você já tem o lado B.
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Roteiro copiado.</div>
+
+  <script>
+    function selectRoteiro(){
+      const el = document.getElementById('roteiro');
+      el.focus();
+      el.select();
+    }
+
+    async function copyRoteiro(){
+      const el = document.getElementById('roteiro');
+      const text = el.value;
+      try{
+        if(navigator.clipboard && window.isSecureContext){
+          await navigator.clipboard.writeText(text);
+        } else {
+          selectRoteiro();
+          document.execCommand('copy');
+        }
+        showToast('Roteiro copiado.');
+      } catch(e){
+        showToast('Não consegui copiar. Selecione e copie manualmente.');
+      }
+    }
+
+    let tHandle;
+    function showToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(tHandle);
+      tHandle = setTimeout(()=> t.classList.remove('show'), 2200);
+    }
+  </script>
+</body>
+</html>
