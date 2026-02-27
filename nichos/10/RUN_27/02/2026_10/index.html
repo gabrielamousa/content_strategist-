@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nutrição — Calendário de Conteúdo (30 dias)</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0B1020;
+      --card:#0F1731;
+      --stroke:rgba(255,255,255,.08);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.68);
+      --shadow:0 18px 45px rgba(0,0,0,.45);
+      --r:18px;
+      --pad:18px;
+      --max:1120px;
+      --grad:linear-gradient(90deg,#22C55E 0%,#3B82F6 52%,#F59E0B 100%);
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(59,130,246,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% 0%, rgba(34,197,94,.18), transparent 60%),
+        radial-gradient(900px 650px at 70% 110%, rgba(245,158,11,.16), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:28px 16px 56px}
+    .topbar{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius:calc(var(--r) + 6px);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .hero{
+      padding:22px 18px 18px;
+      position:relative;
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0 0 auto 0;
+      height:6px;
+      background:var(--grad);
+    }
+    .hrow{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; justify-content:space-between}
+    .hleft{min-width:260px}
+    .kicker{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+    .title{margin:6px 0 0; font-size:28px; line-height:1.15}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+    .chip{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:7px 10px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      color:var(--muted);
+    }
+    .nav{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:14px 18px 18px;
+      border-top:1px solid var(--stroke);
+      background:rgba(0,0,0,.16);
+    }
+    .nav a{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+    }
+    .section{
+      margin-top:18px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--stroke);
+      border-radius:calc(var(--r) + 6px);
+      overflow:hidden;
+    }
+    .shead{
+      padding:16px 18px;
+      border-bottom:1px solid var(--stroke);
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .shead h2{margin:0; font-size:16px}
+    .sbody{padding:18px}
+    .grid2{display:grid; grid-template-columns:1.2fr .8fr; gap:14px}
+    @media (max-width: 980px){ .grid2{grid-template-columns:1fr} .title{font-size:24px} }
+    .card{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      padding:var(--pad);
+    }
+    .card h3{margin:0 0 10px; font-size:14px}
+    .card p, .card li{color:var(--muted); line-height:1.55}
+    .list{margin:0; padding-left:18px}
+    .filters{display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:12px;}
+    .group{display:flex; gap:8px; flex-wrap:wrap}
+    .btn{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:9px 11px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      cursor:pointer;
+    }
+    .btn.active{outline:2px solid rgba(59,130,246,.55); background:rgba(59,130,246,.10)}
+    .count{font-family:var(--mono); font-size:12px; color:var(--muted)}
+    .calgrid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width: 980px){ .calgrid{grid-template-columns:repeat(2, minmax(0,1fr))} }
+    @media (max-width: 640px){ .calgrid{grid-template-columns:1fr} }
+    .day{
+      display:block;
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      padding:16px;
+      transition:transform .12s ease, border-color .12s ease;
+    }
+    .day:hover{transform:translateY(-2px); border-color:rgba(255,255,255,.14)}
+    .daytop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .dnum{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--stroke);
+      color:var(--muted);
+    }
+    .dtitle{margin:10px 0 8px; font-size:14px; line-height:1.25}
+    .meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .small{font-size:12px; color:var(--muted); line-height:1.45}
+    .footer{
+      margin-top:18px;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.55);
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="hero">
+        <div class="hrow">
+          <div class="hleft">
+            <div class="kicker">Calendário de conteúdo</div>
+            <h1 class="title">Nutrição</h1>
+            <div class="chips">
+              <span class="chip">Nicho: Nutrição</span>
+              <span class="chip">Run ID: NUT-30D</span>
+            </div>
+          </div>
+          <div class="chips">
+            <span class="chip">30 ideias prontas</span>
+            <span class="chip">Reels + Carrossel</span>
+          </div>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Navegação">
+        <a href="#framework">Framework</a>
+        <a href="#calendario">Calendário</a>
+        <a href="#como-usar">Como usar</a>
+      </nav>
+    </header>
+
+    <section class="section" id="framework">
+      <div class="shead">
+        <h2>Framework prático (Nutrição)</h2>
+        <div class="count">Estratégia → roteiro → execução</div>
+      </div>
+      <div class="sbody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Pilares de conteúdo</h3>
+            <ul class="list">
+              <li><strong>Passo a passo</strong>: refeições/decisões simples, “base + upgrade”, métricas e armazenamento.</li>
+              <li><strong>Mito vs Verdade</strong>: contraste de contexto, exceções clínicas e ações práticas replicáveis.</li>
+              <li><strong>Erro comum</strong>: correção rápida (ERRO → TROCA) com 1 direção clara.</li>
+              <li><strong>Dor</strong>: culpa, deslize, rotina, ansiedade alimentar; reframe e plano mínimo.</li>
+              <li><strong>Prova</strong>: antes/depois, linha do tempo, evidências visuais, prova social e método.</li>
+              <li><strong>Checklist</strong>: listas com critério fixo para salvar, com métricas simples.</li>
+              <li><strong>Desejo</strong>: identidade, anti-hype e cenas do “dia real” com frase emocional.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Ganchos que funcionam</h3>
+            <ul class="list">
+              <li>“Se seu dia foi ruim, faça isso antes de ‘chutar o balde’…”</li>
+              <li>“Isso parece saudável, mas depende de 3 contextos…”</li>
+              <li>“O erro pequeno que vira um problema grande…”</li>
+              <li>“X vs Y: o que dá para manter no dia a dia?”</li>
+              <li>“Top 5 ‘óbvios’ do detox que não resolvem…”</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Estruturas de roteiro (curtas)</h3>
+            <ul class="list">
+              <li><strong>Hook → Risco → 3 decisões → CTA</strong></li>
+              <li><strong>Mito → Por quê confunde → 3 exemplos → 3 ações</strong></li>
+              <li><strong>Erro → Troca → Regra → Exceções</strong></li>
+              <li><strong>Base → Upgrade → 3 usos → Armazenamento</strong></li>
+              <li><strong>Antes → Virada → Processo → Provas → Hoje</strong></li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Checklist de postagem</h3>
+            <ul class="list">
+              <li>Hook nos primeiros 1–2s (texto grande + fala direta).</li>
+              <li>1 ideia por post; 1 conceito técnico no máximo, traduzido.</li>
+              <li>Mostre contexto: rotina, porção, frequência, objetivo.</li>
+              <li>Feche com 1 ação executável + 1 CTA (salvar/comentar/enviar).</li>
+              <li>Legenda curta com reforço: regra → exceção → próximos passos.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Erros a evitar</h3>
+            <ul class="list">
+              <li>Generalizar (“sempre/nunca”) sem contexto.</li>
+              <li>Infodump: muitos conceitos sem uma decisão prática final.</li>
+              <li>Promessas absolutas (detox, “seca em X dias”, “zera ansiedade”).</li>
+              <li>Receitas sem métrica (rendimento, tempo, armazenamento, usos).</li>
+              <li>CTA frio: peça só 1 ação e alinhe com o objetivo do post.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Biblioteca de CTAs</h3>
+            <ul class="list">
+              <li>Salvar: “Salva para usar na próxima compra/refeição.”</li>
+              <li>Comentário: “Comenta a palavra-chave para eu te mandar a lista.”</li>
+              <li>Compartilhar: “Envia para alguém que vive no 8 ou 80.”</li>
+              <li>DM: “Me chama com a palavra-chave para o guia.”</li>
+              <li>Pesquisa: “Qual situação te pega mais: almoço fora ou noite?”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="calendario">
+      <div class="shead">
+        <h2>Calendário (30 dias)</h2>
+        <div class="count" id="count">Mostrando 30 de 30</div>
+      </div>
+      <div class="sbody">
+        <div class="filters" aria-label="Filtros">
+          <div class="group" aria-label="Formato">
+            <button class="btn active" type="button" data-filter-formato="Todos">Formato: Todos</button>
+            <button class="btn" type="button" data-filter-formato="reels">Reels</button>
+            <button class="btn" type="button" data-filter-formato="carrossel">Carrossel</button>
+          </div>
+          <div class="group" aria-label="Pilar" id="pilarBtns">
+            <button class="btn active" type="button" data-filter-pilar="Todos">Pilar: Todos</button>
+          </div>
+        </div>
+
+        <div class="calgrid" id="grid">
+          <a class="day" href="./dia-01.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 01</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel curto (8–20s) com hook “dia ruim”, mostre o risco (chutar o balde) e entregue 3 decisões simples (proteína + fibra + prazer) com CTA para salvar/comentar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-02.html" data-formato="carrossel" data-pilar="Dor">
+            <div class="daytop">
+              <span class="dnum">Dia 02</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Dor</div>
+            <div class="small">Crie um carrossel emocional (10 slides) alternando dor e reframe sobre culpa pós-deslize. Use fotos reais e finalize com CTA de enviar/salvar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Dor</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-03.html" data-formato="carrossel" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 03</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Prova</div>
+            <div class="small">Crie um carrossel storytelling (8–10 slides) com linha do tempo: antes → virada → processo → provas → hoje → CTA. Use fotos reais + caixas de texto em alto contraste e 1 prova visual por bloco.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-04.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 04</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel ensinando a “versão encaixável” de uma comida desejada usando a regra carbo + proteína + fibras. Abra com número/tempo, mostre montagem rápida, antecipe objeções e feche pedindo salvar + comentar a palavra-chave.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-05.html" data-formato="carrossel" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 05</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Monte um carrossel lifestyle (12–16 slides) com fotos reais + 1 ‘print/virada’ e finalize com legenda que quebra o mito e chama para DM com palavra‑chave.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-06.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 06</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel adaptando uma trend de receita para uma versão “fitness”, com números de macros na tela, passo a passo rápido, prova sensorial e CTA de comentários + salvamento.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-07.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 07</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel com dilema A vs B, valide a culpa e ensine a regra do “mínimo bem feito” com 3 exemplos práticos. Finalize pedindo salvar/compartilhar e comentário.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-08.html" data-formato="reels" data-pilar="Erro comum">
+            <div class="daytop">
+              <span class="dnum">Dia 08</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Erro comum</div>
+            <div class="small">Grave um Reel de 20s com hook polêmico + personagem “nutri moralista” + revelação específica e nostálgica. Finalize com CTA de comentário/marcação.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Erro comum</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-09.html" data-formato="reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 09</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Grave um Reel em 2 personagens: “nutri radical” (exagerada) vs “nutri real” (equilibrada). Termine com pergunta de time para gerar comentários.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-10.html" data-formato="reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 10</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Grave um Reel de 45–65s desmontando um mito “ancestral/natural” com 3 exemplos + 3 contrastes de contexto e feche com 3 ações práticas.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-11.html" data-formato="reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 11</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Grave um Reel de 8–15s com metáfora absurda + contraste (detalhe pequeno vs erro grande) e finalize com 1 direção prática + CTA de comentário.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-12.html" data-formato="reels" data-pilar="Erro comum">
+            <div class="daytop">
+              <span class="dnum">Dia 12</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Erro comum</div>
+            <div class="small">Grave um Reel de 5–8s em 1 take com bronca carinhosa + 1 termo técnico + punchline. Use legendas grandes e CTA de comentário (“FIBRA”).</div>
+            <div class="meta">
+              <span class="badge">Pilar: Erro comum</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-13.html" data-formato="reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 13</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Grave um Reels de 30–45s com hook de ‘falsa permissão + NÃO’ e sequência ‘pode ser que… mas…’. Finalize com frase memorável e CTA de salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-14.html" data-formato="reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 14</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Grave um Reel curto estilo ‘denúncia’ com plot twist (é IA) + 3–5 exemplos de mitos e feche com 3 regras práticas e CTA de salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-15.html" data-formato="reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 15</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Escolha 1 mito viral de nutrição, contraponha com 1 consenso/diretriz e feche com 3 ações práticas + CTA de comentário/salvar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-16.html" data-formato="reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 16</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Grave um Reel desmentindo uma crença popular com humor, lógica simples, evidência e exceções clínicas. Feche com um rótulo do problema + pergunta para comentários.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-17.html" data-formato="reels" data-pilar="Desejo">
+            <div class="daytop">
+              <span class="dnum">Dia 17</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Desejo</div>
+            <div class="small">Grave um Reels de 35–50s usando anti-hype + pergunta identitária + exemplos visuais, fechando com uma frase emocional e CTA de comentário/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Desejo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-18.html" data-formato="reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 18</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Grave um Reel rápido em formato Top 5 regressivo com humor (itens “óbvios”), quebre o mito do detox milagroso e troque por 4–5 hábitos base. Feche com punchline + CTA de salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-19.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 19</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Use o template em 2 partes (base + upgrade) com 3 usos e prova de armazenamento. Grave close do resultado, explique 1 princípio simples e finalize com CTA de salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-20.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 20</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel de 60s com hook comparativo + preparo rápido + prova (macros) + armazenamento + 3 usos. Finalize com CTA de salvar/compartilhar e pergunta.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-21.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 21</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel de 60s com hook de contraste + receita simples + métrica (tempo/calorias/macros) + truque final e CTA de salvar/mandar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-22.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 22</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Escolha 1 receita/tema viral, crie uma comparação opinativa (X vs Y) e entregue 2 versões (original vs ajustada) com 1 critério prático de “dia a dia”. Finalize com CTA de salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-23.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 23</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel tutorial: hook com dor + promessa, entregue 2 regras e mostre o passo a passo em camadas com rendimento e CTA de salvar/enviar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-24.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 24</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel em 8 blocos: quebra de crença → emoção → dado concreto → receita rápida → variações → CTA. Use texto na tela com palavras-chave e cortes rápidos no preparo.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-25.html" data-formato="carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 25</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Checklist</div>
+            <div class="small">Crie um carrossel “lista + métrica”: capa com promessa e critério fixo + 6–10 itens com a mesma estrutura + slide final com resumo para salvar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-26.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 26</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reels de 30–45s com 2 etapas (15s Corpo + 15s Mente), texto grande na tela e CTA forte para salvar. Use o template e substitua apenas o comportamento-alvo e os mantras.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-27.html" data-formato="reels" data-pilar="Erro comum">
+            <div class="daytop">
+              <span class="dnum">Dia 27</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Erro comum</div>
+            <div class="small">Use áudio trend + texto na tela com cortes no beat. Estruture em Hook (1s) → Motivo (2s) → 2–3 soluções (8s) → CTA (1s).</div>
+            <div class="meta">
+              <span class="badge">Pilar: Erro comum</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-28.html" data-formato="reels" data-pilar="Erro comum">
+            <div class="daytop">
+              <span class="dnum">Dia 28</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Erro comum</div>
+            <div class="small">Grave um Reels de 7–12s com áudio reconhecível, mostrando ERRO vs TROCA em cortes no beat e finalize com CTA de comentário + salvamento.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Erro comum</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-29.html" data-formato="reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 29</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reels de 20–30s com hook forte + 1 causa + 3 passos práticos + exemplo X→Y e finalize com CTA de salvar/comentar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-30.html" data-formato="carrossel" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 30</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Prova</div>
+            <div class="small">Crie um carrossel em 10 slides: 1) capa com promessa salvável 2) tabela-guia 3) como usar 4) mini dor/objeção 5–8) prova social 9) transição 10) oferta + CTA por palavra-chave.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Prova</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="como-usar">
+      <div class="shead">
+        <h2>Como usar (5 passos)</h2>
+        <div class="count">Operação semanal</div>
+      </div>
+      <div class="sbody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Ritual simples</h3>
+            <ul class="list">
+              <li>Escolha 5 cards da semana (misture 3 Reels + 2 Carrosséis).</li>
+              <li>Defina 1 promessa por dia e 1 CTA (salvar, comentar ou enviar).</li>
+              <li>Grave em lote (30–60 min): hooks + cenas principais + closes.</li>
+              <li>Edite com texto grande e cortes rápidos; mantenha 1 ideia central.</li>
+              <li>Publique e responda comentários nas primeiras 2 horas para tração.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Cadência sugerida</h3>
+            <ul class="list">
+              <li>Reels: 4–6x/semana (8–60s), foco em decisão prática.</li>
+              <li>Carrossel: 1–3x/semana, foco em salvar/enviar e prova.</li>
+              <li>Stories: bastidores do preparo + enquete de dúvidas (para virar mito/erro).</li>
+              <li>Reciclagem: transforme carrossel em Reel narrado (sem mudar a tese).</li>
+              <li>Banco: salve os melhores comentários para virar novos hooks.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">© 2026</footer>
+  </div>
+
+  <script>
+    (function(){
+      const grid = document.getElementById('grid');
+      const cards = Array.from(grid.querySelectorAll('.day'));
+      const countEl = document.getElementById('count');
+
+      const formatoBtns = Array.from(document.querySelectorAll('[data-filter-formato]'));
+      const pilarWrap = document.getElementById('pilarBtns');
+
+      let activeFormato = 'Todos';
+      let activePilar = 'Todos';
+
+      function norm(v){ return (v || '').toString().trim(); }
+
+      function setActive(btns, activeBtn){
+        btns.forEach(b => b.classList.toggle('active', b === activeBtn));
+      }
+
+      function updateCount(visible){
+        countEl.textContent = 'Mostrando ' + visible + ' de ' + cards.length;
+      }
+
+      function applyFilters(){
+        let visible = 0;
+        cards.forEach(card => {
+          const f = norm(card.getAttribute('data-formato'));
+          const p = norm(card.getAttribute('data-pilar'));
+
+          const okFormato = (activeFormato === 'Todos') || (f === activeFormato);
+          const okPilar = (activePilar === 'Todos') || (p === activePilar);
+
+          const show = okFormato && okPilar;
+          card.style.display = show ? '' : 'none';
+          if(show) visible++;
+        });
+        updateCount(visible);
+      }
+
+      function buildPilarButtons(){
+        const pilers = new Set();
+        cards.forEach(card => {
+          const p = norm(card.getAttribute('data-pilar'));
+          if(p) pilers.add(p);
+        });
+
+        Array.from(pilarWrap.querySelectorAll('button')).forEach((b, idx) => { if(idx>0) b.remove(); });
+
+        Array.from(pilers).sort((a,b)=>a.localeCompare(b,'pt-BR')).forEach(p => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'btn';
+          btn.setAttribute('data-filter-pilar', p);
+          btn.textContent = p;
+          pilarWrap.appendChild(btn);
+        });
+      }
+
+      buildPilarButtons();
+
+      formatoBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeFormato = norm(btn.getAttribute('data-filter-formato'));
+          setActive(formatoBtns, btn);
+          applyFilters();
+        });
+      });
+
+      function getPilarBtns(){ return Array.from(pilarWrap.querySelectorAll('[data-filter-pilar]')); }
+
+      pilarWrap.addEventListener('click', (e) => {
+        const t = e.target;
+        if(!(t && t.matches && t.matches('[data-filter-pilar]'))) return;
+        activePilar = norm(t.getAttribute('data-filter-pilar'));
+        setActive(getPilarBtns(), t);
+        applyFilters();
+      });
+
+      applyFilters();
+    })();
+  </script>
+</body>
+</html>
