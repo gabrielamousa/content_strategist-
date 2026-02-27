@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 28 — Professores — Novidade: novo projeto</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.085);
+      --stroke:rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 14px 44px rgba(0,0,0,.55);
+      --r:18px;
+      --r2:14px;
+      --g1: linear-gradient(90deg,#34D399 0%, #60A5FA 52%, #FB923C 100%);
+      --g2: linear-gradient(135deg, rgba(52,211,153,.22) 0%, rgba(96,165,250,.18) 45%, rgba(251,146,60,.16) 100%);
+      --ok:#34D399;
+      --warn:#FB923C;
+      --info:#60A5FA;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 12% 8%, rgba(96,165,250,.22), transparent 55%),
+        radial-gradient(1000px 540px at 86% 18%, rgba(52,211,153,.18), transparent 52%),
+        radial-gradient(900px 520px at 70% 88%, rgba(251,146,60,.14), transparent 52%),
+        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+      min-height:100vh;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
+
+    .topbar{
+      display:flex; gap:14px; align-items:stretch; justify-content:space-between;
+      padding:16px 16px;
+      border:1px solid var(--stroke);
+      border-radius:calc(var(--r) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .topbar:before{
+      content:"";
+      position:absolute; inset:0;
+      background: var(--g2);
+      opacity:.85;
+      mask-image: radial-gradient(420px 200px at 14% 0%, #000 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .meta{position:relative; z-index:1; display:flex; flex-direction:column; gap:8px; min-width: 280px}
+    .meta .kickers{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+    .pill{
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.22);
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .pill strong{color:var(--text); font-weight:650}
+    h1{
+      margin:0;
+      font-size:20px;
+      line-height:1.22;
+      letter-spacing:.2px;
+    }
+    .meta .sub{color:var(--muted); font-size:13px; line-height:1.4}
+
+    .actions{position:relative; z-index:1; display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap}
+    .btn{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.22);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      cursor:pointer;
+      transition:.15s transform ease, .15s background ease, .15s border-color ease;
+      display:inline-flex; gap:8px; align-items:center;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.18)}
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border-color: rgba(255,255,255,.22);
+    }
+    .btn .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+    }
+    .link{
+      color:var(--muted);
+      font-size:13px;
+      padding:10px 12px;
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius:12px;
+      background: rgba(0,0,0,.14);
+    }
+    .link:hover{border-color:rgba(255,255,255,.28); color:var(--text)}
+
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background: rgba(0,0,0,.10);
+    }
+    .card .hd h2{
+      font-size:14px;
+      margin:0;
+      letter-spacing:.18px;
+      color:rgba(234,240,255,.88);
+      font-weight:700;
+      display:flex; align-items:center; gap:10px;
+    }
+    .badge{
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--muted);
+      background: rgba(0,0,0,.18);
+      font-family: var(--mono);
+    }
+    .accent{
+      width:12px; height:12px; border-radius:4px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.05);
+    }
+    .card .bd{padding:14px 16px 16px}
+    .card p{margin:0 0 10px; color:var(--muted); font-size:13px; line-height:1.55}
+    .card ul{margin:10px 0 0 18px; color:var(--muted); font-size:13px; line-height:1.55}
+    .card li{margin:6px 0}
+    .hr{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+
+    .script{
+      white-space:pre-wrap;
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color: rgba(234,240,255,.86);
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--r2);
+      padding:12px;
+    }
+
+    .callouts{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width: 560px){
+      .callouts{grid-template-columns:1fr}
+    }
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--r2);
+      padding:12px;
+      background: rgba(0,0,0,.16);
+      position:relative;
+      overflow:hidden;
+    }
+    .callout:before{
+      content:"";
+      position:absolute; inset:-80px -80px auto auto;
+      width:180px; height:180px;
+      background: var(--g1);
+      opacity:.12;
+      filter: blur(1px);
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+    .callout h3{margin:0 0 6px; font-size:13px; letter-spacing:.12px}
+    .callout p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
+
+    .checklist{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width: 760px){ .checklist{grid-template-columns:1fr} }
+    .check{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--r2);
+      padding:12px;
+      background: rgba(0,0,0,.16);
+    }
+    .check .t{display:flex; gap:10px; align-items:center; margin-bottom:8px}
+    .ic{
+      width:26px; height:26px; border-radius:9px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    .check ul{margin:0 0 0 18px}
+
+    .foot{margin-top:14px; color:var(--muted2); font-size:12px; line-height:1.5}
+    .foot code{font-family:var(--mono); color:rgba(234,240,255,.82)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="meta">
+        <div class="kickers">
+          <span class="pill"><strong>Nicho</strong>: Professores</span>
+          <span class="pill"><strong>Dia</strong>: 28</span>
+          <span class="pill"><strong>Formato</strong>: Carrossel</span>
+          <span class="pill"><strong>Pilar</strong>: Autoridade</span>
+        </div>
+        <h1>Novidade: novo projeto para ajudar professores na prática</h1>
+        <div class="sub">Modelo reproduzível: <span style="background:var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800">Novidade → Autoridade → Benefício → Participação → CTA</span></div>
+      </div>
+      <div class="actions">
+        <a class="link" href="https://www.instagram.com/p/DGOpNtHRnFS/" target="_blank" rel="noreferrer">Abrir post original</a>
+        <button class="btn primary" id="copyBtn" type="button"><span class="dot"></span>Copiar roteiro</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <div class="hd">
+          <h2><span class="accent"></span>Resumo</h2>
+          <span class="badge">objetivo</span>
+        </div>
+        <div class="bd">
+          <p><strong>Objetivo:</strong> anunciar uma parceria/convite/conquista (autoridade por associação) e converter isso em <strong>benefício direto</strong> para professores, gerando comentários/DM com temas e dúvidas.</p>
+          <div class="callouts">
+            <div class="callout">
+              <h3>Quando usar</h3>
+              <p>Convite para coluna/série, nova turma, novo quadro, parceria com instituição, participação em evento/portal.</p>
+            </div>
+            <div class="callout">
+              <h3>Resultado esperado</h3>
+              <p>Mais salvamentos + prova social (comentários) + lista de ideias para próximos conteúdos.</p>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p><strong>Regra de ouro:</strong> nunca pare no “eu consegui”. Traduza em “o que muda para você, professor(a)”.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2><span class="accent"></span>Estrutura</h2>
+          <span class="badge">sequência</span>
+        </div>
+        <div class="bd">
+          <p>Carrossel recomendado (6–7 slides) para retenção. Se quiser post único, use a capa + mini-bloco de benefícios.</p>
+          <ul>
+            <li><strong>Slide 1:</strong> Capa/Anúncio (hook + credencial)</li>
+            <li><strong>Slide 2:</strong> Por que isso importa (benefícios práticos)</li>
+            <li><strong>Slide 3:</strong> Como vai funcionar (entrega + frequência)</li>
+            <li><strong>Slide 4:</strong> Prova/Contexto (mini-história + missão)</li>
+            <li><strong>Slide 5:</strong> Co-criação (peça temas e série/ano)</li>
+            <li><strong>Slide 6:</strong> Como acompanhar (passo a passo)</li>
+            <li><strong>Slide 7:</strong> CTA final (comentário/DM com palavra-chave)</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2><span class="accent"></span>Slides sugeridos (1..7)</h2>
+          <span class="badge">layout + texto</span>
+        </div>
+        <div class="bd">
+          <p><strong>Slide 1 — Capa (Hook + credencial)</strong><br>
+          Faixa topo: <em>NOVIDADE / COMUNICADO / CONQUISTA</em><br>
+          Headline: <code>[INSTITUIÇÃO/PROJETO] + [SEU NOME]</code><br>
+          Sub: <code>Agora sou [cargo/participação]!</code><br>
+          Rodapé: <code>O que muda pra você: [benefício em 6–10 palavras]</code></p>
+          <p><strong>Slide 2 — O que muda para você (3–4 bullets)</strong><br>
+          <code>✅ [benefício 1] · ✅ [benefício 2] · ✅ [benefício 3]</code></p>
+          <p><strong>Slide 3 — Como vai funcionar</strong><br>
+          <code>Frequência · Formato · Onde acessar · O que você recebe (modelos/exemplos/PDF)</code></p>
+          <p><strong>Slide 4 — Por trás (prova + missão)</strong><br>
+          <code>[X anos] + [experiência] → missão: [frase curta] → foco: [transformação]</code></p>
+          <p><strong>Slide 5 — Me ajude com temas</strong><br>
+          Prompt: <code>Comente: “Tema: ___ / Série: ___”</code><br>
+          Sugestões de temas (6 para facilitar comentário).</p>
+          <p><strong>Slide 6 — Para não perder</strong><br>
+          <code>1) Siga · 2) Salve · 3) Ative notificações · 4) Veja o destaque/link</code></p>
+          <p><strong>Slide 7 — CTA final</strong><br>
+          <code>Comente “QUERO” + sua dúvida em 1 frase</code> <em>ou</em> <code>DM com “TEMAS”</code></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2><span class="accent"></span>Roteiro (copiável)</h2>
+          <span class="badge">substitua [colchetes]</span>
+        </div>
+        <div class="bd">
+          <div class="script" id="scriptText">CARROSSEL — ANÚNCIO + AUTORIDADE (PROFESSORES)
+
+SLIDE 1 (CAPA)
+Faixa topo: NOVIDADE NO AR! (ou: COMUNICADO / CONQUISTA)
+Headline: [INSTITUIÇÃO/PROJETO] + [SEU NOME]
+Subheadline: Agora sou [cargo/participação]!
+Linha de valor (rodapé): Vou te ajudar a [benefício principal] sem [obstáculo comum].
+
+SLIDE 2 (TRADUÇÃO EM BENEFÍCIO)
+Título: O que muda pra você, professor(a):
+Bullets:
+- ✅ [benefício 1 — prático]
+- ✅ [benefício 2 — prático]
+- ✅ [benefício 3 — prático]
+Fecho: Conteúdo direto ao ponto, pra aplicar na próxima aula.
+
+SLIDE 3 (COMO VAI FUNCIONAR)
+Título: Como vai funcionar
+- Frequência: [1x/semana | quinzenal | série de 5 posts]
+- Formato: [carrossel | reels | modelos prontos | PDF]
+- Onde: [perfil | link na bio | destaque | portal]
+- Você vai receber: [exemplos + passo a passo + adaptação por série]
+
+SLIDE 4 (PROVA + MISSÃO)
+Título: Por que eu aceitei isso
+Mini-história (3 linhas):
+- Eu trabalho com [tema] há [X anos].
+- Vejo professores travando em [dor específica].
+- Minha missão aqui é: [transformação] com [tom: leve/prático/rápido].
+
+SLIDE 5 (CO-CRIAÇÃO)
+Título: Me ajude a escolher os próximos temas
+Instrução: Comente “Tema: ____ / Série: ____”
+Sugestões (use 6):
+1) [tema A]
+2) [tema B]
+3) [tema C]
+4) [tema D]
+5) [tema E]
+6) [tema F]
+
+SLIDE 6 (PASSO A PASSO)
+Título: Pra não perder
+1) Siga o perfil
+2) Salve este post
+3) Ative as notificações
+4) Acompanhe em [destaque/link]
+
+SLIDE 7 (CTA FINAL)
+Título: Quer um conteúdo pro seu caso?
+CTA: Comente “QUERO” + sua dúvida em 1 frase.
+Alternativa: Me mande DM com “TEMAS” + sua etapa (Fund I/Fund II/EM/EJA).
+
+LEGENDA (MODELO)
+Hoje eu tenho uma novidade: [o que aconteceu] com [instituição/projeto].
+O mais importante: isso vai virar [tipo de entrega] pra te ajudar a [benefício].
+Me diz nos comentários: qual tema você quer que eu trate primeiro? (Tema + Série)
+
+HASHTAGS (OPCIONAL)
+#professores #educação #planejamentodeaula #[seutema]</div>
+          <p class="foot">Dica de consistência: mantenha a frase <code>“O que muda pra você”</code> como âncora em toda variação desse template.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2><span class="accent"></span>Elementos visuais</h2>
+          <span class="badge">design reproduzível</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Composição:</strong> pessoa/rosto em 40–55% do slide + bloco de texto no lado oposto.</li>
+            <li><strong>Faixa superior:</strong> banner horizontal com 1 palavra (“NOVIDADE”, “COMUNICADO”).</li>
+            <li><strong>Co-branding:</strong> use “<code>[Marca] + [Seu nome]</code>” grande para reforçar parceria.</li>
+            <li><strong>Contraste:</strong> fundo escuro + texto claro; 1 cor forte de destaque por slide (não 5).</li>
+            <li><strong>Textura sutil:</strong> marca d’água/ícone fantasma relacionado ao tema (livro, lápis, quadro, etc.).</li>
+            <li><strong>Hierarquia tipográfica (3 níveis):</strong> faixa (micro), headline (max), subheadline/corpo (apoio).</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Padronização rápida:</strong> o título do slide sempre no topo; CTA sempre no rodapé.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2><span class="accent"></span>Copy e ganchos</h2>
+          <span class="badge">substituições</span>
+        </div>
+        <div class="bd">
+          <p><strong>Fórmulas de headline (até 7 palavras):</strong></p>
+          <ul>
+            <li><code>Novidade: [quadro] para [resultado]</code></li>
+            <li><code>Agora sou [cargo] em [instituição]</code></li>
+            <li><code>Fui convidado(a) para [projeto]</code></li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Ganchos de valor (1 linha):</strong></p>
+          <ul>
+            <li><code>Pra você aplicar já na próxima aula.</code></li>
+            <li><code>Sem virar refém de planejamento infinito.</code></li>
+            <li><code>Com exemplos prontos e adaptáveis por série.</code></li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Promessas “seguras” (sem exagero):</strong> facilitar, economizar tempo, dar clareza, oferecer modelos, reduzir erro comum, apoiar tomada de decisão.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2><span class="accent"></span>CTA</h2>
+          <span class="badge">1 ação por vez</span>
+        </div>
+        <div class="bd">
+          <p><strong>Escolha 1 CTA principal</strong> (comentário OU DM OU clique). Sugestões que funcionam para professores:</p>
+          <ul>
+            <li><strong>Comentários (ideal para alcance):</strong> <code>Comente “TEMA: ____ / SÉRIE: ____”</code></li>
+            <li><strong>DM (ideal para leads):</strong> <code>Me mande “TEMAS” + sua etapa</code></li>
+            <li><strong>Salvamento (ideal para retenção):</strong> <code>Salve para ver a 1ª edição</code></li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Regra:</strong> na arte, CTA curto. Na legenda, explique o “como” em 1 linha.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2><span class="accent"></span>Checklist</h2>
+          <span class="badge">criação + revisão</span>
+        </div>
+        <div class="bd">
+          <div class="checklist">
+            <div class="check">
+              <div class="t"><span class="ic">01</span><strong>Estratégia</strong></div>
+              <ul>
+                <li>Definir qual “novidade” (parceria/convite/projeto).</li>
+                <li>Listar 3 benefícios concretos para o professor.</li>
+                <li>Escolher 1 CTA principal (comentário ou DM).</li>
+              </ul>
+            </div>
+            <div class="check">
+              <div class="t"><span class="ic">02</span><strong>Roteiro</strong></div>
+              <ul>
+                <li>Slide 1 com credencial + promessa em 1 linha.</li>
+                <li>Slide 2 com bullets (sem texto longo).</li>
+                <li>Slide 5 com prompt de comentário (Tema + Série).</li>
+              </ul>
+            </div>
+            <div class="check">
+              <div class="t"><span class="ic">03</span><strong>Design</strong></div>
+              <ul>
+                <li>Alto contraste (legível no celular).</li>
+                <li>Uma cor de destaque + neutros.</li>
+                <li>Padding/margem generosa; nada “apertado”.</li>
+              </ul>
+            </div>
+            <div class="check">
+              <div class="t"><span class="ic">04</span><strong>Publicação</strong></div>
+              <ul>
+                <li>Legenda com: novidade → utilidade → pergunta.</li>
+                <li>Fixar comentário com instrução do CTA.</li>
+                <li>Responder comentários nas primeiras 2 horas.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="foot">Checklist anti-erro: se o slide 2 não tiver benefícios aplicáveis, o post vira “autopromo” e cai a retenção.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2><span class="accent"></span>Variações</h2>
+          <span class="badge">adaptações com mesmo impacto</span>
+        </div>
+        <div class="bd">
+          <p><strong>A) Troque “parceria” por qualquer marco de autoridade</strong></p>
+          <ul>
+            <li><code>“Fui convidado(a) para…”</code> → <code>“Fui aprovado(a) em…”</code> / <code>“Vou palestrar em…”</code> / <code>“Meu material foi adotado por…”</code></li>
+            <li>Mantenha: <strong>o que isso destrava para o professor</strong> (tempo, clareza, modelo, segurança).</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>B) Troque a promessa mantendo o formato</strong></p>
+          <ul>
+            <li><code>[benefício] sem [obstáculo]</code> exemplos:
+              <ul>
+                <li><code>Planejar sem passar o domingo inteiro.</code></li>
+                <li><code>Avaliar sem subjetividade demais.</code></li>
+                <li><code>Adaptar atividades sem começar do zero.</code></li>
+              </ul>
+            </li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>C) Variação “post único” (1 arte)</strong></p>
+          <ul>
+            <li>Capa completa + rodapé: <code>“O que muda pra você: 3 benefícios”</code> em mini-bullets.</li>
+            <li>Legenda faz o papel dos slides 3–7 (com CTA forte no final).</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <p class="foot">Link original: <a href="https://www.instagram.com/p/DGOpNtHRnFS/" target="_blank" rel="noreferrer"><code>https://www.instagram.com/p/DGOpNtHRnFS/</code></a></p>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText').innerText;
+      btn.addEventListener('click', async () => {
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.innerHTML;
+          btn.innerHTML = '<span class="dot"></span>Roteiro copiado';
+          setTimeout(()=> btn.innerHTML = old, 1400);
+        }catch(e){
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          const old = btn.innerHTML;
+          btn.innerHTML = '<span class="dot"></span>Roteiro copiado';
+          setTimeout(()=> btn.innerHTML = old, 1400);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
