@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 16 • Carrossel meme reproduzível (Professores)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B1228;
+      --text:#EAF0FF;
+      --muted:#A8B3D6;
+      --line:rgba(255,255,255,.10);
+      --shadow: 0 16px 50px rgba(0,0,0,.45);
+      --radius:18px;
+      --r2:14px;
+      --g1: linear-gradient(90deg, #22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.22), rgba(56,189,248,.18), rgba(251,146,60,.16));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(56,189,248,.18), transparent 55%),
+        radial-gradient(900px 600px at 90% 10%, rgba(34,197,94,.16), transparent 60%),
+        radial-gradient(900px 700px at 70% 120%, rgba(251,146,60,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      padding:18px;
+      box-shadow: var(--shadow);
+      position:sticky;
+      top:12px;
+      backdrop-filter: blur(10px);
+      z-index:5;
+    }
+    .top{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+    }
+    .meta{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      color:var(--muted); font-size:13px;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+    }
+    .logo{
+      width:34px; height:34px; border-radius:12px;
+      background: var(--g1);
+      box-shadow: 0 10px 28px rgba(56,189,248,.12);
+    }
+    h1{margin:10px 0 6px; font-size:18px; line-height:1.2}
+    .subtitle{margin:0; color:var(--muted); font-size:13px; line-height:1.35}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:600;
+      cursor:pointer;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.16)}
+    .btn.primary{
+      background: var(--g1);
+      border-color: rgba(255,255,255,.18);
+      color:#081018;
+    }
+    .btn.primary:hover{filter:saturate(1.02); transform: translateY(-1px)}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 960px){
+      .grid{grid-template-columns:1fr}
+      header{position:relative; top:auto}
+    }
+    section.card{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .tag{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: var(--g2);
+      color: var(--text);
+      white-space:nowrap;
+    }
+    .card .bd{padding:14px 16px}
+    .list{margin:0; padding-left:18px; color:var(--muted)}
+    .list li{margin:8px 0; line-height:1.45}
+    .k{
+      display:inline-block;
+      font-family:var(--mono);
+      font-size:12px;
+      color: var(--text);
+      padding:2px 7px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:10px;
+      background: rgba(0,0,0,.20);
+    }
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      border-radius: var(--r2);
+      padding:12px;
+      color:var(--muted);
+    }
+    .callout strong{color:var(--text)}
+    .two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 700px){
+      .two{grid-template-columns:1fr}
+    }
+    textarea{
+      width:100%;
+      min-height: 420px;
+      max-height: 70vh;
+      resize: vertical;
+      padding:14px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(7,10,18,.55);
+      color: var(--text);
+      outline:none;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.5;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+    }
+    .mini{font-size:12px; color:var(--muted); margin-top:10px}
+    .hr{height:1px; background: var(--line); margin:12px 0}
+    .cols{
+      display:grid; grid-template-columns: 1fr 1fr; gap:12px;
+    }
+    @media (max-width: 820px){
+      .cols{grid-template-columns:1fr}
+    }
+    .note{
+      font-size:12px; color: var(--muted);
+    }
+    .link{
+      color: var(--text);
+      text-decoration:none;
+      border-bottom:1px dashed rgba(255,255,255,.22);
+    }
+    .link:hover{border-bottom-color: rgba(255,255,255,.45)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="top">
+        <div>
+          <div class="brand">
+            <div class="logo" aria-hidden="true"></div>
+            <div>
+              <div class="meta">
+                <span class="pill">Nicho: <strong style="color:var(--text)">Professores</strong></span>
+                <span class="pill">Dia: <strong style="color:var(--text)">16</strong></span>
+                <span class="pill">Formato: <strong style="color:var(--text)">Carrossel</strong></span>
+                <span class="pill">Pilar: <strong style="color:var(--text)">Dor</strong></span>
+              </div>
+              <h1>Carrossel meme: situações que todo professor vive (modelo reproduzível)</h1>
+              <p class="subtitle">
+                Link do post original: <a class="link" href="https://www.instagram.com/p/DUocjtVEe35/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DUocjtVEe35/</a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <a class="btn" href="#slides">Ver slides sugeridos</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">Modelo “coleção de situações” (meme/relatable)</span>
+        </div>
+        <div class="bd">
+          <div class="callout">
+            <strong>Objetivo:</strong> retenção por identificação + compartilhamento ("manda no grupo", "marca um colega").
+            <div class="hr"></div>
+            <strong>Como funciona:</strong> cada slide é uma piada curta, autoexplicativa, com imagem forte e texto grande. Repetição do padrão + variação do “tipo/situação” = pessoas passam até o fim.
+          </div>
+          <div class="hr"></div>
+          <div class="two">
+            <div>
+              <div class="note"><strong>Quando usar</strong></div>
+              <ul class="list">
+                <li>Você quer crescer alcance rápido com conteúdo leve.</li>
+                <li>Seu público precisa sentir: “aqui me entendem”.</li>
+                <li>Você quer “aquecer” antes de um conteúdo mais denso.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="note"><strong>O que não é</strong></div>
+              <ul class="list">
+                <li>Não é aula completa.</li>
+                <li>Não é carrossel de passo a passo.</li>
+                <li>Venda deve ser ponte (último slide/legenda), sem quebrar a vibe.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Roteiro (copiável)</h2>
+          <span class="tag">Pronto para preencher</span>
+        </div>
+        <div class="bd">
+          <textarea id="script" spellcheck="false">TEMA ÚNICO (1 por carrossel): [ex.: correção de provas / reunião de pais / indisciplina / celular / IA / recuperação]
+PÚBLICO: [fundamental | médio | EJA | cursinho | universidade]
+DOR CENTRAL (1 frase): [o que acontece sempre e irrita/engraça]
+
+TÍTULO DO CARROSSEL (escolha 1):
+1) "Tipos de alunos quando [situação]"
+2) "A turma quando eu falo: ‘[frase]’"
+3) "O aluno que [comportamento]"
+4) "Eu depois de [evento com número/prazo]"
+
+SLIDE 1 — HOOK (hiperespecífico)
+Texto: "EU DEPOIS DE [situação + prazo/número]"
+Sub (opcional): "[detalhe específico: ‘véspera’, ‘última aula’, ‘faltam 10 min’]"
+Imagem: reação forte (desespero/incredulidade/derrota)
+
+SLIDE 2 — TIPO 1 (comum)
+Texto: "O ALUNO QUE [comportamento comum]"
+Punch: "[virada curta: ‘e jura que…’ / ‘como se…’]"
+Imagem: personagem confiante/autoengano
+
+SLIDE 3 — TIPO 2 (atalho/solução mágica)
+Texto: "O ALUNO QUE [atalho] PRA [resultado]"
+Punch: "[exagero numérico]"
+Imagem: ‘gênio’ improvisado / gambiarra
+
+SLIDE 4 — TIPO 3 (frase clássica)
+Texto: "QUANDO ELE DIZ: ‘[FRASE REAL]’"
+Complemento: "E EU: [reação curta]"
+Imagem: silêncio/caos/olhar fixo
+
+SLIDE 5 — TIPO 4 (a realidade bate)
+Texto: "[EU/ELE] DESCOBRINDO QUE [consequência óbvia]"
+Punch: "[‘era pegadinha?’, ‘sempre foi assim?’]"
+Imagem: choque/arrependimento
+
+SLIDE 6 — TIPO 5 (meta impossível)
+Texto: "QUER [OBJETIVO GRANDE] FAZENDO [ESFORÇO PEQUENO]"
+Punch: "[contraste expectativa x realidade]"
+Imagem: relógio/caveira/heroísmo fracassado
+
+SLIDE 7 — CLÍMAX (o melhor/mais absurdo e verdadeiro)
+Texto: "A CADA [evento recorrente]: ‘[pensamento repetitivo]’"
+Efeito: texto ECO repetido ao fundo (10–25% opacidade)
+Imagem: caos total / reação épica
+
+SLIDE 8 — FECHO + CTA COMUNITÁRIO
+Texto grande: "QUAL DESSES É O MAIS FREQUENTE NA SUA TURMA?"
+Sub: "Comenta: 1, 2, 3… | marca um professor | quer PARTE 2?"
+Imagem: reação neutra/convite
+
+BÔNUS (opcional) — PONTE PRA CONTEÚDO ÚTIL (na legenda ou slide 9)
+Linha: "Quer meu passo a passo pra [resultado]? Tá na legenda / comenta ‘QUERO’."</textarea>
+          <div class="mini">Dica: mantenha <span class="k">6–12 palavras</span> por slide e sempre termine com <span class="k">punch</span> (virada curta).</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="tag">Sequência + retenção</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="note"><strong>Macro (6 a 10 slides)</strong></div>
+              <ul class="list">
+                <li><span class="k">1</span> Hook específico (dor + riso imediato).</li>
+                <li><span class="k">2–6</span> Variações do mesmo tema ("o aluno que...", "quando...").</li>
+                <li><span class="k">7</span> Escalada + clímax (o mais absurdo/verdadeiro).</li>
+                <li><span class="k">8</span> Fechamento comunitário + CTA social.</li>
+                <li><span class="k">9–10</span> Opcional: ponte para aula/material (sem vender pesado).</li>
+              </ul>
+            </div>
+            <div>
+              <div class="note"><strong>Checklist de retenção</strong></div>
+              <ul class="list">
+                <li>Repetição do padrão visual (cérebro “lê rápido”).</li>
+                <li>“Curiosidade seriada”: sempre dá vontade de ver o próximo.</li>
+                <li>Escalada: cada slide aumenta a identificação/absurdo.</li>
+                <li>Texto grande (consumo em 1–2s).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="slides">
+        <div class="hd">
+          <h2>Slides sugeridos (1..9)</h2>
+          <span class="tag">Base pronta para Canva</span>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><strong>Slide 1 — Hook:</strong> “EU depois de [situação com prazo/número]”.</li>
+            <li><strong>Slide 2 — Tipo comum:</strong> “O aluno que [comportamento]”.</li>
+            <li><strong>Slide 3 — Atalho:</strong> “O aluno que [atalho] pra [resultado]”.</li>
+            <li><strong>Slide 4 — Frase real:</strong> “Quando ele diz: ‘[frase clássica]’”.</li>
+            <li><strong>Slide 5 — Realidade:</strong> “[Eu/ele] descobrindo que [consequência]”.</li>
+            <li><strong>Slide 6 — Meta impossível:</strong> “Quer [objetivo] fazendo [esforço mínimo]”.</li>
+            <li><strong>Slide 7 — Escalada:</strong> “E quando [situação piora]…”.</li>
+            <li><strong>Slide 8 — Clímax:</strong> “A cada [evento recorrente]: ‘[pensamento repetido]’” + texto eco.</li>
+            <li><strong>Slide 9 — CTA:</strong> “Qual é o mais frequente? Comenta o número / marca um professor / parte 2”.</li>
+          </ol>
+          <div class="hr"></div>
+          <div class="callout"><strong>Regra de ouro:</strong> 1 slide = 1 ideia. Se couber dois pensamentos, faça dois slides.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="tag">Meme high-legibility</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="note"><strong>Padrão visual (repetível)</strong></div>
+              <ul class="list">
+                <li>Imagem ocupa 100% do slide (fundo).</li>
+                <li>Texto em <span class="k">CAIXA ALTA</span> e grande (Impact/Anton/Bebas).</li>
+                <li>Contorno (stroke) forte: <span class="k">6–12px</span> + sombra leve.</li>
+                <li>Marca d’água pequena no canto (30–50% opacidade).</li>
+              </ul>
+            </div>
+            <div>
+              <div class="note"><strong>Especificação técnica</strong></div>
+              <ul class="list">
+                <li>Canvas: <span class="k">1080×1350</span> (4:5).</li>
+                <li>Margem segura: <span class="k">80–120px</span>.</li>
+                <li>Máximo: <span class="k">12–16 palavras</span> (ideal 6–12).</li>
+                <li>Banco de imagens: frames de TV/filme, pinturas, reações, animais, personagens.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Atalho de consistência:</strong> use sempre o mesmo layout (posição do texto + tamanho + contorno). Troque só a imagem e a frase.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">Fórmulas + substituições</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="note"><strong>Fórmulas que funcionam</strong></div>
+              <ul class="list">
+                <li>“O aluno que <span class="k">____</span> achando que <span class="k">____</span>.”</li>
+                <li>“Eu depois de <span class="k">____</span> e perceber que <span class="k">____</span>.”</li>
+                <li>“Quando eu falo ‘<span class="k">____</span>’ e a turma: <span class="k">____</span>.”</li>
+                <li>“Entendeu?” — “<span class="k">____</span>.”</li>
+                <li>“A cada <span class="k">____</span>: ‘<span class="k">____</span>’” (eco no fundo).</li>
+              </ul>
+            </div>
+            <div>
+              <div class="note"><strong>Trocas que mantêm o impacto (adaptações)</strong></div>
+              <ul class="list">
+                <li>Troque “aluno” por: <span class="k">turma</span>, <span class="k">pais</span>, <span class="k">coordenação</span>, <span class="k">você</span> (autozueira).</li>
+                <li>Troque o gatilho por: <span class="k">véspera</span>, <span class="k">último prazo</span>, <span class="k">valendo nota</span>, <span class="k">simulado</span>, <span class="k">conselho</span>.</li>
+                <li>Troque a mecânica do humor por: <span class="k">exagero numérico</span>, <span class="k">contraste</span>, <span class="k">microverdade</span> (detalhe bem específico).</li>
+                <li>Troque “parte 2” por: <span class="k">versão [série/ano]</span>, <span class="k">edição noturna</span>, <span class="k">edição fim de bimestre</span>.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Regra do “hiperespecífico”:</strong> sempre que possível, inclua número/prazo/tempo (“faltam 7 minutos”, “2ª chamada”, “última semana do bimestre”). Isso aumenta identificação.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="tag">Social primeiro</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="note"><strong>CTAs leves (combinam com meme)</strong></div>
+              <ul class="list">
+                <li>“Qual desses aparece mais? Comenta o <span class="k">número</span>.”</li>
+                <li>“Marca um professor que vai falar: <span class="k">sou eu</span>.”</li>
+                <li>“Quer <span class="k">PARTE 2</span>? Comenta ‘PARTE 2’.”</li>
+                <li>“Salva pra mandar no grupo depois.”</li>
+              </ul>
+            </div>
+            <div>
+              <div class="note"><strong>CTA com ponte (sem quebrar a vibe)</strong></div>
+              <ul class="list">
+                <li>Slide final: “Quer meu passo a passo pra <span class="k">[resultado]</span>? Tá na legenda.”</li>
+                <li>Legenda: “Comenta <span class="k">QUERO</span> que eu te envio [material/checklist].”</li>
+                <li>Stories: enquete “Qual foi você hoje?” + caixinha “me conta o seu caso”.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist</h2>
+          <span class="tag">Criação + revisão</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="note"><strong>Antes de criar (5–10 min)</strong></div>
+              <ul class="list">
+                <li>Defina <span class="k">1 tema</span> (não misture).</li>
+                <li>Escreva a <span class="k">dor central</span> em 1 frase.</li>
+                <li>Liste <span class="k">7 situações</span> reais (de preferência ouvidas em sala).</li>
+                <li>Escolha <span class="k">1 fórmula</span> para repetir ("O aluno que..." etc.).</li>
+              </ul>
+            </div>
+            <div>
+              <div class="note"><strong>Revisão (qualidade/UX)</strong></div>
+              <ul class="list">
+                <li>Cada slide cabe em <span class="k">1–2s</span> de leitura.</li>
+                <li>Texto com contraste (stroke/sombra) em fundo “poluído”.</li>
+                <li>Escalada real: o slide 7/8 é o melhor.</li>
+                <li>CTA pergunta <span class="k">algo fácil</span> (número/palavra).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Checklist anti-bloqueio:</strong> se não vierem 7 situações, reduza o carrossel para 6 slides. Melhor curto e forte do que alongado e morno.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="tag">Para reutilizar sem ficar repetitivo</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="note"><strong>Variação A — “Personagens”</strong></div>
+              <ul class="list">
+                <li>Slide 1: “TIPOS DE [ALUNO/PAI/COORDENAÇÃO] QUANDO [situação]”.</li>
+                <li>Slides 2–8: 7 personagens (cada um com frase/mania).</li>
+                <li>Final: “Qual é o <span class="k">campeão</span> na sua escola?”</li>
+              </ul>
+              <div class="hr"></div>
+              <div class="note"><strong>Variação B — “Expectativa x Realidade”</strong></div>
+              <ul class="list">
+                <li>Slide 1: “EXPECTATIVA: [ideal]”.</li>
+                <li>Slide 2: “REALIDADE: [caos]”.</li>
+                <li>Repete por 3–4 duplas + clímax.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="note"><strong>Variação C — “Chat/diálogo”</strong></div>
+              <ul class="list">
+                <li>Slides como prints simulados (texto grande): Professor vs aluno.</li>
+                <li>Gatilho: “Quando pergunto <span class="k">uma coisa simples</span>…”</li>
+                <li>Clímax: a resposta mais absurda (mas realista).</li>
+              </ul>
+              <div class="hr"></div>
+              <div class="note"><strong>Variação D — “Relógio do desespero”</strong></div>
+              <ul class="list">
+                <li>Slides marcados por tempo: “Faltam 30min… 10min… 2min…”</li>
+                <li>Boa para: prova, entrega, conselho, fechamento de notas.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Como adaptar para outro tema (substituições rápidas):</strong><br/>
+            Troque <span class="k">gatilho</span> (véspera/prazo/nota), troque <span class="k">personagem</span> (aluno/pais/coordenação/você) e troque <span class="k">microverdade</span> (frase real/mania recorrente). Mantém o mesmo impacto.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ta = document.getElementById('script');
+      async function copy(){
+        const text = ta.value;
+        try{
+          await navigator.clipboard.writeText(text);
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+        }catch(e){
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+        }
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
