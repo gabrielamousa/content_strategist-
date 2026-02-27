@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ficha Reproduzível — Carrossel por perfis (Produtividade)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1220;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --border:rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --muted2:#7E8AAD;
+      --success:#3EF2A1;
+      --blue:#4DA3FF;
+      --orange:#FFB44D;
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(77,163,255,.18), transparent 60%),
+        radial-gradient(900px 500px at 75% 20%, rgba(62,242,161,.16), transparent 55%),
+        radial-gradient(900px 540px at 60% 85%, rgba(255,180,77,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    a{color:inherit}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 56px;}
+
+    header{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:var(--shadow);
+      border-radius:calc(var(--radius) + 6px);
+      padding:18px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background:
+        linear-gradient(90deg, rgba(62,242,161,.22), rgba(77,163,255,.18), rgba(255,180,77,.18));
+      filter:blur(18px);
+      opacity:.65;
+      pointer-events:none;
+    }
+
+    .head-inner{position:relative;display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+
+    .meta{
+      display:flex;flex-direction:column;gap:8px;min-width:260px;flex:1;
+    }
+
+    .kickers{display:flex;gap:10px;flex-wrap:wrap}
+    .pill{
+      font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:7px 10px;border-radius:999px;
+      background:rgba(0,0,0,.18);
+      backdrop-filter: blur(6px);
+    }
+
+    h1{margin:0;font-size:22px;line-height:1.2;letter-spacing:-.02em}
+    .sub{color:var(--muted);font-size:14px;line-height:1.45;margin:0}
+
+    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+
+    .btn{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      box-shadow:0 10px 24px rgba(0,0,0,.25);
+      transition:transform .15s ease, background .15s ease, border-color .15s ease;
+      font-size:14px;
+      display:inline-flex;gap:10px;align-items:center
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
+
+    .btn-primary{
+      background:linear-gradient(90deg, rgba(62,242,161,.18), rgba(77,163,255,.16), rgba(255,180,77,.14));
+      border-color:rgba(255,255,255,.18);
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.25fr .75fr;}
+    }
+
+    section{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      border-radius:var(--radius);
+      padding:16px 16px;
+      box-shadow:var(--shadow);
+    }
+
+    .sec-title{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      margin-bottom:10px
+    }
+
+    h2{
+      margin:0;
+      font-size:15px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    .tagline{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted2);
+      border:1px dashed rgba(255,255,255,.14);
+      padding:7px 10px;
+      border-radius:12px;
+      background:rgba(0,0,0,.14);
+    }
+
+    .content{color:var(--text);font-size:14px;line-height:1.55}
+    ul{margin:10px 0 0 18px;color:var(--text)}
+    li{margin:6px 0}
+    .muted{color:var(--muted)}
+
+    .cards{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (min-width: 640px){
+      .cards{grid-template-columns:1fr 1fr;}
+    }
+
+    .mini{
+      border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:var(--radius2);
+      padding:12px 12px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .mini:before{
+      content:"";
+      position:absolute;left:-30%;top:-40%;width:80%;height:140%;
+      background:linear-gradient(180deg, rgba(62,242,161,.18), rgba(77,163,255,.12), rgba(255,180,77,.10));
+      transform:rotate(18deg);
+      filter:blur(18px);
+      opacity:.35;
+      pointer-events:none;
+    }
+
+    .mini h3{margin:0 0 6px 0;font-size:14px;position:relative}
+    .mini p{margin:0;color:var(--muted);font-size:13px;position:relative}
+
+    .codebox{
+      margin-top:10px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      background:rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    .codebox .bar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04)
+    }
+    .codebox .bar .left{
+      display:flex;gap:10px;align-items:center
+    }
+    .dot{width:10px;height:10px;border-radius:999px;background:rgba(255,255,255,.18)}
+    .dot.g{background:rgba(62,242,161,.7)}
+    .dot.b{background:rgba(77,163,255,.7)}
+    .dot.o{background:rgba(255,180,77,.7)}
+
+    pre{
+      margin:0;
+      padding:12px;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.5;
+      color:#EAF0FF;
+    }
+
+    .cols{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+    @media (min-width: 980px){
+      .cols{grid-template-columns:1fr 1fr;}
+    }
+
+    .hr{
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      margin:14px 0;
+    }
+
+    .kbd{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:2px 7px;
+      border:1px solid rgba(255,255,255,.16);
+      border-bottom-color:rgba(255,255,255,.08);
+      border-radius:8px;
+      background:rgba(0,0,0,.22);
+      color:var(--muted);
+    }
+
+    .notice{color:var(--muted);font-size:13px;margin:10px 0 0 0}
+
+    .footer{
+      margin-top:14px;
+      color:var(--muted2);
+      font-size:12px;
+      display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-inner">
+        <div class="meta">
+          <div class="kickers">
+            <span class="pill">Nicho: Produtividade</span>
+            <span class="pill">Dia: 24</span>
+            <span class="pill">Formato: Carrossel</span>
+            <span class="pill">Pilar: Checklist</span>
+          </div>
+          <h1>Guia por perfis: produtividade do seu jeito (salve)</h1>
+          <p class="sub">Modelo reproduzível de carrossel “moodboard/curadoria”: a pessoa se identifica com um perfil e recebe recomendações rápidas, escaneáveis e salváveis.</p>
+          <p class="sub">Post original: <a href="https://www.instagram.com/p/DUOX4etjF21/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DUOX4etjF21/</a></p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" id="copyBtn" type="button">Copiar roteiro <span class="kbd">Ctrl/⌘ + C</span></button>
+          <a class="btn" href="https://www.instagram.com/p/DUOX4etjF21/" target="_blank" rel="noreferrer">Abrir post original</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section>
+        <div class="sec-title">
+          <h2>Resumo</h2>
+          <div class="tagline">Objetivo: elevar saves + compartilhamentos</div>
+        </div>
+        <div class="content">
+          <p style="margin:0">
+            Um carrossel de <strong>curadoria por perfis</strong> (estilo “se você é X, faça/pegue Y”) com estética consistente. Funciona porque reduz decisão, aumenta identificação (“sou esse tipo”) e entrega conteúdo <strong>escaneável</strong>.
+          </p>
+          <div class="cards">
+            <div class="mini">
+              <h3>Promessa central (template)</h3>
+              <p><span style="color:var(--success)">Se você é [perfil]</span>, use <span style="color:var(--blue)">[lista de recomendações]</span> para alcançar <span style="color:var(--orange)">[resultado]</span>.</p>
+            </div>
+            <div class="mini">
+              <h3>Entrega (o que a pessoa leva)</h3>
+              <p>3–6 perfis, cada um com 8–12 recomendações rápidas + 1 slide bônus de implementação/checklist.</p>
+            </div>
+          </div>
+          <p class="notice"><strong>Regra de ouro:</strong> no slide, pouco texto. O “contexto” fica na legenda.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Metadados rápidos</h2>
+          <div class="tagline">para calendário/editorial</div>
+        </div>
+        <div class="content">
+          <ul>
+            <li><strong>Tema recomendado:</strong> um problema amplo (ex.: foco, organização semanal, procrastinação).</li>
+            <li><strong>Perfis:</strong> 3–6 grupos que o público reconhece em 1 segundo.</li>
+            <li><strong>Métrica curta:</strong> escolha 1 padrão (tempo/impacto/dificuldade/melhor momento/resultado).</li>
+            <li><strong>CTA principal:</strong> <span class="muted">Salvar</span> + <span class="muted">Comentar perfil</span>.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <div class="cols">
+      <section>
+        <div class="sec-title">
+          <h2>Estrutura</h2>
+          <div class="tagline">macro do carrossel</div>
+        </div>
+        <div class="content">
+          <ul>
+            <li><strong>Slide 1 (Capa):</strong> promessa + estética + “choose your profile”.</li>
+            <li><strong>Slides 2–(N-1) (Perfis):</strong> 1 perfil por slide, com 8–12 itens em formato “moodboard”.</li>
+            <li><strong>Último slide (Bônus salvável):</strong> checklist de implementação / setup rápido / roteiro de 10 min.</li>
+            <li><strong>Legenda:</strong> contexto curto + instrução de uso + CTA.</li>
+          </ul>
+          <div class="hr"></div>
+          <p style="margin:0" class="muted"><strong>Faixa ideal:</strong> 5 a 8 slides (Capa + 3–5 perfis + Bônus).</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Slides sugeridos (1..7)</h2>
+          <div class="tagline">exemplo pronto (ajuste N)</div>
+        </div>
+        <div class="content">
+          <ol style="margin:10px 0 0 18px">
+            <li><strong>Capa:</strong> “Guia [adjetivo] de [tema]” + “ache seu perfil”.</li>
+            <li><strong>Perfil 1:</strong> “Para quem está sem tempo” (itens + métrica).</li>
+            <li><strong>Perfil 2:</strong> “Para quem procrastina” (itens + métrica).</li>
+            <li><strong>Perfil 3:</strong> “Para quem é multitarefa” (itens + métrica).</li>
+            <li><strong>Perfil 4 (opcional):</strong> “Para quem é ansioso(a)” (itens + métrica).</li>
+            <li><strong>Perfil 5 (opcional):</strong> “Para quem vive em reunião” (itens + métrica).</li>
+            <li><strong>Bônus:</strong> “Como aplicar em 10 min hoje” + checklist.</li>
+          </ol>
+        </div>
+      </section>
+    </div>
+
+    <section style="margin-top:14px">
+      <div class="sec-title">
+        <h2>Roteiro</h2>
+        <div class="tagline">texto-base copiável</div>
+      </div>
+
+      <div class="codebox" id="scriptBox">
+        <div class="bar">
+          <div class="left">
+            <span class="dot g"></span><span class="dot b"></span><span class="dot o"></span>
+            <span class="muted" style="font-size:12px">Roteiro do carrossel (substitua os campos entre colchetes)</span>
+          </div>
+          <span class="muted" style="font-size:12px;font-family:var(--mono)">v1.0</span>
+        </div>
+        <pre id="scriptText">TEMA: [ex.: “produtividade sem estresse”]
+ADJETIVO/TOM: [ex.: “minimalista”, “prático”, “sem burnout”, “da pessoa ocupada”]
+MÉTRICA PADRÃO (escolha 1): [⏱ tempo | Impacto | Dificuldade | Melhor momento | Resultado]
+
+SLIDE 1 — CAPA
+Título: “Guia [ADJETIVO] de [TEMA]”
+Sub (opcional): “Escolha seu perfil e aplique hoje.”
+Mini-CTA (pequeno): “Deslize →”
+
+SLIDE 2 — PERFIL 1
+Título central: “Para a pessoa [PERFIL 1]”
+Itens (8–12):
+- [Item 1] — [MÉTRICA curta]
+- [Item 2] — [MÉTRICA curta]
+- ...
+Nota (opcional, micro): “Comece por 1 item hoje.”
+
+SLIDE 3 — PERFIL 2
+Título central: “Para a pessoa [PERFIL 2]”
+Itens (8–12):
+- [Item 1] — [MÉTRICA curta]
+- [Item 2] — [MÉTRICA curta]
+- ...
+
+SLIDE 4 — PERFIL 3
+Título central: “Para a pessoa [PERFIL 3]”
+Itens (8–12):
+- [Item 1] — [MÉTRICA curta]
+- [Item 2] — [MÉTRICA curta]
+- ...
+
+SLIDE 5 — PERFIL 4 (OPCIONAL)
+Título central: “Para a pessoa [PERFIL 4]”
+Itens (8–12):
+- [Item 1] — [MÉTRICA curta]
+- ...
+
+SLIDE 6 — BÔNUS (SALVÁVEL)
+Título: “Setup de 10 minutos para começar hoje”
+Checklist (6–9 bullets):
+1) [Ação 1 de 1 min]
+2) [Ação 2 de 2 min]
+3) [Ação 3 de 3 min]
+4) [Ação 4 de 2 min]
+5) [Ação 5 de 2 min]
+
+SLIDE 7 — CTA (SE QUISER SEPARAR)
+Título: “Qual perfil é você hoje?”
+Opções: “[Perfil 1] / [Perfil 2] / [Perfil 3]”
+CTA: “Comente o seu perfil + eu mando um template/checagem.”
+CTA 2: “Salve para revisar na próxima semana.”
+
+LEGENDA (modelo pronto)
+1) Contexto (2 linhas): “Se produtividade é difícil, o problema quase sempre é o sistema errado para o seu perfil.”
+2) Como usar: “Ache o seu slide, escolha 1 item e teste por 24h.”
+3) Pedido de interação: “Qual perfil você é hoje? (me diz 1, 2, 3 ou 4)”
+4) CTA principal: “Salve este guia para consultar quando bater o caos.”
+
+CHECK DE CONSISTÊNCIA (antes de postar)
+- Cada slide tem o mesmo layout?
+- A métrica está padronizada?
+- Os itens estão curtos (cabem sem poluir)?
+- O bônus é realmente aplicável em 10 min?</pre>
+      </div>
+
+      <p class="notice">Dica de performance: se o seu público salva pouco, deixe o <strong>bônus</strong> mais “material” (ex.: checklist semanal pronto, script de planejamento, templates).</p>
+    </section>
+
+    <div class="cols">
+      <section>
+        <div class="sec-title">
+          <h2>Elementos visuais</h2>
+          <div class="tagline">clean + high-tech (adaptado)</div>
+        </div>
+        <div class="content">
+          <ul>
+            <li><strong>Consistência:</strong> mesmo grid em todos os slides (o cérebro aprende e desliza).</li>
+            <li><strong>Estilo:</strong> moodboard/flatlay (itens recortados com sombra suave).</li>
+            <li><strong>Texto mínimo:</strong> título central + labels curtas por item.</li>
+            <li><strong>“Preço” vira “métrica”:</strong> ⏱ tempo / impacto / dificuldade / melhor momento / resultado.</li>
+            <li><strong>Respiro:</strong> margens grandes; evite caixas pesadas.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="cards">
+            <div class="mini">
+              <h3>Kit de componentes (reutilizável)</h3>
+              <p>Título central + 8–12 cards/ícones em volta + label curta + sombra padronizada.</p>
+            </div>
+            <div class="mini">
+              <h3>Biblioteca de itens (produtividade)</h3>
+              <p>Calendário, timer, checklist, inbox, template (Notion/Trello), lembretes, “fechamento do dia”.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Copy e ganchos</h2>
+          <div class="tagline">título, capa e legenda</div>
+        </div>
+        <div class="content">
+          <p style="margin:0"><strong>Fórmula de título (capa):</strong> “Guia <span style="background:linear-gradient(90deg, rgba(62,242,161,.25), rgba(77,163,255,.20), rgba(255,180,77,.18)); padding:0 6px; border-radius:8px">[adjetivo aspiracional]</span> de [tema]”</p>
+          <ul>
+            <li>“Guia da pessoa ocupada: produtividade em 15 min”</li>
+            <li>“Guia sem estresse: rotinas curtas que funcionam”</li>
+            <li>“Guia de sistemas: do caos ao controle”</li>
+          </ul>
+          <div class="hr"></div>
+          <p style="margin:0"><strong>Ganchos de legenda (escolha 1):</strong></p>
+          <ul>
+            <li>“Se você tenta o método certo no perfil errado, vira frustração.”</li>
+            <li>“O objetivo não é fazer mais. É decidir melhor.”</li>
+            <li>“Pare de salvar dicas aleatórias: use um sistema por 7 dias.”</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <div class="cols">
+      <section>
+        <div class="sec-title">
+          <h2>CTA</h2>
+          <div class="tagline">escolha 1 principal + 1 secundário</div>
+        </div>
+        <div class="content">
+          <ul>
+            <li><strong>CTA principal (saves):</strong> “Salve este post para consultar na próxima semana.”</li>
+            <li><strong>CTA de compartilhamento:</strong> “Manda para alguém que é 100% ‘[perfil]’.”</li>
+            <li><strong>CTA de comentário:</strong> “Qual perfil é você hoje: 1, 2, 3 (ou 4)?”</li>
+            <li><strong>CTA de DM (lead leve):</strong> “Comente ‘GUIA’ que eu mando a versão em checklist/template.”</li>
+          </ul>
+          <p class="notice"><strong>Recomendação:</strong> no último slide, deixe o CTA visual; na legenda, repita com clareza.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Checklist</h2>
+          <div class="tagline">criação (do zero ao post)</div>
+        </div>
+        <div class="content">
+          <ul>
+            <li><strong>Definir:</strong> tema + promessa + adjetivo (tom).</li>
+            <li><strong>Escolher:</strong> 3–6 perfis (nomes simples e reconhecíveis).</li>
+            <li><strong>Listar:</strong> 8–12 itens por perfil (curtos e decisivos).</li>
+            <li><strong>Padronizar:</strong> 1 métrica curta para todos os itens.</li>
+            <li><strong>Montar design:</strong> grid fixo + sombras + tipografia consistente.</li>
+            <li><strong>Bônus:</strong> checklist de implementação em 10 min.</li>
+            <li><strong>Legenda:</strong> contexto (2 linhas) + como usar + CTA.</li>
+            <li><strong>Revisar:</strong> legibilidade em tela pequena + “poluição” visual.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section style="margin-top:14px">
+      <div class="sec-title">
+        <h2>Variações</h2>
+        <div class="tagline">trocas com o mesmo impacto</div>
+      </div>
+      <div class="content">
+        <div class="cards">
+          <div class="mini">
+            <h3>Troque “perfis” por…</h3>
+            <p>
+              Níveis (iniciante/intermediário/avançado), fases (começo do mês/semana/dia), contextos (home office/escritório/estudos), ou objetivos (foco/energia/organização).
+            </p>
+          </div>
+          <div class="mini">
+            <h3>Troque “itens” por…</h3>
+            <p>
+              Hábitos, scripts, atalhos, templates, perguntas de revisão, exemplos, ferramentas, prompts, rotinas de 5–15 min.
+            </p>
+          </div>
+          <div class="mini">
+            <h3>Troque a “métrica” por…</h3>
+            <p>
+              “Tempo para aplicar”, “Impacto”, “Esforço”, “Quando usar”, “Sinal de que funcionou”, “Erro que evita”.
+            </p>
+          </div>
+          <div class="mini">
+            <h3>Variação de bônus (saves)</h3>
+            <p>
+              “Checklist de segunda”, “roteiro de 7 min de fechamento do dia”, “1 página: meu sistema”, “planner semanal pronto”.
+            </p>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+        <p style="margin:0" class="muted"><strong>Atalho para adaptar a outro tema (fora de produtividade):</strong> mantenha a estrutura “perfil → curadoria visual → métrica curta → bônus aplicável → CTA de salvar”. Só troque os itens e a métrica.</p>
+      </div>
+    </section>
+
+    <div class="footer">
+      <span>Identidade visual sugerida: dark, clean, high-tech, destaques em degradê (verde/azul/laranja).</span>
+      <span>Botão “Copiar roteiro” copia o bloco da seção Roteiro.</span>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+      btn.addEventListener('click', async () => {
+        try{
+          await navigator.clipboard.writeText(text.innerText);
+          const old = btn.innerHTML;
+          btn.innerHTML = 'Roteiro copiado <span class="kbd">OK</span>';
+          setTimeout(()=> btn.innerHTML = old, 1400);
+        }catch(e){
+          // Fallback
+          const range = document.createRange();
+          range.selectNodeContents(text);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          document.execCommand('copy');
+          sel.removeAllRanges();
+          const old = btn.innerHTML;
+          btn.innerHTML = 'Roteiro copiado <span class="kbd">OK</span>';
+          setTimeout(()=> btn.innerHTML = old, 1400);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
