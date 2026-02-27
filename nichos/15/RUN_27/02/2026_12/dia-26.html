@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 26 — Roteiro Reproduzível (Reels)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted:#AAB4D6;
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r: 16px;
+      --r2: 22px;
+      --g1: linear-gradient(90deg, #25F1A7 0%, #38BDF8 45%, #FB923C 100%);
+      --g2: linear-gradient(135deg, rgba(37,241,167,.18), rgba(56,189,248,.18), rgba(251,146,60,.18));
+      --g3: linear-gradient(135deg, rgba(37,241,167,.35), rgba(56,189,248,.35), rgba(251,146,60,.35));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(800px 500px at 10% 10%, rgba(56,189,248,.18), transparent 55%),
+        radial-gradient(900px 600px at 85% 25%, rgba(37,241,167,.14), transparent 60%),
+        radial-gradient(900px 700px at 30% 90%, rgba(251,146,60,.10), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 56px;}
+    header{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .top{
+      padding:18px 18px 14px;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .badgeRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background: var(--g1);}
+    .title{
+      padding:0 18px 18px;
+      display:grid;
+      gap:10px;
+    }
+    h1{margin:0;font-size:20px;line-height:1.2;letter-spacing:.2px}
+    .subtitle{color:var(--muted);font-size:13px;line-height:1.45}
+    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size: 13px;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(255,255,255,.08);border-color: rgba(255,255,255,.18)}
+    .btn:active{transform: scale(.99)}
+    .btnPrimary{
+      background: var(--g2);
+      border-color: rgba(56,189,248,.26);
+    }
+    .btnPrimary:hover{background: var(--g3)}
+    .btn small{opacity:.75;font-weight:700;font-family:var(--mono)}
+
+    main{margin-top:18px;display:grid;gap:14px}
+    .grid{display:grid;grid-template-columns: 1.1fr .9fr;gap:14px}
+    @media (max-width: 920px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHd{
+      padding:14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .cardHd h2{margin:0;font-size:14px;letter-spacing:.25px}
+    .pill{
+      font-size:12px;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      padding:6px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .cardBd{padding:14px 16px}
+    .muted{color:var(--muted)}
+
+    ul{margin:10px 0 0 18px;padding:0}
+    li{margin:7px 0;line-height:1.45}
+    .kpi{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .k{
+      flex: 1 1 180px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding:10px 12px;
+    }
+    .k .t{font-size:12px;color:var(--muted)}
+    .k .v{font-size:13px;margin-top:4px}
+
+    pre{
+      margin:0;
+      padding:14px 16px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      overflow:auto;
+      color: #EAF0FF;
+      line-height:1.5;
+      font-size: 12.8px;
+      font-family: var(--mono);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .hl{
+      display:inline;
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:800;
+    }
+    .callout{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(56,189,248,.20);
+      background: linear-gradient(135deg, rgba(56,189,248,.10), rgba(37,241,167,.06), rgba(251,146,60,.06));
+      color: var(--text);
+    }
+    .check{
+      display:grid;
+      gap:8px;
+      margin-top:8px;
+    }
+    .chk{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .box{
+      width:16px;height:16px;
+      border-radius: 4px;
+      border:1px solid rgba(255,255,255,.22);
+      margin-top:2px;
+      flex:0 0 auto;
+      background: rgba(0,0,0,.15);
+    }
+    .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 720px){.twoCol{grid-template-columns:1fr}}
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(10,14,28,.82);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      max-width:min(760px, calc(100vw - 28px));
+    }
+    .toast.show{opacity:1;transform: translateX(-50%) translateY(-2px)}
+    .toast .mini{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="top">
+        <div class="badgeRow">
+          <span class="badge"><span class="dot"></span><strong>Nicho</strong>: Neutro</span>
+          <span class="badge"><strong>Dia</strong>: 26</span>
+          <span class="badge"><strong>Formato</strong>: Reels</span>
+          <span class="badge"><strong>Pilar</strong>: Passo a passo</span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DKavH9Sty6u/" target="_blank" rel="noreferrer">Abrir post original <small>↗</small></a>
+          <button class="btn btnPrimary" id="copyBtn">Copiar roteiro <small>CTRL/CMD+C</small></button>
+        </div>
+      </div>
+      <div class="title">
+        <h1>O roteiro de 60s que faz qualquer método parecer simples</h1>
+        <div class="subtitle">Template reproduzível baseado no padrão: <span class="hl">promessa mensurável</span> + <span class="hl">dor real</span> + <span class="hl">passo a passo</span> + <span class="hl">quebra de objeção</span> + CTA por palavra-chave.</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="grid">
+        <article class="card">
+          <div class="cardHd">
+            <h2>Resumo</h2>
+            <span class="pill">O que faz performar</span>
+          </div>
+          <div class="cardBd">
+            <p class="muted" style="margin:0;line-height:1.55">
+              Este formato funciona porque entrega uma transformação clara (mensurável), cria identificação imediata (dor comum), e mantém retenção com progressão (Passo 1/5, mid-hook e dica extra). Finaliza com CTA simples e contextual, trocando engajamento por um “presente” (template/checklist/link).
+            </p>
+            <div class="kpi">
+              <div class="k"><div class="t">Meta do vídeo</div><div class="v">Gerar “eu preciso disso” em até 2s</div></div>
+              <div class="k"><div class="t">Estrutura</div><div class="v">Hook → Dor → 5 passos → Dica → CTA</div></div>
+              <div class="k"><div class="t">Retenção</div><div class="v">Blocos novos a cada 2–4s</div></div>
+              <div class="k"><div class="t">Engajamento</div><div class="v">Palavra-chave + entrega no direct</div></div>
+            </div>
+            <div class="callout">
+              <strong>Regra de ouro:</strong> cada frase tem <strong>1 ideia</strong> e cada ideia tem <strong>1 ação</strong> (ou 1 prova). Se ficar explicativo demais, vira aula e cai a retenção.
+            </div>
+          </div>
+        </article>
+
+        <aside class="card">
+          <div class="cardHd">
+            <h2>Estrutura (timing recomendado)</h2>
+            <span class="pill">45–60s</span>
+          </div>
+          <div class="cardBd">
+            <ul>
+              <li><strong>0–2s</strong>: Hook com resultado mensurável</li>
+              <li><strong>2–6s</strong>: Mini-história de dor (antes)</li>
+              <li><strong>6–10s</strong>: Virada (“o dia que eu decidi…”) + ponte</li>
+              <li><strong>10–38s</strong>: Passo 1–5 (2–6s cada)</li>
+              <li><strong>30–32s</strong>: Mid-hook (“não acabou…”) embutido</li>
+              <li><strong>38–48s</strong>: Dica extra (armadilha mental/erro comum)</li>
+              <li><strong>48–60s</strong>: CTA (palavra-chave + recompensa clara)</li>
+            </ul>
+            <div class="callout" style="margin-top:12px">
+              <strong>Substituição universal:</strong> “salário” pode ser trocado por <em>tempo</em>, <em>energia</em>, <em>leads</em>, <em>conteúdo</em>, <em>estoque</em>, <em>rotina</em>. O esqueleto é o mesmo: <strong>fazer X render 2x</strong>.
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="card">
+        <div class="cardHd">
+          <h2>Roteiro (template pronto para gravar)</h2>
+          <span class="pill">Copiável e adaptável</span>
+        </div>
+        <div class="cardBd">
+          <pre id="scriptText">ROTEIRO REPRODUZÍVEL (45–60s)
+
+[HOOK — 0–2s]
+“É isso que eu faço com meu/minha [RECURSO: dinheiro/tempo/energia/leads] todo [PERÍODO: mês/semana/dia] pra [PROMESSA MENSURÁVEL: render 2x / durar até o fim / sobrar / crescer].”
+
+[DOR — 2–6s]
+“Antes, eu [DOR 1 FRASE: chegava no dia X e já estava sem… / trabalhava muito e não via… / postava e não vinha…].”
+“Se você sente que [SINTOMA], é exatamente isso.”
+
+[VIRADA — 6–10s]
+“A virada foi quando eu entendi: se eu for esperar [OBJEÇÃO: sobrar tempo/sobrar dinheiro/sobrar cliente], nunca vai sobrar.”
+“Então eu criei um ritual de [NOME SIMPLES: 5 passos] — e faço sempre do mesmo jeito.”
+
+[PASSO 1 — 10–16s]
+“1) Separe o que é ‘pra você’ ANTES de gastar.”
+“Tradução: [AÇÃO 1] primeiro, depois o resto.”
+
+[PASSO 2 — 16–22s]
+“2) Faça um panorama do [PERÍODO].”
+“Eu olho: [LISTA 3 ITENS: contas/eventos/picos de trabalho/surpresas].”
+
+[PASSO 3 — 22–28s]
+“3) Crie categorias e um teto pra cada uma.”
+“Sem teto, qualquer coisa vira ‘só mais um pouquinho’.”
+
+[PASSO 4 — 28–32s]
+“4) Registre tudo que entra.”
+“Sim: [EXEMPLOS CURTOS]. É aqui que você enxerga o jogo.”
+
+[MID-HOOK — 32–34s]
+“E não acabou por aí…”
+
+[PASSO 5 — 34–40s]
+“5) Acompanhe 1–2x por semana.”
+“Não é pra controlar todo minuto — é pra corrigir rota rápido.”
+
+[DICA EXTRA — 40–48s]
+“Dica: cuidado com o modo ‘eu mereço’.”
+“Quando você está [CANSADO/ANSIOSO/EMPOLGADO], você compra/aceita/faz coisas que sabotam o plano.”
+
+[CTA — 48–60s]
+“Se você quer o meu [ENTREGA: template/checklist/planilha/roteiro], comenta ‘[PALAVRA-CHAVE]’ que eu te mando no direct.”
+“(E me diz: você quer versão pra [VARIAÇÃO: iniciante/avançado/rotina corrida]?)”</pre>
+          <div class="twoCol" style="margin-top:12px">
+            <div class="callout" style="margin:0">
+              <strong>Dica de adaptação rápida:</strong> se o seu tema não for “organização”, escolha um <strong>processo repetível</strong> (rotina semanal, funil, treino, estudo, planejamento, atendimento) e transforme em 5 passos.
+            </div>
+            <div class="callout" style="margin:0">
+              <strong>Como manter impacto:</strong> a promessa precisa ser <strong>objetiva</strong> (2x, X dias, X leads, X horas) — ou <strong>claramente perceptível</strong> (“parar de sumir”, “ficar leve”, “não travar”).
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <div class="cardHd">
+            <h2>Elementos visuais</h2>
+            <span class="pill">High-retention</span>
+          </div>
+          <div class="cardBd">
+            <ul>
+              <li><strong>Texto na tela</strong> só com palavras-chave (não parágrafo).</li>
+              <li><strong>Marcador de progresso</strong>: “Passo 1/5” ou barra.</li>
+              <li><strong>Jump cuts</strong> a cada 1–2 frases e <strong>zoom leve</strong> nos trechos: “antes de…”, “nunca sobra…”, “não acabou…”.</li>
+              <li><strong>B-roll/overlays</strong> de apoio (substituível por qualquer tema):
+                <ul>
+                  <li>tela de app/planilha/calendário</li>
+                  <li>lista de categorias/checklist</li>
+                  <li>anotações rápidas/prints</li>
+                </ul>
+              </li>
+              <li><strong>Cores</strong>: fundo escuro + destaque em degradê para termos-chave (resultado, passos, CTA).</li>
+            </ul>
+            <div class="callout">
+              <strong>Padronização (para série):</strong> mantenha a mesma tipografia e layout “Passo 1/5” em todos. A audiência reconhece em 0,5s.
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="cardHd">
+            <h2>Copy e ganchos</h2>
+            <span class="pill">Substituíveis</span>
+          </div>
+          <div class="cardBd">
+            <div class="muted" style="margin-bottom:10px;line-height:1.55">
+              Use 1 gancho principal + 1 mid-hook. A sensação precisa ser: “isso é simples”, “isso é pra mim”, “isso tem começo-meio-fim”.
+            </div>
+            <ul>
+              <li><strong>Hook (promessa)</strong>:
+                <ul>
+                  <li>“Como eu faço meu/minha [X] render 2x sem [sacrifício].”</li>
+                  <li>“O passo a passo que fez [X] parar de sumir.”</li>
+                  <li>“Se você sempre chega em [momento] e já acabou [X], faz isso.”</li>
+                </ul>
+              </li>
+              <li><strong>Dor (identificação)</strong>:
+                <ul>
+                  <li>“Eu fazia [erro] e achava que era normal.”</li>
+                  <li>“Eu me enganava com ‘só hoje’.”</li>
+                </ul>
+              </li>
+              <li><strong>Quebra de objeção</strong>:
+                <ul>
+                  <li>“Se eu esperar sobrar, nunca sobra.”</li>
+                  <li>“Não é sobre força de vontade — é sobre sistema.”</li>
+                </ul>
+              </li>
+              <li><strong>Mid-hook</strong>:
+                <ul>
+                  <li>“E tem uma parte que quase ninguém faz…”</li>
+                  <li>“Mas o detalhe que muda tudo é o próximo.”</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <div class="cardHd">
+            <h2>CTA</h2>
+            <span class="pill">Alto engajamento</span>
+          </div>
+          <div class="cardBd">
+            <ul>
+              <li><strong>Modelo principal</strong>: “Comenta ‘<span class="hl">PALAVRA</span>’ que eu te mando o <span class="hl">PRESENTE</span> no direct.”</li>
+              <li><strong>Palavras-chave</strong> (neutras): “MAPA”, “ROTEIRO”, “CHECKLIST”, “TEMPLATE”, “PASSOAPASSO”.</li>
+              <li><strong>Presentes</strong> (substituíveis): checklist 1 página, template no Notion, Google Sheets, PDF curto, lista de ferramentas.</li>
+              <li><strong>Complemento</strong> (para comentário extra): “Quer versão pra [iniciante/avançado/rotina corrida]? Comenta também.”</li>
+            </ul>
+            <div class="callout">
+              <strong>Regra:</strong> o CTA deve ser <strong>continuação natural</strong> do vídeo. Se o vídeo é “passo a passo”, o presente é “planilha/checklist/template”.
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="cardHd">
+            <h2>Checklist de criação</h2>
+            <span class="pill">Pré • Roteiro • Edição</span>
+          </div>
+          <div class="cardBd">
+            <div class="check">
+              <div class="chk"><div class="box"></div><div><strong>Promessa mensurável</strong>: 2x / X dias / X por semana / até o fim do mês.</div></div>
+              <div class="chk"><div class="box"></div><div><strong>1 dor comum</strong> em 1 frase (sem explicar demais).</div></div>
+              <div class="chk"><div class="box"></div><div><strong>5 passos práticos</strong> (ação clara, sem teoria).</div></div>
+              <div class="chk"><div class="box"></div><div><strong>1 quebra de objeção</strong> (“se eu esperar sobrar…”).</div></div>
+              <div class="chk"><div class="box"></div><div><strong>1 dica extra comportamental</strong> (erro/armadilha mental).</div></div>
+              <div class="chk"><div class="box"></div><div><strong>Entrega do CTA</strong> pronta (link, arquivo, template).</div></div>
+              <div class="chk"><div class="box"></div><div><strong>Edição</strong>: cortes a cada 1–2 frases + texto na tela + “Passo 1/5”.</div></div>
+              <div class="chk"><div class="box"></div><div><strong>Mid-hook</strong> obrigatório (~30s): “não acabou… / detalhe que muda tudo…”.</div></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="card">
+        <div class="cardHd">
+          <h2>Variações (mesmo impacto, outros temas)</h2>
+          <span class="pill">Substituições prontas</span>
+        </div>
+        <div class="cardBd">
+          <div class="twoCol">
+            <div>
+              <div class="callout" style="margin:0 0 10px 0">
+                <strong>Variação A — Tempo/Rotina</strong><br/>
+                Hook: “Como eu faço meu tempo render 2x sem trabalhar mais.”<br/>
+                Presente: “Checklist de planejamento semanal”.
+              </div>
+              <div class="callout" style="margin:0 0 10px 0">
+                <strong>Variação B — Conteúdo</strong><br/>
+                Hook: “O ritual de 5 passos pra eu postar sem travar.”<br/>
+                Dica extra: “cuidado com perfeccionismo disfarçado de pesquisa”.
+              </div>
+              <div class="callout" style="margin:0">
+                <strong>Variação C — Vendas/Leads</strong><br/>
+                Hook: “Como eu faço meus leads renderem 2x com o mesmo tráfego.”<br/>
+                Passo 5: “follow-up 1–2x/semana”.
+              </div>
+            </div>
+            <div>
+              <div class="callout" style="margin:0 0 10px 0">
+                <strong>Variação D — Estudos</strong><br/>
+                Hook: “Como eu faço meus estudos renderem 2x sem estudar 10h.”<br/>
+                Passos: “mapa → sessões → revisão → questões → acompanhamento”.
+              </div>
+              <div class="callout" style="margin:0 0 10px 0">
+                <strong>Variação E — Saúde/Treino</strong><br/>
+                Hook: “O passo a passo pra eu não furar o treino na semana.”<br/>
+                Dica extra: “decisão antecipada (roupa pronta / horário fixo)”.
+              </div>
+              <div class="callout" style="margin:0">
+                <strong>Variação F — Atendimento/Operação</strong><br/>
+                Hook: “Como eu faço minhas entregas renderem 2x sem virar noite.”<br/>
+                Presente: “Template de rotina e prioridades”.
+              </div>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:12px">
+            <strong>Macro-substituições (plug-and-play):</strong>
+            <ul style="margin-top:8px">
+              <li><strong>[RECURSO]</strong>: dinheiro | tempo | energia | atenção | leads | estoque | conteúdo</li>
+              <li><strong>[PROMESSA]</strong>: render 2x | durar até o fim | sobrar X | consistência em X dias</li>
+              <li><strong>[PRESENTE]</strong>: checklist | template | planilha | roteiro | mini-aula em PDF</li>
+              <li><strong>[DICA EXTRA]</strong>: perfeccionismo | “eu mereço” | comparação | pressa | desorganização do ambiente</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast">
+      <div style="width:10px;height:10px;border-radius:999px;background: var(--g1);"></div>
+      <div>
+        <div><strong>Roteiro copiado</strong></div>
+        <div class="mini">Cole no Notion/Docs e substitua os campos entre colchetes.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('copyBtn');
+    const pre = document.getElementById('scriptText');
+    const toast = document.getElementById('toast');
+
+    function showToast(){
+      toast.classList.add('show');
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=>toast.classList.remove('show'), 2200);
+    }
+
+    async function copyText(){
+      const text = pre.innerText;
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast();
+      }catch(e){
+        const range = document.createRange();
+        range.selectNodeContents(pre);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+        showToast();
+      }
+    }
+
+    btn.addEventListener('click', copyText);
+  </script>
+</body>
+</html>
