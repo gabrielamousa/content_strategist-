@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 9 • Nutrição • Qual pão é melhor? (plot twist)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted:#AAB7E6;
+      --muted2:#7F8BC7;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r: 18px;
+      --g1: linear-gradient(90deg,#22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --g2: radial-gradient(1200px 600px at 10% -10%, rgba(56,189,248,.25), transparent 55%),
+            radial-gradient(900px 500px at 90% 0%, rgba(34,197,94,.20), transparent 52%),
+            radial-gradient(900px 700px at 40% 110%, rgba(251,146,60,.18), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px;}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border-radius: calc(var(--r) + 8px);
+      padding:18px 18px 14px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g1);
+      opacity:.12;
+      filter: blur(22px);
+      pointer-events:none;
+    }
+    .toprow{display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between; position:relative;}
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .badge{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      padding:8px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      color: var(--muted);
+      letter-spacing:.3px;
+    }
+    .badge strong{color:var(--text); font-weight:600}
+    .title{
+      position:relative;
+      margin:12px 0 6px;
+      font-size: 22px;
+      line-height:1.15;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      position:relative;
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height:1.45;
+    }
+    .link{
+      position:relative;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      text-decoration:none;
+      color: var(--text);
+      font-size: 13px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(56,189,248,.10);
+    }
+
+    .grid{display:grid; grid-template-columns: 1.05fr .95fr; gap:14px; margin-top:14px;}
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr;}}
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      border-radius: var(--r);
+      padding:16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+    }
+    .card:after{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: var(--g1);
+      opacity:.06;
+      pointer-events:none;
+      filter: blur(26px);
+    }
+    .card > *{position:relative}
+
+    h2{
+      margin:0 0 10px;
+      font-size:14px;
+      font-weight:650;
+      letter-spacing:.35px;
+      text-transform:uppercase;
+      color: var(--muted);
+    }
+    .kpi{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      padding:10px 12px;
+      border-radius: 14px;
+      min-width: 160px;
+      flex: 1;
+    }
+    .pill .label{font-size:12px; color:var(--muted2)}
+    .pill .value{margin-top:2px; font-size:14px; color:var(--text); font-weight:620}
+
+    ul{margin:10px 0 0 18px; padding:0; color:var(--text)}
+    li{margin:8px 0; color: var(--text)}
+    .muted{color:var(--muted)}
+
+    .scriptBox{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.30);
+      border-radius: 14px;
+      padding:14px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height:1.55;
+      color: #DDE6FF;
+      white-space: pre-wrap;
+    }
+
+    .rowBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+    button{
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+    }
+    button.primary{
+      border: none;
+      background: var(--g1);
+      color:#071018;
+      font-weight:750;
+    }
+    .toast{
+      margin-top:10px;
+      font-size:12px;
+      color: var(--muted);
+      display:none;
+    }
+
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+    @media (max-width: 740px){ .cols{grid-template-columns:1fr;}}
+
+    .hooks{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .chip{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      padding:8px 10px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: var(--text);
+    }
+
+    .footerNote{margin-top:14px; font-size:12px; color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="badgeRow">
+          <div class="badge"><strong>Nicho:</strong> Nutrição</div>
+          <div class="badge"><strong>Dia:</strong> 9</div>
+          <div class="badge"><strong>Pilar:</strong> Mito vs Verdade</div>
+          <div class="badge"><strong>Formato:</strong> Reels</div>
+        </div>
+        <a class="link" target="_blank" rel="noopener" href="https://www.instagram.com/p/DULPi54jj6R/">
+          <span class="dot"></span>
+          <span>Ver post original</span>
+        </a>
+      </div>
+      <h1 class="title">Qual pão é melhor? (plot twist da nutri “radical”)</h1>
+      <p class="subtitle">Estratégia: hook comparativo + caricatura (humor) + virada humana/sensorial + CTA de “time” para comentários.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <ul>
+          <li><strong>Ideia central:</strong> zoar o extremismo (“nutri radical”) e terminar com uma mensagem realista: “não existe melhor universal; existe contexto + prazer + consistência”.</li>
+          <li><strong>Motor de engajamento:</strong> pergunta com opções específicas + plot twist + disputa de preferências nos comentários.</li>
+          <li><strong>Meta do vídeo:</strong> retenção (virada antes da metade) + comentários (time/top 1).</li>
+        </ul>
+        <div class="kpi">
+          <div class="pill"><div class="label">Duração sugerida</div><div class="value">20–35s</div></div>
+          <div class="pill"><div class="label">Virada (plot twist)</div><div class="value">8–12s</div></div>
+          <div class="pill"><div class="label">Energia</div><div class="value">rápido → leve</div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura (sequência reproduzível)</h2>
+        <ul>
+          <li><strong>1) Hook (0–2s):</strong> pergunta comparativa com 4 opções específicas.</li>
+          <li><strong>2) Personagem 1 (2–9s):</strong> “nutri radical” com 3 frases absolutistas (exagero cômico).</li>
+          <li><strong>3) Pausa (0,3–0,7s):</strong> silêncio + olhar (corte seco).</li>
+          <li><strong>4) Personagem 2 (9–22s):</strong> “nutri real” + top 1 + mini ranking + detalhes sensoriais.</li>
+          <li><strong>5) Fechamento (22–30s):</strong> pergunta de time + comentário guiado (opções na tela).</li>
+        </ul>
+        <p class="footerNote"><span class="muted">Regra de ouro:</span> a virada precisa acontecer antes do meio do vídeo.</p>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro (pronto para gravar)</h2>
+        <div id="script" class="scriptBox">[CENA 1 — HOOK | 0–2s | olhando pra câmera, direto]
+"Pães: brioche, croissant, francês ou focaccia… qual é o melhor?"
+(TEXTO NA TELA: "QUAL PÃO É MELHOR?" + lista)
+
+[CENA 2 — NUTRI RADICAL (CARICATURA) | 2–9s | rápido, indignada, jump cuts]
+"SÉRIO isso?" 
+"Carboidrato… engorda." 
+"Glúten inflama TODO MUNDO." 
+"Isso não entra na minha casa." 
+(TEXTO NA TELA em blocos: "CARBO ENGORDA?", "GLÚTEN PRA TODO MUNDO?", "PROIBIDO")
+
+[CENA 3 — PAUSA/QUEBRA | 9–10s | silêncio curto + troca de energia]
+(para, respira, olha)
+(TEXTO: "Tá… a verdade:")
+
+[CENA 4 — NUTRI REAL (HUMANA) | 10–24s | leve, sorriso, sensorial]
+"Cara… nada ganha de um pão francês com ovo." 
+"Quentinho, crocante por fora, macio por dentro… é conforto." 
+"Meu top 3 fica: 1) francês com ovo, 2) croissant com presunto e queijo, 3) focaccia com azeitona salgadinha." 
+"E no fim: o ‘melhor’ é o que cabe no seu objetivo e na sua rotina." 
+(TEXTO: "TOP 3" + itens)
+
+[CENA 5 — CTA | 24–30s | direto e fácil de responder]
+"Agora é com você: qual é seu TOP 1?" 
+"Comenta: #TimeFrancês, #TimeCroissant, #TimeBrioche ou #TimeFocaccia."
+(TELA FINAL: opções + "COMENTA SEU TIME")</div>
+        <div class="rowBtns">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="copyHooks">Copiar hooks</button>
+        </div>
+        <div class="toast" id="toast">Copiado para a área de transferência.</div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <div class="cols">
+          <div>
+            <ul>
+              <li><strong>Personagens:</strong> “nutri radical” (expressão tensa) vs “nutri real” (expressão leve). Pode trocar com óculos/jaleco/cabelo preso.</li>
+              <li><strong>Enquadramento:</strong> close/medium close; mantenha olhos no centro.</li>
+              <li><strong>Edição:</strong> jump cuts no “rant”; corte seco + micro silêncio na virada.</li>
+              <li><strong>Legenda:</strong> 2–5 palavras por bloco, grande, contrastada.</li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><strong>SFX opcional:</strong> “record scratch” na virada ou silêncio total por 0,5s.</li>
+              <li><strong>B-roll opcional (0,5–1s):</strong> rápido de pão saindo do forno / ovo / manteiga (só na parte sensorial).</li>
+              <li><strong>Texto na tela:</strong> use “TOP 3” e as opções para guiar o comentário.</li>
+              <li><strong>Ritmo:</strong> indignado (rápido) → conversa (mais texto sensorial).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos</h2>
+        <p class="muted">Use listas específicas (4 opções) + frase de plot twist. Abaixo, modelos plug-and-play.</p>
+        <div class="hooks" id="hooksList">
+          <span class="chip">"Arroz, batata, macarrão ou pão: qual é melhor?"</span>
+          <span class="chip">"Whey, creatina ou pré-treino: você é de qual time?"</span>
+          <span class="chip">"Café, chá verde ou matcha: qual funciona pra você?"</span>
+          <span class="chip">"Jejum, 3 em 3 horas ou comer por fome: qual é ‘certo’?"</span>
+          <span class="chip">"Açúcar, adoçante ou ‘zero’: qual é pior?"</span>
+          <span class="chip">"Granola, aveia ou pão: qual dá mais saciedade?"</span>
+        </div>
+        <ul>
+          <li><strong>Frases de caricatura (exagero):</strong> “isso inflama”, “engorda”, “proibido”, “não entra na minha casa”, “se comer, já era”.</li>
+          <li><strong>Plot twist:</strong> “Tá… a verdade:” / “Agora sem terrorismo nutricional:”</li>
+          <li><strong>Sensorial:</strong> quente, crocante, macio, cheiro de padaria, “conforto”, “quentinho no coração”.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <ul>
+          <li><strong>CTA principal (comentários):</strong> “Comenta seu TOP 1: francês, brioche, croissant ou focaccia.”</li>
+          <li><strong>CTA secundário (marcações):</strong> “Marca alguém que sempre pergunta ‘qual é o melhor?’”</li>
+          <li><strong>CTA de sequência:</strong> “Quer versão ‘melhor pro café da manhã / pré-treino / intestino’? comenta ‘QUERO’.”</li>
+        </ul>
+        <p class="footerNote"><span class="muted">Dica:</span> escolha 1 CTA principal por vídeo para não diluir ação.</p>
+      </section>
+
+      <section class="card">
+        <h2>Checklist (criação rápida)</h2>
+        <div class="cols">
+          <div>
+            <h2>Pré-roteiro</h2>
+            <ul>
+              <li>Definir tema com <strong>preferência popular</strong> (comida/suplemento/hábito).</li>
+              <li>Selecionar <strong>4 opções específicas</strong> (nomes do dia a dia).</li>
+              <li>Separar <strong>3 clichês extremistas</strong> para satirizar (inflama/engorda/proibido).</li>
+              <li>Escrever <strong>1 plot twist</strong> (“Tá… a verdade:”).</li>
+            </ul>
+          </div>
+          <div>
+            <h2>Gravação + edição</h2>
+            <ul>
+              <li>Gravar “rant” em frases curtas (energia alta) + <strong>jump cuts</strong>.</li>
+              <li>Marcar a virada com <strong>pausa</strong> (0,3–0,7s) e troca de expressão.</li>
+              <li>Adicionar <strong>legendas grandes</strong> (2–5 palavras por bloco).</li>
+              <li>Final com tela de opções + <strong>pergunta de time</strong>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Variações (mesma fórmula, outros temas)</h2>
+        <ul>
+          <li><strong>Emagrecimento:</strong> “Pão no café da manhã: sim ou não?” (radical: “nunca”; real: “depende do total do dia e da saciedade”).</li>
+          <li><strong>Esportiva:</strong> “Pré-treino: banana, pão com mel ou tapioca?” (radical: “só low carb”; real: “carbo ajuda performance”).</li>
+          <li><strong>Clínica (intestino):</strong> “Leite, iogurte ou queijo: qual piora o intestino?” (radical: “lactose pra todos”; real: “depende de tolerância e quantidade”).</li>
+          <li><strong>Comportamento alimentar:</strong> “Doce depois do almoço: pode?” (radical: “nunca”; real: “planejado, sem culpa, com estratégia”).</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const toast = document.getElementById('toast');
+
+    function showToast(){
+      toast.style.display = 'block';
+      clearTimeout(window.__t);
+      window.__t = setTimeout(() => toast.style.display = 'none', 1400);
+    }
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast();
+      } catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast();
+      }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      const script = document.getElementById('script').innerText;
+      copyText(script);
+    });
+
+    document.getElementById('copyHooks').addEventListener('click', () => {
+      const hooks = Array.from(document.querySelectorAll('#hooksList .chip')).map(x => x.innerText).join('\n');
+      copyText(hooks);
+    });
+  </script>
+</body>
+</html>
