@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Dia 11 — Rotina de blocos (Reels)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.08);
+    --stroke:rgba(255,255,255,.10);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.55);
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --r12: 16px;
+    --r16: 22px;
+    --grad: linear-gradient(90deg, #22c55e 0%, #3b82f6 45%, #f97316 100%);
+    --grad2: radial-gradient(800px 400px at 20% 0%, rgba(34,197,94,.18), transparent 55%),
+             radial-gradient(800px 400px at 70% 10%, rgba(59,130,246,.16), transparent 60%),
+             radial-gradient(700px 420px at 60% 90%, rgba(249,115,22,.12), transparent 60%);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background: var(--grad2), linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px}
+  header{
+    position:relative;
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+    border-radius: var(--r16);
+    box-shadow: var(--shadow);
+    padding:18px 18px 16px;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(90deg, rgba(34,197,94,.18), rgba(59,130,246,.12), rgba(249,115,22,.12));
+    opacity:.55;
+    pointer-events:none;
+    mask-image: radial-gradient(900px 240px at 20% 0%, black 10%, transparent 70%);
+  }
+  .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; position:relative}
+  .chips{display:flex; gap:10px; flex-wrap:wrap}
+  .chip{
+    font-size:12px;
+    padding:7px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.20);
+    color: rgba(234,240,255,.86);
+    backdrop-filter: blur(10px);
+  }
+  .chip strong{color: #fff; font-weight:700}
+  .hgroup{margin-top:10px; position:relative}
+  h1{margin:0; font-size:20px; line-height:1.25; letter-spacing:.2px}
+  .sub{margin-top:8px; color: var(--muted); font-size:13px; line-height:1.45}
+  .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; position:relative}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    gap:10px;
+    padding:10px 12px;
+    border-radius: 12px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color: rgba(234,240,255,.92);
+    font-weight:650;
+    font-size:13px;
+    cursor:pointer;
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    user-select:none;
+  }
+  .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22)}
+  .btn.primary{
+    border:0;
+    background: var(--grad);
+    color:#071019;
+    box-shadow: 0 10px 30px rgba(59,130,246,.18);
+  }
+  .btn.primary:hover{filter:saturate(1.05) brightness(1.02)}
+  .grid{
+    display:grid;
+    grid-template-columns: 1.25fr .75fr;
+    gap:14px;
+    margin-top:14px;
+  }
+  @media (max-width: 920px){.grid{grid-template-columns:1fr}}
+  .card{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.05);
+    border-radius: var(--r16);
+    box-shadow: 0 14px 45px rgba(0,0,0,.35);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 14px 10px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .card .hd h2{margin:0; font-size:14px; letter-spacing:.18px}
+  .card .bd{padding:14px}
+  .kicker{font-family:var(--mono); font-size:12px; color: rgba(234,240,255,.70)}
+  .hr{height:1px; background: rgba(255,255,255,.08); margin:12px 0}
+  ul{margin:0; padding-left:18px; color: var(--muted)}
+  li{margin:7px 0}
+  .muted{color: var(--muted)}
+  .muted2{color: var(--muted2)}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px;
+    padding:6px 10px;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:999px;
+    background: rgba(0,0,0,.22);
+    white-space:nowrap;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; background: var(--grad)}
+  .script{
+    font-family: var(--mono);
+    font-size: 12.6px;
+    line-height: 1.55;
+    color: rgba(234,240,255,.9);
+    background: rgba(0,0,0,.30);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px;
+    padding: 12px;
+    overflow:auto;
+    white-space:pre-wrap;
+  }
+  .two{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  @media (max-width: 720px){.two{grid-template-columns:1fr}}
+  .callout{
+    border:1px solid rgba(255,255,255,.12);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius: 16px;
+    padding: 12px;
+  }
+  .callout .t{
+    font-weight:800;
+    letter-spacing:.22px;
+    font-size:12px;
+    background: var(--grad);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    margin-bottom:6px;
+  }
+  .small{font-size:12px; line-height:1.45}
+  .footerNote{
+    margin-top:14px;
+    color: rgba(234,240,255,.55);
+    font-size:12px;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <div class="chip"><strong>Nicho</strong>: Produtividade</div>
+          <div class="chip"><strong>Dia</strong>: 11</div>
+          <div class="chip"><strong>Formato</strong>: Reels</div>
+          <div class="chip"><strong>Pilar</strong>: Passo a passo</div>
+        </div>
+        <a class="chip" href="https://www.instagram.com/p/DUY_RjaEkbC/" target="_blank" rel="noreferrer">Post original ↗</a>
+      </div>
+      <div class="hgroup">
+        <h1>Rotina de blocos: produza 2h sem travar (roteiro pronto)</h1>
+        <div class="sub">Modelo reproduzível: tempo fechado + 4 blocos + pausas + “etapa mais importante” + revisão final. Ideal para estudo, planejamento, execução de tarefas ou produção de conteúdo.</div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <button class="btn" id="copyHookBtn">Copiar ganchos</button>
+        <a class="btn" href="#checklist">Ir para checklist</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="pill"><span class="dot"></span> Ordem &gt; Esforço</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Promessa:</strong> entregar um roteiro de tempo pronto para executar agora e render mais.</li>
+            <li><strong>Mecanismo:</strong> blocos curtos + pausas programadas + revisão/fechamento.</li>
+            <li><strong>Por que salva:</strong> é operacional (o que fazer em cada bloco), fácil de testar hoje e vira “modelo” pro seguidor repetir.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="two">
+            <div class="callout">
+              <div class="t">Regra do post</div>
+              <div class="small muted">Sempre destaque 1 etapa como “a mais importante” e dê 1 dica anti-erro para evitar esforço desperdiçado.</div>
+            </div>
+            <div class="callout">
+              <div class="t">Meta de retenção</div>
+              <div class="small muted">Mudar de bloco a cada 2–4s e colocar o tempo como texto gigante na tela.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Metadados de execução</h2>
+          <span class="kicker">pronto pra calendário</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Objetivo do Reels:</strong> aumentar salvamentos e seguidores com um “template” de rotina.</li>
+            <li><strong>Duração:</strong> 28–40s.</li>
+            <li><strong>Áudio:</strong> baixo/lofi + “tick” nas transições.</li>
+            <li><strong>Cenário:</strong> mesa + tela (notion/agenda) ou b-roll simples.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura (reproduzível)</h2>
+          <span class="pill"><span class="dot"></span> 4 blocos + 3 pausas</span>
+        </div>
+        <div class="bd">
+          <ol class="muted" style="margin:0; padding-left:18px">
+            <li><strong>Hook (0–2s):</strong> pergunta/benefício + tempo fechado.</li>
+            <li><strong>Contexto mínimo (2–4s):</strong> “Segue a rotina em blocos”.</li>
+            <li><strong>Bloco 1 — Entrada (4–10s):</strong> preparar/entender/coletar.</li>
+            <li><strong>Pausa (10–11s):</strong> 5 min (reforça método).</li>
+            <li><strong>Bloco 2 — Processar (11–18s):</strong> organizar/decidir/priorizar.</li>
+            <li><strong>Pausa (18–19s)</strong></li>
+            <li><strong>Bloco 3 — Aplicar (19–27s):</strong> executar (etapa mais importante).</li>
+            <li><strong>Pausa (27–28s)</strong></li>
+            <li><strong>Bloco 4 — Revisão (28–33s):</strong> checar resultado + próximo passo.</li>
+            <li><strong>CTA (33–36s):</strong> salvar + testar hoje + comentário-chave.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Roteiro (falas + texto na tela)</h2>
+          <span class="kicker">cole, ajuste X e poste</span>
+        </div>
+        <div class="bd">
+          <div class="script" id="scriptText">[0–2s | TEXTO GRANDE]
+"Como fazer X em 2 horas (sem travar)?"
+
+[2–4s | VOCÊ NA CÂMERA]
+"Faz nessa ordem: 4 blocos + pausas curtas. É simples e funciona."
+
+[4–10s | TELA: 30 min — ENTRADA]
+"Primeiro: 30 minutos pra entrar no assunto/objetivo.
+Se for produtividade: abre a lista e escolhe 1 entrega do dia. Nada de 15 tarefas."
+
+[10–11s | TELA: 5 min — PAUSA]
+"5 minutos de pausa. Levanta, água, sem tela."
+
+[11–18s | TELA: 30 min — PROCESSAR]
+"Depois: 30 minutos pra organizar.
+Quebra em 3 passos, define o ‘próximo clique’ e remove o que te distrai."
+
+[18–19s | TELA: 5 min — PAUSA]
+"Mais 5 minutos. Isso mantém seu cérebro ‘ligado’ por mais tempo."
+
+[19–27s | TELA: 30 min — APLICAR (MAIS IMPORTANTE)]
+"Agora vem o mais importante: 30 minutos de execução real.
+Entrega algo visível: rascunho, e-mail enviado, página pronta, tarefa concluída.
+Dica anti-erro: não ‘organiza’ de novo. Faz."
+
+[27–28s | TELA: 5 min — PAUSA]
+"Última pausa: 5 minutos."
+
+[28–33s | TELA: 15 min — REVISÃO]
+"Pra fechar: 15 minutos de revisão.
+O que ficou pendente? Qual o próximo passo de 2 minutos pra amanhã?"
+
+[33–36s | TELA: CTA]
+"Salva pra testar hoje.
+Comenta ‘BLOCOS’ que eu te mando uma versão pra (seu objetivo)."</div>
+          <div class="hr"></div>
+          <div class="two">
+            <div class="callout">
+              <div class="t">Como preencher o X (sem pensar muito)</div>
+              <div class="small muted">X deve ser uma entrega específica: “escrever 1 post”, “zerar inbox”, “planejar semana”, “estudar capítulo”, “organizar projetos”.</div>
+            </div>
+            <div class="callout">
+              <div class="t">Tempo alternativo (mais curto)</div>
+              <div class="small muted">Versão 60 min: 15/3/15/3/15/3/6 (mantém a lógica + revisão final).</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais (edição replicável)</h2>
+          <span class="pill"><span class="dot"></span> cortes + números</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Cortes secos</strong> em toda troca de etapa (sempre que mudar o tempo).</li>
+            <li><strong>Texto gigante</strong>: “30 min”, “5 min”, “15 min” + nome do bloco (ENTRADA / PROCESSAR / APLICAR / REVISÃO).</li>
+            <li><strong>Barra de progresso</strong> (opcional) no topo: 0% → 100%.</li>
+            <li><strong>Som de tick</strong> a cada transição (padrão reconhecível).</li>
+            <li><strong>Zoom leve</strong> quando falar “mais importante”.</li>
+            <li><strong>Legenda dinâmica</strong> destacando palavras: EXECUTAR / ENTREGAR / PRÓXIMO PASSO.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos (prontos)</h2>
+          <span class="kicker">uso imediato</span>
+        </div>
+        <div class="bd">
+          <div class="two">
+            <div class="callout">
+              <div class="t">Hooks (0–2s)</div>
+              <ul>
+                <li>“Como fazer X em 2 horas sem procrastinar?”</li>
+                <li>“Se você só tem 2 horas hoje, faz nessa ordem.”</li>
+                <li>“Você trava porque está na ordem errada. Faz assim em 2h:”</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <div class="t">Frases de retenção (no meio)</div>
+              <ul>
+                <li>“Essa pausa é parte do método.”</li>
+                <li>“Agora vem a etapa mais importante.”</li>
+                <li>“Dica anti-erro: não confunde planejamento com execução.”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="t">Legenda curta (modelo)</div>
+            <div class="small muted" id="captionModel">Roteiro de 2 horas pra você produzir sem travar: 30/5/30/5/30/5/15.
+Salva pra fazer hoje e me comenta “BLOCOS” que eu adapto pro seu objetivo.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="pill"><span class="dot"></span> salvar + comentar</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Primário (salvar):</strong> “Salva esse vídeo e testa hoje.”</li>
+            <li><strong>Prova/feedback:</strong> “Depois volta aqui e me diz qual bloco foi mais difícil.”</li>
+            <li><strong>Engajamento (comentário):</strong> “Comenta ‘BLOCOS’ que eu te mando uma versão pra [objetivo].”</li>
+            <li><strong>Follow:</strong> “Segue pra mais rotinas de 15–60 min pra vida real.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" id="checklist">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <span class="kicker">pré • gravação • edição • publicação</span>
+        </div>
+        <div class="bd">
+          <div class="two">
+            <div class="callout">
+              <div class="t">Antes de gravar</div>
+              <ul>
+                <li>Definir <strong>objetivo específico</strong>: “X em 2 horas”.</li>
+                <li>Escolher <strong>4 blocos + 3 pausas</strong> (ou 3+2 se o vídeo for curto).</li>
+                <li>Decidir a <strong>etapa mais importante</strong> (onde está o maior ganho).</li>
+                <li>Escrever <strong>1 dica anti-erro</strong> (o que a maioria faz e atrasaria).</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <div class="t">Roteiro (na ordem)</div>
+              <ul>
+                <li>Hook com pergunta + tempo.</li>
+                <li>Contexto em 1 frase (“4 blocos + pausas”).</li>
+                <li>Bloco 1: entrada.</li>
+                <li>Pausa.</li>
+                <li>Bloco 2: processar.</li>
+                <li>Pausa.</li>
+                <li>Bloco 3: aplicar (diga “mais importante”).</li>
+                <li>Pausa.</li>
+                <li>Bloco 4: revisão + próximo passo.</li>
+                <li>CTA salvar + comentar palavra.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="two">
+            <div class="callout">
+              <div class="t">Edição</div>
+              <ul>
+                <li>Texto grande com tempo + nome do bloco.</li>
+                <li>Corte a cada troca de etapa.</li>
+                <li>Ênfase visual na etapa mais importante (zoom/cor).</li>
+                <li>Tick/transition padrão + legendas com palavras-chave.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <div class="t">Publicação</div>
+              <ul>
+                <li>Legenda curta reforçando “roteiro pronto”.</li>
+                <li>CTA para <strong>salvar</strong> (conteúdo de uso).</li>
+                <li>3–7 hashtags específicas (ex.: #produtividade #foco #rotina).</li>
+                <li>Fixar comentário: “Comenta BLOCOS + seu objetivo”.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações (5 temas de produtividade)</h2>
+          <span class="kicker">mesma estrutura, novo X</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Planejar a semana (20–30 min):</strong> Entrada = calendário; Processar = escolher 3 prioridades; Aplicar = bloquear agenda; Revisão = checar conflitos.</li>
+            <li><strong>Zerar inbox (30–60 min):</strong> Entrada = filtros/pastas; Processar = triagem rápida; Aplicar = responder/delegar; Revisão = rotina diária de 10 min.</li>
+            <li><strong>Rotina de foco (60–120 min):</strong> Entrada = preparar ambiente; Processar = definir próximo passo; Aplicar = sprint de execução; Revisão = checklist do que faltou.</li>
+            <li><strong>Limpar lista de tarefas:</strong> Entrada = juntar tudo; Processar = deletar/adiar/delegar; Aplicar = executar 1 tarefa de 15 min; Revisão = definir limite diário.</li>
+            <li><strong>Criar conteúdo (2h):</strong> Entrada = pesquisa; Processar = outline; Aplicar = gravação/escrita; Revisão = cortes + thumbnail + agendar.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <div class="footerNote">Dica de consistência: mantenha o mesmo padrão de tempos e identidade (tick + texto grande). O público reconhece e salva mais.</div>
+  </div>
+
+<script>
+  function copyTextFromEl(el){
+    const txt = el.innerText;
+    navigator.clipboard.writeText(txt);
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    copyTextFromEl(document.getElementById('scriptText'));
+    this.innerText = 'Roteiro copiado';
+    setTimeout(()=> this.innerText = 'Copiar roteiro', 1400);
+  });
+
+  document.getElementById('copyHookBtn').addEventListener('click', function(){
+    const hooks = [
+      'Como fazer X em 2 horas (sem travar)?',
+      'Se você só tem 2 horas hoje, faz nessa ordem.',
+      'Você trava porque está na ordem errada. Faz assim em 2h:'
+    ].join('\n');
+    navigator.clipboard.writeText(hooks);
+    this.innerText = 'Ganchos copiados';
+    setTimeout(()=> this.innerText = 'Copiar ganchos', 1400);
+  });
+</script>
+</body>
+</html>
