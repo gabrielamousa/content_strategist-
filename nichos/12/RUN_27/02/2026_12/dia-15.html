@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dia 15 — Professores — Roteiro de Carrossel</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B132A;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:#AAB6E8;
+      --muted2:#7F8BC7;
+      --shadow: 0 14px 40px rgba(0,0,0,.55);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --g1: linear-gradient(90deg,#2AF598 0%, #009EFD 55%, #FF9A3D 100%);
+      --g2: linear-gradient(135deg, rgba(42,245,152,.22), rgba(0,158,253,.18), rgba(255,154,61,.16));
+      --good:#2AF598;
+      --warn:#FF9A3D;
+      --info:#009EFD;
+      --danger:#FF4D6D;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(0,158,253,.18), transparent 60%),
+        radial-gradient(900px 600px at 85% 20%, rgba(42,245,152,.12), transparent 58%),
+        radial-gradient(900px 600px at 60% 90%, rgba(255,154,61,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    a{color:inherit; text-decoration:none;}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px;}
+
+    .topbar{
+      display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between;
+      gap:16px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius:var(--r20);
+      padding:18px 18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .topbar:before{
+      content:"";
+      position:absolute; inset:-1px;
+      background: var(--g2);
+      opacity:.7;
+      pointer-events:none;
+      mask: linear-gradient(#000, transparent 70%);
+    }
+
+    .kicker{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);}
+    h1{margin:6px 0 10px; font-size:26px; line-height:1.15;}
+    .meta{
+      display:flex; flex-wrap:wrap; gap:10px 12px; align-items:center;
+      color:var(--muted);
+      font-size:13px;
+      position:relative;
+    }
+    .pill{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.18);
+      padding:6px 10px;
+      border-radius:999px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .dot{width:8px; height:8px; border-radius:50%; background:var(--info); box-shadow:0 0 0 3px rgba(0,158,253,.14);}
+    .dot.good{background:var(--good); box-shadow:0 0 0 3px rgba(42,245,152,.14);}
+    .dot.warn{background:var(--warn); box-shadow:0 0 0 3px rgba(255,154,61,.15);}
+
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; position:relative;}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke2);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+      display:inline-flex; align-items:center; gap:10px;
+      user-select:none;
+    }
+    .btn:hover{border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.07);}
+    .btn:active{transform: translateY(1px);}
+    .btn.primary{
+      border-color:rgba(0,158,253,.35);
+      background:linear-gradient(180deg, rgba(0,158,253,.18), rgba(0,158,253,.08));
+    }
+    .btn .icon{
+      width:18px; height:18px; display:inline-block;
+      background: var(--g1);
+      -webkit-mask: radial-gradient(circle at 30% 40%, #000 35%, transparent 36%) top left/50% 50% no-repeat,
+                    radial-gradient(circle at 70% 60%, #000 35%, transparent 36%) top right/50% 50% no-repeat,
+                    radial-gradient(circle at 30% 60%, #000 35%, transparent 36%) bottom left/50% 50% no-repeat,
+                    radial-gradient(circle at 70% 40%, #000 35%, transparent 36%) bottom right/50% 50% no-repeat;
+      mask: radial-gradient(circle at 30% 40%, #000 35%, transparent 36%) top left/50% 50% no-repeat,
+            radial-gradient(circle at 70% 60%, #000 35%, transparent 36%) top right/50% 50% no-repeat,
+            radial-gradient(circle at 30% 60%, #000 35%, transparent 36%) bottom left/50% 50% no-repeat,
+            radial-gradient(circle at 70% 40%, #000 35%, transparent 36%) bottom right/50% 50% no-repeat;
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media(min-width: 980px){
+      .grid{grid-template-columns: 1.1fr .9fr;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius:var(--r20);
+      padding:16px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute; inset:0;
+      background: var(--g2);
+      opacity:.35;
+      pointer-events:none;
+      mask: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+    }
+
+    .card h2{margin:0 0 10px; font-size:15px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+    .card p{margin:0; color:var(--text); line-height:1.5;}
+    .card .sub{color:var(--muted); font-size:13px; line-height:1.5;}
+
+    .list{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:10px; position:relative;}
+    .li{
+      padding:10px 10px;
+      background:rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:14px;
+      display:flex; gap:10px;
+      align-items:flex-start;
+    }
+    .tag{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,.10);
+      padding:4px 8px;
+      border-radius:999px;
+      white-space:nowrap;
+      background:rgba(255,255,255,.03);
+    }
+    .li strong{display:block; margin-bottom:2px;}
+    .li .txt{color:var(--text);}
+    .li .note{color:var(--muted); font-size:13px; line-height:1.45;}
+
+    .twoCol{display:grid; grid-template-columns: 1fr; gap:12px; margin-top:12px;}
+    @media(min-width: 980px){.twoCol{grid-template-columns: 1fr 1fr;}}
+
+    .callout{
+      margin-top:12px;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(0,158,253,.10), rgba(42,245,152,.06));
+    }
+    .callout .t{font-weight:800; letter-spacing:.02em;}
+    .callout .d{color:var(--muted); margin-top:4px; line-height:1.5;}
+
+    textarea{
+      width:100%; min-height:260px;
+      background:rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:16px;
+      padding:12px;
+      color:var(--text);
+      outline:none;
+      resize:vertical;
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.45;
+    }
+
+    .footerNote{margin-top:12px; color:var(--muted2); font-size:12px;}
+    .hr{height:1px; background:rgba(255,255,255,.10); margin:10px 0 0;}
+
+    .slides{counter-reset: s;}
+    .slideItem{counter-increment:s;}
+    .slideItem .tag:before{content:"Slide " counter(s);}
+
+    .mini{font-size:12px; color:var(--muted2);}
+    .gradText{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="topbar">
+      <div>
+        <div class="kicker">Calendário de Conteúdo</div>
+        <h1><span class="gradText">Dia 15</span> · Nicho: Professores · <span class="gradText">Carrossel</span></h1>
+        <div class="meta">
+          <span class="pill"><span class="dot good"></span> Pilar: Passo a passo</span>
+          <span class="pill"><span class="dot"></span> Título: O planejamento mais irreal cobrado da escola? (Template)</span>
+          <span class="pill"><span class="dot warn"></span> Fonte: <a href="https://www.instagram.com/p/DTyXuGjEff5/" target="_blank" rel="noopener">Post original</a></span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn" type="button"><span class="icon" aria-hidden="true"></span>Copiar roteiro</button>
+        <a class="btn" href="https://www.instagram.com/p/DTyXuGjEff5/" target="_blank" rel="noopener">Abrir post</a>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <p><strong>Objetivo do post:</strong> explicar uma <u>mudança/regra/cobrança</u> (da rede, coordenação ou política escolar) com narrativa editorial: <em>gancho emocional → prova lógica → impactos reais → orientação prática → CTA binário</em>.</p>
+        <div class="twoCol">
+          <div class="callout">
+            <div class="t">Quando usar</div>
+            <div class="d">BNCC mal interpretada, nova regra de avaliação/recuperação, cobrança de planejamento, diário digital, política de AI, calendário, metas, disciplina.</div>
+          </div>
+          <div class="callout" style="background: linear-gradient(180deg, rgba(255,154,61,.10), rgba(0,158,253,.06));">
+            <div class="t">Promessa central</div>
+            <div class="d">“Vou te mostrar <strong>o que mudou</strong>, <strong>por que isso pesa</strong> e <strong>o que dá pra fazer agora</strong> sem romantizar.”</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Estrutura (macro)</h2>
+        <ul class="list">
+          <li class="li"><span class="tag">Hook</span><div><strong>Gancho emocional</strong><div class="note">Pergunta polarizante + micro-CTA “arraste”.</div></div></li>
+          <li class="li"><span class="tag">Contexto</span><div><strong>Fato gerador (“a bomba”)</strong><div class="note">O que aconteceu, quando, quem definiu + tese do post.</div></div></li>
+          <li class="li"><span class="tag">Prova</span><div><strong>Antes vs Agora</strong><div class="note">Contraste em bullets curtos (escaneável).</div></div></li>
+          <li class="li"><span class="tag">Mecanismo</span><div><strong>O “vilão” específico</strong><div class="note">O detalhe que distorce o jogo (peso, critério, rubrica, prazo, ferramenta).</div></div></li>
+          <li class="li"><span class="tag">Impacto</span><div><strong>Consequências práticas</strong><div class="note">Como isso bate no dia a dia e em perfis diferentes.</div></div></li>
+          <li class="li"><span class="tag">Saída</span><div><strong>Orientação + acolhimento</strong><div class="note">Recomendações realistas, sem culpa no professor.</div></div></li>
+          <li class="li"><span class="tag">CTA</span><div><strong>Opinião binária + salvar + compartilhar</strong><div class="note">“SIM/NÃO” reduz fricção; share cresce com polêmica útil.</div></div></li>
+        </ul>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Roteiro</h2>
+        <p class="sub">Texto base para você apenas trocar o que está entre colchetes. Mantém a retenção com “re-gancho” no meio e 1 frase-martelo por slide.</p>
+
+        <div class="twoCol">
+          <div>
+            <h2 style="margin-top:14px;">Slides sugeridos (1..10)</h2>
+            <ul class="list slides" id="slidesList">
+              <li class="li slideItem"><span class="tag"></span><div><strong>CAPA (gancho)</strong><div class="note">Título: “O(a) <u>[tema]</u> mais <strong>[adjetivo polarizante]</strong> de <u>[ano/período]</u>?”<br/>Sub: “Entenda o que muda e por que isso pesa na sala de aula.”<br/><span class="mini">Micro-CTA:</span> “Arraste →”</div></div></li>
+              <li class="li slideItem"><span class="tag"></span><div><strong>O FATO (“a bomba”)</strong><div class="note">“Em <u>[data]</u>, <u>[rede/escola/coordenação]</u> anunciou <u>[mudança]</u>.”<br/><strong>Frase-martelo:</strong> “Na prática, isso pode <u>[impacto principal]</u>.”</div></div></li>
+              <li class="li slideItem"><span class="tag"></span><div><strong>Por que isso é problemático? (Antes vs Agora)</strong><div class="note"><strong>Antes</strong> ✅ [2–3 pontos objetivos]<br/><strong>Agora</strong> → [2–3 pontos objetivos]<br/><strong>Frase-martelo:</strong> “O jogo fica <u>[injusto/irreal/mais pesado]</u> porque <u>[razão central]</u>.”</div></div></li>
+              <li class="li slideItem"><span class="tag"></span><div><strong>Mecanismo 1 (o “vilão”)</strong><div class="note">“O fator <u>[X]</u> vira o centro porque <u>[causa]</u>.”<br/>Se possível: dado simples (peso, prazo, número de registros, quantidade de evidências).<br/><strong>Âncora sublinhada:</strong> “<u>[termo-chave]</u>”.</div></div></li>
+              <li class="li slideItem"><span class="tag"></span><div><strong>Mecanismo 2 (efeito colateral)</strong><div class="note">“Quando <u>[mudança]</u> acontece, o efeito colateral é <u>[consequência]</u>.”<br/><strong>Box:</strong> “O risco aqui é: <u>[erro comum que a gestão/professor pode cair]</u>.”</div></div></li>
+              <li class="li slideItem"><span class="tag"></span><div><strong>Impacto no dia a dia (dilema real)</strong><div class="note"><strong>Pergunta:</strong> “O que o professor faz quando <u>[situação real]</u>?”<br/><strong>Resposta curta:</strong> “Você não precisa <u>[culpa]</u> — precisa de <u>[critério]</u>.”<br/><strong>Nota:</strong> 1 recomendação inicial aplicável amanhã.</div></div></li>
+              <li class="li slideItem"><span class="tag"></span><div><strong>Personagens (3 perfis)</strong><div class="note">Perfil A: “Quem <u>[característica]</u> tende a <u>[efeito]</u>.”<br/>Perfil B: “Quem <u>[característica]</u> tende a <u>[efeito]</u>.”<br/>Perfil C (gestão/aluno/família): “Isso vira <u>[tensão]</u>.”<br/><strong>Box sentimento:</strong> “O sentimento geral: <u>[frustração/ansiedade/aperto]</u>.”</div></div></li>
+              <li class="li slideItem"><span class="tag"></span><div><strong>RE-GANCHO (capa intermediária)</strong><div class="note">Título: “O pior <u>[subtema]</u> de todos os tempos?”<br/>1–2 linhas: “E tem um detalhe que quase ninguém está falando…”</div></div></li>
+              <li class="li slideItem"><span class="tag"></span><div><strong>Acolhimento + orientação (3 passos)</strong><div class="note">“Eu sei que isso pesa porque <u>[validação]</u>.”<br/><strong>👉 Faça assim:</strong><br/>1) <u>[passo 1]</u><br/>2) <u>[passo 2]</u><br/>3) <u>[passo 3]</u><br/><strong>Fecho:</strong> “A ideia é proteger <u>[aprendizagem/tempo/saúde mental]</u> sem perder <u>[qualidade]</u>.”</div></div></li>
+              <li class="li slideItem"><span class="tag"></span><div><strong>CTA final (simples e forte)</strong><div class="note"><strong>Pergunta:</strong> “Você concorda com <u>[medida]</u>?”<br/><strong>Comentário:</strong> “SIM” ou “NÃO” (e por quê em 1 frase).<br/><strong>Distribuição:</strong> “Compartilhe com um(a) professor(a) que está vivendo isso.”<br/><strong>Retenção:</strong> “Salve para consultar depois.”<br/><strong>Crescimento:</strong> “Siga para mais templates de gestão de sala e vida real docente.”</div></div></li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 style="margin-top:14px;">Roteiro pronto (para copiar)</h2>
+            <textarea id="scriptArea" spellcheck="false">CARROSSEL (10 SLIDES) — TEMPLATE PARA PROFESSORES
+
+[SLIDE 1 — CAPA]
+“O(a) [TEMA] mais [ADJETIVO] de [PERÍODO]?”
+Sub: “Entenda o que muda e por que isso pesa na sala de aula.”
+Arraste →
+
+[SLIDE 2 — A BOMBA]
+“Em [DATA], [REDE/ESCOLA/COORDENAÇÃO] anunciou [MUDANÇA].”
+Frase-martelo: “Na prática, isso pode [IMPACTO PRINCIPAL].”
+
+[SLIDE 3 — ANTES VS AGORA]
+Antes ✅
+- [PONTO 1]
+- [PONTO 2]
+- [PONTO 3]
+Agora →
+- [PONTO 1]
+- [PONTO 2]
+- [PONTO 3]
+Frase-martelo: “O jogo fica [INJUSTO/IRREAL] porque [RAZÃO CENTRAL].”
+
+[SLIDE 4 — O ‘VILÃO’ ESPECÍFICO]
+“O detalhe que muda tudo é [FATOR X].”
+“Ele pesa mais porque [CAUSA].”
+Se der: número rápido ([PESO]/[PRAZO]/[QUANTIDADE]).
+Âncora: “[TERMO-CHAVE]”.
+
+[SLIDE 5 — EFEITO COLATERAL]
+“Quando [MUDANÇA] acontece, o efeito colateral é [CONSEQUÊNCIA].”
+Box: “O risco aqui é: [ERRO COMUM].”
+
+[SLIDE 6 — DILEMA REAL]
+“E no dia a dia, o que o professor faz quando [SITUAÇÃO REAL]?”
+Resposta: “Você não precisa [CULPA]. Precisa de [CRITÉRIO/PROCESSO].”
+Recomendação inicial: [1 AÇÃO APLICÁVEL AMANHÃ].
+
+[SLIDE 7 — QUEM SOFRE MAIS? (3 PERFIS)]
+- Perfil A: [DESCRIÇÃO] → [EFEITO]
+- Perfil B: [DESCRIÇÃO] → [EFEITO]
+- Perfil C (gestão/aluno/família): [DESCRIÇÃO] → [EFEITO]
+Box: “O sentimento geral: [FRUSTRAÇÃO/ANSIEDADE].”
+
+[SLIDE 8 — RE-GANCHO]
+“O pior [SUBTEMA] de todos os tempos?”
+“E tem um detalhe que quase ninguém está falando…”
+
+[SLIDE 9 — ACOLHIMENTO + 3 PASSOS]
+“Eu sei que isso pesa porque [VALIDAÇÃO].”
+👉 Faça assim:
+1) [PASSO 1]
+2) [PASSO 2]
+3) [PASSO 3]
+Fecho: “A ideia é proteger [APRENDIZAGEM/TEMPO/SAÚDE MENTAL] sem perder [QUALIDADE].”
+
+[SLIDE 10 — CTA]
+“Você concorda com [MEDIDA]?”
+Comente: SIM ou NÃO (e por quê em 1 frase).
+Salve para consultar depois.
+Compartilhe com um(a) professor(a) que está vivendo isso.
+Siga para mais templates e estratégias de vida real docente.</textarea>
+            <div class="footerNote" id="copyStatus">Dica: substitua os colchetes e mantenha 1 frase-martelo por slide.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <ul class="list">
+          <li class="li"><span class="tag">Dois mundos</span><div><strong>Impacto vs Didático</strong><div class="note">Capa e re-gancho com foto + overlay escuro. Slides didáticos com fundo azul/grade sutil e boxes.</div></div></li>
+          <li class="li"><span class="tag">Regra 1</span><div><strong>1 ideia por slide</strong><div class="note">Sempre terminar com uma frase “printável” (sublinhada/negritada).</div></div></li>
+          <li class="li"><span class="tag">Regra 2</span><div><strong>Escaneabilidade</strong><div class="note">Bullets curtos ✅ / 👉, margens generosas, alinhamento à esquerda, 2 linhas no título.</div></div></li>
+          <li class="li"><span class="tag">Componentes</span><div><strong>Kit Canva/Figma</strong><div class="note">Seta “Arraste →”, box de conclusão, selo “Antes/Agora”, ícones ✅ e 👉, sublinhado estilo marca-texto.</div></div></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos</h2>
+        <ul class="list">
+          <li class="li"><span class="tag">Capa</span><div><strong>Fórmula</strong><div class="note">“O(a) [tema] mais [adjetivo polarizante] e [adjetivo de escala] de [período]?”</div></div></li>
+          <li class="li"><span class="tag">Títulos</span><div><strong>Perguntas que retêm</strong><div class="note">“Por que isso virou injusto?” · “O que mudou de verdade?” · “Quem vai pagar a conta?”</div></div></li>
+          <li class="li"><span class="tag">Prova</span><div><strong>Concretude</strong><div class="note">Insira quantificadores: “em 48h”, “peso 2”, “3 evidências”, “1 registro por aula”, “X planilhas”.</div></div></li>
+          <li class="li"><span class="tag">Tom</span><div><strong>Editorial + empático</strong><div class="note">Crítica ao sistema/processo, não ao professor. Validação + saída prática.</div></div></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <div class="callout" style="background: linear-gradient(180deg, rgba(42,245,152,.10), rgba(255,154,61,.06));">
+          <div class="t">CTA em camadas (reproduzível)</div>
+          <div class="d">
+            <strong>1)</strong> Comentário fácil: “SIM/NÃO”.<br/>
+            <strong>2)</strong> Compartilhar: “manda no grupo da escola / para um colega”.<br/>
+            <strong>3)</strong> Salvar: “para consultar na próxima reunião/planejamento”.<br/>
+            <strong>4)</strong> Seguir: “para receber templates práticos toda semana”.
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Checklist (criação rápida)</h2>
+        <div class="twoCol">
+          <div>
+            <ul class="list">
+              <li class="li"><span class="tag">Tema</span><div><strong>Defina o assunto em 1 linha</strong><div class="note">[mudança/regra/cobrança] + onde (rede/escola) + quando.</div></div></li>
+              <li class="li"><span class="tag">Tese</span><div><strong>Escolha a “frase-martelo”</strong><div class="note">Uma frase que dá o motivo do incômodo (injusto/irreal/mais pesado).</div></div></li>
+              <li class="li"><span class="tag">Prova</span><div><strong>Escreva o Antes vs Agora</strong><div class="note">3 bullets para cada lado, sem parágrafo.</div></div></li>
+              <li class="li"><span class="tag">Mecanismo</span><div><strong>Nomeie o vilão</strong><div class="note">O detalhe técnico (rubrica, peso, prazo, plataforma, critério).</div></div></li>
+            </ul>
+          </div>
+          <div>
+            <ul class="list">
+              <li class="li"><span class="tag">Impacto</span><div><strong>Liste 2 consequências</strong><div class="note">Uma para o professor (tempo/energia) e uma para o aluno (equidade/aprendizagem).</div></div></li>
+              <li class="li"><span class="tag">Saída</span><div><strong>Traga 3 passos realistas</strong><div class="note">Coisas possíveis em escola real: priorizar, documentar, comunicar, negociar critério.</div></div></li>
+              <li class="li"><span class="tag">Design</span><div><strong>Padronize</strong><div class="note">2 fontes, 1 cor base + 1 destaque, 1 box por slide, 1 sublinhado.</div></div></li>
+              <li class="li"><span class="tag">CTA</span><div><strong>Finalize com pergunta binária</strong><div class="note">SIM/NÃO + convite para compartilhar com “um professor que precisa ver isso”.</div></div></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Variações</h2>
+        <ul class="list">
+          <li class="li"><span class="tag">V1</span><div><strong>“Erro comum”</strong><div class="note">Troque a tese: “O maior erro ao aplicar [tema] é…” e no final: “Quer checklist? Comenta ‘CHECK’.”</div></div></li>
+          <li class="li"><span class="tag">V2</span><div><strong>“Mito vs Verdade”</strong><div class="note">Slides 3–6 viram 4 mitos/verdades. Mantém o re-gancho no slide 8.</div></div></li>
+          <li class="li"><span class="tag">V3</span><div><strong>“Checklist salvável”</strong><div class="note">Slide 9 vira checklist de 7 itens (“salva isso”). CTA: “Salva + manda no grupo.”</div></div></li>
+          <li class="li"><span class="tag">V4</span><div><strong>Com prova social</strong><div class="note">Inclua 1 print/anônimo (ou dado) no slide 5: “Isso apareceu em X escolas/relatos”.</div></div></li>
+        </ul>
+        <div class="hr"></div>
+        <div class="footerNote">Ajuste o grau de polêmica: forte o suficiente para gerar comentário, mas sempre terminando com orientação prática.</div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const area = document.getElementById('scriptArea');
+      const status = document.getElementById('copyStatus');
+
+      async function copy(){
+        try{
+          area.focus();
+          area.select();
+          const text = area.value;
+          if (navigator.clipboard && window.isSecureContext){
+            await navigator.clipboard.writeText(text);
+          } else {
+            document.execCommand('copy');
+          }
+          status.textContent = 'Roteiro copiado. Agora é só substituir os [colchetes] e montar no Canva.';
+        } catch(e){
+          status.textContent = 'Não consegui copiar automaticamente. Selecione o texto e copie manualmente.';
+        }
+        setTimeout(()=>{
+          status.textContent = 'Dica: substitua os colchetes e mantenha 1 frase-martelo por slide.';
+        }, 4500);
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
