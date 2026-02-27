@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roteiro reproduzível — Dia 29</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1624;
+      --card:#101a2c;
+      --text:#e8eefc;
+      --muted:#a9b4cc;
+      --stroke:rgba(255,255,255,.08);
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --radius:16px;
+
+      --g1: linear-gradient(135deg, #22c55e 0%, #38bdf8 55%, #fb923c 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.22), rgba(56,189,248,.18), rgba(251,146,60,.18));
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(251,146,60,.16), transparent 55%),
+        radial-gradient(900px 600px at 50% 105%, rgba(34,197,94,.14), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 16px 64px}
+
+    header{
+      background: var(--g2);
+      border: 1px solid var(--stroke);
+      border-radius: calc(var(--radius) + 6px);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g1);
+      opacity:.12;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .headTop{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;position:relative}
+    .badgeRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .badge{
+      border:1px solid var(--stroke);
+      background: rgba(15,22,36,.55);
+      padding:8px 10px;
+      border-radius:999px;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .badge strong{color:var(--text);font-weight:650}
+
+    h1{margin:12px 0 8px;font-size:22px;letter-spacing:-.3px;position:relative}
+    .sub{margin:0;color:var(--muted);font-size:13px;position:relative}
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;position:relative}
+    .btn{
+      appearance:none;border:1px solid var(--stroke);
+      background: rgba(16,26,44,.75);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:650;
+      cursor:pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      font-size: 13px;
+    }
+    .btn:hover{transform: translateY(-1px);border-color: rgba(255,255,255,.14);background: rgba(16,26,44,.92)}
+    .btn.primary{
+      border: none;
+      background: var(--g1);
+      color: #07101a;
+    }
+
+    main{margin-top:18px;display:grid;grid-template-columns: 1.05fr .95fr;gap:16px}
+    @media (max-width: 920px){main{grid-template-columns:1fr}}
+
+    section{
+      background: rgba(15,22,36,.62);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .secTitle{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+    .dot{width:10px;height:10px;border-radius:999px;background: var(--g1);box-shadow: 0 0 0 4px rgba(255,255,255,.03)}
+    h2{font-size:14px;margin:0;letter-spacing:.2px}
+
+    .p{margin:0;color:var(--muted);font-size:13px}
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 720px){.grid2{grid-template-columns:1fr}}
+
+    .card{
+      background: rgba(16,26,44,.72);
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .k{font-size:12px;color:var(--muted);margin:0 0 6px}
+    .v{margin:0;font-size:13px;color:var(--text)}
+
+    ul{margin:8px 0 0 18px;color:var(--muted);font-size:13px}
+    li{margin:6px 0}
+
+    .code{
+      background: rgba(6,10,18,.65);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 12px;
+      color: #deebff;
+      font-size: 13px;
+      overflow:auto;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+
+    .mini{
+      font-size:12px;color:var(--muted);margin-top:10px
+    }
+
+    .pillRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .pill{
+      font-size:12px;
+      border:1px solid var(--stroke);
+      background: rgba(16,26,44,.55);
+      color: var(--muted);
+      padding:7px 10px;
+      border-radius: 999px;
+    }
+
+    .split{
+      display:grid;grid-template-columns: 1fr;gap:12px;
+    }
+
+    .hr{height:1px;background:rgba(255,255,255,.06);margin:12px 0}
+
+    .toast{
+      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+      background: rgba(10,15,24,.8);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      opacity:0;pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(-2px)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headTop">
+        <div class="badgeRow">
+          <div class="badge"><strong>Nicho:</strong> Neutro</div>
+          <div class="badge"><strong>Dia:</strong> 29</div>
+          <div class="badge"><strong>Formato:</strong> Carrossel</div>
+          <div class="badge"><strong>Pilar:</strong> Desejo</div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DSFTNgpEVN8/" target="_blank" rel="noopener">Abrir post original</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <h1>1 hábito bom x 30 tentações (meme que todo mundo vive)</h1>
+      <p class="sub">Modelo reproduzível de humor + identificação: meta → fricção → tentação → comparação → punchline → CTA.</p>
+    </header>
+
+    <main>
+      <div class="split">
+        <section>
+          <div class="secTitle"><span class="dot"></span><h2>Resumo</h2></div>
+          <p class="p">Carrossel em estilo “print/nota” com texto grande e minimalista. A graça vem do contraste numérico (1 vs 30) e da escalada de obstáculos do cotidiano. Dá para aplicar a qualquer tema (hábitos, trabalho, estudos, finanças, alimentação, rotina).</p>
+          <div class="pillRow">
+            <span class="pill">Leve</span>
+            <span class="pill">Compartilhável</span>
+            <span class="pill">Alta identificação</span>
+            <span class="pill">Baixo esforço de design</span>
+          </div>
+        </section>
+
+        <section>
+          <div class="secTitle"><span class="dot"></span><h2>Estrutura</h2></div>
+          <div class="grid2">
+            <div class="card">
+              <p class="k">Fórmula</p>
+              <p class="v"><strong>Meta</strong> → <strong>Caos</strong> → <strong>Tentação</strong> → <strong>Comparação</strong> → <strong>Punchline</strong> → <strong>CTA</strong></p>
+            </div>
+            <div class="card">
+              <p class="k">Objetivo do post</p>
+              <p class="v">Fazer a pessoa pensar “sou eu” e compartilhar/mandar para amigos.</p>
+            </div>
+            <div class="card">
+              <p class="k">Tom de voz</p>
+              <p class="v">Conversacional, autoirônico, com pausas (…); 1–3 emojis no máximo.</p>
+            </div>
+            <div class="card">
+              <p class="k">Padrão memorável</p>
+              <p class="v">Contraste numérico e objeto/ícone do tema (ex.: panetone, notificações, boletos, séries).</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="secTitle"><span class="dot"></span><h2>Roteiro</h2></div>
+          <div class="code" id="roteiroText">TÍTULO/IDEIA (1 linha)
+“É [época/momento] e eu tentando [meta]…”
+
+SEQUÊNCIA (carrossel 6–7 slides)
+1) HOOK (capa)
+“É [época/momento] e eu tentando [meta]…”
+
+2) CONTEXTO (por que tá difícil)
+“Só que é [evento 1], [evento 2], [compromisso], e minha agenda virou um caos…”
+
+3) IDENTIFICAÇÃO (a tentação/atrito)
+“E ainda tem [tentação/ruído principal]… [emoji opcional]”
+
+4) COMPARAÇÃO (meme)
+“Minha vida tá tipo aquele [programa/situação/analogia]:”
+
+5) PUNCHLINE (contraste numérico)
+“1 [ação certa] x 30 [coisas que te puxam pro lado errado]”
+
+6) FECHAMENTO + CTA
+“Quem mais tá assim? Comenta ‘EU’ / marca o(a) amigo(a) que vai rir.”
+
+7) ASSINATURA (opcional)
+Logo pequeno no rodapé + @ do perfil (bem discreto).</div>
+          <p class="mini">Dica de execução: escreva como desabafo curto; use quebras de linha para o olho “escaneiar” rápido.</p>
+        </section>
+
+        <section>
+          <div class="secTitle"><span class="dot"></span><h2>Slides sugeridos (1..7)</h2></div>
+          <div class="card">
+            <p class="k">Slide 1 — Capa/Hook</p>
+            <p class="v">“É [época] e eu tentando [meta]…”</p>
+          </div>
+          <div class="hr"></div>
+          <div class="card">
+            <p class="k">Slide 2 — Contexto</p>
+            <p class="v">Escalada de caos: “mas é [X], é [Y], é [Z]…”</p>
+          </div>
+          <div class="hr"></div>
+          <div class="card">
+            <p class="k">Slide 3 — Tentação/Atrito</p>
+            <p class="v">Nomeie o vilão cotidiano do tema (comida, notificações, cansaço, boleto, preguiça).</p>
+          </div>
+          <div class="hr"></div>
+          <div class="card">
+            <p class="k">Slide 4 — Comparação</p>
+            <p class="v">“Minha vida tá tipo [analogia popular]…”</p>
+          </div>
+          <div class="hr"></div>
+          <div class="card">
+            <p class="k">Slide 5 — Punchline</p>
+            <p class="v">“1 [bom] x 30 [ruim]” (curto, meme, fácil de printar/reenviar)</p>
+          </div>
+          <div class="hr"></div>
+          <div class="card">
+            <p class="k">Slide 6 — CTA</p>
+            <p class="v">Pergunta + instrução simples (comentar/marcar/salvar).</p>
+          </div>
+          <div class="hr"></div>
+          <div class="card">
+            <p class="k">Slide 7 — Brand (opcional)</p>
+            <p class="v">Assinatura mínima para não “quebrar” o estilo print.</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="split">
+        <section>
+          <div class="secTitle"><span class="dot"></span><h2>Elementos visuais</h2></div>
+          <ul>
+            <li><strong>Estilo:</strong> “print/nota” (parece espontâneo, pouco publicitário).</li>
+            <li><strong>Tipografia:</strong> sans (Inter/Montserrat/SF), peso 600–800, texto grande.</li>
+            <li><strong>Composição:</strong> alinhado à esquerda, margens grandes, poucas linhas por bloco.</li>
+            <li><strong>Ritmo visual:</strong> 1 ideia por slide; quebras de linha planejadas para leitura rápida.</li>
+            <li><strong>UI fake (opcional):</strong> nome no topo simulando print; logo discreto no rodapé.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="grid2">
+            <div class="card">
+              <p class="k">Dimensão recomendada</p>
+              <p class="v">1080×1350 (feed) ou 1080×1920 (stories).</p>
+            </div>
+            <div class="card">
+              <p class="k">Regra de ouro</p>
+              <p class="v">Se parecer “peça”, perde graça. Se parecer “desabafo”, ganha share.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="secTitle"><span class="dot"></span><h2>Copy e ganchos</h2></div>
+          <div class="card">
+            <p class="k">Ganchos (substituíveis)</p>
+            <ul>
+              <li>“É [momento] e eu tentando [meta]…”</li>
+              <li>“Eu jurei que ia [meta], mas…”</li>
+              <li>“Minha rotina tá tipo: [bom] x [muito ruim]”</li>
+              <li>“O plano era [meta]. A realidade:”</li>
+            </ul>
+          </div>
+          <div class="hr"></div>
+          <div class="card">
+            <p class="k">Peças-chave que dão impacto</p>
+            <ul>
+              <li><strong>Detalhe específico</strong> (um símbolo do tema): panetone / notificações / cafeína / planilha / boleto.</li>
+              <li><strong>Escalada</strong>: listar 3–5 obstáculos em sequência.</li>
+              <li><strong>Contraste numérico</strong>: 1 vs 30 (ou 2 vs 57; 10min vs 4h).</li>
+              <li><strong>Frase curta final</strong>: printável, “memeável”.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section>
+          <div class="secTitle"><span class="dot"></span><h2>CTA</h2></div>
+          <div class="grid2">
+            <div class="card">
+              <p class="k">Comentários</p>
+              <p class="v">“Quem mais tá assim? Comenta ‘EU’.”</p>
+            </div>
+            <div class="card">
+              <p class="k">Marcação</p>
+              <p class="v">“Marca o(a) amigo(a) do ‘1 x 30’.”</p>
+            </div>
+            <div class="card">
+              <p class="k">Salvamento</p>
+              <p class="v">“Salva pra reler quando bater a culpa (ou a tentação).”</p>
+            </div>
+            <div class="card">
+              <p class="k">Direct (leve)</p>
+              <p class="v">“Quer uma versão pro seu caso? Me chama no direct com a palavra ‘TEMA’.”</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="secTitle"><span class="dot"></span><h2>Checklist</h2></div>
+          <div class="card">
+            <p class="k">Checklist de criação (reproduzível)</p>
+            <ul>
+              <li>Definir <strong>tema</strong>: qual meta a pessoa quer manter?</li>
+              <li>Escolher <strong>época/momento</strong> que intensifica o caos (mês, feriado, fim de ciclo, segunda-feira, volta às aulas).</li>
+              <li>Listar 3–5 <strong>obstáculos</strong> reais (coisas que todo mundo vive).</li>
+              <li>Escolher 1 <strong>tentação/ruído símbolo</strong> do tema.</li>
+              <li>Escolher 1 <strong>analogia popular</strong> (programa, meme, situação social).</li>
+              <li>Fechar com <strong>contraste numérico</strong> curto (ideal: 1 linha).</li>
+              <li>Adicionar <strong>CTA</strong> de baixo atrito (comentar/marcar/salvar).</li>
+              <li>Revisar legibilidade mobile: fonte grande, margens, no máximo 35–45 palavras por slide.</li>
+              <li>Manter assinatura mínima (se usar).</li>
+            </ul>
+          </div>
+        </section>
+
+        <section>
+          <div class="secTitle"><span class="dot"></span><h2>Variações</h2></div>
+          <div class="card">
+            <p class="k">Trocas que mantêm o mesmo impacto</p>
+            <ul>
+              <li><strong>Meta</strong> (substituir): treinar → estudar → dormir cedo → economizar → beber água → postar conteúdo → organizar casa.</li>
+              <li><strong>Caos</strong> (substituir): festas → reuniões → filhos → prazos → viagens → obras → imprevistos.</li>
+              <li><strong>Tentação</strong> (substituir): panetone → série → delivery → redes sociais → compras online → “só mais um café”.</li>
+              <li><strong>Analogia</strong> (substituir): “tipo aquele programa” → “parece episódio de…” → “tá igual modo hard”.</li>
+              <li><strong>Contraste</strong> (substituir): 1 x 30 → 10min x 3h → 1 planilha x 47 abas abertas.</li>
+            </ul>
+          </div>
+          <div class="hr"></div>
+          <div class="card">
+            <p class="k">5 scripts prontos (exemplos para trocar o tema)</p>
+            <div class="code">1) Estudos
+“É semana de provas e eu tentando estudar…”
+“mas é trabalho, é casa, é cansaço…”
+“e ainda tem o celular vibrando…”
+“Minha vida tá tipo modo hard:”
+“1 capítulo x 30 notificações”
+
+2) Trabalho focado
+“É segunda e eu tentando focar…”
+“mas é reunião, é urgência, é ‘rapidinho’…”
+“e ainda tem 27 abas abertas…”
+“Resumo do dia:”
+“1 tarefa importante x 30 interrupções”
+
+3) Finanças
+“É fim do mês e eu tentando economizar…”
+“mas é convite, é promoção, é ‘só hoje’…”
+“e ainda tem frete grátis…”
+“Minha vida tá tipo:”
+“1 meta x 30 tentações no carrinho”
+
+4) Sono
+“É domingo e eu tentando dormir cedo…”
+“mas é ansiedade, é barulho, é pensamento…”
+“e ainda tem ‘só mais um episódio’…”
+“Placar final:”
+“1 ‘boa noite’ x 30 minutos virando na cama”
+
+5) Conteúdo
+“É dia de postar e eu tentando criar conteúdo…”
+“mas é falta de ideia, é tempo curto, é comparação…”
+“e ainda tem zero vontade…”
+“Resultado:”
+“1 post x 30 abas de referência”</div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div class="toast" id="toast">Roteiro copiado.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('roteiroText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      btn.addEventListener('click', async () => {
+        const content = textEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(content);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = content;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          showToast('Roteiro copiado.');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
