@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 2 — Carrossel de prova social (Professores)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.08);
+      --stroke: rgba(255,255,255,0.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,0.72);
+      --muted2: rgba(234,240,255,0.56);
+      --shadow: 0 18px 60px rgba(0,0,0,0.55);
+      --radius: 16px;
+      --radius2: 22px;
+      --g1: linear-gradient(90deg,#22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --g2: radial-gradient(900px 350px at 10% 0%, rgba(56,189,248,0.20), transparent 55%),
+            radial-gradient(900px 350px at 85% 15%, rgba(251,146,60,0.16), transparent 55%),
+            radial-gradient(700px 300px at 40% 100%, rgba(34,197,94,0.16), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
+      min-height:100vh;
+    }
+
+    a{color:inherit}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 54px;}
+
+    .header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position: relative;
+    }
+
+    .header::before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(1100px 260px at 20% 0%, rgba(56,189,248,0.18), transparent 55%),
+                  radial-gradient(900px 240px at 90% 20%, rgba(251,146,60,0.16), transparent 55%),
+                  radial-gradient(900px 260px at 45% 120%, rgba(34,197,94,0.14), transparent 55%);
+      pointer-events:none;
+    }
+
+    .header-inner{position:relative; padding:22px 22px 18px; display:flex; flex-direction:column; gap:14px;}
+
+    .toprow{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;}
+
+    .chips{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+
+    .chip{
+      font-size:12px;
+      letter-spacing:0.2px;
+      color: var(--muted);
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,0.25);
+      padding:8px 10px;
+      border-radius: 999px;
+      backdrop-filter: blur(6px);
+    }
+
+    .chip strong{color: var(--text)}
+
+    .title{
+      font-size: clamp(20px, 3vw, 32px);
+      line-height:1.15;
+      margin:0;
+    }
+
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .linkrow{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;}
+
+    .link{
+      display:inline-flex; gap:10px; align-items:center;
+      color: var(--muted);
+      text-decoration:none;
+      border-bottom: 1px dashed rgba(234,240,255,0.35);
+      padding-bottom:2px;
+    }
+
+    .btns{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+    }
+
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+      position:relative;
+      overflow:hidden;
+    }
+    .btn.primary::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g1);
+      opacity:0.22;
+      filter: blur(10px);
+      pointer-events:none;
+    }
+    .btn span{position:relative}
+
+    .grid{display:grid; grid-template-columns: 1.05fr 0.95fr; gap:16px; margin-top:16px;}
+    @media (max-width: 940px){ .grid{grid-template-columns: 1fr;} }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.35);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding:14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      display:flex; align-items:center; justify-content:space-between; gap:8px;
+      background: rgba(0,0,0,0.18);
+    }
+
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:0.2px; text-transform: uppercase; color: rgba(234,240,255,0.88);}
+
+    .tag{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,0.14);
+      color: rgba(234,240,255,0.76);
+      background: rgba(0,0,0,0.2);
+      white-space:nowrap;
+    }
+
+    .tag.grad{position:relative; overflow:hidden;}
+    .tag.grad::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background: var(--g1);
+      opacity:0.28;
+      pointer-events:none;
+    }
+    .tag.grad span{position:relative}
+
+    .bd{padding:16px; color: var(--muted); font-size:14px; line-height:1.6;}
+    .bd ul{margin:10px 0 0 18px; padding:0;}
+    .bd li{margin:6px 0;}
+
+    .hr{height:1px; background: rgba(255,255,255,0.10); margin:14px 0;}
+
+    .kpi{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:10px;}
+    @media (max-width: 520px){ .kpi{grid-template-columns:1fr;} }
+    .kpi .box{
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .kpi .box .lab{font-size:12px; color: var(--muted2); margin-bottom:6px;}
+    .kpi .box .val{font-weight:700; color: var(--text)}
+
+    pre{
+      margin:0;
+      padding:14px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.25);
+      color: rgba(234,240,255,0.86);
+      overflow:auto;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height:1.55;
+    }
+
+    .two{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media (max-width: 940px){ .two{grid-template-columns:1fr;} }
+
+    .note{
+      padding:12px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      color: rgba(234,240,255,0.78);
+    }
+
+    .accent{
+      background: var(--g1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight:800;
+    }
+
+    .footer{margin-top:18px; color: rgba(234,240,255,0.55); font-size:12px; text-align:center;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="header">
+      <div class="header-inner">
+        <div class="toprow">
+          <div class="chips">
+            <div class="chip">Nicho: <strong>Professores</strong></div>
+            <div class="chip">Dia: <strong>2</strong></div>
+            <div class="chip">Pilar: <strong>Prova</strong></div>
+            <div class="chip">Formato: <strong>Carrossel</strong></div>
+          </div>
+          <div class="chips">
+            <div class="chip">Objetivo: <strong>autoridade + conexão</strong></div>
+          </div>
+        </div>
+
+        <h1 class="title">Carrossel de prova social: evento em 12 fotos (professores)</h1>
+        <p class="subtitle">Modelo reproduzível para transformar cobertura de evento, premiação, feira, congresso ou conquista pedagógica em narrativa cronológica com alta retenção (quase sem texto).</p>
+
+        <div class="linkrow">
+          <a class="link" href="https://www.instagram.com/p/DGGXh88RkQ1/" target="_blank" rel="noopener noreferrer">Post original: https://www.instagram.com/p/DGGXh88RkQ1/</a>
+          <div class="btns">
+            <button class="btn primary" id="copyBtn"><span>Copiar roteiro</span></button>
+            <button class="btn" id="copyCaptionBtn"><span>Copiar legenda</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card" id="cardResumo">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <div class="tag grad"><span>Storytelling documental</span></div>
+        </div>
+        <div class="bd">
+          <div class="note">
+            <span class="accent">Ideia central:</span> use fotos reais (evento/conquista) para construir <strong>prova social</strong> + <strong>bastidores</strong> + <strong>clímax</strong>. O “texto” principal fica na <strong>ordem</strong> e na <strong>legenda</strong>.
+          </div>
+          <div class="kpi">
+            <div class="box"><div class="lab">Quantidade ideal</div><div class="val">10–14 slides</div></div>
+            <div class="box"><div class="lab">Formato</div><div class="val">4:5 vertical</div></div>
+            <div class="box"><div class="lab">Texto nos slides</div><div class="val">0–2 slides</div></div>
+          </div>
+          <div class="hr"></div>
+          <strong>Quando usar (professores):</strong>
+          <ul>
+            <li>Conferência / formação / congresso / seminário</li>
+            <li>Feira de ciências / mostra cultural / olimpíadas</li>
+            <li>Premiação (da escola, rede, alunos, projetos)</li>
+            <li>Palestra / mesa / oficina ministrada</li>
+            <li>Entrega de certificados / certificações / pós</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card" id="cardEstrutura">
+        <div class="hd">
+          <h2>Estrutura (sequência replicável)</h2>
+          <div class="tag"><span>Impacto → Contexto → Prova → Bastidores → Clímax → CTA</span></div>
+        </div>
+        <div class="bd">
+          <ol>
+            <li><strong>Hook (slide 1):</strong> a foto mais forte (você + “símbolo”).</li>
+            <li><strong>Contexto (slides 2–3):</strong> onde foi, com quem, por quê você estava lá.</li>
+            <li><strong>Prova social (slides 4–8):</strong> palco, placas, crachá, pessoas, registros oficiais.</li>
+            <li><strong>Bastidores (slides 6–10 misturados):</strong> preparação, ansiedade, perrengue, processo.</li>
+            <li><strong>Clímax (penúltimos):</strong> o resultado (momento-chave).</li>
+            <li><strong>Fechamento humano:</strong> sorriso, equipe, turma, gratidão implícita.</li>
+            <li><strong>CTA (último slide ou legenda):</strong> convite leve para comentar/salvar/compartilhar.</li>
+          </ol>
+          <div class="hr"></div>
+          <strong>Elemento-fio (obrigatório):</strong> escolha 1 objeto e repita 3–5x (crachá, certificado, banner do projeto, material didático, livro, medalha dos alunos).
+        </div>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card" id="cardRoteiro">
+        <div class="hd">
+          <h2>Roteiro (copiável)</h2>
+          <div class="tag grad"><span>Pronto para 12 slides</span></div>
+        </div>
+        <div class="bd">
+<pre id="roteiroText">ROTEIRO — CARROSSEL DOCUMENTAL (PROFESSORES)
+
+Pré-setup (2 min)
+- Tese em 1 frase: “Isso prova que [resultado] vem de [processo].”
+- Objeto-fio (aparece 3–5x): [crachá/certificado/banner/livro/material]
+- Tom: humano + conquista (sem arrogância)
+
+Slides (12)
+1) CAPA (impacto)
+   Foto: você + símbolo (certificado/troféu/banner) + fundo reconhecível.
+   Texto opcional (até 6 palavras): “Um dia pra lembrar.”
+
+2) CONTEXTO 1
+   Foto: placa do evento / fachada / credencial.
+   Microtexto opcional: “Formação em [tema] — [cidade]”.
+
+3) CONTEXTO 2 (cheguei aqui)
+   Foto: caminho/entrada/sala/plateia.
+   (Sem texto) ou 1 frase curta: “Representando [escola/projeto].”
+
+4) PROVA SOCIAL 1
+   Foto: com colegas (grupo), sorrindo.
+
+5) BASTIDOR 1 (antes)
+   Foto: material, caderno, slide aberto no notebook, bastidor no corredor.
+
+6) PROVA SOCIAL 2 (relevância)
+   Foto: com alguém referência / organizadores / palestrante.
+   Alternativa: foto do crachá + programação.
+
+7) DETALHE (símbolo)
+   Foto: close no certificado/medalha/crachá/placa.
+
+8) CENA AMPLA
+   Foto: auditório/palco/turma/estande/feira.
+
+9) BASTIDOR 2 (humaniza)
+   Foto: selfie espontânea, rindo, perrengue, descanso.
+
+10) MOMENTO-CHAVE
+   Foto: você apresentando/recebendo/mostrando o projeto.
+
+11) CLÍMAX (melhor foto do resultado)
+   Foto: registro “oficial” / entrega / foto com banner do prêmio.
+
+12) FECHAMENTO + CTA
+   Foto: você ou equipe/turma.
+   Texto curto: “Quer o checklist? Comenta ‘QUERO’.”
+
+Legenda (regra de ouro)
+- 1ª linha: emoção + contexto.
+- Meio: 1 insight aplicável (3 bullets).
+- Final: CTA leve + palavra-chave para comentário.</pre>
+        </div>
+      </article>
+
+      <article class="card" id="cardSlides">
+        <div class="hd">
+          <h2>Slides sugeridos (1..12)</h2>
+          <div class="tag"><span>Sem texto (ou texto mínimo)</span></div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>1:</strong> Capa (você + símbolo) — melhor foto do carrossel</li>
+            <li><strong>2:</strong> Placa/fachada/credencial — “onde é”</li>
+            <li><strong>3:</strong> Chegada/entrada/plateia — “estou aqui”</li>
+            <li><strong>4:</strong> Grupo com colegas — pertencimento</li>
+            <li><strong>5:</strong> Bastidor de preparação — processo</li>
+            <li><strong>6:</strong> Foto com referência/organização — validação</li>
+            <li><strong>7:</strong> Close no certificado/crachá/banner — símbolo repetido</li>
+            <li><strong>8:</strong> Ambiente amplo (palco/auditório/feira) — escala</li>
+            <li><strong>9:</strong> Selfie espontânea — humanização</li>
+            <li><strong>10:</strong> Ação (apresentando/recebendo) — narrativa</li>
+            <li><strong>11:</strong> Foto oficial do resultado — clímax</li>
+            <li><strong>12:</strong> Encerramento + CTA (pode ter texto curto)</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="note"><strong>Dica de retenção:</strong> troque o enquadramento a cada 1–2 slides (close → médio → amplo → selfie). Reinsira o “objeto‑fio” pelo menos 3 vezes.</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card" id="cardVisual">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <div class="tag grad"><span>Unidade + consistência</span></div>
+        </div>
+        <div class="bd">
+          <strong>Padrão visual (para reproduzir sempre):</strong>
+          <ul>
+            <li><strong>Âncoras:</strong> 1 objeto-fio + 1 fundo reconhecível (banner, sala, auditório).</li>
+            <li><strong>Edição consistente:</strong> escolha um “look” (quente, frio, P&B, film look) e mantenha.</li>
+            <li><strong>Variação de cena:</strong> palco → bastidor → close → grupo → ambiente amplo.</li>
+            <li><strong>Texto mínimo (opcional):</strong> slide 1 (hook) e slide 12 (CTA).</li>
+          </ul>
+          <div class="hr"></div>
+          <strong>Preset rápido (recomendação):</strong>
+          <ul>
+            <li>Temperatura: +5 a +15 (mais quente) ou padronize “frio” se o ambiente pedir</li>
+            <li>Contraste: +10</li>
+            <li>Realces: -10</li>
+            <li>Sombras: +10</li>
+            <li>Saturação: +5</li>
+            <li>Vinheta: -5 (leve)</li>
+          </ul>
+          <div class="note" style="margin-top:12px;"><strong>Tipografia segura (se usar):</strong> Inter, Montserrat ou Poppins. Regra: 1 frase curta, em área limpa, sem “caixão” (use blur sutil atrás).</div>
+        </div>
+      </article>
+
+      <article class="card" id="cardCopy">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <div class="tag"><span>Legenda que “amarra” a história</span></div>
+        </div>
+        <div class="bd">
+          <strong>Ganchos (1ª linha da legenda):</strong>
+          <ul>
+            <li>“Um dia que eu nunca vou esquecer: [evento].”</li>
+            <li>“Eu vim representar [escola/projeto] — e voltei com [resultado].”</li>
+            <li>“Por trás dessa foto tem [X] meses de trabalho.”</li>
+            <li>“Se você é professor, lê isso antes de desistir.”</li>
+          </ul>
+          <div class="hr"></div>
+          <strong>Corpo da legenda (estrutura pronta):</strong>
+<pre id="captionText">LEGENDA — MODELO (celebração + lição)
+
+Um dia que eu nunca vou esquecer: [evento/conquista].
+
+O que mais me marcou foi: [insight humano em 1 frase].
+
+Se você quer [resultado] na escola/sala de aula, 3 coisas fizeram diferença pra mim:
+1) [decisão prática]
+2) [processo/rotina]
+3) [rede/apoio/ajuste]
+
+Quer que eu mande o checklist (roteiro + fotos que não podem faltar)?
+Comenta “QUERO” que eu te envio / ou eu publico a parte 2.</pre>
+          <div class="note" style="margin-top:12px;"><strong>Tom recomendado:</strong> reconhecimento sem soberba. Mostre processo, agradeça rede/equipe, conecte com a realidade docente.</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card" id="cardCTA">
+        <div class="hd">
+          <h2>CTA</h2>
+          <div class="tag grad"><span>Leve + comunitário</span></div>
+        </div>
+        <div class="bd">
+          <strong>CTAs replicáveis (escolha 1):</strong>
+          <ul>
+            <li>“Quer o checklist do carrossel? Comenta <strong>QUERO</strong>.”</li>
+            <li>“Marca um(a) professor(a) que precisa lembrar que dá certo.”</li>
+            <li>“Salva pra usar esse roteiro no seu próximo evento.”</li>
+            <li>“Quer a parte 2 com o passo a passo do projeto? Comenta <strong>PARTE 2</strong>.”</li>
+            <li>“Me chama no direct com <strong>CHECKLIST</strong>.”</li>
+          </ul>
+          <div class="hr"></div>
+          <strong>Onde colocar:</strong>
+          <ul>
+            <li><strong>Legenda:</strong> sempre (principal CTA).</li>
+            <li><strong>Último slide:</strong> 3–6 palavras, alto contraste.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card" id="cardChecklist">
+        <div class="hd">
+          <h2>Checklist de criação (reproduzível)</h2>
+          <div class="tag"><span>Antes → durante → pós</span></div>
+        </div>
+        <div class="bd">
+          <strong>Antes (planejamento em 5 min):</strong>
+          <ul>
+            <li>( ) Objetivo: autoridade / relacionamento / recrutamento / venda indireta</li>
+            <li>( ) Tese (1 frase): “Isso prova que [resultado] vem de [processo].”</li>
+            <li>( ) Objeto-fio definido (vai aparecer 3–5 vezes)</li>
+            <li>( ) Lista de fotos necessárias (capa, contexto, bastidores, clímax, encerramento)</li>
+          </ul>
+          <div class="hr"></div>
+          <strong>Durante (captura):</strong>
+          <ul>
+            <li>( ) 1 foto “capa” (mais forte)</li>
+            <li>( ) 2 fotos de contexto (placa/fachada/crachá/programação)</li>
+            <li>( ) 3 fotos de prova social (grupo, palco, referência)</li>
+            <li>( ) 2 fotos de bastidor (antes + espontânea)</li>
+            <li>( ) 1 close do símbolo (certificado/medalha/crachá)</li>
+            <li>( ) 1 foto ampla do ambiente</li>
+            <li>( ) 1 foto do clímax (melhor do resultado)</li>
+          </ul>
+          <div class="hr"></div>
+          <strong>Pós (montagem):</strong>
+          <ul>
+            <li>( ) Ordenar para criar “curiosidade do próximo slide”</li>
+            <li>( ) Aplicar o mesmo look em todas as fotos</li>
+            <li>( ) Inserir texto apenas no slide 1 e/ou 12 (opcional)</li>
+            <li>( ) Revisar legenda (gancho + 3 aprendizados + CTA)</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card" id="cardVariacoes">
+        <div class="hd">
+          <h2>Variações (para não repetir igual)</h2>
+          <div class="tag grad"><span>3 versões rápidas</span></div>
+        </div>
+        <div class="bd">
+          <div class="two">
+            <div class="note">
+              <strong>Variação 1 — 100% foto (documental)</strong><br/>
+              Texto só na legenda. Último slide com CTA bem curto (ou sem texto).
+            </div>
+            <div class="note">
+              <strong>Variação 2 — Foto + microtexto</strong><br/>
+              Coloque 1 microtexto em 3 slides (2, 7 e 12) para orientar o leitor.
+            </div>
+          </div>
+          <div class="two" style="margin-top:12px;">
+            <div class="note">
+              <strong>Variação 3 — “Em 10 fotos, eu aprendi…”</strong><br/>
+              Cada slide representa 1 aprendizado (texto mínimo no canto), mantendo as fotos.
+            </div>
+            <div class="note">
+              <strong>Gancho alternativo</strong><br/>
+              “Fui pra [evento] achando que eu ia só assistir… e voltei com [aprendizado/resultado].”
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="cardNotas">
+        <div class="hd">
+          <h2>Checklist de qualidade (antes de postar)</h2>
+          <div class="tag"><span>UX do carrossel</span></div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li>( ) Slide 1 é o mais forte de todos (se não for, troque)</li>
+            <li>( ) Existe variedade real de enquadramento (close/médio/amplo/selfie)</li>
+            <li>( ) O objeto-fio aparece várias vezes (coerência)</li>
+            <li>( ) O clímax está nos últimos 20% do carrossel (retém)</li>
+            <li>( ) Legenda tem gancho na 1ª linha e CTA claro no final</li>
+            <li>( ) CTA pede 1 ação (não 3 ao mesmo tempo)</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <div class="footer">Identidade visual sugerida: fundo escuro + cards suaves + destaques em degradê (verde/azul/laranja). Template pronto para repetir no seu calendário.</div>
+  </div>
+
+  <script>
+    function copyFromEl(elId){
+      const el = document.getElementById(elId);
+      const text = el ? el.innerText : "";
+      if(!text) return;
+      navigator.clipboard.writeText(text);
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', function(){
+      copyFromEl('roteiroText');
+      this.querySelector('span').innerText = 'Roteiro copiado';
+      setTimeout(()=>{ this.querySelector('span').innerText = 'Copiar roteiro'; }, 1400);
+    });
+
+    document.getElementById('copyCaptionBtn').addEventListener('click', function(){
+      copyFromEl('captionText');
+      this.querySelector('span').innerText = 'Legenda copiada';
+      setTimeout(()=>{ this.querySelector('span').innerText = 'Copiar legenda'; }, 1400);
+    });
+  </script>
+</body>
+</html>
