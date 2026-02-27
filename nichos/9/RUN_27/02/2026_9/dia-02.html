@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 2 — Trend + comando (Dermato/Harmonização)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card: rgba(255,255,255,.06);
+    --stroke: rgba(255,255,255,.10);
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,.72);
+    --muted2: rgba(234,240,255,.56);
+    --shadow: 0 20px 60px rgba(0,0,0,.55);
+    --r12: 14px;
+    --r18: 18px;
+    --g1: linear-gradient(135deg,#29F19C 0%,#2A7BFF 50%,#FF8A2A 100%);
+    --g2: linear-gradient(135deg, rgba(41,241,156,.20), rgba(42,123,255,.18), rgba(255,138,42,.18));
+    --g3: linear-gradient(90deg,#29F19C 0%,#2A7BFF 50%,#FF8A2A 100%);
+    --ok:#29F19C;
+    --warn:#FF8A2A;
+    --info:#2A7BFF;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background:
+      radial-gradient(1200px 700px at 15% 10%, rgba(42,123,255,.18), transparent 60%),
+      radial-gradient(1000px 600px at 85% 20%, rgba(41,241,156,.14), transparent 55%),
+      radial-gradient(900px 560px at 70% 85%, rgba(255,138,42,.14), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 70px;}
+
+  .topbar{
+    display:flex;
+    gap:14px;
+    align-items:stretch;
+    justify-content:space-between;
+    margin-bottom:18px;
+  }
+
+  .brand{
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    box-shadow: var(--shadow);
+    border-radius: var(--r18);
+    padding:16px 16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width: 320px;
+    flex:1;
+  }
+
+  .logo{
+    width:44px; height:44px;
+    border-radius: 14px;
+    background: var(--g1);
+    box-shadow: 0 10px 25px rgba(0,0,0,.35);
+    position:relative;
+    flex:0 0 44px;
+  }
+  .logo:after{
+    content:"";
+    position:absolute; inset:2px;
+    border-radius: 12px;
+    background: rgba(0,0,0,.28);
+    border:1px solid rgba(255,255,255,.10);
+  }
+
+  .brand h1{font-size:14px; line-height:1.25; margin:0; letter-spacing:.2px;}
+  .brand .meta{font-size:12px; color: var(--muted); margin-top:6px; display:flex; flex-wrap:wrap; gap:10px;}
+  .pill{
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.04);
+    padding:6px 10px;
+    border-radius: 999px;
+    font-size:12px;
+    color: var(--muted);
+  }
+  .pill strong{color: var(--text); font-weight:600}
+
+  .actions{
+    display:flex;
+    gap:10px;
+    align-items:stretch;
+  }
+
+  .btn{
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    border-radius: 14px;
+    padding:12px 14px;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    box-shadow: 0 14px 35px rgba(0,0,0,.35);
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    white-space:nowrap;
+  }
+  .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.20)}
+  .btn.primary{
+    background: var(--g2);
+    border-color: rgba(255,255,255,.18);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+  }
+
+  @media (min-width: 980px){
+    .grid{grid-template-columns: 1.12fr .88fr; align-items:start;}
+  }
+
+  .card{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.05);
+    border-radius: var(--r18);
+    padding:16px 16px;
+    box-shadow: var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+
+  .card:before{
+    content:"";
+    position:absolute;
+    inset:-2px -2px auto -2px;
+    height:2px;
+    background: var(--g3);
+    opacity:.9;
+  }
+
+  .card h2{
+    margin:0 0 10px;
+    font-size:14px;
+    letter-spacing:.2px;
+  }
+  .card p{margin:0 0 10px; color: var(--muted); font-size:13px; line-height:1.55}
+
+  .section{margin-top:12px;}
+  .kpi{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:10px;
+    margin-top:10px;
+  }
+  .kpi .mini{
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.16);
+    border-radius: var(--r12);
+    padding:10px;
+  }
+  .mini .lbl{font-size:11px; color: var(--muted2);}
+  .mini .val{margin-top:6px; font-family: var(--mono); font-size:12px; color: var(--text);}
+
+  .list{margin:10px 0 0; padding:0; list-style:none;}
+  .list li{
+    padding:10px 10px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.14);
+    border-radius: 12px;
+    margin-bottom:10px;
+  }
+  .list li .t{font-size:13px; font-weight:650; margin-bottom:6px;}
+  .list li .d{font-size:12.5px; color: var(--muted); line-height:1.55}
+
+  .code{
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.22);
+    border-radius: var(--r18);
+    padding:14px;
+  }
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-break:break-word;
+    color: rgba(234,240,255,.88);
+    font-family: var(--mono);
+    font-size:12.5px;
+    line-height:1.55;
+  }
+
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; color: var(--muted);
+    margin-bottom:10px;
+  }
+  .dot{width:8px; height:8px; border-radius: 999px; background: var(--g1); box-shadow: 0 0 0 4px rgba(255,255,255,.06)}
+
+  .twoCol{display:grid; grid-template-columns: 1fr; gap:12px;}
+  @media (min-width: 980px){ .twoCol{grid-template-columns: 1fr 1fr;} }
+
+  .small{font-size:12px; color: var(--muted2)}
+
+  .hr{height:1px; background: rgba(255,255,255,.10); margin:14px 0;}
+
+  .toast{
+    position:fixed;
+    left:50%; bottom:18px;
+    transform: translateX(-50%);
+    padding:10px 12px;
+    background: rgba(0,0,0,.70);
+    border:1px solid rgba(255,255,255,.16);
+    border-radius: 999px;
+    color: rgba(234,240,255,.92);
+    font-size:12px;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .18s ease, transform .18s ease;
+    backdrop-filter: blur(10px);
+  }
+  .toast.show{opacity:1; transform: translateX(-50%) translateY(-2px)}
+
+  .link{
+    display:inline-flex; gap:8px; align-items:center;
+    color: rgba(234,240,255,.9);
+    border-bottom: 1px dashed rgba(234,240,255,.35);
+    padding-bottom:2px;
+  }
+
+  .callout{
+    border:1px solid rgba(255,255,255,.14);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.10));
+    border-radius: var(--r18);
+    padding:12px;
+  }
+  .callout strong{color: var(--text)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Nicho: Harmonização e dermatologia • Dia 2 • <span style="background:var(--g3); -webkit-background-clip:text; background-clip:text; color:transparent;">Trend + comando: Reel curto que dá retenção</span></h1>
+          <div class="meta">
+            <span class="pill"><strong>Formato</strong>: Reels</span>
+            <span class="pill"><strong>Pilar</strong>: Passo a passo</span>
+            <span class="pill"><strong>Link</strong>: <a class="link" href="https://www.instagram.com/p/DIJnJypvt38/" target="_blank" rel="noreferrer">Post original</a></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        <a class="btn" href="https://www.instagram.com/p/DIJnJypvt38/" target="_blank" rel="noreferrer">Abrir post</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="badge"><span class="dot"></span><span>Roteiro reproduzível (baseado em áudios trend + comando curto)</span></div>
+        <h2>Resumo</h2>
+        <p>Este modelo usa <strong>áudio trend</strong> + <strong>frase imperativa na primeira batida</strong> para gerar retenção e loop. Em 15–25s você entrega <strong>3 beats</strong> (lista rápida) + <strong>micro-solução</strong> e fecha com <strong>CTA de salvar/comentar</strong>.</p>
+
+        <div class="kpi">
+          <div class="mini"><div class="lbl">Duração alvo</div><div class="val">15–25s</div></div>
+          <div class="mini"><div class="lbl">Cortes (0–5s)</div><div class="val">a cada 0,5–1,2s</div></div>
+          <div class="mini"><div class="lbl">Estrutura</div><div class="val">Hook → 3 beats → solução → CTA</div></div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>Estrutura (sequência fixa)</h2>
+        <ul class="list">
+          <li>
+            <div class="t">1) Hook (0–1s): comando + movimento</div>
+            <div class="d">Texto grande na tela + você já em ação (entrando no frame, apontando, giro, “mini dancinha”). Modelo: <strong>“TODO MUNDO [AÇÃO] AGORA”</strong>.</div>
+          </li>
+          <li>
+            <div class="t">2) Contexto (1–4s): 1 linha que “encaixa” no público</div>
+            <div class="d">Frase curtíssima do tipo “Se você…” para segmentar. Ex.: “Se sua pele repuxa depois de lavar…”</div>
+          </li>
+          <li>
+            <div class="t">3) 3 beats (4–12s): lista rápida + mudança visual</div>
+            <div class="d">Três pontos no máximo. Cada beat com gesto/zoom/objeto diferente: “Sinal 1… / Sinal 2… / Sinal 3…”</div>
+          </li>
+          <li>
+            <div class="t">4) Micro-solução (12–18s): 1–2 ações seguras e simples</div>
+            <div class="d">Sem prometer cura/diagnóstico. Direcione para avaliação se necessário. Ex.: “Comece por hidratação + barreira; se arder/piorar, avalie.”</div>
+          </li>
+          <li>
+            <div class="t">5) CTA (18–22s): 1 ação</div>
+            <div class="d">Escolha <strong>um</strong>: salvar, comentar palavra-chave ou direct. Reforce em texto na tela e na legenda.</div>
+          </li>
+          <li>
+            <div class="t">6) Loop (final): volte ao primeiro frame/gesto</div>
+            <div class="d">Termine repetindo o movimento inicial ou “cortando” no pico do áudio para estimular replay.</div>
+          </li>
+        </ul>
+
+        <div class="hr"></div>
+
+        <h2>Roteiro (pronto para gravar)</h2>
+        <div class="callout small">
+          <strong>Escolha 1 tema por Reel</strong> (ex.: pele desidratada, erro de skincare que irrita, mito sobre preenchimento, sinais de barreira sensibilizada). O texto abaixo é um exemplo “Teste rápido: desidratação”.
+        </div>
+        <div class="section code">
+          <pre id="scriptText">TÍTULO NA TELA (0–1s): TODO MUNDO CHECA ISSO AGORA
+AÇÃO: entra no frame no beat do áudio + aponta para o texto
+
+(1–4s) CONTEXTO (fala ou texto):
+“Se sua pele repuxa depois de lavar, presta atenção.”
+
+(4–12s) 3 BEATS (troca de ângulo/zoom a cada item):
+1) “Descamação fina (principalmente ao redor do nariz/queixo).”
+2) “Brilho, mas com sensação de repuxo.”
+3) “A base craquela ou marca textura rápido.”
+
+(12–18s) MICRO-SOLUÇÃO:
+“Comece por: limpeza suave + hidratante com foco em barreira.
+E reduz ácidos por alguns dias se estiver sensível.”
+
+(18–22s) CTA (1 ação):
+“Salva pra revisar na próxima rotina.
+E comenta ‘ROTINA’ que eu mando um passo a passo base.”
+
+TELA FINAL / LOOP:
+repete o gesto do início + mesma frase “CHECA ISSO AGORA” (corta no beat)</pre>
+        </div>
+
+        <div class="twoCol section">
+          <div class="card" style="box-shadow:none; margin:0;">
+            <h2>Elementos visuais</h2>
+            <ul class="list" style="margin-top:10px;">
+              <li><div class="t">Movimento constante</div><div class="d">Apontar/entrar no frame/zoom punch-in a cada beat.</div></li>
+              <li><div class="t">Prova visual rápida</div><div class="d">Close de pele (com boa luz), textura de produto, ambiente de consultório (sem dados do paciente).</div></li>
+              <li><div class="t">Texto legível sem som</div><div class="d">Fonte grande, 4–7 palavras por tela, alto contraste.</div></li>
+            </ul>
+          </div>
+
+          <div class="card" style="box-shadow:none; margin:0;">
+            <h2>Copy e ganchos (templates)</h2>
+            <ul class="list" style="margin-top:10px;">
+              <li><div class="t">Comando (Hook)</div><div class="d">“TODO MUNDO CHECA ISSO AGORA” / “PARE DE FAZER ISSO AGORA” / “OLHA ISSO ANTES DE…”</div></li>
+              <li><div class="t">Segmentação</div><div class="d">“Se sua pele…” / “Se você faz…” / “Se você usa ácido e…”</div></li>
+              <li><div class="t">Promessa curta e segura</div><div class="d">“Em 5s você identifica [sinal]” / “3 sinais de…” (evite promessas de cura).</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>CTA (escolha 1 por post)</h2>
+        <ul class="list">
+          <li><div class="t">Salvar</div><div class="d">“Salva pra revisar na próxima rotina.”</div></li>
+          <li><div class="t">Comentário com palavra-chave</div><div class="d">“Comenta ‘ROTINA’ que eu mando um passo a passo base.” (fixe o comentário com a instrução)</div></li>
+          <li><div class="t">Direct</div><div class="d">“Me chama no direct com ‘AVALIAÇÃO’ pra eu te orientar por onde começar.”</div></li>
+          <li><div class="t">Compartilhar</div><div class="d">“Manda pra alguém que vive com a pele repuxando.”</div></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Checklist de criação (copiar e usar)</h2>
+        <ul class="list">
+          <li>
+            <div class="t">Pré-produção</div>
+            <div class="d">
+              <div>□ Escolher áudio trend com batida marcada (reconhecível e não saturado no seu nicho).</div>
+              <div>□ Definir 1 tema + 1 promessa em 1 frase (sem “diagnosticar”).</div>
+              <div>□ Selecionar 3 beats (no máximo).</div>
+              <div>□ Planejar 1 prova visual (close, produto, instrumento, antes/depois com consentimento).</div>
+              <div>□ Escrever o texto na tela: 1 hook + 1 contexto + 3 itens + 1 solução + 1 CTA.</div>
+            </div>
+          </li>
+          <li>
+            <div class="t">Gravação</div>
+            <div class="d">
+              <div>□ Começar já em movimento (sem “oi gente”).</div>
+              <div>□ 9:16, luz frontal, fundo limpo/high-tech.</div>
+              <div>□ Takes curtos (1–2 frases por take).</div>
+              <div>□ Captar 2–3 B-rolls (pele/produto/consultório) para cobrir cortes.</div>
+            </div>
+          </li>
+          <li>
+            <div class="t">Edição</div>
+            <div class="d">
+              <div>□ Cortes rápidos nos primeiros 3s.</div>
+              <div>□ Texto grande sincronizado com a batida.</div>
+              <div>□ Zoom punch-in nos itens (Sinal 1/2/3).</div>
+              <div>□ Speed ramp leve (1,1–1,3x) se perder energia.</div>
+              <div>□ Final em loop (repete gesto/primeiro frame).</div>
+            </div>
+          </li>
+          <li>
+            <div class="t">Publicação</div>
+            <div class="d">
+              <div>□ Legenda: 1 linha reforçando a promessa + 1 CTA.</div>
+              <div>□ Fixar comentário com palavra-chave (se usar comentário como CTA).</div>
+              <div>□ Capa com 3–5 palavras (ex.: “3 sinais de desidratação”).</div>
+            </div>
+          </li>
+        </ul>
+
+        <div class="hr"></div>
+
+        <h2>Variações (mantenha o mesmo esqueleto)</h2>
+        <ul class="list">
+          <li>
+            <div class="t">Variação 1 — Erro comum (skincare)</div>
+            <div class="d">Hook: “PARE DE FAZER ISSO AGORA” → 2 consequências rápidas → “Troque por…” → CTA “Comenta ‘CHECK’”.</div>
+          </li>
+          <li>
+            <div class="t">Variação 2 — Mito vs Verdade (procedimentos)</div>
+            <div class="d">Hook: “TODO MUNDO REPETE ISSO… E TÁ ERRADO” → “Mito:” (1 linha) → “Verdade:” (1 linha) → “Quando avaliar?” → CTA salvar.</div>
+          </li>
+          <li>
+            <div class="t">Variação 3 — Antes/depois (com contexto seguro)</div>
+            <div class="d">Hook: “OLHA ISSO AGORA” → mostra antes/depois com consentimento → 2 motivos do resultado (técnica/planejamento) → “Pra quem serve” → CTA direct.</div>
+          </li>
+          <li>
+            <div class="t">Variação 4 — Teste rápido (pele)</div>
+            <div class="d">Hook: “FAZ ESSE TESTE AGORA” → demonstra 1 gesto simples → 3 interpretações → “Próximo passo” → CTA comentar.</div>
+          </li>
+        </ul>
+
+        <div class="hr"></div>
+        <p class="small"><strong>Nota de segurança:</strong> evite diagnosticar em vídeo; use linguagem de “sinais” e “possível”, e convide para avaliação profissional quando necessário.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const text = document.getElementById('scriptText');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      window.clearTimeout(window.__t);
+      window.__t = window.setTimeout(()=>toast.classList.remove('show'), 1600);
+    }
+
+    btn.addEventListener('click', async () => {
+      const content = text.innerText.trim();
+      try{
+        await navigator.clipboard.writeText(content);
+        showToast('Roteiro copiado.');
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = content;
+        document.body.appendChild(ta);
+        ta.select();
+        try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
+        catch(err){ showToast('Não foi possível copiar automaticamente.'); }
+        document.body.removeChild(ta);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
