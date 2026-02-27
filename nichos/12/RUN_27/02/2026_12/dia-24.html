@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dia 24 — Carrossel de conquista (Professores)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.58);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --green:#34D399;
+      --blue:#60A5FA;
+      --orange:#FB923C;
+      --grad: linear-gradient(90deg, rgba(52,211,153,.95), rgba(96,165,250,.95), rgba(251,146,60,.95));
+      --gradSoft: linear-gradient(135deg, rgba(52,211,153,.18), rgba(96,165,250,.16), rgba(251,146,60,.14));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 24% -10%, rgba(96,165,250,.22), transparent 60%),
+        radial-gradient(900px 520px at 92% 8%, rgba(251,146,60,.18), transparent 55%),
+        radial-gradient(1000px 700px at 58% 112%, rgba(52,211,153,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    a{color:inherit}
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 64px;
+    }
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      border-radius: calc(var(--radius) + 6px);
+      padding:18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--gradSoft);
+      filter: blur(18px);
+      opacity:.9;
+      z-index:0;
+    }
+
+    .headerInner{position:relative; z-index:1; display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;}
+
+    .kicker{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:8px 10px;
+      border:1px solid var(--stroke);
+      border-radius: 999px;
+      background: rgba(0,0,0,.25);
+      color: var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+
+    .dot{
+      width:8px;height:8px;border-radius:99px;
+      background: var(--grad);
+      box-shadow: 0 0 0 6px rgba(255,255,255,.06);
+    }
+
+    h1{
+      margin:10px 0 6px;
+      font-size: clamp(20px, 2.6vw, 34px);
+      line-height:1.15;
+      letter-spacing:-.4px;
+    }
+
+    .sub{
+      margin:0;
+      color: var(--muted);
+      max-width: 72ch;
+      font-size: 14px;
+      line-height:1.5;
+    }
+
+    .meta{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .chip{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(234,240,255,.82);
+      padding:8px 10px;
+      background: rgba(0,0,0,.25);
+      border:1px solid var(--stroke);
+      border-radius: 999px;
+    }
+
+    .link{
+      font-size: 13px;
+      color: rgba(234,240,255,.86);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(234,240,255,.35);
+      padding-bottom:2px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.15fr .85fr; align-items:start;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.045));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .cardHeader{
+      padding:16px 16px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .cardHeader h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+      text-transform: uppercase;
+      color: rgba(234,240,255,.86);
+    }
+
+    .tag{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding:6px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      color: rgba(234,240,255,.78);
+    }
+
+    .cardBody{padding:14px 16px 16px;}
+
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      margin: 14px 0;
+    }
+
+    .callout{
+      padding:12px 12px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+    }
+
+    .callout b{
+      background: var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+    }
+
+    ul{margin:10px 0 0 18px; padding:0; color: var(--muted); line-height:1.55;}
+    li{margin:6px 0;}
+
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 740px){
+      .cols{grid-template-columns: 1fr 1fr;}
+    }
+
+    .mini{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      border-radius: var(--radius2);
+      padding:12px;
+    }
+
+    .mini h3{
+      margin:0 0 8px;
+      font-size: 13px;
+      color: rgba(234,240,255,.88);
+      letter-spacing:.2px;
+    }
+
+    .mini p{margin:0; color: var(--muted); font-size: 13px; line-height:1.55;}
+
+    .script{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: rgba(234,240,255,.86);
+      background: rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius2);
+      padding: 12px;
+      overflow:auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+
+    button{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      color: rgba(234,240,255,.9);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 600;
+      letter-spacing:.2px;
+    }
+
+    button.primary{
+      background: linear-gradient(90deg, rgba(52,211,153,.22), rgba(96,165,250,.18), rgba(251,146,60,.18));
+      border-color: rgba(255,255,255,.18);
+    }
+
+    .toast{
+      display:none;
+      font-size: 12px;
+      color: rgba(234,240,255,.78);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.28);
+      padding:8px 10px;
+      border-radius: 999px;
+    }
+
+    .muted{color: var(--muted2)}
+    .gradText{
+      background: var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight: 800;
+    }
+
+    .footerNote{margin-top:12px; font-size: 12px; color: rgba(234,240,255,.58)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headerInner">
+        <div>
+          <div class="kicker"><span class="dot"></span><span><b>Nicho:</b> Professores</span><span class="muted">•</span><span><b>Dia:</b> 24</span></div>
+          <h1><span class="gradText">Carrossel de conquista</span> (storytelling em 10 fotos)</h1>
+          <p class="sub">Modelo reproduzível inspirado em carrossel “evento/documental”: narrativa por sequência de imagens, com <b>âncora visual</b> + <b>progresso emocional</b>. Ideal para prova social/autoridade/bastidores.</p>
+          <div class="meta">
+            <span class="chip">Pilar: Prova</span>
+            <span class="chip">Formato: Carrossel</span>
+            <a class="link" href="https://www.instagram.com/p/C7ZWCbVOWXt/" target="_blank" rel="noreferrer">Ver post original</a>
+          </div>
+        </div>
+        <div class="btnRow">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <span class="toast" id="toast">Roteiro copiado.</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo</span>
+        </div>
+        <div class="cardBody">
+          <div class="callout">
+            Use um carrossel fotográfico para transformar um <b>marco</b> (reconhecimento, resultado, convite, apresentação, projeto) em narrativa: <b>acontecimento → legitimidade → emoção → prova social → proximidade</b>.
+          </div>
+          <div class="hr"></div>
+          <div class="cols">
+            <div class="mini">
+              <h3>Quando usar</h3>
+              <p>Premiação, certificação, formatura, convite para palestrar, aprovação, projeto concluído, feira pedagógica, aula aberta, publicação, resultado de turma.</p>
+            </div>
+            <div class="mini">
+              <h3>O que faz funcionar</h3>
+              <p>Variação de enquadramento + repetição de um símbolo + progressão emocional + “com quem você está” (prova social).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardHeader">
+          <h2>Estrutura</h2>
+          <span class="tag">Macro</span>
+        </div>
+        <div class="cardBody">
+          <ul>
+            <li><b>Slides:</b> 7–12 (recomendado: 10)</li>
+            <li><b>Ritmo:</b> alternar close / médio / aberto</li>
+            <li><b>Âncora visual:</b> objeto/símbolo em 60–80% dos slides</li>
+            <li><b>Texto nos slides:</b> opcional (minimalista vs performance)</li>
+            <li><b>CTA principal:</b> legenda + comentários (conversa/salvar/compartilhar)</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="mini">
+            <h3>Fórmula de capa (adaptável)</h3>
+            <p><span class="gradText">[Emoção/Marco]</span> + <span class="gradText">[Especificidade]</span> + (opcional) <span class="gradText">[Aprendizado]</span>.<br/>Ex.: “Meu 1º prêmio como professora — o que aprendi”.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader">
+        <h2>Slides sugeridos (1..10)</h2>
+        <span class="tag">Carrossel</span>
+      </div>
+      <div class="cardBody">
+        <div class="cols">
+          <div class="mini">
+            <h3>1) Capa (hero shot)</h3>
+            <p>Foto mais forte + símbolo do feito (certificado, crachá, placa, livro, print impresso).<br/><span class="muted">Texto opcional:</span> “Meu [MARCO] como professora”.</p>
+          </div>
+          <div class="mini">
+            <h3>2) Momento-chave (ação)</h3>
+            <p>Entrega/assinatura/aperto de mão/apresentando no palco/mostrando resultado.<br/><span class="muted">Texto opcional:</span> “O momento em que aconteceu”.</p>
+          </div>
+          <div class="mini">
+            <h3>3) Reação (emoção)</h3>
+            <p>Close do rosto (sorriso, choro, alívio).<br/><span class="muted">Texto opcional:</span> “Eu não imaginava…”.</p>
+          </div>
+          <div class="mini">
+            <h3>4) Prova social 1 (autoridade)</h3>
+            <p>Coordenação/direção/organização/cliente/mentor.<br/><span class="muted">Texto opcional:</span> “Reconhecimento oficial”.</p>
+          </div>
+          <div class="mini">
+            <h3>5) Prova social 2 (grupo afetivo)</h3>
+            <p>Alunos, equipe, família, colegas.<br/><span class="muted">Texto opcional:</span> “Ninguém faz sozinho”.</p>
+          </div>
+          <div class="mini">
+            <h3>6) Contexto (plano aberto)</h3>
+            <p>Auditório/escola/sala/feira/ambiente com placa ou público.<br/><span class="muted">Texto opcional:</span> “Onde aconteceu”.</p>
+          </div>
+          <div class="mini">
+            <h3>7) Detalhe (tátil)</h3>
+            <p>Close do símbolo: diploma, selo, medalha, material, folha com carimbo, livro com dedicatória.<br/><span class="muted">Texto opcional:</span> “O que isso representa”.</p>
+          </div>
+          <div class="mini">
+            <h3>8) Variedade (novo elenco)</h3>
+            <p>Outro grupo/pessoa diferente para não repetir demais.<br/><span class="muted">Texto opcional:</span> “Parte da história”.</p>
+          </div>
+          <div class="mini">
+            <h3>9) Bastidor humano</h3>
+            <p>Selfie, risada, corredor, pós-evento, making-of.<br/><span class="muted">Texto opcional:</span> “Depois que acabou…”.</p>
+          </div>
+          <div class="mini">
+            <h3>10) Fechamento (melhor foto final)</h3>
+            <p>Sua foto mais “síntese” do dia + sensação de conclusão.<br/><span class="muted">Texto opcional:</span> “Obrigada + próximo passo: [X]”.</p>
+          </div>
+        </div>
+        <p class="footerNote">Dica de retenção: a cada 2–3 slides, alterne enquadramento (close → aberto → médio) e mantenha a âncora visual aparecendo com intenção.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader">
+        <h2>Roteiro (reproduzível)</h2>
+        <span class="tag">Legenda + direção</span>
+      </div>
+      <div class="cardBody">
+        <div class="callout">
+          Direção criativa: <b>contar sem precisar escrever nos slides</b>. Se adicionar texto, use no máximo <b>1 ideia por slide</b>.
+        </div>
+        <div class="hr"></div>
+        <div class="script" id="scriptText">ROTEIRO — CARROSSEL “MARCO/RECONHECIMENTO” (10 SLIDES)
+
+PRÉ-PRODUÇÃO (2 minutos)
+1) Defina o MARCO: [prêmio / certificação / convite / aprovação / projeto / resultado].
+2) Defina a ÂNCORA VISUAL (aparece em 60–80%): [diploma / crachá / livro / atividade / painel / print].
+3) Defina a EMOÇÃO que você quer que a pessoa sinta: [orgulho / alívio / inspiração / gratidão].
+4) Defina o “ELENCO” (3 grupos): [autoridade/coordenação] + [alunos/equipe] + [família/amigos].
+
+SLIDE A SLIDE
+S1 — CAPA (hero shot)
+• Foto: você + âncora visual.
+• Texto opcional (6–10 palavras): “Meu [MARCO] como professora”.
+
+S2 — AÇÃO (momento-chave)
+• Foto: entrega / aperto de mão / assinatura / você no palco.
+• Texto opcional: “O momento que eu esperei por [tempo]”.
+
+S3 — EMOÇÃO (reação)
+• Foto: close (sorriso, olho marejado, respiração de alívio).
+• Texto opcional: “Eu não imaginava que ia chegar aqui…”.
+
+S4 — PROVA SOCIAL 1 (autoridade)
+• Foto: com direção/coordenação/organização.
+• Texto opcional: “Reconhecimento institucional”.
+
+S5 — PROVA SOCIAL 2 (grupo afetivo)
+• Foto: com alunos/equipe/família.
+• Texto opcional: “Ninguém faz sozinho”.
+
+S6 — CONTEXTO (plano aberto)
+• Foto: ambiente (auditório, escola, feira, sala).
+• Texto opcional: “Onde tudo aconteceu”.
+
+S7 — DETALHE (símbolo)
+• Foto: close do diploma/placa/livro/assinatura.
+• Texto opcional: “Isso representa: [1 palavra forte]”.
+
+S8 — VARIEDADE (novo elenco)
+• Foto: outra combinação de pessoas.
+• Texto opcional: “Outro capítulo do mesmo sonho”.
+
+S9 — BASTIDOR HUMANO
+• Foto: selfie ou cena espontânea pós-evento.
+• Texto opcional: “Nos bastidores: eu estava [estado]”.
+
+S10 — FECHAMENTO
+• Foto: melhor foto final + âncora visual.
+• Texto opcional: “Obrigada. Próximo passo: [X]”.
+
+LEGENDA (copiar e preencher)
+Linha 1 (gancho):
+“Hoje eu vivi um marco: [o que aconteceu].”
+
+Contexto (2–3 linhas):
+“Isso veio depois de [tempo/esforço/projeto].
+O maior desafio foi [desafio real].”
+
+Aprendizados (3 bullets):
+“O que eu levo disso:
+• [aprendizado 1]
+• [aprendizado 2]
+• [aprendizado 3]”
+
+Gratidão (1–2 linhas):
+“Obrigada a [pessoas/instituição/alunos] por [motivo específico].”
+
+CTA:
+“Se você é professor(a) e quer [resultado], comenta ‘QUERO’ que eu te mando [recurso] / ou me chama no direct com ‘PROF’.”</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader">
+        <h2>Elementos visuais</h2>
+        <span class="tag">Unidade + retenção</span>
+      </div>
+      <div class="cardBody">
+        <div class="cols">
+          <div class="mini">
+            <h3>Unidade (para parecer “documental”)</h3>
+            <ul>
+              <li>Mesma paleta do evento + 1 cor destaque (roupa/objeto).</li>
+              <li>Mesmo preset em todas as fotos (pele natural, contraste leve).</li>
+              <li>Âncora visual recorrente (certificado/placa/etc.).</li>
+              <li>Numeração sutil (1/10) opcional para incentivar seguir.</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Variação (para não cansar)</h3>
+            <ul>
+              <li>Alterne: close (emoção) → aberto (contexto) → médio (interação).</li>
+              <li>Troque o “elenco” a cada 1–2 slides.</li>
+              <li>Inclua 1 bastidor espontâneo (humaniza).</li>
+              <li>Mostre detalhes táteis (mão segurando, carimbo, assinatura).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="mini">
+          <h3>Opcional: texto discreto nos slides (performance)</h3>
+          <p>Se o fundo estiver poluído, use faixa/blur/gradiente atrás. Regra: <b>uma frase por slide</b>, sempre curta. Fontes seguras: Inter / Montserrat / Poppins.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader">
+        <h2>Copy e ganchos</h2>
+        <span class="tag">Substituível por tema</span>
+      </div>
+      <div class="cardBody">
+        <div class="cols">
+          <div class="mini">
+            <h3>Títulos de capa (curtos)</h3>
+            <ul>
+              <li>“Um dia que eu não vou esquecer: [MARCO]”</li>
+              <li>“Quando a sala de aula vira reconhecimento”</li>
+              <li>“Bastidores do meu [MARCO]”</li>
+              <li>“Recebi [X] — e isso muda [Y]”</li>
+              <li>“A prova de que [DECISÃO] funciona”</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Ganchos de legenda (linha 1)</h3>
+            <ul>
+              <li>“Eu fiquei sem palavras quando chamaram meu nome.”</li>
+              <li>“Eu quase desisti de [X] — até que aconteceu isso.”</li>
+              <li>“Se você acha que [crença], eu te entendo… eu também achava.”</li>
+              <li>“Não é sobre diploma. É sobre [significado real].”</li>
+              <li>“Três coisas que eu aprendi antes de chegar aqui:”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="mini">
+          <h3>Blocos substituíveis (mesmo impacto, qualquer tema)</h3>
+          <ul>
+            <li><b>[MARCO]</b> pode virar: “aprovação”, “premiação”, “projeto concluído”, “convite para palestrar”, “resultado da turma”, “publicação”.</li>
+            <li><b>[ÂNCORA VISUAL]</b> pode virar: “atividade”, “plano de aula impresso”, “caderno”, “relatório”, “print de feedback”, “livro”.</li>
+            <li><b>[AUTORIDADE]</b> pode virar: “direção”, “coordenação”, “secretaria”, “cliente”, “banca”, “mentor”.</li>
+            <li><b>[PROVA]</b> pode virar: “certificado”, “carimbo”, “medalha”, “print”, “formulário de avaliação”, “antes/depois”.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader">
+        <h2>CTA</h2>
+        <span class="tag">Escolha 1 principal</span>
+      </div>
+      <div class="cardBody">
+        <div class="cols">
+          <div class="mini">
+            <h3>CTA suave (relacionamento)</h3>
+            <ul>
+              <li>“Você já viveu um momento assim na escola? Conta aqui.”</li>
+              <li>“Qual conquista você quer viver ainda este ano?”</li>
+              <li>“Qual foi seu maior marco como professor(a)?”</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>CTA de valor (salvar/compartilhar)</h3>
+            <ul>
+              <li>“Salve para lembrar: reconhecimento também é parte do caminho.”</li>
+              <li>“Envie para um(a) professor(a) que merece ser reconhecido(a).”</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>CTA comercial (discreto)</h3>
+            <ul>
+              <li>“Quer aplicar [estratégia] e construir resultados assim? Me chama no direct com ‘PROF’.”</li>
+              <li>“Comenta ‘GUIA’ que eu te envio o checklist que usei.”</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Regra prática</h3>
+            <p>Use <b>1 CTA principal</b> (comentário) + <b>1 secundário</b> (salvar/compartilhar). Evite 4 pedidos na mesma legenda.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader">
+        <h2>Checklist</h2>
+        <span class="tag">Criação</span>
+      </div>
+      <div class="cardBody">
+        <div class="cols">
+          <div class="mini">
+            <h3>Antes do evento (planejar)</h3>
+            <ul>
+              <li>Definir: marco + âncora visual + emoção.</li>
+              <li>Lista de cenas: ação, reação, autoridade, grupo, contexto, detalhe, bastidor.</li>
+              <li>Combinar com alguém: “faz 3 fotos minhas em pé + 2 closes”.</li>
+              <li>Roupas: 1 cor destaque que contraste com o fundo.</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Durante (captar)</h3>
+            <ul>
+              <li>3 enquadramentos: close / médio / aberto.</li>
+              <li>2 provas sociais: autoridade + grupo afetivo.</li>
+              <li>1 detalhe tátil do símbolo.</li>
+              <li>1 bastidor espontâneo (selfie serve).</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Depois (montar)</h3>
+            <ul>
+              <li>Escolher a capa pela força do olhar + âncora visual.</li>
+              <li>Ordenar para ter progressão: marco → legitimidade → emoção → pessoas → fechamento.</li>
+              <li>Edição uniforme (mesmo preset).</li>
+              <li>Legenda com: gancho + contexto + 3 aprendizados + gratidão + CTA.</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Publicação (ajustes finais)</h3>
+            <ul>
+              <li>Alt text (acessibilidade): descreva o evento e o marco.</li>
+              <li>Marque perfis relevantes (instituição/pessoas) se fizer sentido.</li>
+              <li>Fixe 1 comentário com pergunta (aumenta replies).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader">
+        <h2>Variações</h2>
+        <span class="tag">Adaptações rápidas</span>
+      </div>
+      <div class="cardBody">
+        <div class="cols">
+          <div class="mini">
+            <h3>Variação A — “Resultados da turma”</h3>
+            <p><b>Âncora:</b> mural/atividades/planilha/print de feedback.<br/>
+              <b>Slides:</b> capa com turma + detalhe do resultado + bastidor do planejamento.<br/>
+              <b>CTA:</b> “Comenta ‘PLANO’ que eu mando a estrutura da atividade.”</p>
+          </div>
+          <div class="mini">
+            <h3>Variação B — “Aprovação / certificação”</h3>
+            <p><b>Âncora:</b> certificado, e-mail de aprovação, livro de estudos.<br/>
+              <b>Extra:</b> inserir 1 slide com “antes/depois” (foto antiga + atual).<br/>
+              <b>CTA:</b> “Qual etapa você está? (0–10) Me conta.”</p>
+          </div>
+          <div class="mini">
+            <h3>Variação C — “Projeto pedagógico”</h3>
+            <p><b>Âncora:</b> cartaz do projeto, materiais, fotos da aplicação.<br/>
+              <b>Troca de prova social:</b> aluno/família + coordenação.<br/>
+              <b>CTA:</b> “Quer que eu poste o passo a passo do projeto? Salva e comenta ‘SIM’.”</p>
+          </div>
+          <div class="mini">
+            <h3>Variação D — “Autoridade sem evento”</h3>
+            <p>Se você não tem fotos de cerimônia: use sequência “processo → prova → impacto”.<br/>
+              <b>Prova:</b> prints (anonimizados), páginas do caderno, rubricas, feedbacks, gráficos simples.<br/>
+              <b>CTA:</b> “Te mando o template (DM ‘TEMPLATE’).”</p>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="mini">
+          <h3>Banco de substituições (copiar e escolher)</h3>
+          <ul>
+            <li><b>Reconhecimento</b> → validação / avanço / conquista / marco / virada</li>
+            <li><b>Diploma</b> → certificado / relatório / feedback / evidência / registro</li>
+            <li><b>Autoridade</b> → direção / coordenação / banca / mentor(a) / cliente</li>
+            <li><b>“Obrigada”</b> → gratidão / celebro / honro / compartilho</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('scriptText');
+
+      function showToast(){
+        toast.style.display = 'inline-flex';
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>{ toast.style.display='none'; }, 1600);
+      }
+
+      btn.addEventListener('click', async () => {
+        const content = text.innerText;
+        try{
+          await navigator.clipboard.writeText(content);
+          showToast();
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = content;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
