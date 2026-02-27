@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha Reproduzível — Produtividade (Dia 6)</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1626;
+      --card:#0f182b;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.58);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --g1:linear-gradient(135deg,#22c55e 0%, #3b82f6 45%, #f59e0b 100%);
+      --g2:linear-gradient(135deg, rgba(34,197,94,.18), rgba(59,130,246,.18), rgba(245,158,11,.18));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(59,130,246,.18), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, rgba(245,158,11,.16), transparent 55%),
+        radial-gradient(800px 520px at 40% 120%, rgba(34,197,94,.14), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    a{color:rgba(147,197,253,.95); text-decoration:none;}
+    a:hover{text-decoration:underline;}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:26px 18px 60px;}
+
+    .header{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--stroke);
+      border-radius: var(--r20);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .headerTop{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
+      padding:18px 18px 14px;
+    }
+
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap;}
+    .badge{
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--stroke);
+      color:rgba(255,255,255,.78);
+    }
+    .badge strong{color:rgba(255,255,255,.92); font-weight:650;}
+
+    .titleBlock{padding:0 18px 18px;}
+    .h1{
+      margin:6px 0 8px;
+      font-size: clamp(22px, 3.1vw, 34px);
+      line-height:1.12;
+      letter-spacing:-0.02em;
+    }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      max-width:78ch;
+    }
+
+    .linkRow{
+      padding:0 18px 18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .linkPill{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      background:rgba(15,24,43,.65);
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      color:rgba(255,255,255,.86);
+      max-width:100%;
+    }
+
+    .linkPill span{color:var(--muted2); font-family:var(--mono); font-size:12px; word-break:break-all;}
+
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke2);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.9);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:650;
+      letter-spacing:.01em;
+    }
+    .btn:hover{background:rgba(255,255,255,.09)}
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr;}
+      .linkRow{justify-content:flex-start;}
+    }
+
+    .card{
+      background: rgba(15,24,43,.72);
+      border: 1px solid var(--stroke);
+      border-radius: var(--r16);
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+
+    .cardHead{
+      padding:14px 14px 0;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+
+    .cardTitle{
+      margin:0;
+      font-size:13px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.72);
+    }
+
+    .cardBody{padding:12px 14px 14px;}
+    .cardBody p{margin:0 0 10px; color:var(--muted);}
+    .cardBody p:last-child{margin-bottom:0;}
+
+    .accent{
+      border-top:1px solid rgba(255,255,255,.06);
+      background: var(--g2);
+      padding:12px 14px;
+      color:rgba(255,255,255,.86);
+    }
+
+    .hr{height:1px; background:rgba(255,255,255,.08); margin:10px 0 12px;}
+
+    ul{margin:10px 0 0 18px; color:var(--muted);}
+    li{margin:6px 0;}
+    .muted{color:var(--muted2);}
+
+    .kpi{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top:10px;
+    }
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.04);
+      color:rgba(255,255,255,.78);
+      font-size:12px;
+    }
+    .chip strong{color:rgba(255,255,255,.92);}
+
+    .scriptBox{
+      position:relative;
+      padding:0;
+    }
+
+    pre{
+      margin:0;
+      padding:14px;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      border-radius: 0 0 var(--r16) var(--r16);
+      background:rgba(8,12,20,.55);
+      border-top:1px solid rgba(255,255,255,.08);
+      color:rgba(255,255,255,.86);
+      font: 12.6px/1.5 var(--mono);
+    }
+
+    .copyRow{
+      display:flex; gap:10px; align-items:center; justify-content:flex-end;
+      padding: 12px 14px;
+      border-top:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:16px;
+      transform:translateX(-50%);
+      background:rgba(15,24,43,.92);
+      border:1px solid rgba(255,255,255,.14);
+      padding:10px 12px;
+      border-radius:999px;
+      color:rgba(255,255,255,.88);
+      box-shadow: var(--shadow);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      font-size:13px;
+    }
+    .toast.show{opacity:1;}
+
+    .highlight{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight:750;
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 680px){
+      .twoCol{grid-template-columns:1fr;}
+    }
+
+    .small{font-size:12.5px; color:var(--muted2);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="header">
+      <div class="headerTop">
+        <div class="badgeRow">
+          <div class="badge">Nicho: <strong>Produtividade</strong></div>
+          <div class="badge">Dia: <strong>6</strong></div>
+          <div class="badge">Pilar: <strong>Passo a passo</strong></div>
+          <div class="badge">Formato: <strong>Carrossel</strong></div>
+        </div>
+        <div class="badge" style="background:rgba(255,255,255,.04)">Identidade: <span class="highlight">high-tech</span> + lifestyle</div>
+      </div>
+
+      <div class="titleBlock">
+        <h1 class="h1">Passo a passo: desenhe sua rotina produtiva (na prática)</h1>
+        <p class="sub">Carrossel salvável com exercício guiado (papel e caneta) + prompts em 5 passos. Promessa: sair do “vou me organizar” para um sistema simples e sustentável.</p>
+      </div>
+
+      <div class="linkRow">
+        <div class="linkPill" title="Post original">
+          <strong>Post original</strong>
+          <span>https://www.instagram.com/p/DSyEitekfZi/</span>
+        </div>
+        <button class="btn" onclick="copyScript()">Copiar roteiro</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="cardHead"><h2 class="cardTitle">Resumo</h2></div>
+        <div class="cardBody">
+          <p><span class="highlight">Objetivo do post:</span> gerar <strong>salvamentos</strong> e <strong>comentários</strong> por ser um exercício prático e guiado.</p>
+          <div class="twoCol">
+            <div>
+              <p><strong>Promessa:</strong> em poucos minutos, você sai com um rascunho de rotina + prioridades + 1 hábito mínimo.</p>
+              <p><strong>Momento ideal:</strong> domingo / início do mês / véspera de sprint.</p>
+            </div>
+            <div>
+              <p><strong>Grande ideia:</strong> produtividade é <em>sinais consistentes</em> na agenda — não motivação.</p>
+              <p><strong>Entrega:</strong> 5 passos + perguntas que a pessoa responde mentalmente e anota.</p>
+            </div>
+          </div>
+
+          <div class="kpi">
+            <div class="chip"><strong>8</strong> slides</div>
+            <div class="chip"><strong>1</strong> ideia por slide</div>
+            <div class="chip"><strong>3–5</strong> bullets por passo</div>
+            <div class="chip"><strong>CTA</strong> leve (salvar/comentar)</div>
+          </div>
+        </div>
+        <div class="accent small">
+          Tom: calmo, direto, “vida real”. Evite prometer mudança radical; prometa clareza e próximos passos.
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="cardHead"><h2 class="cardTitle">Estrutura</h2></div>
+        <div class="cardBody">
+          <p><strong>Arco narrativo:</strong> Promessa → Preparação → 5 passos com prompts → Reframe final → CTA.</p>
+          <div class="hr"></div>
+          <ul>
+            <li><strong>Slide 1:</strong> Capa (hook + resultado + período)</li>
+            <li><strong>Slide 2:</strong> Setup (papel e caneta + 10 min + “vamos ao passo a passo”)</li>
+            <li><strong>Slides 3–7:</strong> Passos 1–5 (perguntas curtas + bullets)</li>
+            <li><strong>Slide 8:</strong> Fechamento (síntese + mantra + CTA)</li>
+          </ul>
+        </div>
+        <div class="accent small">
+          Regra de retenção: “Passo 1, 2, 3…” cria efeito checklist; cada slide precisa dar vontade de ir para o próximo.
+        </div>
+      </article>
+
+      <article class="card" style="grid-column:1/-1;">
+        <div class="cardHead"><h2 class="cardTitle">Roteiro (texto base reproduzível)</h2></div>
+        <div class="scriptBox">
+          <pre id="roteiro">CARROSSEL (8 SLIDES) — PRODUTIVIDADE — EXERCÍCIO GUIADO
+
+SLIDE 1 — CAPA (HOOK)
+Linha 1 (pequena): COMO DESENHAR (NA PRÁTICA) SUA
+Linha 2 (grande): ROTINA PRODUTIVA
+Linha 3 (pequena): PARA [SEMANAS/PRÓXIMOS 30 DIAS/2026]
+Destaque: sublinhe “na prática” OU “rotina produtiva”.
+
+SLIDE 2 — SETUP (PREPARAÇÃO)
+Topo: Pegue papel e caneta.
+Frase-guia: 10 minutos. Sem perfeição.
+Bullets:
+• como você quer se sentir no fim do dia?
+• quais 1–2 entregas importam de verdade?
+• o que precisa sair da sua rotina para caber?
+Fecho: Vamos ao passo a passo.
+
+SLIDE 3 — PASSO 1 (CLAREZA / IDENTIDADE)
+Título: PASSO 1 — QUAL ROTINA VOCÊ QUER TER?
+Frase-guia: Defina o “ritmo” antes de preencher a agenda.
+Prompts:
+• que horas começa/termina seu dia ideal?
+• qual é seu pico de energia?
+• quais 2 coisas você não negocia?
+• como você reage às distrações?
+
+SLIDE 4 — PASSO 2 (RESULTADO ESPECÍFICO)
+Título: PASSO 2 — QUE RESULTADOS VOCÊ QUER ENTREGAR?
+Frase-guia: Seja específico. Produtividade sem alvo vira ocupação.
+Prompts:
+• quais 3 entregas até [data]?
+• quantas horas/semana de foco real?
+• o que você vai dizer “não” este mês?
+Âncora: Resultados seguem prioridades visíveis.
+
+SLIDE 5 — PASSO 3 (SISTEMA / HÁBITOS)
+Título: PASSO 3 — QUE HÁBITOS SUSTENTAM ISSO?
+Frase-guia: Seus hábitos são o seu sistema.
+Prompts:
+• qual hábito mínimo começa hoje (5–10 min)?
+• qual hábito está roubando seu tempo?
+• qual gatilho você vai usar (ex.: depois do café…)?
+
+SLIDE 6 — PASSO 4 (DECISÕES / PRIORIDADES)
+Título: PASSO 4 — QUAIS DECISÕES VOCÊ PRECISA TOMAR?
+Frase-guia: A mudança acontece nas pequenas escolhas.
+Prompts:
+• o que entra primeiro na agenda?
+• o que sai (mesmo sendo confortável)?
+• que limite você vai comunicar?
+
+SLIDE 7 — PASSO 5 (CONSISTÊNCIA / SINAIS)
+Título: PASSO 5 — CRIE SINAIS CONSISTENTES
+Frase-guia: Seu foco aparece na sua agenda.
+Prompts:
+• o que você consome no início do dia?
+• quais 2 blocos fixos na semana?
+• como você vai proteger esses blocos?
+
+SLIDE 8 — FECHAMENTO (REFRAME + CTA)
+Texto:
+Rotina produtiva não é virar outra pessoa.
+É alinhar seus dias com suas prioridades — com hábitos pequenos e consistentes.
+CTA (escolha 1):
+• Salve para fazer no domingo.
+• Comente “ROTINA” que eu mando o checklist copiável.
+• Em qual passo você travou: 1, 2, 3, 4 ou 5?
+Rodapé: @seuuser + ícones (curtir/comentar/salvar)</pre>
+          <div class="copyRow">
+            <span class="small muted">Dica: mantenha a mesma estrutura e troque só o tema (semana, estudos, energia, procrastinação).</span>
+            <button class="btn" onclick="copyScript()">Copiar roteiro</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="cardHead"><h2 class="cardTitle">Elementos visuais</h2></div>
+        <div class="cardBody">
+          <ul>
+            <li><strong>Estética:</strong> lifestyle “vida real” (mesa, café, caderno, tela com calendário).</li>
+            <li><strong>Fundo:</strong> foto levemente escurecida (overlay 20–40%) para contraste.</li>
+            <li><strong>Texto:</strong> branco; 3 níveis (título PASSO, frase-guia, bullets).</li>
+            <li><strong>Destaques:</strong> 1–3 palavras sublinhadas por slide + doodles discretos.</li>
+            <li><strong>Consistência:</strong> mesma fonte, mesma margem, mesma posição do “PASSO”.</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="muted"><strong>Assinatura high-tech:</strong> adicione barra/etiqueta em degradê (verde→azul→laranja) no topo da capa e micro-linhas (grid) bem sutis nos cantos.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="cardHead"><h2 class="cardTitle">Copy e ganchos</h2></div>
+        <div class="cardBody">
+          <p><strong>Ganchos de capa (escolha 1):</strong></p>
+          <ul>
+            <li>“Como desenhar (na prática) sua rotina produtiva”</li>
+            <li>“O passo a passo para organizar a semana sem virar refém de lista”</li>
+            <li>“5 passos para ter foco sem depender de motivação”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Frases-âncora (espalhe 1 por carrossel):</strong></p>
+          <ul>
+            <li>“Produtividade sem alvo vira ocupação.”</li>
+            <li>“Sua agenda revela suas prioridades.”</li>
+            <li>“O sistema vence a força de vontade.”</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="cardHead"><h2 class="cardTitle">CTA</h2></div>
+        <div class="cardBody">
+          <ul>
+            <li><strong>CTA principal (salvamento):</strong> “Salve para fazer no domingo.”</li>
+            <li><strong>CTA de comentário:</strong> “Comente ‘ROTINA’ que eu mando o checklist copiável.”</li>
+            <li><strong>CTA de engajamento fácil:</strong> “Em qual passo você travou: 1–5?”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="muted"><strong>Regra:</strong> 1 CTA por post. Se pedir comentário, mantenha a legenda curta e objetiva.</p>
+        </div>
+      </article>
+
+      <article class="card" style="grid-column:1/-1;">
+        <div class="cardHead"><h2 class="cardTitle">Checklist de criação (reproduzível)</h2></div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p><strong>Antes de criar</strong></p>
+              <ul>
+                <li>Definir <strong>período</strong>: próximos 7 dias / 30 dias / ano</li>
+                <li>Escolher <strong>tema</strong>: semana / estudos / energia / anti-procrastinação</li>
+                <li>Definir <strong>resultado</strong> (1 frase): “sair com um rascunho de rotina”</li>
+                <li>Escolher <strong>1 frase-âncora</strong></li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Design</strong></p>
+              <ul>
+                <li>8 fotos verticais (1 por slide) com atmosfera consistente</li>
+                <li>Overlay/escurecimento para legibilidade (20–40%)</li>
+                <li>Texto branco + margem segura</li>
+                <li>1–3 palavras destacadas por slide (sublinhado)</li>
+                <li>Doodles pequenos (1–2 por slide) e repetidos</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="twoCol">
+            <div>
+              <p><strong>Roteiro</strong></p>
+              <ul>
+                <li>Slide 2 com instrução clara (papel e caneta + minutos)</li>
+                <li>Passos 1–5 com <strong>bullets curtos</strong> (3–5)</li>
+                <li>Evitar parágrafo; usar “escadinha”: título → frase → bullets</li>
+                <li>Fecho com reframe (tira culpa/perfeccionismo)</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Publicação</strong></p>
+              <ul>
+                <li>Legenda: 3 linhas de contexto + CTA (1)</li>
+                <li>Hashtags: 3–8 (bem específicas)</li>
+                <li>Primeiro comentário: variação de CTA (“qual passo foi mais difícil?”)</li>
+                <li>Responder comentários com perguntas (puxar conversa)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="accent small">
+          Critério de qualidade: se alguém conseguir executar só lendo os bullets, o post está “salvável”.
+        </div>
+      </article>
+
+      <article class="card" style="grid-column:1/-1;">
+        <div class="cardHead"><h2 class="cardTitle">Slides sugeridos (1..8)</h2></div>
+        <div class="cardBody">
+          <ol style="margin:10px 0 0 18px; color:rgba(255,255,255,.78)">
+            <li><strong>Capa:</strong> “Como desenhar (na prática) sua rotina produtiva” + período</li>
+            <li><strong>Setup:</strong> papel e caneta + 10 min + 3 bullets de intenção</li>
+            <li><strong>Passo 1:</strong> identidade/ritmo (como você quer viver o dia)</li>
+            <li><strong>Passo 2:</strong> resultados específicos (entregas/horas de foco)</li>
+            <li><strong>Passo 3:</strong> hábitos/sistema (mínimo viável + sabotadores)</li>
+            <li><strong>Passo 4:</strong> decisões/renúncias (prioridades e limites)</li>
+            <li><strong>Passo 5:</strong> consistência/sinais (blocos fixos + proteção)</li>
+            <li><strong>Fecho:</strong> reframe + CTA (salvar/comentar)</li>
+          </ol>
+        </div>
+      </article>
+
+      <article class="card" style="grid-column:1/-1;">
+        <div class="cardHead"><h2 class="cardTitle">Variações (para produzir em série)</h2></div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p><strong>Variação por tema</strong></p>
+              <ul>
+                <li><strong>Planejamento semanal:</strong> passos focados em blocos de agenda</li>
+                <li><strong>Rotina de estudos:</strong> metas de ciclos + revisões</li>
+                <li><strong>Gestão de energia:</strong> sono, alimentação, pausas, picos</li>
+                <li><strong>Anti-procrastinação:</strong> fricção, gatilhos e “próxima ação”</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Variação por promessa</strong></p>
+              <ul>
+                <li>“Em 10 min” (rápido e executável)</li>
+                <li>“Sem depender de motivação” (objeção forte)</li>
+                <li>“Para quem tem pouco tempo” (dor)</li>
+                <li>“Para quem começa e não mantém” (consistência)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="accent small">
+          Produção em lote: mantenha a mesma estrutura e troque apenas: período + tema + 2 bullets por passo.
+        </div>
+      </article>
+    </section>
+
+    <div id="toast" class="toast">Roteiro copiado.</div>
+  </div>
+
+  <script>
+    function copyScript(){
+      const el = document.getElementById('roteiro');
+      const text = el ? el.innerText : '';
+      if(!text) return;
+      navigator.clipboard.writeText(text).then(()=>{
+        const t = document.getElementById('toast');
+        t.classList.add('show');
+        setTimeout(()=>t.classList.remove('show'), 1200);
+      }).catch(()=>{
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        const t = document.getElementById('toast');
+        t.classList.add('show');
+        setTimeout(()=>t.classList.remove('show'), 1200);
+      });
+    }
+  </script>
+</body>
+</html>
