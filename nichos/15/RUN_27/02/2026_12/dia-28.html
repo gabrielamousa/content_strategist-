@@ -1,0 +1,461 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Dia 28 — Roteiro Reproduzível</title><style>
+:root{
+  --bg0:#070A12;
+  --bg1:#0B1020;
+  --card:rgba(255,255,255,.06);
+  --card2:rgba(255,255,255,.08);
+  --stroke:rgba(255,255,255,.12);
+  --stroke2:rgba(255,255,255,.18);
+  --text:#EAF0FF;
+  --muted:rgba(234,240,255,.72);
+  --muted2:rgba(234,240,255,.55);
+  --shadow: 0 18px 60px rgba(0,0,0,.55);
+  --r16:16px;
+  --r20:20px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  --grad: linear-gradient(90deg, #22c55e 0%, #3b82f6 45%, #f59e0b 100%);
+  --gradSoft: linear-gradient(90deg, rgba(34,197,94,.18) 0%, rgba(59,130,246,.18) 45%, rgba(245,158,11,.18) 100%);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--text);
+  background:
+    radial-gradient(1200px 800px at 15% 10%, rgba(59,130,246,.18), transparent 60%),
+    radial-gradient(900px 700px at 85% 20%, rgba(245,158,11,.16), transparent 55%),
+    radial-gradient(900px 700px at 60% 90%, rgba(34,197,94,.14), transparent 55%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+}
+a{color:inherit; text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1100px; margin:0 auto; padding:28px 18px 64px}
+.header{
+  border:1px solid var(--stroke);
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+  box-shadow:var(--shadow);
+  border-radius:var(--r20);
+  padding:18px 18px 16px;
+  overflow:hidden;
+  position:relative;
+}
+.header:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--gradSoft);
+  opacity:.8;
+  filter:blur(0px);
+  pointer-events:none;
+  mask-image: radial-gradient(700px 120px at 20% 0%, black, transparent 70%);
+}
+.topRow{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; position:relative}
+.badges{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.badge{
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--stroke);
+  background:rgba(0,0,0,.18);
+  padding:8px 10px;
+  border-radius:999px;
+  font-size:13px;
+  color:var(--muted);
+}
+.badge b{color:var(--text)}
+.titleBlock{margin-top:10px; position:relative}
+.h1{
+  font-size: clamp(22px, 3.3vw, 34px);
+  line-height:1.08;
+  margin:0;
+  letter-spacing:-.02em;
+}
+.sub{
+  margin:10px 0 0;
+  color:var(--muted);
+  max-width:80ch;
+}
+.metaLinks{margin-top:12px; display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+.link{
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.05);
+  padding:10px 12px;
+  border-radius:12px;
+  color:var(--muted);
+  font-size:13px;
+}
+.link .dot{width:7px; height:7px; border-radius:99px; background:var(--grad);}
+.actions{display:flex; gap:10px; flex-wrap:wrap}
+.btn{
+  border:1px solid var(--stroke2);
+  background: rgba(255,255,255,.08);
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:12px;
+  font-weight:600;
+  font-size:13px;
+  cursor:pointer;
+  transition:transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.btn:hover{background:rgba(255,255,255,.11); border-color:rgba(255,255,255,.22)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{
+  background: linear-gradient(90deg, rgba(34,197,94,.22), rgba(59,130,246,.22), rgba(245,158,11,.22));
+  border-color: rgba(255,255,255,.20);
+}
+.grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:16px}
+@media(min-width:920px){
+  .grid{grid-template-columns: 1.15fr .85fr; align-items:start}
+}
+.card{
+  border:1px solid var(--stroke);
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+  border-radius:var(--r16);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.cardHeader{
+  padding:14px 16px 10px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.cardHeader h2{margin:0; font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.cardBody{padding:14px 16px 16px}
+.kbd{font-family:var(--mono); font-size:12px; color:var(--muted); border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.25); padding:6px 8px; border-radius:10px}
+.p{margin:0; color:var(--muted); line-height:1.55}
+.list{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:10px}
+.li{
+  padding:12px 12px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.16);
+  border-radius:14px;
+}
+.li b{color:var(--text)}
+.hr{height:1px; background:rgba(255,255,255,.10); margin:12px 0}
+.tagRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.tag{font-size:12px; color:var(--muted); border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); padding:7px 9px; border-radius:999px}
+.highlight{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:750}
+pre{
+  margin:0;
+  white-space:pre-wrap;
+  word-wrap:break-word;
+  font-family:var(--mono);
+  font-size:12.6px;
+  line-height:1.55;
+  color:rgba(234,240,255,.86);
+}
+.small{font-size:12.5px; color:var(--muted2); line-height:1.5}
+.cols{display:grid; grid-template-columns:1fr; gap:12px}
+@media(min-width:920px){.cols{grid-template-columns:1fr 1fr}}
+.toast{
+  position:fixed;
+  left:50%; bottom:18px;
+  transform:translateX(-50%);
+  background:rgba(10,15,28,.78);
+  border:1px solid rgba(255,255,255,.14);
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:999px;
+  box-shadow:var(--shadow);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s ease, transform .2s ease;
+  font-size:13px;
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(-2px)}
+</style></head><body><div class="container">
+  <section class="header">
+    <div class="topRow">
+      <div class="badges">
+        <div class="badge"><span class="dot" style="width:8px;height:8px;border-radius:99px;background:var(--grad)"></span><b>Nicho:</b>&nbsp;Neutro</div>
+        <div class="badge"><b>Dia:</b>&nbsp;28</div>
+        <div class="badge"><b>Formato:</b>&nbsp;Carrossel</div>
+        <div class="badge"><b>Pilar:</b>&nbsp;Mito vs Verdade</div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <a class="btn" href="https://www.instagram.com/p/DGA2yRgsNA6/" target="_blank" rel="noopener">Abrir post original</a>
+      </div>
+    </div>
+    <div class="titleBlock">
+      <h1 class="h1">As cores de <span class="highlight">[OBRA]</span> revelam mais do que você imagina</h1>
+      <p class="sub">Template reproduzível para analisar uma paleta (obra, marca, campanha ou produto) com evidência visual + interpretação — e fechar com síntese e CTA.</p>
+      <div class="metaLinks">
+        <a class="link" href="https://www.instagram.com/p/DGA2yRgsNA6/" target="_blank" rel="noopener"><span class="dot"></span><span>Link do post original</span></a>
+        <span class="kbd">1080×1350 • 8 slides • 4:5</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <div class="cardHeader"><h2>Resumo</h2><span class="kbd">Objetivo</span></div>
+      <div class="cardBody">
+        <p class="p">Carrossel em 8 slides que prova (com imagens e swatches) que a paleta não é aleatória. Você entrega um método simples: <b>cor → evidência → significado → impacto no tema</b>. Final: síntese (recompensa cognitiva) + pergunta (comentários) + convite (follow/salvar).</p>
+        <div class="tagRow">
+          <span class="tag">Curiosidade (camadas ocultas)</span>
+          <span class="tag">Prova visual (frames + paleta)</span>
+          <span class="tag">Padrão repetitivo com variação</span>
+          <span class="tag">Contraste (tensão narrativa)</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><h2>Metadados (para calendário)</h2><span class="kbd">Preencher/editar</span></div>
+      <div class="cardBody">
+        <ul class="list">
+          <li class="li"><b>Título curto:</b> As cores de [OBRA] revelam mais do que você imagina</li>
+          <li class="li"><b>Instrução curta:</b> 8 slides: capa-hype, contexto+método, 3–4 cores com evidência e significado, síntese e CTA.</li>
+          <li class="li"><b>Pilar:</b> Mito vs Verdade ("não é estética: é linguagem")</li>
+          <li class="li"><b>Formato:</b> Carrossel</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><h2>Estrutura</h2><span class="kbd">Sequência</span></div>
+      <div class="cardBody">
+        <ul class="list">
+          <li class="li"><b>Slide 1 (Capa):</b> Hook + promessa de insight + frame icônico.</li>
+          <li class="li"><b>Slide 2:</b> Contexto/autoridade + tese: “nada é por acaso” + o método que você vai usar.</li>
+          <li class="li"><b>Slides 3–6:</b> 1 cor por slide (3 cores) + 1 cor com dupla leitura (ou contraste).</li>
+          <li class="li"><b>Slide 7:</b> Síntese (big idea) amarrando as cores ao tema central.</li>
+          <li class="li"><b>Slide 8:</b> Pergunta + CTA (seguir/salvar) + gancho para o próximo.</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="small"><b>Ritmo recomendado:</b> slides 2–7 mais densos (aula/prova) e slides 1 e 8 como “respiro” (impacto + convite).</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><h2>Slides sugeridos (1..8)</h2><span class="kbd">Template</span></div>
+      <div class="cardBody">
+<pre id="slides">1) CAPA
+- Headline: “As cores de [OBRA] revelam mais do que você imagina”
+- Sub: “psicologia das cores / cinema / branding / design” (escolha 1)
+- Visual: 1 imagem forte + 1 detalhe marcado (círculo/sublinhado)
+
+2) CONTEXTO + MÉTODO
+- Frase: “[OBRA] é [opinião forte em 3–6 palavras].”
+- Tese: “Nada aqui é por acaso — nem as cores.”
+- Método: “Vou te mostrar o que cada cor comunica.”
+- Micro-CTA: “Arrasta →”
+
+3) COR 1 (BASE)
+- Título: “O [COR 1] domina [ambiente/situação].”
+- Prova: 2–3 imagens (mesma cena/mesmo clima)
+- Swatches: 5–7 tons (escuro → claro)
+- Leitura: 1 sensação + 1 função narrativa
+
+4) COR 2 (CONTRASTE)
+- Título: “[COR 2] aparece quando [quebra/ameaça/muda].”
+- Prova + swatches
+- Leitura: “passa de [sensação 1] para [sensação 2]”
+
+5) COR 3 (NEUTROS / AUSÊNCIA)
+- Título: “O [branco/cinza/preto] não é ‘neutro’.”
+- Prova + swatches suaves
+- Leitura: vazio, rotina, anonimato, padronização (escolha 1–2)
+
+6) COR 4 (DUPLA LEITURA)
+- Headline: “O [COR 4] pode significar duas coisas:”
+- Lista: (1) [leitura positiva] (2) [leitura irônica/negativa]
+- Nota manuscrita: 2–3 palavras-resumo
+
+7) SÍNTESE (BIG IDEA)
+- Frase: “Juntas, essas cores constroem visualmente: [tema central].”
+- 2–3 bullets do que muda na percepção
+- Visual: 1 imagem grande com tipografia por cima
+
+8) FECHAMENTO
+- Pergunta: “Você tinha notado isso?” / “Qual cor te chamou mais atenção?”
+- CTA: “Salva pra rever” + “Segue pra mais análises”
+- Gancho: “Quer que eu analise [OBRA 2]?”</pre>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><h2>Roteiro</h2><span class="kbd">Copy pronta (editável)</span></div>
+      <div class="cardBody">
+<pre id="roteiro">PROMESSA CENTRAL (use no slide 1 e repita no 7)
+“Isso não é só estética. A paleta está contando a história por baixo do texto.”
+
+SLIDE 1 — CAPA
+Headline: “As cores de [OBRA] revelam mais do que você imagina”
+Linha fina: “Não é acaso: é linguagem visual.”
+
+SLIDE 2 — CONTEXTO + MÉTODO
+“[OBRA] é [uma das melhores / subestimada / visualmente cirúrgica].
+E o mais interessante: nada do que você vê é por acaso — principalmente as cores.
+Vou separar 4 cores e te mostrar o que elas comunicam.”
+
+SLIDE 3 — COR 1
+“O [COR 1] domina [lugar/rotina/ambiente].
+Sensação: [frieza / calma / distância / confiança].
+Função: reforça [controle / ordem / previsibilidade / profissionalismo].”
+
+SLIDE 4 — COR 2
+“Quando o [COR 2] aparece, algo está fora do eixo.
+Sensação: [tensão / urgência / desejo / alerta].
+Função: marca [ruptura / conflito / risco / rebeldia].”
+
+SLIDE 5 — COR 3 (NEUTRO)
+“O [BRANCO/CINZA/PRETO] aqui não é ‘limpo’ — é [vazio / padronização / silêncio].
+Função: apaga individualidade e deixa tudo com cara de [rotina / sistema / protocolo].”
+
+SLIDE 6 — COR 4 (DUPLA LEITURA)
+“O [COR 4] pode ser lido de duas formas:
+(1) [esperança / frescor / vida / crescimento]
+(2) [ironia / controle disfarçado / ‘bem-estar’ fabricado]
+Percebe como a mesma cor muda dependendo do contexto?”
+
+SLIDE 7 — SÍNTESE
+“Juntas, essas cores constroem visualmente: [TEMA CENTRAL].
+• [efeito 1: o mundo parece controlado]
+• [efeito 2: o conflito ‘vaza’ em pontos específicos]
+• [efeito 3: o vazio vira mensagem]
+
+SLIDE 8 — FECHAMENTO
+“Você já tinha notado esses detalhes?
+Qual cor foi a mais ‘barulhenta’ pra você?
+Salva pra rever e me segue pra mais análises nesse estilo.”</pre>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><h2>Elementos visuais</h2><span class="kbd">DNA do design</span></div>
+      <div class="cardBody">
+        <ul class="list">
+          <li class="li"><b>Prova visual:</b> frames/fotos do tema + swatches (5–7 tons) por cor.</li>
+          <li class="li"><b>Assinatura high-tech/editorial:</b> microheaders, “etiquetas” tipo software, cursores/menus, grids.</li>
+          <li class="li"><b>Guias de olhar:</b> 2–3 marcações manuais por slide (círculo, seta, sublinhado).</li>
+          <li class="li"><b>Consistência:</b> moldura/padrão fixo (mesma posição de swatches e textos).</li>
+          <li class="li"><b>Contraste e respiro:</b> capa e fechamento com menos texto; slides do meio com estrutura repetível.</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="small"><b>Dica prática:</b> se não tiver frames (direitos autorais/sem imagens), substitua por <b>moodboard</b>, fotos autorais, screenshots de sites, embalagens, ou layouts de campanha — mantendo o “cor → evidência → significado”.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><h2>Copy e ganchos</h2><span class="kbd">Substituições rápidas</span></div>
+      <div class="cardBody">
+        <div class="cols">
+          <div class="li">
+            <b>Ganchos de capa (escolha 1):</b>
+            <div class="small" style="margin-top:8px">
+              1) “As cores de [OBRA] revelam mais do que você imagina”<br/>
+              2) “O que a paleta de [OBRA] diz sobre [tema emocional]”<br/>
+              3) “Parece só estética — mas é narrativa”<br/>
+              4) “Você está lendo as cores errado (te mostro como)” 
+            </div>
+          </div>
+          <div class="li">
+            <b>Frases de prova (slide 2):</b>
+            <div class="small" style="margin-top:8px">
+              • “Nada aqui é por acaso.”<br/>
+              • “Repara onde essa cor aparece.”<br/>
+              • “Quando a paleta muda, o significado muda junto.”<br/>
+              • “Vamos separar por camadas: ambiente → cor → intenção.”
+            </div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="li">
+          <b>Banco de interpretações (para adaptar sem travar):</b>
+          <div class="small" style="margin-top:8px">
+            <b>Azul:</b> controle, distância, tecnologia, confiança, frieza.<br/>
+            <b>Vermelho:</b> alerta, desejo, conflito, ruptura, coragem.<br/>
+            <b>Verde:</b> cura, esperança, natureza, ironia “bem-estar”, dinheiro/poder (depende do tom).<br/>
+            <b>Amarelo/Laranja:</b> urgência, otimismo, energia, instabilidade, artificialidade (neon).<br/>
+            <b>Branco/Cinza:</b> padronização, silêncio, vazio, rotina, protocolo.<br/>
+            <b>Preto:</b> poder, segredo, luto, sofisticação, ameaça.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><h2>CTA</h2><span class="kbd">Engajamento + crescimento</span></div>
+      <div class="cardBody">
+        <ul class="list">
+          <li class="li"><b>Comentário (pergunta única):</b> “Qual cor te chamou mais atenção e por quê?”</li>
+          <li class="li"><b>Salvar:</b> “Salva pra rever quando assistir/estudar [OBRA].”</li>
+          <li class="li"><b>Follow:</b> “Me segue pra mais análises de [tema: cinema/branding/produtos/design].”</li>
+          <li class="li"><b>Próximo post (ponte):</b> “Quer a parte 2: símbolos/figurino/tipos de plano?”</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="small"><b>Regra:</b> 1 pergunta + 1 ação (salvar ou seguir). Evite 3 CTAs no mesmo slide.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><h2>Checklist</h2><span class="kbd">Criação e publicação</span></div>
+      <div class="cardBody">
+        <ul class="list">
+          <li class="li"><b>Antes:</b> defina [OBRA/TEMA] + [tema central] (1 frase).</li>
+          <li class="li"><b>Assets:</b> separe 8–12 imagens (2–3 por cor) com a cor bem evidente.</li>
+          <li class="li"><b>Paleta:</b> extraia 5–7 tons por cor (do mais escuro ao mais claro).</li>
+          <li class="li"><b>Texto:</b> por cor: escreva <b>1 sensação</b> + <b>1 função</b> (máx. 2 linhas cada).</li>
+          <li class="li"><b>Consistência:</b> swatches sempre no mesmo lugar; microheader fixo; margens generosas.</li>
+          <li class="li"><b>Retenção:</b> repita o padrão “cor → evidência → significado” e varie no slide 6 (dupla leitura).</li>
+          <li class="li"><b>Final:</b> slide 7 amarra; slide 8 pergunta + CTA.</li>
+          <li class="li"><b>Legenda:</b> 3 blocos (tese / mini-resumo das cores / pergunta final). Inclua “Salva”.</li>
+          <li class="li"><b>Publicação:</b> capa legível em miniatura; teste contraste; revise ortografia; exporte em 1080×1350.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><h2>Variações</h2><span class="kbd">Mesmo impacto, outro tema</span></div>
+      <div class="cardBody">
+        <ul class="list">
+          <li class="li"><b>Variação A (Marca/Produto):</b> cores da embalagem/site → “o que isso sinaliza sobre preço, público e promessa”.</li>
+          <li class="li"><b>Variação B (Ambiente/Arquitetura):</b> cores do espaço → “como a paleta guia comportamento (calma, urgência, consumo)”.</li>
+          <li class="li"><b>Variação C (Conteúdo pessoal):</b> “as cores que eu uso no meu perfil e o que elas comunicam”.</li>
+          <li class="li"><b>Variação D (Mito vs Verdade explícito):</b> Slide 2: “Mito: é só estética. Verdade: é direção de significado.”</li>
+          <li class="li"><b>Variação E (3 cores apenas):</b> Slides 3–5 (3 cores) + slide 6 vira “o detalhe invisível” (textura/luz/contraste) no lugar da 4ª cor.</li>
+          <li class="li"><b>Substituições rápidas:</b> “frames da obra” → “prints do site” / “fotos do produto” / “moodboard” mantendo swatches.</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="small"><b>Atalho para adaptar:</b> troque apenas 4 campos: <span class="kbd">[OBRA]</span> <span class="kbd">[tema central]</span> <span class="kbd">[4 cores]</span> <span class="kbd">[onde aparece cada cor]</span>. O resto permanece.</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+<div class="toast" id="toast">Roteiro copiado.</div>
+<script>
+(function(){
+  const btn = document.getElementById('copyBtn');
+  const toast = document.getElementById('toast');
+  const roteiro = document.getElementById('roteiro');
+  const slides = document.getElementById('slides');
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(window.__t);
+    window.__t = setTimeout(()=>toast.classList.remove('show'), 1600);
+  }
+
+  btn.addEventListener('click', async ()=>{
+    const text = "ROTEIRO (Dia 28)\n\n" + slides.textContent.trim() + "\n\n" + roteiro.textContent.trim();
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast('Roteiro copiado.');
+    }catch(e){
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try{document.execCommand('copy'); showToast('Roteiro copiado.');}
+      catch(err){showToast('Não foi possível copiar.');}
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script></body></html>
