@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 5 — Produtividade — Rotina funcional em 6 passos</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1220;
+      --card:#0E172A;
+      --card2:#0B1326;
+      --text:#E7EEFf;
+      --muted:#A8B3CF;
+      --line:rgba(231,238,255,.10);
+      --line2:rgba(231,238,255,.16);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --r:18px;
+      --r2:14px;
+      --grad: linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+      --grad2: radial-gradient(900px 380px at 18% 12%, rgba(34,197,94,.14), transparent 55%),
+               radial-gradient(900px 380px at 62% 18%, rgba(56,189,248,.14), transparent 55%),
+               radial-gradient(900px 380px at 78% 62%, rgba(251,146,60,.12), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--grad2), linear-gradient(180deg,var(--bg0),var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--r) + 6px);
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--grad);
+      opacity:.10;
+      filter: blur(26px);
+      pointer-events:none;
+    }
+
+    .toprow{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+
+    .badgeRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .badge{
+      border:1px solid var(--line2);
+      background: rgba(255,255,255,.03);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:12px;
+      color: var(--muted);
+      letter-spacing:.2px;
+    }
+
+    .title{
+      margin:14px 0 10px;
+      font-size:20px;
+      line-height:1.25;
+      letter-spacing:.2px;
+    }
+
+    .title .hl{
+      background: var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:800;
+    }
+
+    .sub{
+      color:var(--muted);
+      margin:0;
+      line-height:1.55;
+      max-width: 78ch;
+      font-size:14px;
+    }
+
+    a{
+      color:#9ae6ff;
+      text-decoration:none;
+      border-bottom:1px dashed rgba(154,230,255,.35);
+    }
+    a:hover{border-bottom-color:rgba(154,230,255,.8)}
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.15fr .85fr; gap:16px}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+    }
+
+    .card h2{
+      margin:0;
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:.35px;
+      text-transform:uppercase;
+      color:#DCE6FF;
+    }
+
+    .chip{
+      font-family:var(--mono);
+      font-size:12px;
+      color: rgba(231,238,255,.72);
+      border:1px solid var(--line2);
+      background: rgba(255,255,255,.03);
+      border-radius:999px;
+      padding:6px 10px;
+      white-space:nowrap;
+    }
+
+    .bd{padding:16px}
+
+    .list{margin:0; padding-left:18px; color:var(--muted); line-height:1.6; font-size:14px}
+    .list li{margin:6px 0}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    @media (min-width: 560px){
+      .kpi{grid-template-columns: repeat(3,1fr)}
+    }
+
+    .kpi .box{
+      border:1px solid var(--line);
+      background: rgba(10,18,34,.55);
+      border-radius: var(--r2);
+      padding:12px;
+    }
+
+    .kpi .t{font-size:12px;color:var(--muted);margin:0 0 6px}
+    .kpi .v{margin:0;font-size:14px;font-weight:750}
+    .kpi .v .hl{
+      background: var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .scriptWrap{position:relative}
+    pre{
+      margin:0;
+      padding:14px;
+      border:1px solid var(--line);
+      background: rgba(6,10,18,.65);
+      border-radius: var(--r2);
+      overflow:auto;
+      color: rgba(231,238,255,.86);
+      line-height:1.55;
+      font-size:12.8px;
+      font-family: var(--mono);
+      max-height: 540px;
+    }
+
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+    button{
+      border:1px solid rgba(231,238,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:650;
+      letter-spacing:.2px;
+    }
+
+    button.primary{
+      border: none;
+      background: var(--grad);
+      color: #071018;
+    }
+
+    button:active{transform: translateY(1px)}
+
+    .note{
+      margin-top:10px;
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    .cols{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+    @media (min-width: 860px){
+      .cols{grid-template-columns:1fr 1fr}
+    }
+
+    .hr{
+      height:1px;
+      background: var(--line);
+      margin:14px 0;
+    }
+
+    .callout{
+      border:1px solid rgba(56,189,248,.22);
+      background: linear-gradient(180deg, rgba(56,189,248,.10), rgba(56,189,248,.04));
+      border-radius: var(--r2);
+      padding:12px 12px;
+      color: rgba(231,238,255,.88);
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .callout b{
+      background: var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    footer{
+      margin-top:18px;
+      color: rgba(168,179,207,.85);
+      font-size:12px;
+      line-height:1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="badgeRow">
+          <span class="badge">Nicho: <b style="color:#E7EEFf">Produtividade</b></span>
+          <span class="badge">Dia: <b style="color:#E7EEFf">5</b></span>
+          <span class="badge">Formato: <b style="color:#E7EEFf">Carrossel</b></span>
+          <span class="badge">Pilar: <b style="color:#E7EEFf">Passo a passo</b></span>
+        </div>
+        <div class="badgeRow">
+          <span class="badge">Original: <a href="https://www.instagram.com/p/DS6EK15kR8v/" target="_blank" rel="noreferrer">instagram.com/p/DS6EK15kR8v</a></span>
+        </div>
+      </div>
+
+      <h1 class="title"><span class="hl">Rotina funcional:</span> 6 passos realistas para organizar sua semana</h1>
+      <p class="sub">Objetivo do post: guiar um diagnóstico rápido (sem culpa) e transformar isso em microajustes + limites + metas funcionais. Promessa: um sistema que você sustenta — não um plano perfeito.</p>
+
+      <div style="margin-top:14px" class="kpi">
+        <div class="box">
+          <p class="t">Quantidade sugerida</p>
+          <p class="v"><span class="hl">9 slides</span> (guia + exercício)</p>
+        </div>
+        <div class="box">
+          <p class="t">Âncora de retenção</p>
+          <p class="v">“Antes de metas, <span class="hl">base</span>”</p>
+        </div>
+        <div class="box">
+          <p class="t">Microação</p>
+          <p class="v">Salvar + comentar <span class="hl">1 proteção</span></p>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="chip">Versão reproduzível</span>
+        </div>
+        <div class="bd">
+          <div class="callout"><b>Ideia-mãe:</b> O seu resultado vem do que você consegue sustentar no dia a dia. Então o primeiro passo não é “se cobrar mais”, é <b>mapear, lapidar e proteger</b> a sua rotina.</div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><b>Para quem:</b> pessoas cansadas de planos rígidos, que querem consistência sem sobrecarga.</li>
+            <li><b>Promessa:</b> montar uma rotina funcional (e realista) em 6 passos aplicáveis.</li>
+            <li><b>Resultado esperado:</b> clareza do que manter/cortar/ajustar + 2–3 metas pequenas mensuráveis.</li>
+            <li><b>Tom:</b> acolhedor, direto, “vida real”.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="chip">Leve + aplicável</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Principal:</b> “Salva pra fazer no fim de semana.”</li>
+            <li><b>Engajamento:</b> “Comenta: qual parte da sua rotina você vai proteger a partir de agora?”</li>
+            <li><b>Opcional (isca):</b> “Comenta ‘ROTINA’ que eu mando um checklist.”</li>
+            <li><b>Compartilhamento:</b> “Envia pra alguém que tá recomeçando sem querer se cobrar tanto.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="chip">Lógica: diagnóstico → ajuste → proteção → metas</span>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <ul class="list">
+                <li><b>Slide 1:</b> Capa (hook + promessa + anti-objeção)</li>
+                <li><b>Slide 2:</b> Reframe (rotina/base &gt; metas isoladas)</li>
+                <li><b>Slide 3:</b> Passo 1 — Mapear o agora</li>
+                <li><b>Slide 4:</b> Passo 2 — O que funciona</li>
+                <li><b>Slide 5:</b> Passo 3 — O que pesa</li>
+              </ul>
+            </div>
+            <div>
+              <ul class="list">
+                <li><b>Slide 6:</b> Passo 4 — Ajustar (micro)</li>
+                <li><b>Slide 7:</b> Passo 5 — Proteger (limites)</li>
+                <li><b>Slide 8:</b> Passo 6 — Metas funcionais (pequenas e mensuráveis)</li>
+                <li><b>Slide 9:</b> Fecho (resumo + CTA + assinatura)</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><b>Regra de ouro:</b> 1 slide = 1 ação ou 1 pergunta.</li>
+            <li><b>Cadência:</b> título curto + 1 frase-âncora sublinhada + lista de 4–7 bullets.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="chip">Abertura + frases-motor</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Hook de capa:</b> “Como montar uma rotina funcional (e realista) — sem começar do zero.”</li>
+            <li><b>Reframe:</b> “O que você faz consistentemente define mais do que o que você planeja 1x.”</li>
+            <li><b>Anti-culpa:</b> “Não é sobre fazer mais. É sobre caber na sua energia real.”</li>
+            <li><b>Tensão:</b> “O que sustenta vs. o que pesa.”</li>
+            <li><b>Frase assinatura:</b> “Sistema funcional não é o que cabe tudo. É o que protege o que te mantém bem.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Slides sugeridos (1..9)</h2>
+          <span class="chip">Texto pronto para diagramar</span>
+        </div>
+        <div class="bd scriptWrap">
+          <div class="btnRow" style="margin-bottom:10px">
+            <button class="primary" onclick="copyScript()">Copiar roteiro</button>
+            <button onclick="toggleCompact()">Alternar compacto</button>
+          </div>
+          <pre id="script">SLIDE 1 — CAPA
+COMO MONTAR UMA
+ROTINA FUNCIONAL
+(E REALISTA)
+
+Sub (pequeno): 6 passos pra organizar sua semana sem se sobrecarregar.
+
+SLIDE 2 — CONTEXTO (REFRAME)
+Isso é um exercício rápido.
+O que você sustenta no dia a dia define mais do que metas soltas.
+Antes de “planejar perfeito”, vamos montar a base.
+
+SLIDE 3 — PASSO 1: MAPEAR O AGORA
+PASSO 1: COLOQUE SUA REALIDADE NO PAPEL
+• Como é sua semana hoje?
+• Onde sua energia é melhor/pior?
+• Quais tarefas são fixas?
+• O que sempre estoura/atraso?
+
+SLIDE 4 — PASSO 2: O QUE JÁ FUNCIONA?
+PASSO 2: IDENTIFIQUE O QUE FUNCIONA
+Perguntas:
+• O que flui sem você “se forçar”?
+• O que você mantém até em dias cheios?
+• O que te dá sensação de controle?
+Fecho: Isso vira sua BASE.
+
+SLIDE 5 — PASSO 3: O QUE PESA?
+PASSO 3: IDENTIFIQUE O QUE PESA
+Perguntas:
+• O que drena mais do que ajuda?
+• Onde você está tentando fazer “demais”?
+• O que te deixa em dívida com você?
+
+SLIDE 6 — PASSO 4: AJUSTAR (MICRO)
+PASSO 4: O QUE VAMOS AJUSTAR?
+Nem tudo precisa mudar de uma vez.
+Opções de microajuste:
+• reduzir frequência
+• mudar horário
+• criar “mínimo viável”
+• trocar formato (reunião → async)
+• tarefas difíceis nos melhores horários
+
+SLIDE 7 — PASSO 5: PROTEGER (LIMITES)
+PASSO 5: O QUE VAMOS PROTEGER?
+Se tudo é flexível, nada se sustenta.
+Proteja:
+• blocos de foco
+• pausas e fim do expediente
+• sono/energia
+• “nãos” necessários
+
+Frase-âncora: Sistema funcional não é o que cabe tudo. É o que protege o que te mantém bem.
+
+SLIDE 8 — PASSO 6: METAS FUNCIONAIS
+PASSO 6: DESENHE METAS FUNCIONAIS
+Metas pequenas, mensuráveis e sustentáveis.
+Exemplos:
+• 2 blocos de foco (50min), 3x/semana
+• e-mail só 2x/dia
+• planejar a semana em 20min no domingo
+• 1 prioridade antes das 11h
+• 10min de revisão no fim do dia
+
+SLIDE 9 — FECHAMENTO + CTA
+Resumo:
+Revisar e lapidar sua rotina é o primeiro passo pra uma semana mais leve e consistente.
+
+CTA:
+• Salva pra fazer com calma.
+• Comenta: o que você vai PROTEGER a partir de agora?
+
+Assinatura: @seuperfil</pre>
+          <p class="note" id="copyStatus">Dica: ajuste o vocabulário para seu público (ex.: CLT, autônomas, estudantes) e mantenha a promessa “realista” como anti-objeção.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="chip">Dark-friendly + lifestyle</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Fundo:</b> foto lifestyle (caderno/café/notebook) com overlay escuro 20–35% para legibilidade.</li>
+            <li><b>Texto:</b> branco, alinhado à esquerda, margens generosas.</li>
+            <li><b>Destaques:</b> sublinhados e “doodles” consistentes (3–5 por slide no máximo).</li>
+            <li><b>Hierarquia:</b> Título do passo (grande) → frase-âncora (1–2 linhas) → lista curta.</li>
+            <li><b>Ritmo:</b> repetir estrutura de passos (mesma posição do título) para dar sensação de “método”.</li>
+            <li><b>Assinatura:</b> @perfil + ícones desenhados (salvar/compartilhar) no slide final.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <span class="chip">Do briefing ao upload</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li>[ ] Definir promessa da capa + qualificador anti-culpa (“realista”, “possível”).</li>
+            <li>[ ] Escrever o reframe em 3 linhas (sem moralismo).</li>
+            <li>[ ] Listar 6 passos com 1 pergunta-âncora + 4–7 bullets cada.</li>
+            <li>[ ] Inserir 1 frase assinatura (proteção/limites).</li>
+            <li>[ ] Criar 3 metas funcionais exemplo (bem concretas).</li>
+            <li>[ ] Garantir legibilidade: overlay + contraste + margens.</li>
+            <li>[ ] Consistência de doodles: mesmo estilo em todos os slides.</li>
+            <li>[ ] Último slide: resumo + CTA (salvar/comentar) + @.</li>
+            <li>[ ] Revisão final: cada slide tem 1 foco? Tem ação prática? Está “vida real”?</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações (para repetir sem saturar)</h2>
+          <span class="chip">Mesmo template, outro ângulo</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Variação 1 (Foco):</b> “Como montar blocos de foco realistas em 6 passos”.</li>
+            <li><b>Variação 2 (Planejamento semanal):</b> trocar passo 6 por “metas por energia (alta/média/baixa)”.</li>
+            <li><b>Variação 3 (Procrastinação):</b> no passo 3, mapear gatilhos (cansaço, tarefa grande, ambiente).</li>
+            <li><b>Variação 4 (Autônomas):</b> no passo 5, incluir “limite de atendimento/entregas” e “dia sem reunião”.</li>
+            <li><b>Variação 5 (Estudos):</b> metas funcionais: pomodoros, revisão espaçada, lista de exercícios por blocos.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <div class="hr"></div>
+      <div>Legenda sugerida (curta): “Você não precisa de uma rotina perfeita. Você precisa de uma rotina que você sustenta. Quer que eu transforme isso num checklist baixável? Comenta ‘ROTINA’.”</div>
+    </footer>
+  </div>
+
+  <script>
+    function copyScript(){
+      const el = document.getElementById('script');
+      const text = el.innerText;
+      navigator.clipboard.writeText(text).then(()=>{
+        const status = document.getElementById('copyStatus');
+        status.innerText = 'Roteiro copiado. Agora é só adaptar exemplos ao seu público.';
+        setTimeout(()=> status.innerText = 'Dica: ajuste o vocabulário para seu público (ex.: CLT, autônomas, estudantes) e mantenha a promessa “realista” como anti-objeção.', 2200);
+      }).catch(()=>{
+        alert('Não foi possível copiar automaticamente. Selecione o texto e copie manualmente.');
+      });
+    }
+
+    let compact = false;
+    function toggleCompact(){
+      compact = !compact;
+      const pre = document.getElementById('script');
+      pre.style.maxHeight = compact ? '280px' : '540px';
+    }
+  </script>
+</body>
+</html>
