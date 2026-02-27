@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 11 • Nutrição • Você mira no detalhe e ignora o que te engorda</title>
+<style>
+  :root{
+    --bg:#070A12;
+    --panel:#0C1222;
+    --panel2:#0A1020;
+    --text:#EAF0FF;
+    --muted:#A9B4D0;
+    --line:rgba(255,255,255,.10);
+    --line2:rgba(255,255,255,.14);
+    --shadow: 0 18px 50px rgba(0,0,0,.55);
+    --r:18px;
+    --g1: linear-gradient(90deg, #2AF598 0%, #009EFD 55%, #FFB347 100%);
+    --g2: linear-gradient(135deg, rgba(42,245,152,.20), rgba(0,158,253,.18), rgba(255,179,71,.14));
+    --good:#57F287;
+    --warn:#FFB347;
+    --bad:#FF5C7A;
+    --chip:#0F1930;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+    background:
+      radial-gradient(1100px 700px at 15% -10%, rgba(0,158,253,.22), transparent 60%),
+      radial-gradient(900px 600px at 100% 10%, rgba(42,245,152,.18), transparent 55%),
+      radial-gradient(900px 600px at 40% 120%, rgba(255,179,71,.14), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    line-height:1.45;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:28px 18px 52px;}
+
+  header{
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border:1px solid var(--line);
+    border-radius: calc(var(--r) + 6px);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .topbar{
+    padding:16px 16px 12px;
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-width:280px;
+  }
+  .chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{
+    background: rgba(15,25,48,.85);
+    border:1px solid var(--line);
+    padding:6px 10px;
+    border-radius:999px;
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.2px;
+  }
+  h1{
+    margin:0;
+    font-size:18px;
+    letter-spacing:.2px;
+  }
+  .subtitle{color:var(--muted); font-size:13px;}
+
+  .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  a.btn, button.btn{
+    appearance:none;
+    border:1px solid var(--line2);
+    background: rgba(10,16,32,.65);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;
+    gap:10px;
+    align-items:center;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  a.btn:hover, button.btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.22); background: rgba(12,18,34,.78)}
+  .btn.primary{
+    border:0;
+    background: var(--g1);
+    color:#08121F;
+  }
+  .btn.primary:hover{filter:saturate(1.08) brightness(1.02)}
+
+  .divider{
+    height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
+  }
+
+  .grid{
+    margin-top:16px;
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap:14px;
+  }
+  @media (max-width: 940px){
+    .grid{grid-template-columns:1fr;}
+  }
+
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border:1px solid var(--line);
+    border-radius: var(--r);
+    box-shadow: 0 12px 40px rgba(0,0,0,.45);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 14px 10px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .card .hd h2{margin:0; font-size:14px; letter-spacing:.2px;}
+  .tag{
+    font-size:11px;
+    color: rgba(234,240,255,.85);
+    background: rgba(12,18,34,.72);
+    border:1px solid rgba(255,255,255,.10);
+    padding:5px 9px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .card .bd{padding:14px;}
+
+  .hl{
+    background: var(--g2);
+    border:1px solid rgba(255,255,255,.10);
+    padding:10px 12px;
+    border-radius: 14px;
+  }
+
+  .kvs{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+    margin-top:12px;
+  }
+  @media (max-width:520px){.kvs{grid-template-columns:1fr;}}
+  .kv{padding:10px 12px; border:1px solid rgba(255,255,255,.08); border-radius:14px; background: rgba(10,16,32,.55)}
+  .kv .k{font-size:11px; color:var(--muted); margin-bottom:6px;}
+  .kv .v{font-size:13px; color:var(--text);}
+
+  ul,ol{margin:10px 0 0 18px; padding:0}
+  li{margin:6px 0; color: rgba(234,240,255,.92)}
+  p{margin:0; color: rgba(234,240,255,.92)}
+  .muted{color:var(--muted)}
+
+  .script{
+    position:relative;
+  }
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    padding:14px;
+    border-radius: 14px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(8,12,24,.55);
+    color: rgba(234,240,255,.92);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:840px){.cols{grid-template-columns:1fr;}}
+
+  .hook{
+    border-left: 3px solid rgba(42,245,152,.65);
+    padding-left:10px;
+  }
+  .hook strong{background:var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent;}
+
+  .ctaBox{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:10px;
+  }
+  .pill{
+    padding:9px 10px;
+    border-radius: 999px;
+    background: rgba(10,16,32,.55);
+    border:1px solid rgba(255,255,255,.10);
+    font-size:12px;
+    color: rgba(234,240,255,.92);
+  }
+
+  .checklist{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  @media (max-width:840px){.checklist{grid-template-columns:1fr;}}
+  .check{
+    border:1px solid rgba(255,255,255,.08);
+    border-radius: 14px;
+    background: rgba(10,16,32,.55);
+    padding:12px;
+  }
+  .check h3{margin:0 0 8px 0; font-size:13px;}
+  .check ul{margin:0 0 0 18px;}
+  .check li{color: rgba(234,240,255,.90)}
+
+  .footerNote{margin-top:14px; font-size:12px; color:var(--muted)}
+  .mini{font-size:12px; color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <div class="chips">
+            <span class="chip">Nicho: <b>Nutrição</b></span>
+            <span class="chip">Dia: <b>11</b></span>
+            <span class="chip">Pilar: <b>Mito vs Verdade</b></span>
+            <span class="chip">Formato: <b>Reels</b></span>
+          </div>
+          <h1>Você mira no detalhe e ignora o que te engorda</h1>
+          <div class="subtitle">Baseado no post original: <a href="https://www.instagram.com/p/DT5OBSejhYL/" target="_blank" rel="noopener noreferrer" style="color: #9fd7ff; text-decoration:none; border-bottom:1px dotted rgba(159,215,255,.45)">https://www.instagram.com/p/DT5OBSejhYL/</a></div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DT5OBSejhYL/" target="_blank" rel="noopener noreferrer">Abrir post</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="padding:12px 16px 16px;">
+        <div class="hl">
+          <div class="mini">Instrução curta</div>
+          <div style="margin-top:6px; font-size:13.5px; color: rgba(234,240,255,.94)">Grave um Reel de 8–15s com metáfora absurda + contraste (detalhe pequeno vs erro grande) e finalize com 1 direção prática + CTA de comentário.</div>
+        </div>
+        <div class="kvs">
+          <div class="kv"><div class="k">Objetivo do post</div><div class="v">Fazer a pessoa parar de otimizar o “1%” e olhar para o “80%” que trava resultados.</div></div>
+          <div class="kv"><div class="k">Tom e entrega</div><div class="v">Direto + levemente indignado + humor (sem humilhar o público).</div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">Ideia central</span>
+        </div>
+        <div class="bd">
+          <p>O Reel funciona porque cria <b>quebra de padrão</b> com uma metáfora absurda, gera <b>retenção</b> (curiosidade + humor) e entrega uma verdade simples: você não emagrece/ganha saúde discutindo detalhe enquanto mantém o hábito-base que sabota tudo.</p>
+          <ul>
+            <li><b>Detalhe pequeno</b> (1%): glúten, arroz, fruta à noite, “caloria do azeite”.</li>
+            <li><b>Erro grande</b> (80%): ultraprocessados diários, belisco constante, pouco sono, álcool frequente, baixa proteína/fibra.</li>
+            <li><b>Metáfora absurda</b>: “comer cadeira/tijolo/papelão/gasolina”.</li>
+          </ul>
+          <div class="footerNote">Regra de ouro: a metáfora é o “punchline”, mas a credibilidade vem de você apontar rapidamente <b>1–2 alavancas práticas</b>.</div>
+        </div>
+      </section>
+
+      <section class="card script">
+        <div class="hd">
+          <h2>Roteiro (texto para gravar)</h2>
+          <span class="tag">8–15s</span>
+        </div>
+        <div class="bd">
+          <pre id="scriptText">[0:00–0:02] (entra rápido, sem contexto)
+“Eu não quero saber quem INVENTOU isso…”
+
+[0:02–0:06] (contraste: detalhe pequeno vs erro grande)
+“Eu quero entender por que você tá preocupado com [DETALHE PEQUENO]…”
+
+[0:06–0:09] (punchline com metáfora absurda)
+“…sendo que você tá [METÁFORA DO ERRO GRANDE] todo dia!”
+
+[0:09–0:13] (tradução + direção prática, 1 frase)
+“[METÁFORA] aqui é: [ERRO GRANDE REAL]. Em vez de focar em [DETALHE], foca em: proteína em toda refeição + comida de verdade na maior parte do dia.”
+
+[0:13–0:15] (CTA)
+“Comenta ‘CADEIRA’ que eu te mando uma lista do que é 80% pra emagrecer sem paranoia.”</pre>
+          <div class="ctaBox">
+            <span class="pill">Pausa de 0,3–0,5s antes do punchline</span>
+            <span class="pill">1 take, energia alta</span>
+            <span class="pill">Legenda em blocos de 2–4 palavras</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Estrutura (reproduzível)</h2>
+        <span class="tag">Fórmula</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <p class="muted" style="margin-bottom:8px;">Estrutura A (curta e “bordão” • 6–12s)</p>
+            <ol>
+              <li><b>Indignação/autoridade:</b> “Eu não quero saber…”</li>
+              <li><b>Contraste:</b> “preocupado com [detalhe]…”</li>
+              <li><b>Absurdo:</b> “…engordar comendo uma cadeira…”</li>
+              <li><b>Martelo final:</b> “sendo que você tá comendo uma cadeira!”</li>
+            </ol>
+          </div>
+          <div>
+            <p class="muted" style="margin-bottom:8px;">Estrutura B (educativa • 12–20s)</p>
+            <ol>
+              <li><b>Hook absurdo</b> (quebra de padrão)</li>
+              <li><b>Tradução da metáfora</b> (1 frase)</li>
+              <li><b>Direção prática</b> (1–2 alavancas)</li>
+              <li><b>CTA</b> (comentário/salvar/enviar)</li>
+            </ol>
+          </div>
+        </div>
+        <div class="hl" style="margin-top:12px;">
+          <div class="hook"><strong>Template fixo do hook</strong><br/>
+          “Eu não quero saber quem inventou isso. Eu quero entender por que você tá preocupado com <b>[DETALHE PEQUENO]</b> fazendo <b>[ERRO GIGANTE]</b>.”</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Elementos visuais</h2>
+        <span class="tag">Edição + cena</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <ul>
+              <li><b>Cena:</b> você em plano médio, fundo limpo, luz frontal (janela/ring light).</li>
+              <li><b>Expressão:</b> “sério isso?” + micro pausa antes da punchline.</li>
+              <li><b>Texto na tela:</b> 2–4 palavras por bloco, palavras-chave em CAIXA ALTA.</li>
+              <li><b>Zoom-in leve</b> no momento do absurdo (“CADEIRA”).</li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><b>Cortes:</b> corte seco, sem introdução, ritmo rápido.</li>
+              <li><b>SFX opcional:</b> “record scratch”/“hit” no punchline (bem sutil).</li>
+              <li><b>Loop:</b> terminar repetindo a palavra do início (“cadeira”) para incentivar replay.</li>
+              <li><b>Legenda:</b> sempre (muita gente assiste sem som).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Copy e ganchos</h2>
+        <span class="tag">Prontos pra usar</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <p class="muted">Ganchos (substitua os colchetes)</p>
+            <ul>
+              <li>“Você tá com medo de <b>[DETALHE]</b>… mas seu dia tá cheio de <b>[ERRO GRANDE]</b>.”</li>
+              <li>“Você não tá errando no detalhe. Você tá errando na <b>base</b>.”</li>
+              <li>“Parar de discutir o 1% é o que destrava seu resultado.”</li>
+              <li>“Se você arruma o 80%, o 1% vira ajuste fino.”</li>
+            </ul>
+          </div>
+          <div>
+            <p class="muted">Textos na tela (3 telas rápidas)</p>
+            <ul>
+              <li>“MIRANDO NO DETALHE”</li>
+              <li>“IGNORANDO O PRINCIPAL”</li>
+              <li>“PRIORIDADE &gt; PERFEIÇÃO”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>CTA</h2>
+        <span class="tag">Escolha 1</span>
+      </div>
+      <div class="bd">
+        <ul>
+          <li>“Comenta <b>CADEIRA</b> que eu te mando uma lista do que é ‘80%’.”</li>
+          <li>“Me fala qual é o seu <b>detalhe</b> (glúten? lactose? arroz? fruta?) que eu respondo com o ‘80%’.”</li>
+          <li>“Salva pra lembrar quando bater a paranoia do detalhe.”</li>
+          <li>“Envia pra quem vive preso no ‘pode ou não pode’.”</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Checklist de criação</h2>
+        <span class="tag">Copiar/colar</span>
+      </div>
+      <div class="bd">
+        <div class="checklist">
+          <div class="check">
+            <h3>Antes de gravar</h3>
+            <ul>
+              <li>[ ] Defina 1 <b>detalhe pequeno</b> que gera medo (ex.: fruta à noite, glúten, arroz, pão, azeite).</li>
+              <li>[ ] Defina 1 <b>erro grande</b> comum (ex.: ultraprocessados diários, belisco, álcool, pouco sono, baixa proteína/fibra).</li>
+              <li>[ ] Crie uma <b>metáfora absurda</b> pro erro grande (cadeira/tijolo/papelão/gasolina).</li>
+              <li>[ ] Escolha <b>1–2 alavancas</b> práticas para sugerir (ex.: proteína + fibra; prato base; água; sono).</li>
+            </ul>
+          </div>
+          <div class="check">
+            <h3>Roteiro e gravação</h3>
+            <ul>
+              <li>[ ] Comece sem contexto (primeira frase já é o hook).</li>
+              <li>[ ] Faça a pausa antes do punchline (0,3–0,5s).</li>
+              <li>[ ] Dê a tradução da metáfora em 1 frase (pra não virar só piada).</li>
+              <li>[ ] Feche com CTA de comentário com palavra-chave.</li>
+            </ul>
+          </div>
+          <div class="check">
+            <h3>Edição</h3>
+            <ul>
+              <li>[ ] Legenda grande + dinâmica (2–4 palavras por bloco).</li>
+              <li>[ ] Zoom-in leve na palavra do absurdo.</li>
+              <li>[ ] Duração final 8–15s (corta respirações e sobras).</li>
+              <li>[ ] Final em loop (repete a palavra-chave).</li>
+            </ul>
+          </div>
+          <div class="check">
+            <h3>Publicação</h3>
+            <ul>
+              <li>[ ] Primeira linha da legenda reforça o contraste (detalhe vs base).</li>
+              <li>[ ] Use 3–6 hashtags específicas (ex.: #emagrecimento #nutrição #comportamentoalimentar).</li>
+              <li>[ ] Fixe um comentário com “Se você comentou CADEIRA, eu mando a lista”.</li>
+              <li>[ ] Responda comentários em até 1h (sinal de relevância).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Variações (10 pares detalhe × erro grande)</h2>
+        <span class="tag">Prontas</span>
+      </div>
+      <div class="bd">
+        <ol>
+          <li>Detalhe: <b>glúten</b> • Erro grande: <b>refri + biscoito todo dia</b>.</li>
+          <li>Detalhe: <b>banana à noite</b> • Erro grande: <b>pula almoço e compensa no delivery</b>.</li>
+          <li>Detalhe: <b>caloria do arroz</b> • Erro grande: <b>belisca o dia inteiro</b>.</li>
+          <li>Detalhe: <b>lactose</b> • Erro grande: <b>pouca proteína e muita “beliscagem”</b>.</li>
+          <li>Detalhe: <b>azeite</b> • Erro grande: <b>zero legumes/fibra na rotina</b>.</li>
+          <li>Detalhe: <b>jejum</b> • Erro grande: <b>noite vira ataque à geladeira</b>.</li>
+          <li>Detalhe: <b>pão</b> • Erro grande: <b>álcool 3–5x/semana</b>.</li>
+          <li>Detalhe: <b>doce “fit”</b> • Erro grande: <b>ultraprocessado como base do lanche</b>.</li>
+          <li>Detalhe: <b>creatina</b> • Erro grande: <b>não bate proteína e não treina consistente</b>.</li>
+          <li>Detalhe: <b>detox</b> • Erro grande: <b>sono ruim + estresse alto + cafeína o dia todo</b>.</li>
+        </ol>
+        <div class="hl" style="margin-top:12px;">
+          <p class="muted" style="margin-bottom:6px;">Como variar a metáfora (sem perder a lógica)</p>
+          <ul>
+            <li><b>“Tijolo”</b> = hábito pesado e repetido.</li>
+            <li><b>“Papelão”</b> = comida sem nutrientes (muita caloria, pouca saciedade).</li>
+            <li><b>“Gasolina”</b> = exagero que “incendeia” o apetite (álcool, açúcar líquido, etc.).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const text = document.getElementById('scriptText').innerText;
+    btn.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(text);
+        const old = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=> btn.textContent = old, 1400);
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const old = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=> btn.textContent = old, 1400);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
