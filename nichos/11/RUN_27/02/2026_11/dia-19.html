@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Ficha reproduzível — Carrossel (Dia 19)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0C1226CC;
+      --card2:#0D142B;
+      --stroke:rgba(255,255,255,.08);
+      --stroke2:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+      --muted2:rgba(255,255,255,.55);
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --g1:linear-gradient(90deg,#42FFB7 0%, #2EA8FF 45%, #FFB84A 100%);
+      --g2:linear-gradient(135deg,rgba(66,255,183,.18),rgba(46,168,255,.14),rgba(255,184,74,.12));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1100px 650px at 15% 0%, rgba(46,168,255,.16), transparent 55%),
+        radial-gradient(950px 600px at 95% 15%, rgba(66,255,183,.12), transparent 55%),
+        radial-gradient(900px 550px at 65% 95%, rgba(255,184,74,.10), transparent 55%),
+        linear-gradient(180deg,var(--bg0) 0%, var(--bg1) 100%);
+      min-height:100vh;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1060px; margin:0 auto; padding:28px 18px 52px}
+    header{
+      background:var(--g2);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:radial-gradient(600px 240px at 25% 0%, rgba(46,168,255,.25), transparent 60%),
+                 radial-gradient(600px 240px at 75% 0%, rgba(66,255,183,.18), transparent 60%),
+                 radial-gradient(700px 280px at 60% 120%, rgba(255,184,74,.14), transparent 60%);
+      pointer-events:none;
+      filter: blur(0.2px);
+      opacity:.8;
+    }
+    .headRow{display:flex; gap:14px; align-items:flex-start; justify-content:space-between; position:relative}
+    .kicker{font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+    h1{margin:8px 0 8px; font-size:22px; line-height:1.18}
+    .meta{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
+    .pill{border:1px solid var(--stroke2); background:rgba(0,0,0,.25); padding:8px 10px; border-radius:999px; font-size:12.5px; color:var(--muted)}
+    .pill strong{color:var(--text); font-weight:650}
+    .link{
+      display:inline-flex; gap:10px; align-items:center; justify-content:center;
+      border:1px solid var(--stroke2);
+      background:rgba(0,0,0,.25);
+      padding:10px 12px;
+      border-radius:12px;
+      color:var(--text);
+      font-size:13px;
+      white-space:nowrap;
+    }
+    .link:hover{border-color:rgba(255,255,255,.2)}
+
+    .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px}
+    @media(min-width:980px){ .grid{grid-template-columns:1.2fr .8fr} }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .inner{padding:16px 16px 16px}
+    .card h2{margin:0 0 10px; font-size:16px; letter-spacing:.02em}
+    .sub{color:var(--muted); font-size:13.5px; line-height:1.55; margin:0 0 10px}
+    .hr{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+
+    .list{margin:0; padding-left:18px; color:var(--muted); font-size:13.5px; line-height:1.6}
+    .list li{margin:6px 0}
+    .tag{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.28);
+      border:1px solid var(--stroke2);
+      color:var(--muted);
+      font-size:12.5px;
+    }
+    .dot{width:9px; height:9px; border-radius:99px; background:var(--g1)}
+
+    .twoCol{display:grid; grid-template-columns:1fr; gap:12px}
+    @media(min-width:820px){ .twoCol{grid-template-columns:1fr 1fr} }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.22);
+      border-radius:var(--radius2);
+      padding:12px 12px;
+    }
+    .callout h3{margin:0 0 6px; font-size:13.5px}
+    .callout p{margin:0; color:var(--muted); font-size:13.2px; line-height:1.55}
+
+    .scriptBox{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.28);
+      border-radius:var(--radius);
+      padding:14px;
+      position:relative;
+    }
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      font-family:var(--mono);
+      font-size:12.6px;
+      line-height:1.55;
+      color:rgba(255,255,255,.86);
+    }
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px}
+    .btn{
+      appearance:none; border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      cursor:pointer;
+    }
+    .btn.primary{
+      border:none;
+      background:var(--g1);
+      color:#071018;
+      font-weight:700;
+    }
+    .btn:hover{filter:brightness(1.05)}
+    .toast{color:var(--muted2); font-size:12.5px}
+
+    .mini{font-size:12.5px; color:var(--muted2)}
+    .kbd{font-family:var(--mono); font-size:12px; padding:2px 6px; border:1px solid rgba(255,255,255,.16); border-radius:8px; background:rgba(0,0,0,.25); color:rgba(255,255,255,.78)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headRow">
+        <div>
+          <div class="kicker">Nicho: Produtividade • Dia 19 • Formato: Carrossel • Pilar: Passo a passo</div>
+          <h1>Método de 8 minutos para ganhar 2 horas no dia</h1>
+          <div class="meta">
+            <div class="pill"><strong>Objetivo</strong>: educar + gerar saves + (opcional) capturar DM</div>
+            <div class="pill"><strong>Dinâmica</strong>: promessa → tutorial → prova visual → recap</div>
+            <div class="pill"><strong>Tom</strong>: editorial + humano (anotações/"rabiscos")</div>
+          </div>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DOq7WqBDA4S/" target="_blank" rel="noreferrer">
+          <span style="font-family:var(--mono); font-size:12px; opacity:.8;">Post original</span>
+          <span aria-hidden="true" style="opacity:.75;">↗</span>
+        </a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="inner">
+          <h2>Resumo</h2>
+          <p class="sub">Roteiro reproduzível de carrossel (7 slides) que cria retenção alternando slides aspiracionais (pouco texto) com slides densos (tutorial). Funciona para produtividade e qualquer tema que possa ser explicado em um micro-método.</p>
+          <div class="twoCol">
+            <div class="callout">
+              <div class="tag"><span class="dot"></span> O que faz funcionar</div>
+              <div class="hr"></div>
+              <ul class="list">
+                <li><strong>Contraste numérico</strong> na capa (pouco esforço → grande ganho).</li>
+                <li><strong>Curiosidade progressiva</strong>: revela o método em camadas.</li>
+                <li><strong>Prova visual</strong> (exemplo preenchido / cenário real).</li>
+                <li><strong>Recap salvável</strong> no final (checklist).</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <div class="tag"><span class="dot"></span> Para adaptar para outro tema</div>
+              <div class="hr"></div>
+              <ul class="list">
+                <li>Troque “8 minutos” por um <strong>tempo curto crível</strong> (3–12 min).</li>
+                <li>Troque “ganhar 2 horas” por um <strong>benefício mensurável</strong> (menos erros, mais foco, mais vendas, menos ansiedade).</li>
+                <li>Troque “planner” por <strong>qualquer ferramenta</strong>: template, app, rotina, script, checklist, marco mental.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="inner">
+          <h2>Metadados (calendário)</h2>
+          <ul class="list">
+            <li><strong>Título</strong>: Método de 8 minutos para ganhar 2 horas no dia</li>
+            <li><strong>Instrução curta</strong>: criar carrossel 7 slides (promessa + tutorial + prova + recap + CTA)</li>
+            <li><strong>Pilar</strong>: Passo a passo</li>
+            <li><strong>Formato</strong>: Carrossel</li>
+          </ul>
+          <div class="hr"></div>
+          <h2>Parâmetros de produção</h2>
+          <ul class="list">
+            <li><strong>Slides</strong>: 7 (flexível 6–10)</li>
+            <li><strong>Meta de leitura</strong>: 6–10s por slide</li>
+            <li><strong>1 ideia por slide</strong> (exceto tutorial)</li>
+            <li><strong>CTA</strong>: salvar + comentário/DM opcional</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="inner">
+        <h2>Estrutura</h2>
+        <p class="sub">Sequência pensada para segurar atenção: promessa clara → variações → visão geral → tutorial → aplicação real → quebra de objeção → recap para salvar.</p>
+        <div class="twoCol">
+          <div class="callout">
+            <h3>Macro-sequência (7 blocos)</h3>
+            <ol class="list" style="padding-left:18px; margin:0">
+              <li><strong>Capa</strong>: promessa com contraste (tempo curto vs ganho grande).</li>
+              <li><strong>Variações</strong>: “2 jeitos / 2 cenários / 2 perfis”.</li>
+              <li><strong>Método (macro)</strong>: nome + etapas + tempos.</li>
+              <li><strong>Tutorial (micro)</strong>: passos 1–5 + atalho para destravar.</li>
+              <li><strong>Aplicabilidade</strong>: 3–5 contextos reais.</li>
+              <li><strong>Remove objeção</strong>: por que alternativa comum falha.</li>
+              <li><strong>Recap + CTA</strong>: checklist final + ação.</li>
+            </ol>
+          </div>
+          <div class="callout">
+            <h3>Blocos substituíveis (sem perder impacto)</h3>
+            <ul class="list">
+              <li><strong>Variações</strong> pode virar “antes/depois”, “errado/certo” ou “iniciante/avançado”.</li>
+              <li><strong>Aplicabilidade</strong> pode virar “exemplo preenchido”, “caso real” ou “mini-estudo”.</li>
+              <li><strong>Remove objeção</strong> pode virar “pergunta frequente” ou “mito vs verdade”.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="inner">
+        <h2>Slides sugeridos (1..7)</h2>
+        <p class="sub">Texto abaixo é um template. Troque os trechos entre colchetes para adaptar a qualquer assunto (produtividade, estudos, finanças, marketing, saúde, etc.).</p>
+
+        <div class="scriptBox" id="roteiroBox" aria-label="Roteiro completo">
+<pre id="roteiroText">CARROSSEL (7 SLIDES) — TEMPLATE REPRODUZÍVEL
+
+SLIDE 1 — CAPA (HOOK)
+Headline: “[{X} minutos] de [{ação}]”
+Sub: “para [{benefício grande}]”
+Linha de contraste (opcional): “{X} min → {Y} [{unidade: horas / tarefas / decisões}]”
+Micro-CTA discreto: “deslize →”
+
+SLIDE 2 — VARIAÇÕES (2 JEITOS / 2 CENÁRIOS)
+Headline: “2 jeitos de aplicar”
+Coluna A: “Modo 1: [{contexto 1}]” (ex.: dia cheio)
+Coluna B: “Modo 2: [{contexto 2}]” (ex.: dia leve)
+Nota curta: “Escolha 1 e siga por 3 dias.”
+
+SLIDE 3 — O MÉTODO (VISÃO GERAL)
+Headline: “Método [{nome curto}]”
+Sub: “um sistema simples para [{resultado}]”
+Bullets com tempo (exemplo):
+• Manhã ({a} min): [{passo 1}] → [{passo 2}] → [{passo 3}]
+• Meio do dia ({b} min): [{checagem rápida}] 
+• Noite ({c} min): [{fechamento}] 
+
+SLIDE 4 — TUTORIAL (PASSO A PASSO)
+Headline: “Como fazer [{técnica-chave}]”
+STEP 1: [{ação de 10–30s}]
+STEP 2: [{ação objetiva}]
+STEP 3: [{decisão/critério}]
+STEP 4: [{bloqueio de tempo / execução}]
+STEP 5: [{revisão / próximo passo}]
+Atalho anti-trava: “Se travar, comece por [{menor passo possível}].”
+
+SLIDE 5 — APLICABILIDADE (VIDA REAL)
+Headline: “Funciona em [{contextos}]”
+Lista (3–5): [{reuniões}], [{home office}], [{estudos}], [{rotina com filhos}], [{freelas/plantões}]…
+Linha de prova: “Você só precisa de: [{ferramenta simples}] + {X} minutos.”
+
+SLIDE 6 — REMOVER OBJEÇÃO
+Headline: “[{recurso}] porque [{alternativa comum}] não resolve”
+Texto curto:
+“[{alternativa}] falha quando [{situação}].
+O que resolve é [{princípio}] + [{estrutura}]”.
+
+SLIDE 7 — RECAP (SALVÁVEL) + CTA
+Headline: “Resumo (salve para usar)”
+Checklist (4–6 itens):
+[ ] [{passo-chave 1}]
+[ ] [{passo-chave 2}]
+[ ] [{passo-chave 3}]
+[ ] [{passo-chave 4}]
+CTA 1 (Salvar): “Salve e faça amanhã em {X} minutos.”
+CTA 2 (Comentário/DM): “Comente ‘{PALAVRA}’ que eu te envio o template.”
+CTA 3 (Compartilhar): “Envie para alguém que precisa de [{benefício}].”
+
+NOTAS DE COPY (para adaptar rápido)
+• Verbo forte na capa: planejar / organizar / destravar / priorizar / revisar / simplificar.
+• Benefício mensurável: ganhar tempo / reduzir stress / entregar mais / errar menos / decidir mais rápido.
+• Objeções comuns: “não tenho tempo”, “minha rotina é caótica”, “não consigo manter”, “já tentei”.</pre>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="selectBtn">Selecionar texto</button>
+          <span class="toast" id="toast" role="status" aria-live="polite"></span>
+        </div>
+
+        <div class="hr"></div>
+        <div class="twoCol">
+          <div class="callout">
+            <h3>Ordem de escrita (para ficar rápido)</h3>
+            <ul class="list">
+              <li>Defina <strong>{X minutos}</strong> e <strong>{benefício}</strong> (capa).</li>
+              <li>Escolha <strong>1 técnica-chave</strong> para o tutorial (slide 4).</li>
+              <li>Monte o <strong>recap</strong> (slide 7) antes dos outros.</li>
+              <li>Preencha variações (slide 2) e objeção (slide 6).</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <h3>Regra de ouro de retenção</h3>
+            <p>Não entregue o “como” completo na capa. Prometa o resultado e faça a pessoa deslizar para “ver os passos”.</p>
+            <p class="mini">Dica: se a capa já parece um tutorial, você matou a curiosidade.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="inner">
+        <h2>Elementos visuais</h2>
+        <div class="twoCol">
+          <div class="callout">
+            <h3>Identidade (replicável)</h3>
+            <ul class="list">
+              <li><strong>Tag/cápsula</strong> no canto: “{X MIN}”, “CHECKLIST”, “FRAMEWORK”.</li>
+              <li><strong>Setas/rabiscos</strong> para guiar leitura (humaniza).</li>
+              <li><strong>1 cor de acento</strong> consistente por todo o carrossel.</li>
+              <li><strong>Grid final</strong> (recap) com checkboxes.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <h3>Layout (alto impacto com pouco)</h3>
+            <ul class="list">
+              <li>Slides aspiracionais: <strong>pouco texto</strong> + foto âncora.</li>
+              <li>Slides densos: <strong>texto em steps</strong> com bastante respiro.</li>
+              <li>Hierarquia: 1 headline grande + 1 sub + passos curtos.</li>
+              <li>Consistência: margem, alinhamento e rodapé com assinatura.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="inner">
+        <h2>Copy e ganchos</h2>
+        <div class="twoCol">
+          <div class="callout">
+            <h3>Hooks de capa (substituições prontas)</h3>
+            <ul class="list">
+              <li>“{X} minutos para {benefício} (sem {dor comum}).”</li>
+              <li>“Pare de {dor} com 1 método de {X} minutos.”</li>
+              <li>“Faça isso por {X} minutos e ganhe {Y} {unidade}.”</li>
+              <li>“Se você {dor}, use este checklist de {X} minutos.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <h3>Frases de transição (para manter o swipe)</h3>
+            <ul class="list">
+              <li>“No próximo slide: o mapa em 3 passos.”</li>
+              <li>“Aqui está o passo que muda o jogo (e quase ninguém faz).”</li>
+              <li>“Agora o tutorial — copie exatamente.”</li>
+              <li>“No final tem um resumo para salvar.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <h3>Banco de substituições (para adaptar tema sem perder efeito)</h3>
+          <ul class="list">
+            <li><strong>{ação}</strong>: planejar / priorizar / revisar / organizar / focar / destravar / simplificar.</li>
+            <li><strong>{benefício}</strong>: clareza / foco / leveza / consistência / throughput / tempo livre.</li>
+            <li><strong>{prova}</strong>: “testei por {N} dias”, “uso com clientes”, “é o que eu faço antes de…”.</li>
+            <li><strong>{objeção}</strong>: falta de tempo / rotina caótica / dificuldade de manter / perfeccionismo.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="inner">
+        <h2>CTA</h2>
+        <p class="sub">Use CTA coerente com o objetivo: saves (alcance), comentários (engajamento), DM (captura), compartilhar (viral). Escolha 1 primário + 1 secundário.</p>
+        <div class="twoCol">
+          <div class="callout">
+            <h3>CTAs prontos (salvar)</h3>
+            <ul class="list">
+              <li>“Salve para fazer amanhã de manhã.”</li>
+              <li>“Salve este resumo e repita por 3 dias.”</li>
+              <li>“Salve se você quer um dia mais leve.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <h3>CTAs prontos (comentar/DM)</h3>
+            <ul class="list">
+              <li>“Comente <span class="kbd">8MIN</span> que eu te mando o passo a passo.”</li>
+              <li>“Quer o template? Me chama no direct com <span class="kbd">TEMPLATE</span>.”</li>
+              <li>“Comente <span class="kbd">CHECK</span> para eu liberar a versão editável.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="inner">
+        <h2>Checklist (criação)</h2>
+        <div class="twoCol">
+          <div class="callout">
+            <h3>Texto e estrutura</h3>
+            <ul class="list">
+              <li>[ ] Capa com <strong>contraste numérico</strong> (tempo curto vs ganho).</li>
+              <li>[ ] 1 ideia por slide (exceto tutorial).</li>
+              <li>[ ] Pelo menos 1 slide <strong>100% salvável</strong> (recap/checklist).</li>
+              <li>[ ] Tutorial com <strong>STEP 1–5</strong> e verbos no imperativo.</li>
+              <li>[ ] Objeção explicitada + virada (“por isso não funciona…”).</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <h3>Design e consistência</h3>
+            <ul class="list">
+              <li>[ ] 1 cor de acento + tag no canto em todos os slides.</li>
+              <li>[ ] Alternância: aspiracional → denso → aspiracional → recap.</li>
+              <li>[ ] Hierarquia clara: headline grande + sub + bullets curtos.</li>
+              <li>[ ] Elementos “humanos”: setas/rabiscos/sublinhado.</li>
+              <li>[ ] Rodapé/assinatura discreta (marca).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <h3>Checklist (publicação)</h3>
+          <ul class="list">
+            <li>[ ] Legenda: 1 frase de promessa + 3 bullets do método + CTA.</li>
+            <li>[ ] Hashtags: 3–8 específicas do nicho (evite genéricas demais).</li>
+            <li>[ ] Primeiro comentário: palavra-chave do CTA (ex.: “Comente 8MIN”).</li>
+            <li>[ ] Fixar comentário com instrução (para reduzir atrito).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="inner">
+        <h2>Variações</h2>
+        <p class="sub">Trocas que mantêm o mesmo “peso” de persuasão e retenção, para você reaproveitar esse roteiro em qualquer tema.</p>
+        <div class="twoCol">
+          <div class="callout">
+            <h3>Variação A — “Erro → Correção” (mesma estrutura)</h3>
+            <ul class="list">
+              <li>Slide 1: “Você perde {Y} por causa de {erro}.”</li>
+              <li>Slide 2: “Dois sinais de que você está fazendo errado.”</li>
+              <li>Slide 3: “O método certo em 3 etapas.”</li>
+              <li>Slide 4: Tutorial do passo crítico.</li>
+              <li>Slide 5: Aplicações reais.</li>
+              <li>Slide 6: “Por que {solução superficial} falha.”</li>
+              <li>Slide 7: Recap + CTA.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <h3>Variação B — “Checklist puro” (mais salvável)</h3>
+            <ul class="list">
+              <li>Substitua slides 2 e 5 por <strong>checklists</strong> (antes/depois).</li>
+              <li>Faça o slide 7 virar um “printável”: 6–10 itens + mini lembrete.</li>
+              <li>CTA: “Salve e use como ritual.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <h3>Variação C — “Prova” (quando você tem case/dados)</h3>
+          <ul class="list">
+            <li>Slide 2: “Antes/Depois” com números (ex.: tempo de execução, entregas, foco).</li>
+            <li>Slide 5: mini-case em 3 linhas (“o que mudou / como aplicou / resultado”).</li>
+            <li>CTA: “Quer o template? Comente {PALAVRA}.”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const copyBtn = document.getElementById('copyBtn');
+    const selectBtn = document.getElementById('selectBtn');
+    const toast = document.getElementById('toast');
+    const roteiroText = document.getElementById('roteiroText');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=> toast.textContent = '', 2200);
+    }
+
+    async function copyToClipboard(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch(e){
+        return false;
+      }
+    }
+
+    copyBtn.addEventListener('click', async ()=>{
+      const ok = await copyToClipboard(roteiroText.innerText);
+      if(ok) showToast('Roteiro copiado.');
+      else{
+        // fallback
+        const range = document.createRange();
+        range.selectNodeContents(roteiroText);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
+        catch(e){ showToast('Não foi possível copiar automaticamente. Selecione e copie.'); }
+      }
+    });
+
+    selectBtn.addEventListener('click', ()=>{
+      const range = document.createRange();
+      range.selectNodeContents(roteiroText);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      showToast('Texto selecionado. Use Ctrl/Cmd+C.');
+    });
+  </script>
+</body>
+</html>
