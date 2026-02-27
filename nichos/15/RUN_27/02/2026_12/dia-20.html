@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 20 — Roteiro reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.05);
+      --card2: rgba(255,255,255,.07);
+      --stroke: rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --r12: 14px;
+      --r16: 18px;
+      --grad: linear-gradient(90deg, #22C55E 0%, #3B82F6 45%, #F59E0B 100%);
+      --grad2: linear-gradient(135deg, rgba(34,197,94,.25), rgba(59,130,246,.20), rgba(245,158,11,.18));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% -10%, rgba(59,130,246,.20), transparent 60%),
+        radial-gradient(900px 700px at 110% 10%, rgba(34,197,94,.16), transparent 55%),
+        radial-gradient(800px 600px at 60% 120%, rgba(245,158,11,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      line-height: 1.45;
+    }
+    a{ color: #93C5FD; text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .wrap{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
+
+    header{
+      border: 1px solid var(--stroke);
+      background: var(--card);
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .headTop{
+      padding: 18px 18px 14px;
+      display:flex;
+      gap: 14px;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .badgeRow{ display:flex; gap:10px; flex-wrap: wrap; align-items:center; }
+    .badge{
+      font-size: 12px;
+      letter-spacing: .2px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+    }
+    .badge strong{ color: var(--text); font-weight: 650; }
+
+    .titleBlock{ min-width: 240px; flex: 1; }
+    h1{
+      margin: 8px 0 6px;
+      font-size: 22px;
+      font-weight: 760;
+      letter-spacing: -0.3px;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions{ display:flex; gap:10px; align-items:center; }
+    .btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 650;
+      font-size: 13px;
+      transition: transform .05s ease, background .2s ease, border-color .2s ease;
+      user-select: none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      white-space: nowrap;
+    }
+    .btn:hover{ background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
+    .btn:active{ transform: translateY(1px); }
+    .btnPrimary{
+      background: var(--grad2);
+      border-color: rgba(255,255,255,.16);
+      position: relative;
+    }
+    .btnPrimary::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius: 12px;
+      padding:1px;
+      background: var(--grad);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: .55;
+      pointer-events:none;
+    }
+
+    .headBottom{
+      padding: 0 18px 16px;
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      justify-content: space-between;
+      flex-wrap:wrap;
+    }
+    .linkRow{
+      color: var(--muted2);
+      font-size: 13px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .cardHeader{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .cardHeader h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing: .2px;
+      text-transform: uppercase;
+      color: rgba(234,240,255,.82);
+    }
+    .cardBody{ padding: 14px 16px 16px; }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 520px){
+      .kpi{ grid-template-columns: 1fr; }
+    }
+    .pill{
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .pill .label{ font-size: 12px; color: var(--muted2); margin-bottom: 6px; }
+    .pill .value{ font-size: 13px; color: var(--text); font-weight: 680; }
+
+    .list{ margin: 0; padding-left: 18px; color: var(--muted); }
+    .list li{ margin: 8px 0; }
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.08);
+      margin: 12px 0;
+    }
+
+    .scriptBox{
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      overflow:hidden;
+    }
+    .scriptTop{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 10px;
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .scriptTop .hint{ font-size: 12px; color: var(--muted2); }
+    pre{
+      margin:0;
+      padding: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: rgba(234,240,255,.86);
+      line-height: 1.5;
+    }
+
+    .gradientLine{
+      height: 2px;
+      background: var(--grad);
+      opacity: .85;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 6px 0 0;
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 760px){
+      .twoCol{ grid-template-columns: 1fr; }
+    }
+
+    .callout{
+      background: rgba(255,255,255,.04);
+      border: 1px dashed rgba(255,255,255,.18);
+      border-radius: 16px;
+      padding: 12px 12px;
+      color: var(--muted);
+    }
+    .callout strong{ color: var(--text); }
+
+    .toast{
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(10,14,24,.88);
+      color: rgba(234,240,255,.86);
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-2px); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="gradientLine"></div>
+      <div class="headTop">
+        <div class="titleBlock">
+          <div class="badgeRow">
+            <div class="badge"><strong>Nicho:</strong> Neutro</div>
+            <div class="badge"><strong>Dia:</strong> 20</div>
+            <div class="badge"><strong>Formato:</strong> Reels</div>
+            <div class="badge"><strong>Pilar:</strong> Autoridade</div>
+          </div>
+          <h1>O truque do Reel que vira debate (sem hate)</h1>
+          <p class="sub">Intriga leve + definição simples + lista visual + opinião técnica moderada + pergunta final.</p>
+        </div>
+        <div class="actions">
+          <button class="btn btnPrimary" id="copyBtn" type="button">Copiar roteiro</button>
+          <a class="btn" href="https://www.instagram.com/p/DUbmLVfAfIb/" target="_blank" rel="noreferrer">Ver post original</a>
+        </div>
+      </div>
+      <div class="headBottom">
+        <div class="linkRow">
+          <span style="opacity:.8">URL:</span>
+          <a href="https://www.instagram.com/p/DUbmLVfAfIb/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DUbmLVfAfIb/</a>
+        </div>
+        <div class="linkRow" style="gap:10px;">
+          <span class="tag">Duração alvo: 45–60s</span>
+          <span class="tag">Cortes: a cada 1–2 frases</span>
+          <span class="tag">Texto na tela: bullets</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardHeader"><h2>Resumo</h2></div>
+        <div class="cardBody">
+          <div class="kpi">
+            <div class="pill">
+              <div class="label">Por que engaja</div>
+              <div class="value">Curiosidade social + contraste + opinião</div>
+            </div>
+            <div class="pill">
+              <div class="label">O que entregar</div>
+              <div class="value">Definição prática + sinais concretos</div>
+            </div>
+            <div class="pill">
+              <div class="label">Gatilho final</div>
+              <div class="value">Pergunta binária (tomar partido)</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p style="margin:0;color:var(--muted)">
+            Este modelo funciona para <strong>qualquer conceito</strong> onde as pessoas confundem definições (estilo, método, estratégia, ferramenta, hábito, mito de mercado). Você cria um mini-drama leve, abre um loop com pergunta, define em 1 frase, lista evidências e fecha com diagnóstico + CTA.
+          </p>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardHeader"><h2>Estrutura (sequência)</h2></div>
+        <div class="cardBody">
+          <ol class="list">
+            <li><strong>Intriga com “caso”</strong> (nome/cliente/“vi por aí”).</li>
+            <li><strong>Pergunta</strong> que abre loop: “Mas afinal, o que é X?”.</li>
+            <li><strong>Definição em 1 frase</strong> (A + B).</li>
+            <li><strong>Lista visual</strong>: o que tem / o que não tem.</li>
+            <li><strong>Regra de ouro</strong> (1 frase memorável).</li>
+            <li><strong>Autoridade</strong> (por que você sabe; mini credencial).</li>
+            <li><strong>Diagnóstico moderado</strong> (sem ataque; com empatia).</li>
+            <li><strong>CTA conversacional</strong> (pergunta que força posição).</li>
+          </ol>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader"><h2>Roteiro (reproduzível)</h2></div>
+        <div class="cardBody">
+          <div class="callout" style="margin-bottom:12px;">
+            <strong>Como adaptar rápido:</strong> substitua <span style="font-family:var(--mono)">[X]</span> pelo seu tema; <span style="font-family:var(--mono)">[Pessoa/Exemplo]</span> pode ser “um cliente”, “uma seguidora”, “um amigo”, “um post que vi”, ou um personagem fictício.
+          </div>
+
+          <div class="scriptBox">
+            <div class="scriptTop">
+              <div class="hint">Pronto para gravar (fala + texto na tela). Duração: ~60s.</div>
+              <button class="btn" type="button" id="copyBtn2">Copiar</button>
+            </div>
+            <pre id="scriptText">CENA 1 (0–2s) — INTRIGA (texto na tela: “Ela disse que é [X]…”) 
+FALA: “A [Pessoa/Perfil/Cliente] vive dizendo que é/usa [X]…”
+
+CENA 2 (2–4s) — ABRE LOOP (texto: “Mas o que é [X]?”)
+FALA: “Mas afinal… o que é [X] de verdade?”
+
+CENA 3 (4–10s) — DEFINIÇÃO EM 1 FRASE (texto: “[X] = A + B”)
+FALA: “[X] é a mistura de A ([benefício 1]) com B ([benefício 2]).”
+EXEMPLOS de A/B para substituir:
+- A = praticidade | clareza | conforto | velocidade | simplicidade
+- B = qualidade | resultado | elegância | consistência | previsibilidade
+
+CENA 4 (10–25s) — SINAIS CONCRETOS: O QUE TEM (texto: “Tem: …”) 
+FALA (em bullets): “Quando é [X], você vê:”
+1) [Sinal 1 bem visual/observável]
+2) [Sinal 2]
+3) [Sinal 3]
+4) [Sinal 4]
+5) [Sinal 5]
+
+CENA 5 (25–32s) — O QUE NÃO É (texto: “Não é: …”) 
+FALA: “E não é [confusão comum #1], não é [confusão comum #2] e não depende de [atalho/objeto único].”
+
+CENA 6 (32–40s) — REGRA DE OURO (texto grande: “Regra de ouro: ______”) 
+FALA: “Regra de ouro: [frase-âncora memorável].”
+Modelos de frase-âncora:
+- “É [resultado] sem [custo].”
+- “É [qualidade] com [simplicidade].”
+- “É o ‘[apelido curto]’.”
+
+CENA 7 (40–52s) — AUTORIDADE + DIAGNÓSTICO MODERADO (texto: “Minha leitura: …”) 
+FALA: “Eu, como [sua função/experiência], vejo que [Pessoa A] ainda não está em [X] — parece mais [Y].”
+FALA (empatia): “E tá tudo bem: isso é construção. Dá pra ajustar com [1 ação pequena] + [1 ação pequena].”
+
+CENA 8 (52–60s) — CTA (texto: “Você é time SIM ou NÃO?”)
+FALA: “Você gosta de [X]? Você se enxerga fazendo/ usando isso? Comenta ‘SIM’ ou ‘NÃO’ — e se quiser, comenta ‘ANALISA’ que eu te digo o que te aproxima de [X].”</pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader"><h2>Elementos visuais</h2></div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p style="margin:0 0 8px;color:var(--muted)"><strong>Captação</strong></p>
+              <ul class="list">
+                <li>Plano médio, fundo limpo, luz lateral suave.</li>
+                <li>Áudio limpo (microfone ou ambiente silencioso).</li>
+                <li>Olho na câmera no hook e no diagnóstico.</li>
+              </ul>
+              <div class="hr"></div>
+              <p style="margin:0 0 8px;color:var(--muted)"><strong>Edição</strong></p>
+              <ul class="list">
+                <li>Jump cuts a cada 1–2 frases (ritmo).</li>
+                <li>Zoom-in leve na “opinião/diagnóstico”.</li>
+                <li>Legendas dinâmicas com 1–3 palavras destacadas.</li>
+              </ul>
+            </div>
+            <div>
+              <p style="margin:0 0 8px;color:var(--muted)"><strong>Overlays / B-roll</strong></p>
+              <ul class="list">
+                <li>Mostre exemplos do “tem” (itens, prints, cenas, gráficos).</li>
+                <li>Use tela dividida: “tem” vs “não é”.</li>
+                <li>Bullets na tela sincronizados com a fala.</li>
+              </ul>
+              <div class="hr"></div>
+              <p style="margin:0 0 8px;color:var(--muted)"><strong>Texto na tela (layout)</strong></p>
+              <ul class="list">
+                <li>Bloco 1: intriga + pergunta.</li>
+                <li>Bloco 2: definição A + B.</li>
+                <li>Bloco 3: lista “tem / não é”.</li>
+                <li>Bloco 4: frase-âncora + CTA.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader"><h2>Copy e ganchos</h2></div>
+        <div class="cardBody">
+          <p style="margin:0 0 10px;color:var(--muted)"><strong>Hooks prontos (troque [X])</strong></p>
+          <ul class="list">
+            <li>“Tem gente chamando tudo de <strong>[X]</strong>… mas <strong>[X]</strong> não é isso.”</li>
+            <li>“[Pessoa] disse que faz <strong>[X]</strong> — mas o que é <strong>[X]</strong> de verdade?”</li>
+            <li>“Se você acha que <strong>[X]</strong> é só <strong>[atalho]</strong>, você vai se surpreender.”</li>
+            <li>“Vou te mostrar como reconhecer <strong>[X]</strong> em 20 segundos.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p style="margin:0 0 10px;color:var(--muted)"><strong>Mecanismos que aumentam comentários (com segurança)</strong></p>
+          <ul class="list">
+            <li><strong>Julgamento moderado + empatia:</strong> “não vejo muito… ainda” + “é construção”.</li>
+            <li><strong>Contraste:</strong> “não é X, é Y” (sem humilhar).</li>
+            <li><strong>Escolha forçada:</strong> “SIM/NÃO”, “A/B”.</li>
+          </ul>
+          <div class="callout" style="margin-top:12px;">
+            <strong>Dica anti-hate:</strong> use “minha leitura” + “posso estar vendo por recorte” + “isso não é crítica à pessoa, é sobre o conceito”.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader"><h2>CTA</h2></div>
+        <div class="cardBody">
+          <ul class="list">
+            <li>“Você é mais <strong>time [X]</strong> ou <strong>time [Y]</strong>? Comenta.”</li>
+            <li>“Você se enxerga aplicando <strong>[X]</strong> essa semana? SIM ou NÃO?”</li>
+            <li>“Quer que eu analise seu caso? Comenta <strong>‘ANALISA’</strong> + seu contexto.”</li>
+            <li>“Se isso te ajudou, manda pra alguém que confunde <strong>[X]</strong> com <strong>[confusão comum]</strong>.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader"><h2>Checklist de criação (reproduzível)</h2></div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p style="margin:0 0 8px;color:var(--muted)"><strong>Antes de gravar</strong></p>
+              <ul class="list">
+                <li>[ ] Escolher 1 conceito/tema: <span style="font-family:var(--mono)">[X]</span>.</li>
+                <li>[ ] Definir <strong>A + B</strong> (definição em 1 frase).</li>
+                <li>[ ] Listar 5 sinais visuais/observáveis (sem abstrações).</li>
+                <li>[ ] Listar 3 “não é” (confusões comuns do público).</li>
+                <li>[ ] Criar 1 frase-âncora memorável.</li>
+                <li>[ ] Separar 3 B-rolls/prints para ilustrar os sinais.</li>
+              </ul>
+            </div>
+            <div>
+              <p style="margin:0 0 8px;color:var(--muted)"><strong>Durante / edição</strong></p>
+              <ul class="list">
+                <li>[ ] Hook nos 2 primeiros segundos (nome/caso/“vi por aí”).</li>
+                <li>[ ] Texto na tela com bullets (sincronizado com a fala).</li>
+                <li>[ ] Cortes rápidos (1–2 frases por take).</li>
+                <li>[ ] Ênfase (zoom/pausa) no diagnóstico moderado.</li>
+                <li>[ ] Final com pergunta grande + instrução de comentário.</li>
+                <li>[ ] Revisar tom: sem ataque pessoal; critique o conceito/execução.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader"><h2>Variações (mesmo impacto, outros temas)</h2></div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p style="margin:0 0 8px;color:var(--muted)"><strong>Trocas de “caso real” (sem citar nomes)</strong></p>
+              <ul class="list">
+                <li>“Uma seguidora me mandou…”</li>
+                <li>“Vi um vídeo ontem dizendo que…”</li>
+                <li>“No meu atendimento, isso aparece muito…”</li>
+                <li>“Um erro que eu vejo sempre é…”</li>
+              </ul>
+              <div class="hr"></div>
+              <p style="margin:0 0 8px;color:var(--muted)"><strong>Temas que encaixam perfeito no molde</strong></p>
+              <ul class="list">
+                <li>Negócios: “posicionamento”, “branding”, “funil”, “oferta”.</li>
+                <li>Produtividade: “disciplina”, “foco”, “rotina”, “planejamento”.</li>
+                <li>Saúde/fitness: “déficit calórico”, “hipertrofia”, “cardio”.</li>
+                <li>Finanças: “reserva”, “investir”, “gastar consciente”.</li>
+              </ul>
+            </div>
+            <div>
+              <p style="margin:0 0 8px;color:var(--muted)"><strong>Substituições de alto impacto</strong></p>
+              <ul class="list">
+                <li><strong>Hook</strong>: “Fulano disse…” → “Todo mundo tá falando…”</li>
+                <li><strong>Definição</strong>: “A + B” → “É 80% [base] + 20% [toque]”.</li>
+                <li><strong>Lista</strong>: “tem/não tem” → “3 sinais / 3 anti-sinais”.</li>
+                <li><strong>Diagnóstico</strong>: “Pessoa A vs B” → “Exemplo bom vs exemplo ruim (genérico)”.</li>
+                <li><strong>CTA</strong>: “SIM/NÃO” → “De 0 a 10, quanto você é isso?”</li>
+              </ul>
+              <div class="callout" style="margin-top:12px;">
+                <strong>Regra:</strong> mantenha a sequência (intriga → definição → evidência → contraste → opinião → pergunta). Trocar a sequência derruba retenção.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    function getScript(){
+      return document.getElementById('scriptText').innerText;
+    }
+    async function copyScript(){
+      const text = getScript();
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Roteiro copiado.');
+      }catch(e){
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Roteiro copiado.');
+      }
+    }
+    let toastTimer;
+    function showToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=> t.classList.remove('show'), 1400);
+    }
+    document.getElementById('copyBtn').addEventListener('click', copyScript);
+    document.getElementById('copyBtn2').addEventListener('click', copyScript);
+  </script>
+</body>
+</html>
