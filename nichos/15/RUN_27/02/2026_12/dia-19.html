@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dia 19 — Roteiro reproduzível</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.04);
+      --stroke: rgba(255,255,255,.12);
+      --text:#eaf0ff;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 12px 35px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 14px;
+      --g1: linear-gradient(90deg, #22c55e, #38bdf8, #fb923c);
+      --g2: radial-gradient(1200px 600px at 10% 0%, rgba(56,189,248,.18), transparent 55%),
+            radial-gradient(900px 520px at 95% 10%, rgba(34,197,94,.14), transparent 55%),
+            radial-gradient(900px 520px at 85% 90%, rgba(251,146,60,.12), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: var(--g2), var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    a{color:#9ae6ff; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--radius) + 6px);
+      padding:20px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .topbar{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    }
+
+    .badge{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background: rgba(0,0,0,.18);
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .badge b{color:var(--text); font-weight:650}
+
+    .title{
+      margin:14px 0 6px;
+      font-size:22px;
+      letter-spacing:-.02em;
+    }
+
+    .subtitle{margin:0; color:var(--muted); font-size:14px}
+
+    .header-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px}
+
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{background: rgba(255,255,255,.09)}
+    .btn:active{transform: translateY(1px)}
+
+    .btn-primary{
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.18);
+      position:relative;
+    }
+    .btn-primary::before{
+      content:"";
+      position:absolute; inset:-1px;
+      border-radius:12px;
+      padding:1px;
+      background: var(--g1);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity:.9;
+      pointer-events:none;
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+    }
+
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding:16px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      letter-spacing:-.01em;
+      display:flex; align-items:center; gap:10px;
+    }
+
+    .dot{
+      width:10px; height:10px;
+      border-radius:99px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+      flex:0 0 auto;
+    }
+
+    .muted{color:var(--muted)}
+    .muted2{color:var(--muted2)}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 520px){
+      .kpi{grid-template-columns:1fr;}
+    }
+
+    .tile{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+      border-radius: var(--radius2);
+      padding:12px;
+      min-height:76px;
+    }
+    .tile .label{font-size:12px; color:var(--muted2)}
+    .tile .value{margin-top:6px; font-size:14px; font-weight:650}
+
+    .list{margin:0; padding-left:18px; color:var(--muted)}
+    .list li{margin:7px 0}
+
+    .steps{
+      counter-reset: step;
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .step{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.14);
+      border-radius: var(--radius2);
+      padding:12px;
+      position:relative;
+    }
+
+    .step::before{
+      counter-increment: step;
+      content: counter(step);
+      position:absolute;
+      top:10px; right:10px;
+      color: rgba(234,240,255,.22);
+      font-weight:800;
+      font-size:18px;
+      font-family: var(--mono);
+    }
+
+    .step b{color:var(--text)}
+
+    .script{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+      border-radius: var(--radius);
+      padding:14px;
+      font-family: var(--mono);
+      color: rgba(234,240,255,.88);
+      font-size:13px;
+      white-space:pre-wrap;
+      line-height:1.5;
+    }
+
+    .pillrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      padding:7px 10px;
+      border-radius:999px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .hr{height:1px; background: rgba(255,255,255,.10); margin:12px 0}
+
+    .two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 820px){
+      .two{grid-template-columns:1fr;}
+    }
+
+    .copybox{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.14);
+      border-radius: var(--radius2);
+      padding:12px;
+    }
+    .copybox .head{display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:8px}
+    .copybox .head b{font-size:13px}
+    .small{font-size:12px; color:var(--muted2)}
+
+    footer{margin-top:18px; color:var(--muted2); font-size:12px}
+
+    .toast{
+      position:fixed;
+      bottom:16px; left:50%; transform:translateX(-50%);
+      background: rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.18);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 999px;
+      font-size:13px;
+      opacity:0; pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+      backdrop-filter: blur(10px);
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div class="badge"><b>Nicho</b> Neutro</div>
+        <div class="badge"><b>Dia</b> 19</div>
+        <div class="badge"><b>Formato</b> Reels</div>
+        <div class="badge"><b>Pilar</b> Passo a passo</div>
+      </div>
+
+      <h1 class="title">Bordão de entrada: template pra Reels curtos que prendem</h1>
+      <p class="subtitle">Post original: <a href="https://www.instagram.com/p/DUg8sRwDdNX/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DUg8sRwDdNX/</a></p>
+
+      <div class="header-actions">
+        <button class="btn btn-primary" id="copyBtn">Copiar roteiro</button>
+        <a class="btn" href="https://www.instagram.com/p/DUg8sRwDdNX/" target="_blank" rel="noopener noreferrer">Abrir post</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="dot"></span>Resumo</h2>
+        <p class="muted">
+          Este template replica o efeito “chegada + energia” (bordão forte) que funciona mesmo sem contexto: cria curiosidade, assinatura e loop.
+          Você pode plugar qualquer tema (dica, opinião, história, anúncio, bastidor) mantendo o mesmo impacto.
+        </p>
+        <div class="kpi">
+          <div class="tile"><div class="label">Duração</div><div class="value">7–12s (ideal)</div></div>
+          <div class="tile"><div class="label">Objetivo</div><div class="value">Retenção + comentários</div></div>
+          <div class="tile"><div class="label">Gatilho</div><div class="value">Bordão + vocativo + energia</div></div>
+        </div>
+        <div class="pillrow">
+          <span class="pill">Entrada abrupta (0–0,2s)</span>
+          <span class="pill">Micro-pausa (0,3–0,6s)</span>
+          <span class="pill">Punch/virada</span>
+          <span class="pill">CTA de 1 palavra</span>
+          <span class="pill">Loop natural</span>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2><span class="dot"></span>O que torna reproduzível</h2>
+        <ul class="list">
+          <li><b>Assinatura</b>: bordão repetido vira “personagem” reconhecível.</li>
+          <li><b>Vocativo</b> (povo/minha gente/galera) cria proximidade imediata.</li>
+          <li><b>Verbo de ação</b> (cheguei) dá movimento no 1º segundo.</li>
+          <li><b>Promessa emocional</b>: energia/humor/atitude antes da informação.</li>
+          <li><b>Loop</b>: final com pausa/expressão encaixa no reinício.</li>
+        </ul>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Estrutura</h2>
+      <div class="steps">
+        <div class="step"><b>A. Bordão de entrada (0–1s)</b><div class="muted">Uma frase curta, alta energia, com vocativo + ação.</div></div>
+        <div class="step"><b>B. Micro-pausa + expressão (1–2s)</b><div class="muted">Olhar pra câmera, respira, “segura” o suspense.</div></div>
+        <div class="step"><b>C. Assunto em 1 frase (2–6s)</b><div class="muted">Uma única ideia: dica, fofoca, opinião, bastidor, anúncio.</div></div>
+        <div class="step"><b>D. Punch/virada (6–10s)</b><div class="muted">Exagero, contraste, comparação ou “plot” rápido.</div></div>
+        <div class="step"><b>E. CTA curtíssimo (10–12s)</b><div class="muted">Pedido de comentário com palavra-chave + opcional “seguir”.</div></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Roteiro (template plug-and-play)</h2>
+      <p class="muted2">Copie, substitua os campos entre colchetes e grave em 1 take (ou com 1 corte).</p>
+      <div class="script" id="scriptText">[0–1s | ENTRADA]
+"Ô [momento do dia], [povo/minha gente/galera]... [EU CHEGUEI]!"
+
+[1–2s | MICRO-PAUSA]
+(olha pra câmera | segura o riso | sobe a sobrancelha)
+
+[2–6s | ASSUNTO EM 1 FRASE]
+"Cheguei pra te contar: [tema em 1 frase bem específica]."
+
+[6–10s | PUNCH/CONTRASTE]
+"Porque [contraste/erro comum]... e o pior: [consequência engraçada/real]."
+
+[10–12s | CTA]
+"Comenta '[PALAVRA-CHAVE]' se você já passou por isso."</div>
+
+      <div class="hr"></div>
+      <div class="two">
+        <div class="copybox">
+          <div class="head"><b>Exemplos de bordão (substituições com mesmo impacto)</b><span class="small">Escolha 1 e repita sempre</span></div>
+          <ul class="list">
+            <li>“Ô [dia/noite], [minha gente]! Cheguei com uma…”</li>
+            <li>“[Galera], cheguei. E hoje eu não vou…”</li>
+            <li>“Boa [noite/dia], [povo]. Senta que lá vem…”</li>
+            <li>“Cheguei e vou falar o que ninguém quer ouvir…”</li>
+            <li>“Cheguei só pra avisar: [alerta].”</li>
+          </ul>
+        </div>
+        <div class="copybox">
+          <div class="head"><b>Formatos de “assunto” que encaixam em qualquer nicho</b><span class="small">1 frase, sem contexto longo</span></div>
+          <ul class="list">
+            <li><b>Dica:</b> “Se você quer [resultado], faz [ação] antes de [prazo].”</li>
+            <li><b>Opinião:</b> “Eu não acredito em [mito], acredito em [método].”</li>
+            <li><b>Desabafo:</b> “Ninguém te fala, mas [realidade].”</li>
+            <li><b>Alerta:</b> “Se você tá [situação], cuidado com [erro].”</li>
+            <li><b>Lista:</b> “3 sinais de que [situação]… o 3º é cruel.”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Elementos visuais</h2>
+      <div class="two">
+        <div class="copybox">
+          <div class="head"><b>Captação</b><span class="small">look high-retention</span></div>
+          <ul class="list">
+            <li>Enquadramento: meio corpo ou close (olhos bem visíveis).</li>
+            <li>Iluminação: frontal suave (janela/soft) pra destacar expressão.</li>
+            <li>Energia corporal: entrar no frame já “chegando” (um passo, um giro, um gesto).</li>
+            <li>Áudio: voz clara + volume levemente acima do normal no 1º segundo.</li>
+          </ul>
+        </div>
+        <div class="copybox">
+          <div class="head"><b>Edição</b><span class="small">rápida e limpa</span></div>
+          <ul class="list">
+            <li>Começo sem fade: já no “bordão” (0–0,2s).</li>
+            <li>Zoom-in leve (5–10%) na palavra de impacto (“CHEGUEI”).</li>
+            <li>Legenda grande e central nos 2 primeiros segundos.</li>
+            <li>Final com micro-silêncio/expressão (ajuda no loop).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Copy e ganchos</h2>
+      <div class="two">
+        <div class="copybox">
+          <div class="head"><b>Ganchos prontos (troque os colchetes)</b><span class="small">curtos, “faláveis”</span></div>
+          <ul class="list">
+            <li>“Cheguei pra te mostrar o jeito mais rápido de [resultado]…”</li>
+            <li>“Cheguei com uma verdade que dói: [verdade].”</li>
+            <li>“Cheguei e vou te salvar de um erro: [erro].”</li>
+            <li>“Cheguei com um teste: se você faz isso, [conclusão].”</li>
+            <li>“Cheguei pra acabar com a desculpa: [desculpa].”</li>
+          </ul>
+        </div>
+        <div class="copybox">
+          <div class="head"><b>Texto na tela (2 linhas)</b><span class="small">alto contraste</span></div>
+          <ul class="list">
+            <li>L1: “Ô [dia/noite], [povo]!”</li>
+            <li>L2: “Cheguei com: [tema em 3–6 palavras]”</li>
+            <li>Alternativa meme: só o bordão (quando a expressão fizer o resto).</li>
+            <li>Alternativa curiosidade: “Cheguei pra te contar uma coisa…”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>CTA</h2>
+      <p class="muted">Escolha 1 CTA e mantenha o “ritual” nos próximos vídeos (a repetição aumenta comentários).</p>
+      <div class="two">
+        <div class="copybox">
+          <div class="head"><b>CTAs de comentário (1 palavra)</b><span class="small">melhor para Reels curtos</span></div>
+          <ul class="list">
+            <li>“Comenta ‘CHEGUEI’.”</li>
+            <li>“Comenta ‘EU’ se isso é você.”</li>
+            <li>“Comenta ‘SOCORRO’ se você já errou nisso.”</li>
+            <li>“Comenta ‘QUERO’ que eu mando a continuação.”</li>
+          </ul>
+        </div>
+        <div class="copybox">
+          <div class="head"><b>CTAs de sequência</b><span class="small">para escalar série</span></div>
+          <ul class="list">
+            <li>“Se quiser a parte 2, comenta ‘PARTE 2’.”</li>
+            <li>“Me segue que eu chego aqui todo dia com [promessa do perfil].”</li>
+            <li>“Salva pra lembrar na hora de [situação].”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Checklist (criação e publicação)</h2>
+      <div class="two">
+        <div class="copybox">
+          <div class="head"><b>Antes de gravar</b><span class="small">setup rápido</span></div>
+          <ul class="list">
+            <li>[ ] Definir <b>1 tema</b> em 1 frase (sem explicação longa).</li>
+            <li>[ ] Escolher <b>bordão fixo</b> + vocativo.</li>
+            <li>[ ] Definir <b>palavra-chave</b> do CTA (ex.: “CHEGUEI”).</li>
+            <li>[ ] Planejar 1 <b>punch</b> (exagero/contraste/consequência).</li>
+          </ul>
+        </div>
+        <div class="copybox">
+          <div class="head"><b>Gravação e edição</b><span class="small">retenção</span></div>
+          <ul class="list">
+            <li>[ ] Começar falando em até <b>0,2s</b> (sem introdução).</li>
+            <li>[ ] Fazer <b>1 micro-pausa</b> (0,3–0,6s) com expressão.</li>
+            <li>[ ] Legenda grande nos <b>2 primeiros segundos</b>.</li>
+            <li>[ ] Zoom leve na palavra de impacto (“CHEGUEI”).</li>
+            <li>[ ] Final com <b>micro-silêncio</b> pra loop.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="copybox">
+        <div class="head"><b>Publicação</b><span class="small">o mínimo que importa</span></div>
+        <ul class="list">
+          <li>[ ] Legenda curta repetindo o CTA: “Comenta ‘CHEGUEI’ 👇” (ou a palavra escolhida).</li>
+          <li>[ ] Fixar 1 comentário com pergunta de 1 linha.</li>
+          <li>[ ] Testar 2 versões: (A) só bordão + expressão; (B) bordão + 1 frase de assunto.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Variações (mesmo formato, outros temas)</h2>
+      <p class="muted">Use o mesmo bordão e troque apenas a “frase de assunto” + o punch. Aqui vão modelos de substituição.</p>
+      <div class="two">
+        <div class="copybox">
+          <div class="head"><b>Variação 1 — “Alerta”</b><span class="small">alta salvabilidade</span></div>
+          <div class="script">"Ô [dia/noite], [galera]! Cheguei!"
+(pausa)
+"Se você tá [situação], não faz [erro]."
+"Porque aí você [consequência]."
+"Comenta 'ALERTA'."</div>
+        </div>
+        <div class="copybox">
+          <div class="head"><b>Variação 2 — “Lista 3”</b><span class="small">retenção por contagem</span></div>
+          <div class="script">"Ô [povo]... cheguei!"
+"3 sinais de que [tema]: 1) [x] 2) [y] 3) [z]."
+"O 3º é o que mais te derruba."
+"Comenta '3' que eu aprofundo."</div>
+        </div>
+      </div>
+      <div class="two" style="margin-top:12px;">
+        <div class="copybox">
+          <div class="head"><b>Variação 3 — “Opinião impopular”</b><span class="small">gera comentários</span></div>
+          <div class="script">"Boa [noite/dia], [minha gente]... cheguei!"
+(pausa)
+"Opinião: [declaração curta]."
+"Se doeu, é porque [punch]."
+"Comenta 'DISCORDO' ou 'CONCORDO'."</div>
+        </div>
+        <div class="copybox">
+          <div class="head"><b>Variação 4 — “Bastidor rápido”</b><span class="small">humaniza</span></div>
+          <div class="script">"Ô [povo]... cheguei!"
+"Olha o que aconteceu quando eu [ação]."
+"Eu achei que [expectativa], mas deu [realidade]."
+"Comenta 'QUERO' pra ver a parte 2."</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="muted2">Observação: como o conteúdo original tem apenas uma frase, este documento prioriza um modelo reproduzível (estrutura + substituições) para você aplicar em qualquer tema mantendo o mesmo efeito de retenção.</div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const scriptEl = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        window.clearTimeout(window.__t);
+        window.__t = window.setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      async function copyText(text){
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        } catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          showToast('Roteiro copiado.');
+        }
+      }
+
+      btn.addEventListener('click', ()=>{
+        const text = scriptEl.innerText.trim();
+        copyText(text);
+      });
+    })();
+  </script>
+</body>
+</html>
