@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 4 — Professores — O “Saara” do professor</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B132A;
+      --border:rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --r:18px;
+      --g: linear-gradient(90deg,#27F5A3 0%, #2BD3FF 45%, #FF8A2A 100%);
+      --g2: linear-gradient(135deg, rgba(39,245,163,.18), rgba(43,211,255,.14), rgba(255,138,42,.12));
+      --ok: #27F5A3;
+      --warn:#FF8A2A;
+      --info:#2BD3FF;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(43,211,255,.18), transparent 55%),
+        radial-gradient(900px 500px at 80% 0%, rgba(39,245,163,.14), transparent 55%),
+        radial-gradient(900px 500px at 80% 80%, rgba(255,138,42,.12), transparent 52%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 60px;
+    }
+
+    header{
+      position:relative;
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:24px;
+      padding:22px 20px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(12px);
+      opacity:.9;
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1;}
+
+    .topline{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:10px;
+    }
+
+    .chips{display:flex; gap:8px; flex-wrap:wrap;}
+    .chip{
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .chip b{color:var(--text); font-weight:650;}
+
+    h1{
+      margin:8px 0 10px;
+      font-size:22px;
+      line-height:1.2;
+      letter-spacing:-.3px;
+    }
+
+    .sub{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      color:var(--muted);
+    }
+
+    a{
+      color:var(--text);
+      text-decoration:none;
+      border-bottom:1px solid rgba(234,240,255,.22);
+    }
+    a:hover{border-bottom-color:rgba(234,240,255,.5)}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      margin-top:14px;
+    }
+
+    @media (max-width: 940px){
+      .grid{grid-template-columns:1fr;}
+    }
+
+    .card{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border-radius: var(--r);
+      padding:16px 16px;
+      box-shadow: 0 14px 45px rgba(0,0,0,.35);
+    }
+
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      color:rgba(234,240,255,.92);
+      letter-spacing:.2px;
+      text-transform:uppercase;
+    }
+
+    .card h2 .accent{
+      display:inline-block;
+      height:10px;
+      width:10px;
+      border-radius:3px;
+      background: var(--g);
+      margin-right:8px;
+      vertical-align:middle;
+    }
+
+    .p{
+      color:var(--muted);
+      margin:0;
+      line-height:1.55;
+      font-size:14px;
+    }
+
+    .list{margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:14px; line-height:1.55;}
+    .list li{margin:6px 0;}
+
+    .callout{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(43,211,255,.22);
+      background: rgba(43,211,255,.06);
+      color:rgba(234,240,255,.85);
+    }
+
+    .buttonRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px;}
+    button{
+      appearance:none;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:650;
+      letter-spacing:.2px;
+    }
+    button.primary{
+      background: linear-gradient(90deg, rgba(39,245,163,.20), rgba(43,211,255,.16), rgba(255,138,42,.16));
+      border-color: rgba(255,255,255,.16);
+    }
+    button:hover{filter:brightness(1.08)}
+
+    .mono{
+      font-family:var(--mono);
+      font-size:12.5px;
+      color:rgba(234,240,255,.75);
+      white-space:pre-wrap;
+      background: rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.10);
+      padding:12px;
+      border-radius:14px;
+      overflow:auto;
+    }
+
+    .kpis{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;
+    }
+    @media (max-width: 620px){
+      .kpis{grid-template-columns:1fr;}
+    }
+    .kpi{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+    }
+    .kpi .t{font-size:12px; color:var(--muted2); margin:0 0 6px;}
+    .kpi .v{font-size:14px; margin:0; color:rgba(234,240,255,.9); font-weight:700;}
+
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(39,245,163,.22);
+      background: rgba(39,245,163,.06);
+      color:rgba(234,240,255,.85);
+      font-size:12px;
+      margin-top:8px;
+    }
+    .dot{width:8px; height:8px; border-radius:99px; background:var(--ok); box-shadow:0 0 0 4px rgba(39,245,163,.14);}
+
+    .muted{color:var(--muted2)}
+
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media (max-width: 940px){.twoCol{grid-template-columns:1fr;}}
+
+    .hr{height:1px; background:rgba(255,255,255,.10); margin:12px 0;}
+
+    .small{font-size:12px; color:var(--muted2); line-height:1.5}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <div class="chip"><b>Nicho:</b> Professores</div>
+          <div class="chip"><b>Dia:</b> 4</div>
+          <div class="chip"><b>Pilar:</b> Passo a passo</div>
+          <div class="chip"><b>Formato:</b> Reels</div>
+        </div>
+        <div class="chip"><b>Original:</b> <a href="https://www.instagram.com/p/DU3M2KJkazw/" target="_blank" rel="noopener">abrir post</a></div>
+      </div>
+      <h1>O “Saara” do professor: Reel curto que prende e converte</h1>
+      <div class="sub">
+        <div class="muted">Transforme um problema comum (indisciplina, falta de tempo, correções) numa jornada épica + 3 passos práticos.</div>
+        <div class="badge"><span class="dot"></span><span>Pronto pra gravar em 20–40s</span></div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="accent"></span>Resumo</h2>
+        <p class="p">Use uma metáfora de desafio extremo (“meu Saara”) para abrir com impacto, gerar curiosidade e conduzir até uma virada (“o que mudou tudo foi…”) + um mini passo a passo replicável. Finalize com CTA de palavra-chave para comentários (alcance) e reforço de salvar/compartilhar.</p>
+        <div class="kpis">
+          <div class="kpi"><p class="t">Objetivo</p><p class="v">Comentários + salvamentos</p></div>
+          <div class="kpi"><p class="t">Duração</p><p class="v">20–45s</p></div>
+          <div class="kpi"><p class="t">Entregável</p><p class="v">1 estratégia + 3 passos</p></div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2><span class="accent"></span>Config rápida</h2>
+        <ul class="list">
+          <li><b>Desafio (“Saara”):</b> escolha 1 só (turma difícil, prova acumulada, zero participação, pressão da coordenação).</li>
+          <li><b>Prova/resultado:</b> um dado simples (tempo, antes/depois, comportamento observável).</li>
+          <li><b>Entrega:</b> 1 ferramenta/método/rotina que caiba em 3 passos.</li>
+          <li><b>Palavra-chave:</b> “SAARA” ou tema (“ROTINA”, “PLANO”, “DISCIPLINA”).</li>
+        </ul>
+        <div class="callout small"><b>Dica:</b> não venda “história”. Venda “história + atalho copiável”.</div>
+      </aside>
+
+      <section class="card">
+        <h2><span class="accent"></span>Estrutura (sequência reproduzível)</h2>
+        <ol class="list">
+          <li><b>Hook (0–2s):</b> Ação + desafio gigante + risco emocional.</li>
+          <li><b>Contexto mínimo (2–6s):</b> 1 frase com “o que estava acontecendo” + “por que era difícil”.</li>
+          <li><b>Tensão (6–12s):</b> “Quase desisti/errei/fracassei quando…”</li>
+          <li><b>Virada (12–18s):</b> “O que mudou tudo foi…”</li>
+          <li><b>Passo a passo (18–35s):</b> 1–3 passos curtos (com verbos no imperativo).</li>
+          <li><b>Resultado (35–42s):</b> tempo + efeito concreto (antes/depois).</li>
+          <li><b>CTA (final):</b> comentário com palavra-chave + salvar/enviar.</li>
+        </ol>
+        <div class="hr"></div>
+        <p class="small"><b>Regra de retenção:</b> a cada 3–5s inclua um microgancho (“só que…”, “o detalhe…”, “e piorou…”).</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent"></span>Roteiro (falas + texto na tela)</h2>
+        <div class="buttonRow">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="copyCaptionBtn">Copiar legenda sugerida</button>
+        </div>
+        <div class="hr"></div>
+        <div id="script" class="mono">[CENA 1 — câmera frontal | 0–2s]
+FALA: “Eu atravessei o meu Saara na sala de aula.”
+TEXTO NA TELA: “MEU SAARA na educação”
+
+[CENA 2 — corte rápido | 2–6s]
+FALA: “Era uma turma que não parava 1 minuto… e eu já chegava esgotado.”
+TEXTO: “Parecia impossível porque: (1 motivo)”
+
+[CENA 3 — microgancho | 6–12s]
+FALA: “Teve um dia que eu quase desisti, porque nada funcionava.”
+TEXTO: “Eu quase desisti.”
+
+[CENA 4 — virada | 12–18s]
+FALA: “O que mudou tudo foi uma rotina de 3 passos, bem simples.”
+TEXTO: “O que mudou tudo (3 passos)”
+
+[CENA 5 — passo a passo | 18–35s]
+FALA: “Passo 1: eu abria com uma instrução única e curta. (Uma tarefa só.)”
+TEXTO: “1) Uma instrução. Uma tarefa.”
+
+FALA: “Passo 2: eu colocava tempo na lousa: 3 minutos. E eu narrava o progresso.”
+TEXTO: “2) Tempo visível + narração”
+
+FALA: “Passo 3: eu fechava com um check rápido: ‘mostra pra mim em 10 segundos’.”
+TEXTO: “3) Check de 10s”
+
+[CENA 6 — resultado | 35–42s]
+FALA: “Em uma semana, a aula ficou mais calma e eu recuperei o controle sem gritar.”
+TEXTO: “Resultado em 7 dias: +controle, -estresse”
+
+[CENA 7 — CTA | 42–45s]
+FALA: “Quer o checklist pronto? Comenta ‘SAARA’ que eu te mando.”
+TEXTO: “Comenta: SAARA ✅”</div>
+        <div class="callout small"><b>Como adaptar em 30s:</b> corte o Passo 2 ou 3, mas mantenha Hook → Virada → Resultado → CTA.</div>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent"></span>Elementos visuais (gravação/edição)</h2>
+        <div class="twoCol">
+          <div>
+            <p class="p"><b>Enquadramentos sugeridos</b></p>
+            <ul class="list">
+              <li>Frontal com luz lateral (cara + energia).</li>
+              <li>Corte para lousa/caderno/planilha (prova visual).</li>
+              <li>B-roll: pilha de provas, sala vazia, corredor, mão escrevendo (sem expor rostos).</li>
+            </ul>
+          </div>
+          <div>
+            <p class="p"><b>Padrão de ritmo</b></p>
+            <ul class="list">
+              <li>Cortes a cada 1–2s (jump cuts).</li>
+              <li>Zoom-in leve nas frases “quase desisti” e “mudou tudo”.</li>
+              <li>Texto grande: 1 ideia por tela.</li>
+              <li>Trilha baixa + voz clara (legendas revisadas).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent"></span>Copy e ganchos (modelos prontos)</h2>
+        <p class="p"><b>Hooks alternativos (1–2s)</b></p>
+        <ul class="list">
+          <li>“Essa turma era o meu Saara.”</li>
+          <li>“O dia que eu quase desisti de dar aula…”</li>
+          <li>“Eu fiz X com uma turma ‘impossível’.”</li>
+          <li>“Eu estava no deserto com as correções.”</li>
+          <li>“A coordenação apertou… e eu quase quebrei.”</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="p"><b>Microganchos (a cada 3–5s)</b></p>
+        <ul class="list">
+          <li>“E aí piorou.”</li>
+          <li>“Só que teve um detalhe…”</li>
+          <li>“O erro que eu cometia era esse:”</li>
+          <li>“Quando eu parei de fazer isso, mudou.”</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="p"><b>Legenda sugerida (curta)</b></p>
+        <div id="caption" class="mono">Seu “Saara” na sala de aula pode ser resolvido com uma rotina simples.
+
+O meu foi: (escreva o seu desafio aqui)
+✅ O que mudou tudo: 3 passos
+1) 1 instrução + 1 tarefa
+2) tempo visível (na lousa)
+3) check rápido de 10s
+
+Comenta “SAARA” que eu te mando o checklist pronto.
+Salva pra usar na próxima aula difícil.</div>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent"></span>CTA</h2>
+        <ul class="list">
+          <li><b>Para comentários (alcance):</b> “Comenta ‘SAARA’ que eu te mando o checklist.”</li>
+          <li><b>Para salvar:</b> “Salva pra usar na próxima aula difícil.”</li>
+          <li><b>Para compartilhamento:</b> “Envia pra um professor que tá no deserto agora.”</li>
+          <li><b>Para direct:</b> “Me chama no direct com ‘SAARA’ que eu envio o modelo.”</li>
+        </ul>
+        <div class="callout small"><b>Escolha 1 CTA principal</b> (comentário) + 1 secundário (salvar ou enviar). Evite 3 CTAs no mesmo vídeo.</div>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent"></span>Checklist (criação rápida)</h2>
+        <p class="p"><b>Roteiro</b></p>
+        <ul class="list">
+          <li>Escolhi 1 “Saara” (um desafio grande e comum ao professor).</li>
+          <li>Comecei com verbo de ação + imagem forte (metáfora).</li>
+          <li>Contexto em 1 frase (sem história longa).</li>
+          <li>Tensão: “quase desisti/errei/fracassei”.</li>
+          <li>Virada clara: “o que mudou tudo foi…”.</li>
+          <li>Entreguei 1–3 passos práticos, curtos, copiáveis.</li>
+          <li>Resultado concreto: tempo + efeito (antes/depois).</li>
+          <li>CTA de comentário com palavra-chave.</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="p"><b>Gravação/edição</b></p>
+        <ul class="list">
+          <li>Gancho nos primeiros 2 segundos.</li>
+          <li>Cortes a cada 1–2 segundos ou mudança de enquadramento.</li>
+          <li>Texto na tela: 1 ideia por tela, fonte grande.</li>
+          <li>2+ mudanças visuais (zoom, b-roll, ângulo).</li>
+          <li>Áudio limpo + trilha baixa.</li>
+          <li>Legendas revisadas (sem erro de português).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent"></span>Variações (para repetir sem saturar)</h2>
+        <ul class="list">
+          <li><b>Variação 1 — “Saara do planejamento”:</b> falta de tempo → 3 passos de planejamento em 15 minutos.</li>
+          <li><b>Variação 2 — “Saara da indisciplina”:</b> combinados + sinal + consequência consistente.</li>
+          <li><b>Variação 3 — “Saara das correções”:</b> rubrica simples + correção por amostra + feedback padrão.</li>
+          <li><b>Variação 4 — “Saara da participação”:</b> pergunta fechada → dupla → plenária em 60s.</li>
+          <li><b>Variação 5 — “Saara do primeiro ano”:</b> 1 rotina de entrada + 1 rotina de saída + 1 regra de comunicação.</li>
+        </ul>
+        <div class="callout small"><b>Regra de ouro:</b> mantenha o mesmo esqueleto (Hook → Tensão → Virada → 3 passos → Resultado → CTA) e troque apenas o “Saara” + os passos.</div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        return ok;
+      }
+    }
+
+    const copyBtn = document.getElementById('copyBtn');
+    const copyCaptionBtn = document.getElementById('copyCaptionBtn');
+
+    copyBtn.addEventListener('click', async () => {
+      const text = document.getElementById('script').innerText;
+      const ok = await copyText(text);
+      copyBtn.textContent = ok ? 'Roteiro copiado' : 'Falha ao copiar';
+      setTimeout(()=> copyBtn.textContent = 'Copiar roteiro', 1400);
+    });
+
+    copyCaptionBtn.addEventListener('click', async () => {
+      const text = document.getElementById('caption').innerText;
+      const ok = await copyText(text);
+      copyCaptionBtn.textContent = ok ? 'Legenda copiada' : 'Falha ao copiar';
+      setTimeout(()=> copyCaptionBtn.textContent = 'Copiar legenda sugerida', 1400);
+    });
+  </script>
+</body>
+</html>
