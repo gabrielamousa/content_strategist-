@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roteiro Reproduzível — Marketing e Posicionamento (Dia 24)</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.04);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.52);
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --g1: linear-gradient(90deg, #22c55e 0%, #60a5fa 45%, #fb923c 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.18) 0%, rgba(96,165,250,.18) 45%, rgba(251,146,60,.18) 100%);
+      --green:#22c55e;
+      --blue:#60a5fa;
+      --orange:#fb923c;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 15%, rgba(96,165,250,.18), transparent 60%),
+        radial-gradient(900px 520px at 85% 30%, rgba(34,197,94,.14), transparent 55%),
+        radial-gradient(980px 520px at 60% 90%, rgba(251,146,60,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      line-height:1.35;
+      letter-spacing: .1px;
+    }
+    a{color: inherit; text-decoration: none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(7,10,15,.78), rgba(7,10,15,.45));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .head{
+      max-width:1100px;
+      margin:0 auto;
+      padding:16px 18px;
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      min-width: 280px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+    }
+    .meta{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width: 0;
+    }
+    .meta .k{font-size:12px; color: var(--muted2)}
+    .meta .v{font-size:13px; color: var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width: 0;
+    }
+    .title h1{
+      margin:0;
+      font-size: 15px;
+      font-weight: 750;
+      letter-spacing: .2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 520px;
+    }
+    .title .sub{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      font-size:12px;
+      color: var(--muted2);
+      align-items:center;
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+    .pill strong{color:var(--text)}
+
+    .actions{display:flex; gap:10px; align-items:center}
+    .btn{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight: 650;
+      font-size: 13px;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22)}
+    .btn:active{transform: translateY(1px)}
+    .btn-primary{
+      background: var(--g2);
+      border-color: rgba(255,255,255,.16);
+      position:relative;
+      overflow:hidden;
+    }
+    .btn-primary:before{
+      content:"";
+      position:absolute; inset:0;
+      background: var(--g1);
+      opacity:.18;
+      pointer-events:none;
+    }
+
+    main{margin-top: 22px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 960px){
+      .grid{grid-template-columns: 1fr}
+      .badge{min-width: unset}
+      .title h1{max-width: unset}
+      .head{flex-direction:column; align-items:stretch}
+      .actions{justify-content:space-between}
+    }
+
+    .card{
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .top{
+      padding:16px 16px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background:
+        radial-gradient(600px 140px at 20% 0%, rgba(96,165,250,.18), transparent 60%),
+        radial-gradient(480px 140px at 80% 0%, rgba(34,197,94,.14), transparent 60%),
+        rgba(255,255,255,.02);
+    }
+    .card h2{margin:0; font-size: 14px; letter-spacing:.2px}
+    .card p{margin:8px 0 0; color: var(--muted); font-size: 13px}
+    .card .body{padding: 14px 16px 16px}
+
+    .section{margin-top:14px}
+
+    .hr{height:1px; background: rgba(255,255,255,.08); margin: 12px 0}
+
+    .list{display:flex; flex-direction:column; gap:10px}
+    .item{
+      padding:12px 12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: var(--radius2);
+    }
+    .item .h{display:flex; gap:10px; align-items:flex-start; justify-content:space-between}
+    .item .h strong{font-size:13px}
+    .tag{
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .item .c{margin-top:8px; color: var(--muted); font-size: 13px}
+    .kbd{font-family: var(--mono); font-size: 12px; color: var(--text); background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.10); padding:2px 6px; border-radius: 8px}
+
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width: 640px){.cols{grid-template-columns:1fr}}
+
+    .callout{
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: var(--radius);
+      padding: 12px 12px;
+    }
+    .callout .grad{
+      height: 6px;
+      width: 100%;
+      border-radius: 999px;
+      background: var(--g1);
+      opacity: .95;
+      margin-bottom: 10px;
+    }
+    .callout h3{margin:0; font-size: 13px}
+    .callout p{margin:8px 0 0; color: var(--muted); font-size: 13px}
+
+    textarea{
+      width:100%;
+      min-height: 420px;
+      resize: vertical;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      padding: 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.5;
+      outline: none;
+    }
+    textarea:focus{border-color: rgba(96,165,250,.45); box-shadow: 0 0 0 4px rgba(96,165,250,.12)}
+
+    .small{font-size:12px; color: var(--muted2)}
+
+    .footer{
+      margin-top: 18px;
+      color: var(--muted2);
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 14px;
+      flex-wrap:wrap;
+    }
+    .link{
+      color: var(--text);
+      border-bottom: 1px dotted rgba(255,255,255,.25);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="head">
+      <div class="badge" title="Metadados do calendário">
+        <span class="dot"></span>
+        <div class="meta">
+          <div class="k">Nicho • Dia</div>
+          <div class="v">Marketing e Posicionamento • Dia 24</div>
+        </div>
+      </div>
+
+      <div class="title">
+        <h1>O “nicho” que vai bombar em 2026 (e o jeito certo de usar)</h1>
+        <div class="sub">
+          <span class="pill">Pilar: <strong>Mito vs Verdade</strong></span>
+          <span class="pill">Formato: <strong>Carrossel</strong></span>
+          <a class="pill link" href="https://www.instagram.com/p/DUatQCVDgBW/" target="_blank" rel="noreferrer">Post original</a>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="copyBtn">Copiar roteiro</button>
+        <a class="btn" href="#checklist">Ir para checklist</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <main>
+      <div class="grid">
+        <section class="card">
+          <div class="top">
+            <h2>Resumo</h2>
+            <p>Template de carrossel para gerar retenção com <strong>promessa + quebra de crença</strong>, ensinar a nova regra com exemplos e terminar com <strong>frase-mantra salvável</strong> + CTA por comentário.</p>
+          </div>
+          <div class="body">
+            <div class="callout">
+              <div class="grad"></div>
+              <h3>Objetivo do post</h3>
+              <p>Reposicionar um tema “batido” (ex.: lifestyle, nicho, estratégia, funil) mostrando <strong>o que morreu</strong>, <strong>o que funciona agora</strong> e <strong>como aplicar hoje</strong> em 8 slides.</p>
+            </div>
+
+            <div class="section">
+              <div class="hr"></div>
+              <h2>Estrutura (macro)</h2>
+              <p class="small">Fórmula replicável: <span class="kbd">Promessa</span> → <span class="kbd">Contraste</span> → <span class="kbd">Nova regra</span> → <span class="kbd">Exemplos</span> → <span class="kbd">Mecanismo</span> → <span class="kbd">Filtro</span> → <span class="kbd">Frase-âncora</span> → <span class="kbd">CTA</span></p>
+              <div class="list">
+                <div class="item">
+                  <div class="h"><strong>1) Capa: Hook + promessa + recorte temporal</strong><span class="tag">retenção</span></div>
+                  <div class="c">Use tendência/ano/recorte (“em 2026”, “na próxima fase do mercado”, “com o novo algoritmo”).</div>
+                </div>
+                <div class="item">
+                  <div class="h"><strong>2) Quebra de crença: “isso morreu”</strong><span class="tag">polarização leve</span></div>
+                  <div class="c">Ataque o comportamento, não a pessoa. Mostre o “modelo antigo” que parou de funcionar.</div>
+                </div>
+                <div class="item">
+                  <div class="h"><strong>3) Reframe: não é X, é Y</strong><span class="tag">clareza</span></div>
+                  <div class="c">Defina em uma frase a nova lógica do tema (o “jeito certo”).</div>
+                </div>
+                <div class="item">
+                  <div class="h"><strong>4) Errado vs certo: 4 exemplos práticos</strong><span class="tag">concretude</span></div>
+                  <div class="c">Transforme formatos genéricos em promessas com benefício + contexto + dor evitada.</div>
+                </div>
+                <div class="item">
+                  <div class="h"><strong>5) Mecanismo: por que funciona (2–3 pilares)</strong><span class="tag">credibilidade</span></div>
+                  <div class="c">Explique o motor psicológico/estratégico que torna o “jeito certo” superior.</div>
+                </div>
+                <div class="item">
+                  <div class="h"><strong>6) Regra prática: pergunta-filtro</strong><span class="tag">aplicação</span></div>
+                  <div class="c">Uma pergunta que o leitor consegue usar antes de publicar/decidir.</div>
+                </div>
+                <div class="item">
+                  <div class="h"><strong>7) Síntese: frase-mantra salvável</strong><span class="tag">salvamento</span></div>
+                  <div class="c">Frase curta, memorável, citável. Ideal para virar print e compartilhamento.</div>
+                </div>
+                <div class="item">
+                  <div class="h"><strong>8) CTA: comentário por palavra-chave</strong><span class="tag">conversão</span></div>
+                  <div class="c">Baixa fricção. Prometa um recurso: checklist, exemplos, template, mapa.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="card">
+          <div class="top">
+            <h2>Roteiro (copiável)</h2>
+            <p>Edite os campos entre colchetes e mantenha o ritmo de 1 ideia por slide.</p>
+          </div>
+          <div class="body">
+            <textarea id="roteiro" spellcheck="false">TEMPLATE — CARROSSEL (8 slides)
+
+SLIDE 1 — CAPA (hook + promessa + recorte)
+Headline: O [TEMA] que vai [RESULTADO] em [ANO/RECORTE]
+Sub (opcional): E por que [COMPORTAMENTO POPULAR] vai perder força
+
+SLIDE 2 — QUEBRA DE CRENÇA (o que “morreu”)
+Durante muito tempo disseram que [CRENÇA ANTIGA / REGRA POPULAR].
+E estavam certos… no passado.
+Hoje, [SINTOMA DO ANTIGO] morreu.
+
+SLIDE 3 — REFRAME (não é X, é Y)
+[O TEMA] deixa de ser: “[(abordagem antiga centrada em você)]”
+E passa a ser: “[(abordagem nova centrada no outro + valor)]”.
+Sticker/nota: a pergunta agora é “o que isso resolve pra quem me vê?”
+
+SLIDE 4 — ERRADO vs CERTO (4 exemplos)
+1) Errado: [FORMATO GENÉRICO A]
+   Certo: Como [AÇÃO] para [BENEFÍCIO] sem [DOR]
+2) Errado: [FORMATO GENÉRICO B]
+   Certo: [N] lições para [OBJETIVO] (mesmo com [LIMITAÇÃO])
+3) Errado: [FORMATO GENÉRICO C]
+   Certo: Bastidores de como [PROCESSO] → [RESULTADO]
+4) Errado: [FORMATO GENÉRICO D]
+   Certo: O passo a passo pra [OBJETIVO] sem [OBJEÇÃO COMUM]
+
+SLIDE 5 — POR QUE FUNCIONA (mecanismo em 2–3 pilares)
+Funciona porque entrega pelo menos 1 disso:
+• [PILAR 1: projeção de futuro / “eu consigo fazer isso também”]
+• [PILAR 2: tema universal / dor comum / desejo comum]
+• (opcional) [PILAR 3: prova / método / evidência]
+Resultado: confiança + comunidade.
+
+SLIDE 6 — REGRA DE OURO (pergunta-filtro)
+Antes de postar [X], se pergunte:
+“Por que alguém que não me conhece consumiria isso até o final?”
+Se a resposta for: “porque isso me ajuda a [VERBO DE VALOR]”, está certo.
+
+SLIDE 7 — FRASE-MANTRA (salvável)
+Em [ANO/RECORTE], você precisa [VERBO] com [NARRATIVA/MÉTODO].
+Frase-âncora: [MANTRA CURTO]
+Ex.: “Não é sobre você. É sobre o que você faz o outro entender.”
+
+SLIDE 8 — CTA (comentário + recurso)
+Eu sou [NOME + AUTORIDADE EM 6–10 palavras].
+Quer que eu te envie [RECURSO]?
+Comente “[PALAVRA-CHAVE]”.</textarea>
+            <div class="section">
+              <div class="small">Dica: mantenha títulos com <span class="kbd">verbo + resultado + condição</span>. Ex.: “Como fazer X para Y sem Z”.</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <section class="card section">
+        <div class="top">
+          <h2>Slides sugeridos (1..8)</h2>
+          <p>Distribuição recomendada para 7–9 slides. Aqui está a versão padrão em 8.</p>
+        </div>
+        <div class="body">
+          <div class="list">
+            <div class="item"><div class="h"><strong>Slide 1</strong><span class="tag">capa</span></div><div class="c"><strong>Promessa</strong> + recorte temporal (ano/fase). 10–14 palavras no máximo.</div></div>
+            <div class="item"><div class="h"><strong>Slide 2</strong><span class="tag">quebra</span></div><div class="c">“Isso morreu” (modelo antigo). Use uma frase “curta e fatal”.</div></div>
+            <div class="item"><div class="h"><strong>Slide 3</strong><span class="tag">reframe</span></div><div class="c">Não é X, é Y. Uma frase para o leitor repetir.</div></div>
+            <div class="item"><div class="h"><strong>Slide 4</strong><span class="tag">exemplos</span></div><div class="c">4 pares “errado vs certo” (cada par com benefício explícito).</div></div>
+            <div class="item"><div class="h"><strong>Slide 5</strong><span class="tag">mecanismo</span></div><div class="c">2–3 bullets: por que o novo funciona (psicologia/estratégia).</div></div>
+            <div class="item"><div class="h"><strong>Slide 6</strong><span class="tag">regra</span></div><div class="c">Pergunta-filtro + critério de aprovação (uma condição clara).</div></div>
+            <div class="item"><div class="h"><strong>Slide 7</strong><span class="tag">mantra</span></div><div class="c">Frase-âncora “salvável”. Ideal para fundo escuro e tipografia grande.</div></div>
+            <div class="item"><div class="h"><strong>Slide 8</strong><span class="tag">cta</span></div><div class="c">Autoridade curta + comentário por palavra-chave + benefício (“envio o template”).</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card section">
+        <div class="top">
+          <h2>Elementos visuais</h2>
+          <p>Direção de arte para fundo escuro com estética clean/high-tech e destaques em degradê.</p>
+        </div>
+        <div class="body">
+          <div class="cols">
+            <div class="item">
+              <div class="h"><strong>Identidade</strong><span class="tag">visual system</span></div>
+              <div class="c">Base escura + cards com borda suave. Use 1 faixa de destaque em <strong>degradê verde/azul/laranja</strong> para títulos e palavras-chave.</div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Componentes reutilizáveis</strong><span class="tag">biblioteca</span></div>
+              <div class="c">Headline gigante • palavra-chave em cor • texto outline “fantasma” • sticker curto • colunas “errado vs certo” • sublinhado neon.</div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Hierarquia</strong><span class="tag">tipografia</span></div>
+              <div class="c">N1: headline (60–80% da tela). N2: subhead (1 linha). N3: stickers (metacomentários). N4: listas curtas.</div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Ritmo de retenção</strong><span class="tag">cadência</span></div>
+              <div class="c">Alterne: slide super tipográfico → slide com exemplo em colunas → slide com “regra” em destaque → mantra final com alto contraste.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card section">
+        <div class="top">
+          <h2>Copy e ganchos</h2>
+          <p>Modelos prontos para substituir termos e manter o mesmo impacto persuasivo.</p>
+        </div>
+        <div class="body">
+          <div class="list">
+            <div class="item">
+              <div class="h"><strong>Ganchos de capa (promessa + recorte)</strong><span class="tag">hook</span></div>
+              <div class="c">
+                • O [TEMA] que vai [RESULTADO] em [ANO/RECORTE]
+                <br/>• A estratégia de [TEMA] que vai dominar na era do [CONTEXTO]
+                <br/>• O posicionamento que mais vende quando [MUDANÇA DO MERCADO]
+                <br/>• O “novo” jeito de [AÇÃO] sem [DOR/OBJEÇÃO]
+              </div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Quebra de crença (morte do antigo)</strong><span class="tag">contraste</span></div>
+              <div class="c">
+                • [FORMATO/ESTRATÉGIA] pelo [FORMATO/ESTRATÉGIA] não sustenta mais.
+                <br/>• O que funcionava para [CENÁRIO ANTIGO] falha em [CENÁRIO ATUAL].
+                <br/>• Se você só faz [COMPORTAMENTO], você vira [CONSEQUÊNCIA].
+              </div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Reframe (nova regra)</strong><span class="tag">não é X, é Y</span></div>
+              <div class="c">
+                • Não é sobre [X]. É sobre [Y].
+                <br/>• Você não precisa [X]. Precisa [Y] com [Z].
+                <br/>• O conteúdo não é [X]. É a leitura que você ensina sobre [X].
+              </div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Exemplos (transformar genérico em promessa)</strong><span class="tag">títulos</span></div>
+              <div class="c">
+                • “Rotina” → “Como eu organizo [PROCESSO] para [RESULTADO] em [TEMPO]”
+                <br/>• “Bastidores” → “3 decisões que eu tomo pra [OBJETIVO] sem [DOR]”
+                <br/>• “Antes/depois” → “O que mudou quando parei de [ERRO] e comecei a [ACERTO]”
+                <br/>• “Um dia de trabalho” → “Meu sistema de [X] pra [Y] com [LIMITAÇÃO]”
+              </div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Regra prática (filtro de qualidade)</strong><span class="tag">check</span></div>
+              <div class="c">
+                • “Alguém que não me conhece veria isso até o fim? Por quê?”
+                <br/>• “Isso ajuda a pessoa a decidir, evitar um erro ou economizar tempo?”
+                <br/>• “Existe um ‘Aha!’ explícito nos primeiros 2 segundos/2 linhas?”
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card section">
+        <div class="top">
+          <h2>CTA</h2>
+          <p>Escolha 1 ação simples e 1 recompensa clara. Comentário tende a aumentar alcance e sinal de interesse.</p>
+        </div>
+        <div class="body">
+          <div class="cols">
+            <div class="item">
+              <div class="h"><strong>Modelo principal (comentário)</strong><span class="tag">baixa fricção</span></div>
+              <div class="c">Quer o <strong>template</strong> com exemplos do seu tema? Comente <span class="kbd">“MAPA”</span>.</div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Variações de palavra-chave</strong><span class="tag">substituições</span></div>
+              <div class="c">
+                <span class="kbd">“ROTEIRO”</span> (script)
+                <br/><span class="kbd">“IDEIAS”</span> (lista)
+                <br/><span class="kbd">“POSICIONAMENTO”</span> (exemplos)
+                <br/><span class="kbd">“CHECKLIST”</span> (passo a passo)
+              </div>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:12px">
+            <div class="grad"></div>
+            <h3>Regra do CTA</h3>
+            <p>Palavra-chave curta, fácil de escrever, sem acento. Promessa objetiva: “eu te envio X”. Se possível, conecte com DM/automação.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card section" id="checklist">
+        <div class="top">
+          <h2>Checklist de criação</h2>
+          <p>Para replicar em qualquer tema sem perder a estrutura que gera retenção.</p>
+        </div>
+        <div class="body">
+          <div class="list">
+            <div class="item"><div class="h"><strong>Definição do tema</strong><span class="tag">pré</span></div><div class="c">Escolha <span class="kbd">1 tema</span> + <span class="kbd">1 recorte</span> (ano, fase do mercado, nível do público) + <span class="kbd">1 resultado</span>.</div></div>
+            <div class="item"><div class="h"><strong>Capa irresistível</strong><span class="tag">slide 1</span></div><div class="c">Promessa concreta; evite termos abstratos. Se usar “tendência”, explique o porquê nos slides seguintes.</div></div>
+            <div class="item"><div class="h"><strong>Quebra de crença segura</strong><span class="tag">slide 2</span></div><div class="c">Critique o <strong>modelo</strong>, não a audiência. Use “funcionava antes” para reduzir rejeição.</div></div>
+            <div class="item"><div class="h"><strong>Reframe em 1 frase</strong><span class="tag">slide 3</span></div><div class="c">Escreva “não é X, é Y” e teste: alguém consegue repetir sem pensar?</div></div>
+            <div class="item"><div class="h"><strong>4 exemplos com benefício</strong><span class="tag">slide 4</span></div><div class="c">Cada “certo” deve conter: <span class="kbd">verbo</span> + <span class="kbd">resultado</span> + <span class="kbd">condição</span> (sem dor/mesmo com limitação).</div></div>
+            <div class="item"><div class="h"><strong>Mecanismo em bullets</strong><span class="tag">slide 5</span></div><div class="c">Explique “por que funciona” sem jargão. 2–3 bullets. Termine com consequência (confiança/comunidade/vendas).</div></div>
+            <div class="item"><div class="h"><strong>Pergunta-filtro aplicável</strong><span class="tag">slide 6</span></div><div class="c">Faça o leitor se autoavaliar em 5 segundos: “por que alguém ficaria até o fim?”</div></div>
+            <div class="item"><div class="h"><strong>Frase-mantra salvável</strong><span class="tag">slide 7</span></div><div class="c">Curta, incisiva, sem vírgulas demais. Alto contraste visual para virar print.</div></div>
+            <div class="item"><div class="h"><strong>CTA e distribuição</strong><span class="tag">slide 8</span></div><div class="c">1 pedido + 1 recompensa. Fixe o comentário com o que a pessoa deve fazer depois (ex.: “enviei por DM”).</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card section">
+        <div class="top">
+          <h2>Variações (adaptações com o mesmo impacto)</h2>
+          <p>Troque o “tema central” mantendo a mesma engrenagem: promessa → contraste → regra → exemplos → filtro → mantra → CTA.</p>
+        </div>
+        <div class="body">
+          <div class="list">
+            <div class="item">
+              <div class="h"><strong>Variação A — Posicionamento premium</strong><span class="tag">substituição</span></div>
+              <div class="c">
+                Capa: “O posicionamento que permite cobrar mais em [recorte]”.
+                <br/>Quebra: “Preço baixo como argumento morreu.”
+                <br/>Reframe: “Não é sobre ‘convencer’. É sobre ‘selecionar e justificar’.”
+                <br/>Exemplos: títulos com prova, processo e critério.
+                <br/>CTA: “Comente ‘PREMIUM’ que eu te envio 10 ângulos de autoridade.”
+              </div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Variação B — Conteúdo B2B</strong><span class="tag">substituição</span></div>
+              <div class="c">
+                Capa: “O tipo de conteúdo que abre portas no B2B em [recorte]”.
+                <br/>Quebra: “Conteúdo ‘motivacional corporativo’ morreu.”
+                <br/>Reframe: “Seu conteúdo precisa reduzir risco de decisão.”
+                <br/>CTA: “Comente ‘B2B’ pra receber estrutura de post que vira reunião.”
+              </div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Variação C — Funil orgânico</strong><span class="tag">substituição</span></div>
+              <div class="c">
+                Capa: “O funil orgânico mais simples pra vender em [recorte]”.
+                <br/>Quebra: “Postar sem intenção/etapa morreu.”
+                <br/>Reframe: “Cada post tem um papel: atrair, aquecer, converter.”
+                <br/>CTA: “Comente ‘FUNIL’ e eu te mando 12 ideias por etapa.”
+              </div>
+            </div>
+            <div class="item">
+              <div class="h"><strong>Variação D — Branding pessoal</strong><span class="tag">substituição</span></div>
+              <div class="c">
+                Capa: “Branding pessoal que cria demanda em [recorte]”.
+                <br/>Quebra: “Ser ‘interessante’ sem direção morreu.”
+                <br/>Reframe: “Seu diferencial é a lente (interpretação) + consistência.”
+                <br/>CTA: “Comente ‘LENTE’ que eu te envio 20 ideias de ‘lente de marca’.”
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <div>Uso recomendado: 7–9 slides • 1 ideia/slide • destaque 1–3 palavras por slide</div>
+        <div>Link: <a class="link" href="https://www.instagram.com/p/DUatQCVDgBW/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DUatQCVDgBW/</a></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ta = document.getElementById('roteiro');
+      const original = btn.textContent;
+
+      async function copy(){
+        const text = ta.value;
+        try{
+          if(navigator.clipboard && window.isSecureContext){
+            await navigator.clipboard.writeText(text);
+          } else {
+            ta.focus();
+            ta.select();
+            document.execCommand('copy');
+            ta.setSelectionRange(0,0);
+          }
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>btn.textContent = original, 1400);
+        }catch(e){
+          btn.textContent = 'Falha ao copiar';
+          setTimeout(()=>btn.textContent = original, 1400);
+        }
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
