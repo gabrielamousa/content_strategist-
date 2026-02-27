@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dia 9 — Bastidores (Harmonização e Dermatologia)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.085);
+    --border:rgba(255,255,255,.10);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.55);
+    --shadow: 0 18px 50px rgba(0,0,0,.45);
+    --g1: linear-gradient(90deg,#33D6A6 0%, #2E7BFF 45%, #FF8A34 100%);
+    --g2: radial-gradient(900px 450px at 18% 0%, rgba(46,123,255,.22), transparent 55%),
+          radial-gradient(750px 380px at 88% 10%, rgba(51,214,166,.18), transparent 52%),
+          radial-gradient(800px 420px at 70% 92%, rgba(255,138,52,.12), transparent 55%);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color:var(--text);
+    background: var(--g2), linear-gradient(180deg,var(--bg0), var(--bg1));
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
+
+  .topbar{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
+    padding:18px 18px;
+    border:1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    border-radius:16px;
+    box-shadow: var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+  .topbar:before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: var(--g1);
+    opacity:.16;
+    filter: blur(18px);
+    z-index:0;
+  }
+  .topbar > *{position:relative; z-index:1}
+
+  .kicker{
+    display:flex; flex-wrap:wrap; gap:10px;
+    margin-bottom:8px;
+  }
+  .pill{
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:rgba(234,240,255,.86);
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.22);
+  }
+  .pill strong{color:#fff}
+
+  h1{
+    margin:6px 0 10px;
+    font-size: clamp(20px, 3vw, 30px);
+    line-height:1.15;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    max-width:76ch;
+    font-size:14.5px;
+    line-height:1.55;
+  }
+  .meta{
+    display:flex; gap:10px; flex-wrap:wrap; margin-top:12px
+  }
+  .meta a{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:9px 11px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:12px;
+    background: rgba(255,255,255,.05);
+    color: rgba(234,240,255,.88);
+    font-size:13px;
+  }
+  .meta a:hover{border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.07)}
+
+  .actions{
+    display:flex; flex-direction:column; gap:10px; min-width:240px;
+  }
+  .btn{
+    cursor:pointer;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.28);
+    color:#fff;
+    border-radius:14px;
+    padding:12px 12px;
+    font-weight:650;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .btn.primary{
+    border:0;
+    background: var(--g1);
+    color:#111;
+  }
+  .btn:hover{transform: translateY(-1px)}
+  .btn:active{transform: translateY(0px)}
+  .hint{font-size:12.5px; color:var(--muted2); text-align:center}
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+    margin-top:16px;
+  }
+  @media(min-width: 920px){
+    .grid{grid-template-columns: 1fr 1fr}
+    .span2{grid-column: 1 / -1}
+  }
+
+  .card{
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.05);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 16px 16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card:before{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(255,255,255,.05), transparent 55%);
+    pointer-events:none;
+  }
+  .card > *{position:relative; z-index:1}
+  .card h2{
+    margin:0 0 10px;
+    font-size:16px;
+    letter-spacing:.02em;
+  }
+  .card p{margin:0; color:var(--muted); line-height:1.6; font-size:14px}
+  .card ul{margin:10px 0 0 20px; color:var(--muted); line-height:1.7; font-size:14px}
+  .card ol{margin:10px 0 0 20px; color:var(--muted); line-height:1.7; font-size:14px}
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    color:rgba(234,240,255,.82);
+    padding:7px 10px;
+    border-radius:999px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.22);
+  }
+  .tag .dot{width:8px; height:8px; border-radius:50%; background: var(--g1)}
+
+  .script{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: rgba(234,240,255,.82);
+    background: rgba(0,0,0,.28);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px;
+    padding: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .two{
+    display:grid; gap:12px;
+    grid-template-columns: 1fr;
+  }
+  @media(min-width: 920px){
+    .two{grid-template-columns: 1.1fr .9fr}
+  }
+
+  .gradline{
+    height:1px;
+    background: var(--g1);
+    opacity:.55;
+    margin: 10px 0 0;
+  }
+  .footer{
+    margin-top:18px;
+    color: var(--muted2);
+    font-size: 12.5px;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="topbar">
+      <div>
+        <div class="kicker">
+          <span class="pill"><strong>Nicho</strong>: Harmonização e dermatologia</span>
+          <span class="pill"><strong>Dia</strong>: 9</span>
+          <span class="pill"><strong>Formato</strong>: Carrossel</span>
+          <span class="pill"><strong>Pilar</strong>: Bastidores</span>
+        </div>
+        <h1>Bastidores de um dia na clínica: do preparo ao pós-atendimento</h1>
+        <p class="sub">Modelo editorial/lifestyle (fotos sem muito texto) com narrativa na legenda. Objetivo: humanizar, reforçar segurança e autoridade sem prometer resultados.</p>
+        <div class="meta">
+          <a href="https://www.instagram.com/p/DUerVMoDO_L/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <a href="#roteiro">Ir para o roteiro</a>
+          <a href="#slides">Ver slides sugeridos</a>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        <button class="btn" id="copyLegendBtn" type="button">Copiar legenda pronta</button>
+        <div class="hint" id="copyHint">Copia para a área de transferência (texto puro).</div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Resumo</h2>
+        <p><span class="tag"><span class="dot"></span>Ideia-mãe</span></p>
+        <ul>
+          <li>Carrossel de 6–8 fotos com ritmo visual (close → contexto → prova → credencial → bastidor).</li>
+          <li>Legenda em formato de mini-história + 3 critérios profissionais (segurança, indicação, pós).</li>
+          <li>CTA leve: comentário (“BASTIDORES”) ou pergunta de slide favorito.</li>
+        </ul>
+        <div class="gradline"></div>
+      </div>
+
+      <div class="card">
+        <h2>Estrutura (reproduzível)</h2>
+        <ol>
+          <li><strong>Heroshot</strong>: você (ou equipe) em foto forte/limpa.</li>
+          <li><strong>Variação</strong>: outro ângulo/close (sem sensacionalismo).</li>
+          <li><strong>Contexto</strong>: sala preparada / bancada organizada / ambiente.</li>
+          <li><strong>Prova social</strong>: equipe/colega/participação (sem identificar paciente).</li>
+          <li><strong>Credencial</strong>: congresso, estudo, certificado, material técnico.</li>
+          <li><strong>Bastidor real</strong>: final do dia + detalhe humano.</li>
+          <li>(Opcional) <strong>Pós</strong>: cuidado, rotina, organização, checklist de segurança.</li>
+          <li>(Opcional) <strong>Fechamento</strong>: slide com CTA discreto (texto curto).</li>
+        </ol>
+      </div>
+
+      <div class="card span2" id="roteiro">
+        <h2>Roteiro (produção + legenda)</h2>
+        <div class="two">
+          <div>
+            <p><span class="tag"><span class="dot"></span>Roteiro de captação (15–25 min)</span></p>
+            <div class="script" id="scriptText">CENÁRIO: clínica/consultório (ou evento/congresso). Luz: natural + softbox; fundo limpo.
+
+CAPTAÇÃO (em ordem):
+1) HERO (slide 1): retrato vertical bem iluminado (jaleco ou look neutro). Expressão confiante.
+2) VARIAÇÃO (slide 2): close 3/4; detalhe de mãos organizando materiais (sem dados; sem close de agulha).
+3) CONTEXTO (slide 3): plano aberto da sala preparada (bancada, EPIs, maca pronta, ambiente).
+4) PROVA SOCIAL (slide 4): foto com equipe/colega (sem paciente identificável).
+5) CREDENCIAL (slide 5): foto com certificado, crachá de congresso, artigo/atlas, ou equipamento ao fundo (sem prometer resultado).
+6) BASTIDOR (slide 6): espontânea (fim do dia / café / equipe rindo / organização).
+7) (Opcional) PÓS (slide 7): rotina de pós (itens gerais: proteção solar, hidratação, retorno) em imagem simbólica.
+8) (Opcional) CTA (slide 8): você olhando para a câmera + texto pequeno “Quer mais bastidores? Comenta BASTIDORES”.
+
+REGRA: 1 ideia por foto. Alternar: close → médio → aberto → social → credencial → real.
+
+EDIÇÃO: preset consistente (tons quentes ou neutros), contraste moderado, pele natural, sem excesso de textura/clareamento.</div>
+          </div>
+          <div>
+            <p><span class="tag"><span class="dot"></span>Legenda pronta (copiável)</span></p>
+            <div class="script" id="legendText">Bastidores de um dia na clínica: do preparo ao pós-atendimento.
+
+Por fora, parece “só um procedimento”. Por trás, tem método, segurança e muita decisão clínica.
+
+Hoje meu foco foi:
+1) Indicação certa: nem todo mundo precisa do mesmo tratamento (a avaliação é individual).
+2) Segurança: checagem de histórico, planejamento e ambiente preparado.
+3) Naturalidade: respeitar anatomia e priorizar um resultado harmônico, sem exageros.
+
+O que mais te interessa ver nos próximos bastidores?
+( ) avaliação facial  ( ) planejamento  ( ) pós-cuidados  ( ) materiais/organização
+
+Comenta “BASTIDORES” que eu monto uma sequência completa — do começo ao fim (sem expor pacientes e sem promessas de resultado).</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="slides">
+        <h2>Slides sugeridos (1..8)</h2>
+        <ul>
+          <li><strong>Slide 1 (Hero)</strong>: você em retrato — texto opcional: “Bastidores de um dia na clínica”.</li>
+          <li><strong>Slide 2 (Curiosidade)</strong>: close 3/4 — texto opcional: “Antes de indicar, eu olho isso…”.</li>
+          <li><strong>Slide 3 (Contexto)</strong>: sala preparada/ambiente — texto opcional: “Planejamento + segurança”.</li>
+          <li><strong>Slide 4 (Prova social)</strong>: equipe/colega — texto opcional: “Trabalho em equipe”.</li>
+          <li><strong>Slide 5 (Credencial)</strong>: congresso/estudo — texto opcional: “Atualização contínua”.</li>
+          <li><strong>Slide 6 (Bastidor)</strong>: espontânea — texto opcional: “Fim do dia (e ainda revisando casos)”.</li>
+          <li><strong>Slide 7 (Pós)</strong>: protetor solar/rotina/retorno — texto opcional: “Pós importa tanto quanto o ‘durante’”.</li>
+          <li><strong>Slide 8 (CTA)</strong>: você olhando p/ câmera — texto: “Quer mais bastidores? Comenta BASTIDORES”.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Elementos visuais</h2>
+        <ul>
+          <li><strong>Identidade</strong>: fundo escuro/baixo ruído + pele natural + contraste limpo.</li>
+          <li><strong>Assinatura</strong>: @/logo discreto sempre no mesmo canto.</li>
+          <li><strong>Paleta</strong>: preto/azul-marinho + 1 cor quente (âmbar/laranja) ou verde/azul (high-tech).</li>
+          <li><strong>Tipografia (se usar texto)</strong>: 5–10 palavras por slide; alto contraste; 1 bloco por imagem.</li>
+          <li><strong>Evitar</strong>: dados do paciente, prontuário à vista, antes/depois sem autorização, close chamativo de agulhas.</li>
+        </ul>
+      </div>
+
+      <div class="card span2">
+        <h2>Copy e ganchos (para 1ª linha da legenda)</h2>
+        <ul>
+          <li>“O que ninguém vê antes de um resultado natural.”</li>
+          <li>“3 decisões que eu tomo antes de indicar qualquer procedimento.”</li>
+          <li>“Bastidores reais: preparo, planejamento e pós.”</li>
+          <li>“A parte mais importante não é a ‘técnica’ — é a indicação certa.”</li>
+          <li>“Se você acha que é ‘chegar e fazer’, olha isso.”</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>CTA</h2>
+        <ul>
+          <li><strong>Interação</strong>: “Qual slide você mais curtiu: 1, 4 ou 6?”</li>
+          <li><strong>Pedido claro</strong>: “Comenta ‘BASTIDORES’ que eu mostro o passo a passo.”</li>
+          <li><strong>Salvar</strong>: “Salve para lembrar desses critérios antes de escolher um profissional.”</li>
+          <li><strong>Direct</strong> (sem promessa): “Direct com ‘AVALIAÇÃO’ e eu explico como funciona a consulta.”</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Checklist de criação (rápido)</h2>
+        <ul>
+          <li>[ ] Tema em até 6 palavras (ex.: “Dia de avaliação facial”).</li>
+          <li>[ ] 6–8 fotos verticais + variação de planos (close/médio/aberto).</li>
+          <li>[ ] 1 slide de prova social + 1 de credencial (autoridade).</li>
+          <li>[ ] Nada identificável de paciente (rostos, nomes, telas, prontuário).</li>
+          <li>[ ] Preset único + correção de pele natural.</li>
+          <li>[ ] Legenda: contexto → valor → 3 critérios → bastidor humano → CTA.</li>
+          <li>[ ] CTA único (comentário OU direct OU salvar).</li>
+        </ul>
+      </div>
+
+      <div class="card span2">
+        <h2>Variações (mesmo modelo, outros temas)</h2>
+        <ul>
+          <li><strong>Harmonização</strong>: “Planejamento de lábios naturais” (ênfase em avaliação e proporção).</li>
+          <li><strong>Dermato</strong>: “Dia de tratamento de melasma” (ênfase em rotina, proteção solar, acompanhamento).</li>
+          <li><strong>Procedimento ‘queridinho’</strong>: “Skinbooster: o que entra na decisão” (sem prometer resultado).</li>
+          <li><strong>Autoridade</strong>: “O que eu trouxe do congresso” (1 slide por insight + bastidores).</li>
+          <li><strong>Equipe</strong>: “Quem faz tudo acontecer na clínica” (humanização + confiança).</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="footer">Observação (compliance): conteúdo informativo e de bastidores. Resultados variam e a indicação depende de avaliação individual. Evite qualquer promessa e preserve privacidade.</div>
+  </div>
+
+<script>
+  function copyFrom(elId, hintId){
+    const el = document.getElementById(elId);
+    const hint = document.getElementById(hintId);
+    const text = el ? el.innerText : "";
+    if(!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      if(hint){
+        const prev = hint.textContent;
+        hint.textContent = "Copiado!";
+        setTimeout(()=> hint.textContent = prev, 1200);
+      }
+    });
+  }
+  document.getElementById('copyBtn').addEventListener('click', () => copyFrom('scriptText','copyHint'));
+  document.getElementById('copyLegendBtn').addEventListener('click', () => copyFrom('legendText','copyHint'));
+</script>
+</body>
+</html>
