@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 17 — Carrossel reproduzível | Harmonização e dermatologia</title>
+  <style>
+    :root{
+      --bg0:#06080f;
+      --bg1:#0a0f1f;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#eaf0ff;
+      --muted:#a9b4d0;
+      --muted2:#7f8bb0;
+      --good:#2ef2a0;
+      --blue:#48a8ff;
+      --orange:#ff9a3c;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(72,168,255,.18), transparent 60%),
+        radial-gradient(900px 500px at 85% 0%, rgba(46,242,160,.16), transparent 60%),
+        radial-gradient(900px 500px at 85% 105%, rgba(255,154,60,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 70px}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .glow{
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(420px 220px at 18% 20%, rgba(46,242,160,.18), transparent 60%),
+        radial-gradient(420px 220px at 65% 10%, rgba(72,168,255,.16), transparent 60%),
+        radial-gradient(420px 220px at 90% 60%, rgba(255,154,60,.14), transparent 60%);
+      pointer-events:none;
+      filter: blur(0px);
+      opacity:.9;
+    }
+
+    .head-grid{display:grid; grid-template-columns: 1.3fr .7fr; gap:14px; position:relative}
+    @media (max-width: 860px){
+      .head-grid{grid-template-columns: 1fr;}
+    }
+
+    .kicker{
+      display:flex; flex-wrap:wrap; gap:8px;
+      font-size:12px;
+      color: var(--muted);
+      letter-spacing:.02em;
+      align-items:center;
+      margin-bottom:10px;
+    }
+
+    .pill{
+      border:1px solid var(--stroke);
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+    }
+
+    .pill.grad{
+      border-color: rgba(255,255,255,.14);
+      background: linear-gradient(90deg, rgba(46,242,160,.14), rgba(72,168,255,.12), rgba(255,154,60,.12));
+    }
+
+    h1{
+      margin:0;
+      font-size:22px;
+      line-height:1.2;
+      letter-spacing:-.01em;
+    }
+
+    .sub{
+      margin-top:10px;
+      color: var(--muted);
+      line-height:1.45;
+      font-size:14px;
+      max-width: 70ch;
+    }
+
+    .link{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      color: var(--text);
+      text-decoration:none;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      padding:10px 12px;
+      border-radius: 12px;
+      transition: .2s ease;
+      width: fit-content;
+      margin-top: 12px;
+    }
+    .link:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
+    .link small{color: var(--muted2)}
+
+    .actions{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      justify-content:flex-start;
+      align-items:flex-end;
+      position:relative;
+    }
+    @media (max-width: 860px){
+      .actions{align-items:flex-start}
+    }
+
+    button{
+      border:1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      padding:12px 13px;
+      border-radius: 14px;
+      cursor:pointer;
+      transition:.2s ease;
+      font-weight:600;
+      letter-spacing:.01em;
+      width: 100%;
+      max-width: 280px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.28);
+    }
+    button:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.22)}
+
+    .btn-row{display:flex; gap:10px; width:100%; max-width: 360px}
+    .btn-secondary{
+      background: rgba(255,255,255,.04);
+      font-weight:600;
+      width:100%;
+    }
+
+    .toast{
+      font-size:12px;
+      color: var(--muted);
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.25);
+      padding:10px 12px;
+      border-radius: 14px;
+      width:100%;
+      max-width: 360px;
+      display:none;
+    }
+    .toast.show{display:block;}
+
+    main{margin-top:18px; display:grid; grid-template-columns: 1fr; gap:14px}
+
+    section{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: var(--shadow);
+    }
+
+    .sec-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: var(--muted);
+    }
+
+    .tag{
+      font-family: var(--mono);
+      font-size:12px;
+      color: rgba(234,240,255,.9);
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(90deg, rgba(46,242,160,.12), rgba(72,168,255,.10), rgba(255,154,60,.10));
+    }
+
+    .grid-2{display:grid; grid-template-columns: 1fr 1fr; gap:14px}
+    @media (max-width: 900px){.grid-2{grid-template-columns:1fr}}
+
+    .card{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--radius2);
+      padding:14px;
+    }
+
+    ul{margin:10px 0 0 18px; color: var(--text)}
+    li{margin:6px 0; color: rgba(234,240,255,.92)}
+    .muted{color: var(--muted)}
+    .small{font-size:13px; line-height:1.55}
+
+    .code{
+      font-family: var(--mono);
+      background: rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      color: rgba(234,240,255,.92);
+      line-height:1.55;
+      font-size:13px;
+    }
+
+    .split{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 980px){.split{grid-template-columns:1fr}}
+
+    .hr{
+      height:1px;
+      width:100%;
+      background: linear-gradient(90deg, rgba(46,242,160,.35), rgba(72,168,255,.28), rgba(255,154,60,.22));
+      opacity:.45;
+      margin:14px 0;
+      border-radius:999px;
+    }
+
+    .checklist{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 780px){.checklist{grid-template-columns:1fr}}
+
+    .check{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: 14px;
+      padding:10px 12px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+
+    .box{
+      width:18px; height:18px;
+      border-radius:6px;
+      border:1px solid rgba(255,255,255,.20);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      margin-top:2px;
+      flex: 0 0 auto;
+    }
+
+    .check p{margin:0; color: rgba(234,240,255,.92); font-size:13px; line-height:1.45}
+
+    .footer-note{margin-top:10px; color: var(--muted2); font-size:12px; line-height:1.55}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="glow"></div>
+      <div class="head-grid">
+        <div>
+          <div class="kicker">
+            <span class="pill">Nicho: Harmonização e dermatologia</span>
+            <span class="pill">Dia: 17</span>
+            <span class="pill grad">Formato: Carrossel</span>
+            <span class="pill">Pilar: Checklist</span>
+          </div>
+          <h1>Carrossel reproduzível: “N itens que eu usaria se tivesse [DOR]”</h1>
+          <p class="sub">Objetivo: gerar <b>salvos</b> e <b>confiança</b> com uma curadoria prática (1 item por slide), reforçando autoridade + vivência e fechando com expectativa realista e CTA simples.</p>
+          <a class="link" href="https://www.instagram.com/p/DVCjXzyjnYR/" target="_blank" rel="noopener noreferrer">
+            <span>Post original</span>
+            <small>instagram.com/p/DVCjXzyjnYR/</small>
+          </a>
+        </div>
+        <div class="actions">
+          <button id="copyBtn" type="button">Copiar roteiro</button>
+          <div class="btn-row">
+            <button class="btn-secondary" id="copyCaptionBtn" type="button">Copiar legenda</button>
+            <button class="btn-secondary" id="copyChecklistBtn" type="button">Copiar checklist</button>
+          </div>
+          <div class="toast" id="toast">Copiado para a área de transferência.</div>
+          <div class="toast" id="toast2">Não foi possível copiar. Selecione o texto e copie manualmente.</div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div class="sec-title">
+          <h2>Resumo</h2>
+          <span class="tag">Curadoria + microaula</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="small muted">O que é</div>
+            <p class="small" style="margin:8px 0 0;">Um carrossel de lista que responde: <b>“O que eu escolheria se tivesse [problema]”</b>. Cada item vem com justificativas rápidas + uma cautela quando necessário.</p>
+          </div>
+          <div class="card">
+            <div class="small muted">Por que funciona</div>
+            <ul class="small">
+              <li>Lista (N itens) cria completude e retenção.</li>
+              <li>Autoridade + vivência pessoal aumenta confiança.</li>
+              <li>1 decisão por slide = leitura em 2–3s.</li>
+              <li>Slide final com limites evita “receitinha”.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Estrutura</h2>
+          <span class="tag">8 slides</span>
+        </div>
+        <div class="split">
+          <div class="card">
+            <div class="small muted">Sequência recomendada</div>
+            <ul class="small">
+              <li><b>Slide 1:</b> Hook (promessa) + autoridade/vivência.</li>
+              <li><b>Slides 2–6:</b> 5 itens (1 por slide) com bullets e cautela.</li>
+              <li><b>Slide 7:</b> Expectativa realista + pilares do resultado.</li>
+              <li><b>Slide 8:</b> CTA (pergunta + seguir/salvar).</li>
+            </ul>
+            <div class="hr"></div>
+            <div class="small muted">Regras de densidade</div>
+            <ul class="small">
+              <li>Até <b>6 bullets</b> por item (ideal: 4–5).</li>
+              <li>Frases curtas: 1 ideia por bullet.</li>
+              <li>Se tiver risco/irritação/contraindicação: incluir <b>⚠️</b>.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="small muted">Campos para preencher (template)</div>
+            <div class="code" id="templateFields">[DOR/CONDIÇÃO]: (ex.: melasma, acne adulta, olheiras, rosácea)
+[N]: (3 a 7)
+[ESPECIALIDADE]: (dermatologista, biomédica, dentista, etc.)
+[PROVA/VIVÊNCIA]: ("que atende isso todo dia" / "que também tem")
+[ITENS]: (produtos, cuidados, decisões, passos, hábitos)
+[CAUTELAS]: (sensibilidade, gestantes, medicamentos, pós-procedimento)
+[PILARES]: (protetor solar, rotina, técnica, consistência, acompanhamento) 
+[CTA PERGUNTA]: ("Qual você já usou?" / "Quer versão para pele oleosa?")</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Slides sugeridos (1..8)</h2>
+          <span class="tag">Copy pronta + espaços</span>
+        </div>
+        <div class="code" id="slidesScript">SLIDE 1 — HOOK + AUTORIDADE
+Título (grande):
+“[N] itens que eu [usaria/compraria/evitaria] se tivesse [DOR]”
+Sub (menor, humano):
+“por uma [ESPECIALIDADE] (que [PROVA/VIVÊNCIA])”
+Dica visual: destacar 1 palavra em CAIXA ALTA: [DOR] / [OBJETIVO].
+
+SLIDE 2 — ITEM 1
+Topo: “[Item #1] — [marca/contexto]”
+Bullets:
+• Ativo/critério principal: [____]
+• Ajuda em: [benefício 1]
+• Ajuda em: [benefício 2]
+• Melhor para: [perfil/pele/momento]
+• Como usar/decisão prática: [frequência/como escolher]
+• ⚠️ Cuidado se: [condição]
+
+SLIDE 3 — ITEM 2
+Topo: “[Item #2] — [marca/contexto]”
+Bullets:
+• [____]
+• [____]
+• [____]
+• [____]
+• ⚠️ [____]
+
+SLIDE 4 — ITEM 3
+Topo: “[Item #3] — [marca/contexto]”
+Bullets:
+• [____]
+• [____]
+• [____]
+• ⚠️ [____]
+
+SLIDE 5 — ITEM 4
+Topo: “[Item #4] — [marca/contexto]”
+Bullets:
+• [____]
+• [____]
+• [____]
+• ⚠️ [____]
+
+SLIDE 6 — ITEM 5
+Topo: “[Item #5] — [marca/contexto]”
+Bullets:
+• [____]
+• [____]
+• [____]
+• ⚠️ [____]
+
+SLIDE 7 — EXPECTATIVA REALISTA (ANTI-OBJEÇÃO)
+Card 1 (forte):
+“Isso sozinho NÃO resolve [DOR].”
+Card 2 (alinhamento):
+“Funciona como parte de um plano.”
+Pilares (bullets):
+• Pilar 1: [proteção/rotina]
+• Pilar 2: [tratamento específico]
+• Pilar 3: [barreira/inflamação/hábitos]
+• Pilar 4: consistência + acompanhamento
+
+SLIDE 8 — CTA
+Pergunta (card):
+“Você já usou/fez algum desses? Quer a versão para [variação]?”
+CTA crescimento:
+“Me segue para mais conteúdos sobre [tema] com base em ciência.”
+CTA de ação:
+“Salva pra consultar depois.”</div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Roteiro</h2>
+          <span class="tag">Reproduzível</span>
+        </div>
+        <div class="split">
+          <div class="card">
+            <div class="small muted">Passo a passo de criação (rápido)</div>
+            <ol class="small" style="margin:10px 0 0 18px;">
+              <li>Escolha <b>uma dor</b> bem específica (ex.: “melasma pós-gravidez”, “acne adulta com sensibilidade”, “pré-preenchimento labial”).</li>
+              <li>Defina <b>N</b> (5 é o mais escaneável) e liste itens/decisões de alto impacto.</li>
+              <li>Para cada item, escreva: <b>mecanismo</b> → <b>benefício</b> → <b>para quem</b> → <b>cautela</b>.</li>
+              <li>Inclua no slide 7: “não resolve sozinho” + 3–4 pilares (credibilidade).</li>
+              <li>Finalize com CTA simples: pergunta + seguir + salvar.</li>
+            </ol>
+          </div>
+          <div class="card">
+            <div class="small muted">Modelo de legenda (copiável)</div>
+            <div class="code" id="captionTemplate">Legenda pronta (ajuste colchetes):
+
+Se eu tivesse [DOR], esses seriam os [N] itens/decisões que eu priorizaria — com olhar de [ESPECIALIDADE] (e [PROVA/VIVÊNCIA]).
+
+✅ O objetivo aqui é te dar curadoria e clareza (não “milagre”).
+⚠️ Cada pele/caso tem contexto: sensibilidade, rotina, tratamentos em andamento.
+
+No final do carrossel eu te explico por que isso é complemento de um plano (e quais pilares realmente mudam o jogo).
+
+Pergunta: qual desses você já usou/fez? Quer versão para [pele oleosa/sensível/gestante/pós-procedimento]?
+
+➡️ Salva pra consultar depois e me segue para mais conteúdos de dermato/harmonização baseados em ciência.</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Elementos visuais</h2>
+          <span class="tag">Clean + high-tech</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="small muted">Composição que mantém retenção</div>
+            <ul class="small">
+              <li>Fundo real (bancada/consultório/prateleira) para “vida real”.</li>
+              <li>Dois cards por slide: <b>título no topo</b> + <b>bullets embaixo</b>.</li>
+              <li>Ícone ⚠️ sempre que houver cuidado/contraindicação.</li>
+              <li>Palavra-chave em <b>CAIXA ALTA</b> no slide 1 (ex.: MELASMA).</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="small muted">Guia de texto (legibilidade)</div>
+            <ul class="small">
+              <li>Título do item: até <b>60 caracteres</b>.</li>
+              <li>Bullets: 4 a 6, com <b>até 1 linha</b> cada.</li>
+              <li>Evite parágrafo; o carrossel é “escaneável”.</li>
+              <li>Use “melhor para…” pra reduzir objeções e aumentar precisão.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">Substituições com o mesmo impacto</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="small muted">Fórmulas de título (Slide 1)</div>
+            <ul class="small">
+              <li>“[N] itens que eu usaria se tivesse <b>[DOR]</b>”</li>
+              <li>“[N] escolhas que eu faria antes de <b>[procedimento]</b>”</li>
+              <li>“[N] erros que eu evitaria se eu quisesse <b>[OBJETIVO]</b>”</li>
+              <li>“[N] ativos/decisões que fazem diferença em <b>[DOR]</b>”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="small muted">Âncora de autoridade (subheadline)</div>
+            <ul class="small">
+              <li>“por uma [especialidade]” + “(que atende isso todo dia)”</li>
+              <li>“por uma [especialidade]” + “(que também tem [dor])”</li>
+              <li>“na prática do consultório: o que mais vejo funcionar é…”</li>
+              <li>“o que eu considero antes de indicar/usar…”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="card">
+          <div class="small muted">Bullets: banco de frases (troca rápida)</div>
+          <div class="grid-2">
+            <div class="small">
+              <ul>
+                <li>“Ajuda a reduzir [sinal] sem agredir a barreira.”</li>
+                <li>“Boa opção se você tem [sensibilidade/oleosidade].”</li>
+                <li>“Eu priorizo porque entrega [benefício] com consistência.”</li>
+                <li>“Se você faz/usa [tratamento], isso pode complementar.”</li>
+              </ul>
+            </div>
+            <div class="small">
+              <ul>
+                <li>“⚠️ Evite se estiver com [irritação/dermatite/pele sensibilizada].”</li>
+                <li>“⚠️ Introduza aos poucos: 2–3x/semana e ajuste.”</li>
+                <li>“⚠️ No pós-procedimento: siga a orientação do seu profissional.”</li>
+                <li>“Não é sobre ‘o mais forte’, é sobre ‘o mais sustentável’.”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>CTA</h2>
+          <span class="tag">Engajamento + crescimento</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="small muted">CTA principal (comentário)</div>
+            <ul class="small">
+              <li>“Qual desses você já usou/fez?”</li>
+              <li>“Quer a versão para pele sensível/oleosa/madura?”</li>
+              <li>“Qual sua maior dúvida sobre [tema] hoje?”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="small muted">CTA secundário (ação)</div>
+            <ul class="small">
+              <li>“Salva pra consultar na farmácia/no pré/pós.”</li>
+              <li>“Me segue para mais guias práticos com base em ciência.”</li>
+              <li>“Envie para alguém que está com [dor] agora.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Checklist</h2>
+          <span class="tag">Produção</span>
+        </div>
+        <div class="checklist" id="checklistText">
+          <div class="check"><div class="box"></div><p><b>Promessa clara:</b> “N itens que eu usaria/evitaria se tivesse [dor]”.</p></div>
+          <div class="check"><div class="box"></div><p><b>Autoridade + proximidade:</b> “por uma [especialidade] (que [vivência])”.</p></div>
+          <div class="check"><div class="box"></div><p><b>1 item por slide</b> (decisão única; sem juntar temas).</p></div>
+          <div class="check"><div class="box"></div><p><b>Bullets enxutos:</b> 4–6 no máximo; 1 ideia por linha.</p></div>
+          <div class="check"><div class="box"></div><p><b>Mecanismo simples</b> (o “porquê”) + benefício prático (o “pra quê”).</p></div>
+          <div class="check"><div class="box"></div><p><b>⚠️ Cautela</b> quando houver risco (sensibilização, contraindicação, pós-procedimento).</p></div>
+          <div class="check"><div class="box"></div><p><b>Slide 7 obrigatório:</b> “não resolve sozinho” + pilares do plano.</p></div>
+          <div class="check"><div class="box"></div><p><b>CTA duplo:</b> pergunta + “salvar/seguir”.</p></div>
+        </div>
+        <p class="footer-note">Dica de consistência editorial: mantenha o mesmo layout (topo = título do item; base = bullets; ⚠️ para ressalvas). Isso cria reconhecimento de série.</p>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Variações</h2>
+          <span class="tag">Trocas que preservam performance</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="small muted">Variações por tema (Dermato)</div>
+            <ul class="small">
+              <li>“5 ativos que eu consideraria se tivesse acne adulta”</li>
+              <li>“6 escolhas que eu faria para rosácea sem irritar”</li>
+              <li>“4 produtos que eu evitaria no melasma (e por quê)”</li>
+              <li>“5 passos que eu faria para recuperar a barreira cutânea”</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="small muted">Variações por tema (Harmonização)</div>
+            <ul class="small">
+              <li>“5 coisas que eu checaria antes de fazer preenchimento labial”</li>
+              <li>“4 erros comuns no pós-botox que reduzem o resultado”</li>
+              <li>“6 pontos que eu avaliaria antes de bioestimulador”</li>
+              <li>“5 sinais de que você precisa de plano (não de procedimento isolado)”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="card">
+          <div class="small muted">Substituições equivalentes (para adaptar rápido)</div>
+          <div class="grid-2">
+            <div class="small">
+              <ul>
+                <li><b>“itens”</b> → “hábitos”, “passos”, “checagens”, “decisões”.</li>
+                <li><b>“eu usaria”</b> → “eu priorizaria”, “eu evitaria”, “eu perguntaria na consulta”.</li>
+                <li><b>“marca”</b> → “critério” (quando não quiser citar produtos): “procure por…”.</li>
+              </ul>
+            </div>
+            <div class="small">
+              <ul>
+                <li><b>“por uma dermatologista”</b> → “por uma especialista em [área]”.</li>
+                <li><b>“que também tem”</b> → “que acompanha casos assim semanalmente”.</li>
+                <li><b>Slide 7</b> pode virar: “O que realmente decide o resultado é…” (pilares).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-title">
+          <h2>Texto para copiar (roteiro completo)</h2>
+          <span class="tag">Tudo em um bloco</span>
+        </div>
+        <div class="code" id="fullScript">CARROSSEL (8 SLIDES) — TEMPLATE REPRODUZÍVEL
+
+SLIDE 1 — HOOK
+[N] itens que eu [usaria/compraria/evitaria] se tivesse [DOR]
+por uma [ESPECIALIDADE] (que [PROVA/VIVÊNCIA])
+
+SLIDE 2 — ITEM 1
+[Item #1] — [marca/contexto]
+• [mecanismo/critério]
+• Ajuda em: [benefício 1]
+• Ajuda em: [benefício 2]
+• Melhor para: [perfil]
+• Como usar/decidir: [como]
+• ⚠️ Cuidado se: [condição]
+
+SLIDE 3 — ITEM 2
+[Item #2] — [marca/contexto]
+• [mecanismo/critério]
+• [benefício 1]
+• [benefício 2]
+• Melhor para: [perfil]
+• ⚠️ [cautela]
+
+SLIDE 4 — ITEM 3
+[Item #3] — [marca/contexto]
+• [mecanismo/critério]
+• [benefício 1]
+• [benefício 2]
+• Melhor para: [perfil]
+• ⚠️ [cautela]
+
+SLIDE 5 — ITEM 4
+[Item #4] — [marca/contexto]
+• [mecanismo/critério]
+• [benefício 1]
+• [benefício 2]
+• Melhor para: [perfil]
+• ⚠️ [cautela]
+
+SLIDE 6 — ITEM 5
+[Item #5] — [marca/contexto]
+• [mecanismo/critério]
+• [benefício 1]
+• [benefício 2]
+• Melhor para: [perfil]
+• ⚠️ [cautela]
+
+SLIDE 7 — EXPECTATIVA REALISTA
+Isso sozinho NÃO resolve [DOR].
+Ele entra como parte de um plano.
+• Pilar 1: [____]
+• Pilar 2: [____]
+• Pilar 3: [____]
+• Pilar 4: consistência + acompanhamento
+
+SLIDE 8 — CTA
+Você já usou/fez algum desses? Quer versão para [variação]?
+Me segue para mais conteúdos sobre [tema] com base em ciência.
+Salva pra consultar depois.</div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    const toast = document.getElementById('toast');
+    const toast2 = document.getElementById('toast2');
+
+    function showToast(ok=true){
+      toast.classList.remove('show');
+      toast2.classList.remove('show');
+      (ok ? toast : toast2).classList.add('show');
+      setTimeout(()=>{ (ok ? toast : toast2).classList.remove('show'); }, 2200);
+    }
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast(true);
+      }catch(e){
+        showToast(false);
+      }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', ()=>{
+      const text = document.getElementById('fullScript').innerText;
+      copyText(text);
+    });
+
+    document.getElementById('copyCaptionBtn').addEventListener('click', ()=>{
+      const text = document.getElementById('captionTemplate').innerText;
+      copyText(text);
+    });
+
+    document.getElementById('copyChecklistBtn').addEventListener('click', ()=>{
+      const checks = Array.from(document.querySelectorAll('#checklistText .check p')).map(p=>'- ' + p.innerText.replace(/\s+/g,' ').trim()).join('\n');
+      copyText('CHECKLIST (produção)\n\n' + checks);
+    });
+  </script>
+</body>
+</html>
