@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 8 — Social Media — Carrossel de curadoria</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1220;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.08);
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,.72);
+    --muted2: rgba(234,240,255,.55);
+    --stroke: rgba(255,255,255,.12);
+    --stroke2: rgba(255,255,255,.18);
+    --shadow: 0 14px 40px rgba(0,0,0,.45);
+    --r16: 16px;
+    --r22: 22px;
+    --g1: linear-gradient(90deg,#2AF598 0%,#00B4FF 45%,#FF8A00 100%);
+    --g2: linear-gradient(135deg, rgba(42,245,152,.28), rgba(0,180,255,.18), rgba(255,138,0,.18));
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background:
+      radial-gradient(1200px 700px at 15% 10%, rgba(0,180,255,.16), transparent 55%),
+      radial-gradient(1000px 650px at 90% 25%, rgba(42,245,152,.12), transparent 55%),
+      radial-gradient(900px 700px at 60% 105%, rgba(255,138,0,.10), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{color: inherit; text-decoration: none}
+  .wrap{max-width:1100px; margin:0 auto; padding:26px 18px 64px}
+  header{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    border-radius: var(--r22);
+    padding:18px 18px;
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header::before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: var(--g2);
+    filter: blur(14px);
+    opacity:.9;
+    z-index:0;
+  }
+  header > *{position:relative; z-index:1}
+  .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .badges{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .badge{
+    border:1px solid var(--stroke2);
+    background: rgba(255,255,255,.06);
+    color: var(--muted);
+    padding:6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: .2px;
+  }
+  .badge strong{color: var(--text); font-weight: 650}
+  h1{
+    margin:12px 0 8px;
+    font-size: 20px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .sub{
+    margin:0;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.4;
+  }
+  .linkrow{
+    margin-top: 12px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .link{
+    display:flex; gap:10px; align-items:center;
+    padding:10px 12px;
+    border-radius: 12px;
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    color: var(--muted);
+    font-size: 13px;
+    max-width: 100%;
+    overflow:hidden;
+  }
+  .link code{font-family: var(--mono); font-size: 12px; color: rgba(234,240,255,.62)}
+  .btn{
+    cursor:pointer;
+    padding:10px 12px;
+    border-radius: 12px;
+    border:1px solid rgba(255,255,255,.20);
+    background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+    color: var(--text);
+    font-weight: 650;
+    letter-spacing:.2px;
+    font-size: 13px;
+    transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    display:inline-flex;
+    gap:10px;
+    align-items:center;
+  }
+  .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.32)}
+  .btnPrimary{
+    border: 1px solid rgba(42,245,152,.45);
+    background: linear-gradient(90deg, rgba(42,245,152,.22), rgba(0,180,255,.14), rgba(255,138,0,.10));
+  }
+  .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px}
+  @media(min-width: 980px){
+    .grid{grid-template-columns: 1.08fr .92fr}
+  }
+  .card{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    border-radius: var(--r22);
+    padding:16px;
+    box-shadow: var(--shadow);
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size: 14px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: rgba(234,240,255,.72);
+  }
+  .card p{margin:0; color: var(--muted); line-height: 1.55; font-size: 14px}
+  .hl{background: var(--g1); -webkit-background-clip:text; background-clip:text; color: transparent; font-weight: 750}
+  .divider{height:1px; background: rgba(255,255,255,.10); margin: 14px 0}
+  .list{margin:0; padding-left: 18px; color: var(--muted); line-height: 1.6; font-size: 14px}
+  .list li{margin: 6px 0}
+  .kvs{display:grid; grid-template-columns: 1fr; gap:10px}
+  @media(min-width: 740px){ .kvs{grid-template-columns: 1fr 1fr} }
+  .kv{
+    padding:12px;
+    border-radius: var(--r16);
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.16);
+  }
+  .kv .k{font-size: 12px; letter-spacing:.12em; text-transform:uppercase; color: rgba(234,240,255,.62)}
+  .kv .v{margin-top:6px; color: var(--text); font-size: 14px; line-height:1.45}
+  .codebox{
+    border-radius: var(--r22);
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.30);
+    padding:14px;
+    overflow:auto;
+  }
+  pre{margin:0; white-space:pre-wrap; word-wrap:break-word; color: rgba(234,240,255,.86); font-family: var(--mono); font-size: 12.5px; line-height: 1.55}
+  .mini{font-size: 12.5px; color: var(--muted2); line-height: 1.45}
+  .pillrow{display:flex; flex-wrap:wrap; gap:10px; margin-top: 10px}
+  .pill{
+    padding:8px 10px;
+    border-radius: 999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.05);
+    color: rgba(234,240,255,.78);
+    font-size: 12.5px;
+  }
+  .ok{display:none; margin-left:10px; color: rgba(42,245,152,.95); font-weight:650; font-size: 12.5px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badges">
+          <span class="badge"><strong>Nicho</strong>: Social Media</span>
+          <span class="badge"><strong>Dia</strong>: 8</span>
+          <span class="badge"><strong>Formato</strong>: Carrossel</span>
+          <span class="badge"><strong>Pilar</strong>: Checklist</span>
+        </div>
+        <button class="btn btnPrimary" id="copyBtn" type="button">Copiar roteiro <span class="ok" id="copied">Copiado</span></button>
+      </div>
+      <h1>Carrossel de curadoria que gera <span class="hl">salvamentos</span> (modelo 7 slides)</h1>
+      <p class="sub">Modelo reproduzível de “curadoria + aprendizado”: lista fechada + 1 benefício por item + repetição visual para reduzir fricção.</p>
+      <div class="linkrow">
+        <a class="link" href="https://www.instagram.com/p/DVBVdQbDmF_/" target="_blank" rel="noopener noreferrer">
+          <span>Post original</span>
+          <code>instagram.com/p/DVBVdQbDmF_/</code>
+        </a>
+        <span class="mini">Dica: priorize um tema que o público quer consultar depois (ferramentas, métricas, ideias, prompts, referências).</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <div class="kvs">
+          <div class="kv"><div class="k">O que entrega</div><div class="v">Curadoria pronta (5 itens) + <span class="hl">por que</span> cada item serve no trabalho (aplicação prática).</div></div>
+          <div class="kv"><div class="k">Meta do post</div><div class="v">Maximizar <strong>salvamentos</strong>, aumentar <strong>tempo de leitura</strong> e puxar <strong>comentários</strong> (“qual você vai usar primeiro?”).</div></div>
+          <div class="kv"><div class="k">Regra-mãe</div><div class="v">Em cada item: <strong>1 benefício principal</strong> (não empilhe 3 ideias no mesmo slide).</div></div>
+          <div class="kv"><div class="k">Quando usar</div><div class="v">Quando você quer “emprestar repertório” e virar referência sem precisar ensinar uma aula completa.</div></div>
+        </div>
+        <div class="divider"></div>
+        <p class="mini">Esse formato funciona porque a pessoa entende o padrão no slide 2 e entra no modo “só consumir até o fim”.</p>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura</h2>
+        <ul class="list">
+          <li><strong>7 slides</strong>: 1 capa + 5 itens + 1 fechamento/CTA.</li>
+          <li><strong>Slides 2–6</strong> idênticos em grid (texto à esquerda / imagem à direita).</li>
+          <li><strong>Variação controlada</strong>: alternar fundo (A/B) e trocar apenas a “capa do item”.</li>
+          <li><strong>Fechamento</strong>: pergunta objetiva + CTA de salvar.</li>
+        </ul>
+        <div class="pillrow">
+          <span class="pill">Objetivo: salvável</span>
+          <span class="pill">Lista fechada (5)</span>
+          <span class="pill">Consistência visual</span>
+          <span class="pill">Pergunta final</span>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Roteiro</h2>
+        <p class="mini">Copie e preencha os campos entre colchetes. Mantém o texto curto e com benefício profissional.</p>
+        <div class="codebox" id="scriptBox">
+<pre id="scriptText">CARROSSEL (7 SLIDES) — CURADORIA + APRENDIZADO
+
+SLIDE 1 — CAPA (HOOK + PROMESSA)
+Topo (marca/editoria): [SUA MARCA ou “CURADORIA SM”]
+Título (quebrado em 3–5 linhas/faixas):
+- [CATEGORIA] que vão
+- te deixar mais
+- [BENEFÍCIO]
+- como [PÚBLICO]
+Sub (pequeno, opcional): “5 itens + por que usar no trabalho”
+
+SLIDES 2–6 — ITENS (Padrão repetível)
+Para cada item:
+Título: [ITEM #]
+Descrição (1–2 frases):
+- “Um(a) [tipo de item] para [ação] [habilidade] e aplicar em [contexto do público].”
+Opcional (linha 2): “Repare em: [detalhe observável / técnica / porquê].”
+
+Exemplo de conexão com trabalho (para Social Media):
+- aplicar em: calendário editorial, roteiros de Reels, brand voice, timing, ângulos, CTAs, análise de métricas.
+
+SLIDE 7 — FECHAMENTO (PERGUNTA + CTA)
+Pergunta (grande): “Qual desses você vai [assistir/ler/testar] primeiro?”
+CTA principal: “Salva pra não perder.”
+CTA secundário (pequeno, opcional): “Marca alguém do time.”</pre>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Slides sugeridos (1..7)</h2>
+        <ol class="list">
+          <li><strong>Capa</strong>: promessa clara (categoria + benefício + público) + “5 itens”.</li>
+          <li><strong>Item 1</strong>: nome + 1 benefício prático (o mais forte da lista).</li>
+          <li><strong>Item 2</strong>: nome + 1 benefício (varie o ângulo: estratégia, criação, execução, análise).</li>
+          <li><strong>Item 3</strong>: nome + 1 benefício (evite repetir verbos/estruturas).</li>
+          <li><strong>Item 4</strong>: nome + 1 benefício (puxe para aplicação no dia a dia).</li>
+          <li><strong>Item 5</strong>: nome + 1 benefício (um “curinga” que amarra tudo).</li>
+          <li><strong>Final</strong>: pergunta objetiva + salvar + (opcional) “quer parte 2?”.</li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <ul class="list">
+          <li><strong>Formato</strong>: 1080×1350 (4:5).</li>
+          <li><strong>Grid itens</strong>: ~55% texto / 45% imagem (capa do item como “pôster” com borda suave).</li>
+          <li><strong>Consistência</strong>: marca no topo sempre no mesmo lugar.</li>
+          <li><strong>Ritmo</strong>: alternar fundo A/B (para não ficar monótono) sem quebrar o padrão.</li>
+          <li><strong>Tipografia</strong>: máx. 2 famílias (+ itálico como acento). Título grande; corpo com poucas linhas.</li>
+          <li><strong>Legibilidade</strong>: texto “lido a 1 metro” (tamanho e contraste).</li>
+        </ul>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Copy e ganchos</h2>
+        <div class="kvs">
+          <div class="kv">
+            <div class="k">Padrões de título (capa)</div>
+            <div class="v">
+              <div><strong>1)</strong> “5 <span class="hl">[categoria]</span> pra você ficar mais <span class="hl">[benefício]</span> como <span class="hl">[público]</span>”</div>
+              <div><strong>2)</strong> “Se você é <span class="hl">[público]</span>, salva essa lista: 5 <span class="hl">[categoria]</span>”</div>
+              <div><strong>3)</strong> “5 <span class="hl">[itens]</span> que melhoram seu <span class="hl">[resultado]</span> ainda hoje”</div>
+            </div>
+          </div>
+          <div class="kv">
+            <div class="k">Modelo de benefício (por item)</div>
+            <div class="v">
+              “Pra <span class="hl">[ação]</span> <strong>[habilidade]</strong> e aplicar em <strong>[contexto]</strong>.”<br/>
+              <span class="mini">Ex.: “pra destravar ângulos de Reels e aplicar no seu calendário editorial”.</span>
+            </div>
+          </div>
+          <div class="kv">
+            <div class="k">Frases curtas que retêm</div>
+            <div class="v">
+              <ul class="list">
+                <li>“Leia/assista com esse filtro: <strong>[o que observar]</strong>.”</li>
+                <li>“Se você só pegar <strong>1 coisa</strong>, pega isso: <strong>[insight]</strong>.”</li>
+                <li>“Isso aqui vira <strong>roteiro</strong> em 10 minutos.”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="kv">
+            <div class="k">Evite</div>
+            <div class="v">
+              <ul class="list">
+                <li>Jargão sem aterrissar no trabalho (“branding”, “narrativa” sem exemplo).</li>
+                <li>3 benefícios por item (vira “texto pequeno” e mata leitura).</li>
+                <li>Itens sem critério (a lista precisa parecer <strong>curada</strong>, não aleatória).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <ul class="list">
+          <li><strong>Principal (salvar):</strong> “Salva pra não perder — isso aqui é referência.”</li>
+          <li><strong>Secundário (comentário):</strong> “Qual você vai testar primeiro: 1, 2, 3, 4 ou 5?”</li>
+          <li><strong>Extra (DM/lead):</strong> “Comenta <strong>LISTA</strong> que eu mando a versão completa/atualizada.”</li>
+          <li><strong>Compartilhar:</strong> “Manda pra alguém do time que precisa desse atalho.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Checklist (criação e qualidade)</h2>
+        <ul class="list">
+          <li>[ ] Tema escolhido tem <strong>alto potencial de consulta</strong> (salvável).</li>
+          <li>[ ] Lista é <strong>fechada em 5</strong> (ou 7) e tem critério (por que esses?).</li>
+          <li>[ ] Capa responde: <strong>o que</strong> + <strong>pra quem</strong> + <strong>ganho</strong>.</li>
+          <li>[ ] Em cada item: <strong>1 benefício principal</strong> + (opcional) 1 “repare em”.</li>
+          <li>[ ] Grid repetido nos slides 2–6 (mesma hierarquia e espaçamentos).</li>
+          <li>[ ] Texto legível no celular (título grande, parágrafo curto, bom contraste).</li>
+          <li>[ ] Slide final pede <strong>1 comentário</strong> + <strong>1 salvar</strong> (sem poluição).</li>
+          <li>[ ] Legenda reforça utilidade e repete o CTA de salvar.</li>
+        </ul>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Variações</h2>
+        <div class="kvs">
+          <div class="kv">
+            <div class="k">Variação por tema (Social Media)</div>
+            <div class="v">
+              <ul class="list">
+                <li>“5 ideias de posts pra quando você não tem pauta”</li>
+                <li>“5 métricas que importam (e o que fazer com elas)”</li>
+                <li>“5 ferramentas de IA que aceleram roteiro + edição”</li>
+                <li>“5 frameworks de legenda que aumentam retenção”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="kv">
+            <div class="k">Variação de estrutura</div>
+            <div class="v">
+              <ul class="list">
+                <li><strong>3 itens</strong> (mais profundo): 1 capa + 3 itens (2 slides cada) + CTA.</li>
+                <li><strong>7 itens</strong> (mais rápido): 1 capa + 7 itens curtos + CTA.</li>
+                <li><strong>Ranking</strong>: “do mais fácil ao mais avançado” (ajuda progressão).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="kv">
+            <div class="k">Variação de CTA</div>
+            <div class="v">
+              <ul class="list">
+                <li>“Quer parte 2? Comenta o tema.”</li>
+                <li>“Se você salvar, eu faço a versão ‘aplicável em 30 minutos’.”</li>
+                <li>“Comenta ‘TEMPLATE’ que eu mando o modelo no Canva.”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="kv">
+            <div class="k">Variação de design</div>
+            <div class="v">
+              <ul class="list">
+                <li>“Capa em faixas” (placas) + itens em split (padrão).</li>
+                <li>Itens com “tag” no topo: <span class="mini">Estratégia / Criação / Execução / Métrica</span>.</li>
+                <li>Imagem menor e mais respiro se o texto precisar ficar maior.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const ok = document.getElementById('copied');
+    const text = document.getElementById('scriptText');
+
+    async function copy(){
+      const content = text.innerText;
+      try{
+        await navigator.clipboard.writeText(content);
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = content;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      ok.style.display = 'inline';
+      setTimeout(()=> ok.style.display = 'none', 1200);
+    }
+
+    btn.addEventListener('click', copy);
+  })();
+</script>
+</body>
+</html>
