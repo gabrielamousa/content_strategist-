@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dia 17 — O “motor” de um Reel que retém até o final</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1730;
+      --card2:#0B142B;
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.58);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r: 18px;
+      --r2: 14px;
+      --g1: linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+      --g2: radial-gradient(800px 420px at 20% 10%, rgba(56,189,248,.18), transparent 55%),
+            radial-gradient(800px 420px at 80% 20%, rgba(34,197,94,.16), transparent 55%),
+            radial-gradient(800px 420px at 55% 90%, rgba(251,146,60,.14), transparent 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 64px}
+
+    .topbar{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-width: 260px;
+    }
+
+    .pillrow{display:flex; flex-wrap:wrap; gap:10px}
+    .pill{
+      padding:8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing:.2px;
+    }
+    .pill strong{color:var(--text); font-weight:650}
+
+    .title{
+      font-size: 28px;
+      letter-spacing: -0.4px;
+      line-height: 1.18;
+      margin:2px 0 0;
+    }
+    .subtitle{color:var(--muted); margin:0}
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      cursor:pointer;
+      box-shadow: 0 8px 26px rgba(0,0,0,.25);
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: var(--stroke2); background: rgba(255,255,255,.06)}
+    .btn.primary{
+      border: none;
+      background: var(--g1);
+      color: #07101C;
+      font-weight: 750;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      margin-top: 14px;
+    }
+    @media(max-width: 940px){
+      .grid{grid-template-columns:1fr}
+      .actions{justify-content:flex-start}
+      .title{font-size: 24px}
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--stroke);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid var(--stroke);
+      background: rgba(0,0,0,.15);
+    }
+    .h{
+      margin:0;
+      font-size: 14px;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .accent{
+      height:10px;
+      width: 120px;
+      border-radius: 999px;
+      background: var(--g1);
+      filter: saturate(1.1);
+      opacity:.95;
+    }
+
+    .card .bd{padding: 16px}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top: 10px;
+    }
+    @media(max-width: 560px){
+      .kpi{grid-template-columns:1fr}
+    }
+
+    .k{
+      border:1px solid var(--stroke);
+      background: rgba(5,10,18,.35);
+      border-radius: var(--r2);
+      padding: 12px;
+    }
+    .k .t{font-size: 12px; color: var(--muted2); margin:0 0 6px}
+    .k .v{font-size: 14px; margin:0; font-weight:650}
+
+    ul{margin:10px 0 0; padding-left: 18px; color: var(--muted)}
+    li{margin: 6px 0}
+
+    .hr{height:1px; background: var(--stroke); margin: 14px 0}
+
+    .code{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: rgba(234,240,255,.86);
+      background: rgba(0,0,0,.28);
+      border:1px solid var(--stroke);
+      border-radius: var(--r2);
+      padding: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .twocol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media(max-width: 780px){
+      .twocol{grid-template-columns:1fr}
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 8px 0 0;
+    }
+    .dot{width:8px; height:8px; border-radius:99px; background: var(--g1)}
+
+    .note{
+      border-left: 3px solid rgba(56,189,248,.65);
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(56,189,248,.07);
+      color: var(--muted);
+    }
+
+    .footer{
+      margin-top:14px;
+      color: var(--muted2);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="pillrow">
+          <div class="pill"><strong>Nicho</strong>: Social Media</div>
+          <div class="pill"><strong>Dia</strong>: 17</div>
+          <div class="pill"><strong>Formato</strong>: Reels</div>
+          <div class="pill"><strong>Pilar</strong>: Passo a passo</div>
+        </div>
+        <h1 class="title">O “motor” de um Reel que retém até o final</h1>
+        <p class="subtitle">Dissecação + template preenchível: contraste, repetição e payoff real.</p>
+        <div class="pillrow">
+          <a class="pill" href="https://www.instagram.com/p/DSuyUt8gLr6/" target="_blank" rel="noreferrer">Post original: https://www.instagram.com/p/DSuyUt8gLr6/</a>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="copyBtn">Copiar roteiro</button>
+        <a class="btn primary" href="#checklist">Ir para checklist</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd"><h2 class="h">Resumo</h2><div class="accent" aria-hidden="true"></div></div>
+        <div class="bd">
+          <p style="margin:0; color: var(--muted)">Este modelo funciona porque combina: <strong style="color:var(--text)">hook com stakes altos</strong>, <strong style="color:var(--text)">progressão emocional</strong>, uma <strong style="color:var(--text)">repetição cadenciada</strong> que cria retenção e um <strong style="color:var(--text)">payoff</strong> que justifica assistir até o fim.</p>
+          <div class="kpi">
+            <div class="k"><p class="t">Objetivo do vídeo</p><p class="v">Retenção + compartilhamento</p></div>
+            <div class="k"><p class="t">Gatilho central</p><p class="v">“Ninguém vê o que tem por trás”</p></div>
+            <div class="k"><p class="t">Motor de fechamento</p><p class="v">Payoff real + reação</p></div>
+          </div>
+          <div class="hr"></div>
+          <div class="note"><strong style="color:var(--text)">Regra de ouro:</strong> o payoff não pode ser só “moral da história”. Precisa ser <strong style="color:var(--text)">ação/decisão/anúncio</strong> (mesmo que simples) para fechar o loop.</div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd"><h2 class="h">Estrutura (sequência)</h2><div class="accent" aria-hidden="true"></div></div>
+        <div class="bd">
+          <ol style="margin:0; padding-left: 18px; color: var(--muted)">
+            <li><strong style="color:var(--text)">Hook (0–2s):</strong> número + contraste</li>
+            <li><strong style="color:var(--text)">Contexto curto (2–6s):</strong> cena + permissão/humanização</li>
+            <li><strong style="color:var(--text)">Conflito (6–10s):</strong> bloqueio/medo/dúvida</li>
+            <li><strong style="color:var(--text)">Virada (10–12s):</strong> “vou contar o que ninguém sabe”</li>
+            <li><strong style="color:var(--text)">Loop de retenção (12–35s):</strong> repetição 3–6x</li>
+            <li><strong style="color:var(--text)">Tese emocional (35–40s):</strong> “isso existe por causa de…”</li>
+            <li><strong style="color:var(--text)">Pré-payoff (40–45s):</strong> reduzir contexto, aumentar impacto</li>
+            <li><strong style="color:var(--text)">Payoff (45–55s):</strong> anúncio/decisão/presente</li>
+            <li><strong style="color:var(--text)">Reação (55–60s):</strong> cru, sem polir</li>
+            <li><strong style="color:var(--text)">Fecho (últimos 2s):</strong> frase âncora + CTA suave</li>
+          </ol>
+          <div style="margin-top:10px">
+            <span class="tag"><span class="dot"></span>Fala curta no início</span>
+            <span class="tag"><span class="dot"></span>Detalhes específicos</span>
+            <span class="tag"><span class="dot"></span>Imperfeições intencionais</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd"><h2 class="h">Roteiro (template preenchível e reproduzível)</h2><div class="accent" aria-hidden="true"></div></div>
+        <div class="bd">
+          <p style="margin:0 0 10px; color: var(--muted)">Preencha os campos entre colchetes e grave em <strong style="color:var(--text)">A-roll</strong> (câmera frontal) com cortes secos. Tempo sugerido: 45–60s.</p>
+          <div class="code" id="roteiroText">[CENA REAL / AMBIENTE] (0–1s)
+"Posso…?" / "Dá 1 minuto?" / "Vem cá rapidinho."
+
+HOOK (0–2s)
+"Eu já fiz [QUANTIDADE] de [COISA], mas esse é o mais importante da minha vida."
+
+CONTEXTO CURTO (2–6s)
+"Eu tava aqui pra fazer [TAREFA/ROTINA], e travei. Eu fiquei pensando: o que eu falo?"
+
+CONFLITO (6–10s)
+"Porque ninguém vê isso… e eu quase não gravei por [MEDO/DÚVIDA/CANSAÇO]."
+
+VIRADA (10–12s)
+"Mas eu decidi contar uma coisa que a maioria não sabe."
+
+LOOP ‘NINGUÉM VÊ…’ (12–35s) — repita 3 a 6 vezes
+"Todo mundo vê [RESULTADO VISÍVEL 1]. Ninguém vê [BASTIDOR INVISÍVEL 1]."
+"Todo mundo vê [RESULTADO VISÍVEL 2]. Ninguém vê [BASTIDOR INVISÍVEL 2]."
+"Todo mundo vê [RESULTADO VISÍVEL 3]. Ninguém vê [BASTIDOR INVISÍVEL 3]."
+(+ 1–3 variações)
+
+TESE EMOCIONAL (35–40s)
+"E, no meu caso… quem sustenta isso é [PESSOA/REDE/PROCESSO]."
+
+CRESCENDO (40–45s)
+"Porque honestamente: nem faria sentido eu viver [RESULTADO] se eu não pudesse [SIGNIFICADO: compartilhar/retribuir/estar junto]."
+
+PAYOFF (45–55s)
+"Então chegou a hora de retribuir: [ANÚNCIO/DECISÃO/PRESENTE/CONVITE REAL]."
+
+REAÇÃO (55–60s)
+[DEIXE A REAÇÃO ACONTECER: risos, pausa, choro, choque — sem cortar demais]
+
+FECHO (últimos 2s)
+"Só faz sentido se for com [VOCÊS/NOME]."</div>
+          <div class="footer">Dica: se não tiver “reação ao vivo”, use um B-roll curto (print, email, bastidor) apenas no payoff — 1 a 2s.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2 class="h">Elementos visuais (edição high-retention)</h2><div class="accent" aria-hidden="true"></div></div>
+        <div class="bd">
+          <div class="twocol">
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Captação</p>
+              <ul>
+                <li>A-roll próximo (rosto ocupando 35–55% do quadro).</li>
+                <li>Ambiente real (casa/escritório), luz suave lateral.</li>
+                <li>Áudio limpo (microfone de lapela se possível).</li>
+              </ul>
+            </div>
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Edição</p>
+              <ul>
+                <li>Cortes secos removendo respiros longos (preserve emoção).</li>
+                <li>Zoom-in leve (3–8%) nos trechos: virada, tese, payoff.</li>
+                <li>J/L cuts para ritmo natural.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p style="margin:0; color:var(--text); font-weight:700">Texto na tela (pronto para usar)</p>
+          <div class="code">0–2s: “O roteiro mais importante da minha vida”
+10–12s: “Todo mundo vê… mas ninguém vê o que tem por trás”
+12–35s (a cada frase): “NINGUÉM VÊ: [palavra-chave do bastidor]”
+40–45s: “Chegou a hora de retribuir”
+Payoff: “Eu decidi: [anúncio]”
+Final: “Só faz sentido se for com vocês”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2 class="h">Copy e ganchos (opções)</h2><div class="accent" aria-hidden="true"></div></div>
+        <div class="bd">
+          <p style="margin:0 0 8px; color: var(--muted)">Escolha 1 hook e 1 linha de virada. O resto segue o loop repetitivo.</p>
+          <div class="twocol">
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Hooks (0–2s)</p>
+              <ul>
+                <li>“Eu já fiz <strong style=\"color:var(--text)\">[X]</strong> vezes isso… mas esse é o mais importante.”</li>
+                <li>“Todo mundo vê <strong style=\"color:var(--text)\">[resultado]</strong>. Ninguém vê o que sustenta.”</li>
+                <li>“Eu quase não postei isso por um motivo.”</li>
+              </ul>
+            </div>
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Viradas (10–12s)</p>
+              <ul>
+                <li>“Eu prefiro te mostrar o bastidor que ninguém comenta.”</li>
+                <li>“Não é sobre <strong style=\"color:var(--text)\">[resultado]</strong>. É sobre o que ele custa e o que ele significa.”</li>
+                <li>“Se tem uma coisa que eu aprendi, é isso:”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p style="margin:0; color:var(--text); font-weight:700">Legenda (3 modelos curtos)</p>
+          <div class="code">Modelo 1:
+“Todo mundo vê o palco. Pouca gente vê a estrutura.”
+Comenta “POR TRÁS” que eu te mando o template.
+
+Modelo 2:
+Se você tá no corre, lembra: alguém (ou algo) tá te sustentando.
+Marca a pessoa que é seu “por trás de tudo”.
+
+Modelo 3:
+Isso aqui é sobre gratidão + decisão.
+Salva pra usar quando você esquecer por que começou.</div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;" id="cta">
+        <div class="hd"><h2 class="h">CTA (sem quebrar a emoção)</h2><div class="accent" aria-hidden="true"></div></div>
+        <div class="bd">
+          <div class="twocol">
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Escolha 1 CTA principal</p>
+              <ul>
+                <li><strong style="color:var(--text)">Comentário:</strong> “Comenta ‘POR TRÁS’ que eu te mando o roteiro-base.”</li>
+                <li><strong style="color:var(--text)">Marcação:</strong> “Marca quem te sustenta nos bastidores.”</li>
+                <li><strong style="color:var(--text)">Salvamento:</strong> “Salva pra lembrar do que realmente sustenta teus resultados.”</li>
+              </ul>
+            </div>
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Timing recomendado</p>
+              <ul>
+                <li>Falar CTA só nos <strong style="color:var(--text)">últimos 2–3 segundos</strong> OU deixar apenas na legenda.</li>
+                <li>Se o payoff for emotivo, priorize <strong style="color:var(--text)">comentário</strong> ou <strong style="color:var(--text)">marcação</strong> (mais natural).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;" id="checklist">
+        <div class="hd"><h2 class="h">Checklist de criação (produção reproduzível)</h2><div class="accent" aria-hidden="true"></div></div>
+        <div class="bd">
+          <div class="twocol">
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Pré-roteiro (5 min)</p>
+              <ul>
+                <li>Definir <strong style="color:var(--text)">resultado visível</strong>: [ex.: crescimento, clientes, projeto, consistência].</li>
+                <li>Listar 5 <strong style="color:var(--text)">bastidores invisíveis</strong>: [rotina, apoio, sacrifício, terapia, equipe].</li>
+                <li>Escolher 1 <strong style="color:var(--text)">payoff real</strong>: [decisão, anúncio, entrega, convite, presente].</li>
+                <li>Separar 1–2 <strong style="color:var(--text)">detalhes específicos</strong> (lugares, horários, frases, cenas).</li>
+              </ul>
+            </div>
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Gravação/Edição (30–45 min)</p>
+              <ul>
+                <li>Gravar 2 takes do hook (com energia diferente).</li>
+                <li>Garantir 3–6 frases do loop “ninguém vê…”.</li>
+                <li>Editar com cortes secos + legendas com ênfase (palavras: NINGUÉM VÊ / POR TRÁS / HOJE).</li>
+                <li>Música baixa (opcional) crescendo no loop e baixando no payoff.</li>
+                <li>Final cru com reação (sem “perfeição”).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p style="margin:0; color:var(--text); font-weight:700">Publicação</p>
+          <ul>
+            <li>Capa: “Ninguém vê o que tem por trás do meu [resultado]”.</li>
+            <li>Legenda: 1 frase forte + 1 CTA (comentário ou marcação).</li>
+            <li>Fixar comentário com o “template” para incentivar interação.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd"><h2 class="h">Variações (para o nicho Social Media)</h2><div class="accent" aria-hidden="true"></div></div>
+        <div class="bd">
+          <div class="twocol">
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Variação 1 — Bastidor de entrega</p>
+              <div class="code">“Eu já fiz [X] calendários editoriais… mas esse é o mais importante.”
+
+Todo mundo vê: posts no ar.
+Ninguém vê: 2 horas de pesquisa + pauta que morre + cliente mudando briefing.
+
+Payoff: “Hoje eu vou te entregar meu template de [assets] — comenta ‘POR TRÁS’.”</div>
+            </div>
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Variação 2 — Anti-glamour de crescimento</p>
+              <div class="code">Todo mundo vê: seguidores.
+Ninguém vê: constância em semana ruim.
+
+Payoff: “Decidi voltar pro básico por 30 dias: 1 Reel/dia + 3 stories. Vou documentar aqui.”</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="twocol">
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Variação 3 — Rede de apoio (equipe/cliente)</p>
+              <div class="code">“Todo mundo vê resultado. Ninguém vê as conversas difíceis.”
+
+Payoff: “Hoje eu vou reconhecer [pessoa/equipe] e abrir 2 vagas/1 mentoria (se fizer sentido).”</div>
+            </div>
+            <div>
+              <p style="margin:0; color:var(--text); font-weight:700">Variação 4 — Confissão (bloqueio)</p>
+              <div class="code">“Eu quase não postei hoje.”
+
+Loop: todo mundo vê consistência; ninguém vê ansiedade, comparação, medo de flop.
+
+Payoff: “Aqui vai a regra que eu uso pra postar mesmo assim: [regra simples].”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const txt = document.getElementById('roteiroText');
+      function copy(){
+        const content = txt ? txt.innerText : '';
+        if(!content) return;
+        navigator.clipboard.writeText(content).then(()=>{
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = old, 1400);
+        }).catch(()=>{
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = content;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = old, 1400);
+        });
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
