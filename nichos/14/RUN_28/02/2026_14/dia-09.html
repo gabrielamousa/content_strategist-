@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 9 — Social Media — Carrossel</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0B1020;
+      --card:#0E1630;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow:0 18px 60px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --g1:linear-gradient(90deg,#32D583 0%,#2E90FA 45%,#F79009 100%);
+      --g2:linear-gradient(135deg,rgba(50,213,131,.18),rgba(46,144,250,.18),rgba(247,144,9,.16));
+      --g3:linear-gradient(135deg,#32D583,#2E90FA);
+      --g4:linear-gradient(135deg,#2E90FA,#F79009);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(46,144,250,.22), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(247,144,9,.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 120%, rgba(50,213,131,.16), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.35;
+    }
+    a{color:#B9D7FF; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 64px}
+
+    header{
+      background:rgba(11,16,32,.68);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius2);
+      padding:18px 18px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g2);
+      opacity:.9;
+      pointer-events:none;
+    }
+    header > *{position:relative}
+
+    .top{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background:rgba(14,22,48,.55);
+    }
+    .badge strong{font-weight:700}
+    .title{
+      margin:14px 0 6px;
+      font-size:22px;
+      font-weight:750;
+      letter-spacing:-.02em;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      max-width:78ch;
+    }
+    .link{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke2);
+      background:rgba(14,22,48,.55);
+      font-size:13px;
+      color:var(--text);
+      white-space:nowrap;
+    }
+    .link span{opacity:.75}
+
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      background:rgba(11,16,32,.62);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius2);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid var(--stroke);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background:rgba(14,22,48,.30);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-family:var(--mono);
+    }
+    .pill{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background:rgba(14,22,48,.55);
+      color:var(--text);
+    }
+    .card .bd{padding:14px 16px}
+
+    .kpi{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+    @media (max-width:540px){
+      .kpi{grid-template-columns:1fr}
+    }
+    .kpi .box{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background:rgba(14,22,48,.42);
+    }
+    .kpi .box .t{font-family:var(--mono); color:var(--muted2); font-size:12px; text-transform:uppercase; letter-spacing:.06em}
+    .kpi .box .v{margin-top:6px; font-size:14px; font-weight:700}
+
+    .list{margin:10px 0 0; padding-left:18px; color:var(--muted)}
+    .list li{margin:8px 0}
+
+    .callout{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(50,213,131,.10), rgba(46,144,250,.08));
+      color:var(--text);
+    }
+    .callout b{background:var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+    .scriptArea{
+      margin-top:10px;
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background:rgba(7,10,18,.55);
+      font-family:var(--mono);
+      font-size:12.5px;
+      color:rgba(234,240,255,.86);
+      white-space:pre-wrap;
+      line-height:1.45;
+    }
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    button{
+      appearance:none;
+      border:1px solid var(--stroke2);
+      background:rgba(14,22,48,.55);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition:transform .06s ease, border-color .12s ease;
+    }
+    button:hover{border-color:rgba(255,255,255,.28)}
+    button:active{transform:translateY(1px)}
+    .primary{
+      background:linear-gradient(135deg, rgba(50,213,131,.18), rgba(46,144,250,.16), rgba(247,144,9,.14));
+      border-color:rgba(255,255,255,.20);
+    }
+    .toast{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .sectionTitle{
+      margin:0 0 8px;
+      font-weight:800;
+      letter-spacing:-.01em;
+      font-size:16px;
+    }
+    .muted{color:var(--muted)}
+    .hr{
+      height:1px;
+      background:rgba(255,255,255,.10);
+      margin:14px 0;
+    }
+
+    .slides{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:10px;
+    }
+    @media (max-width:720px){
+      .slides{grid-template-columns:1fr}
+    }
+    .slide{
+      border:1px solid var(--stroke);
+      background:rgba(14,22,48,.36);
+      border-radius:16px;
+      padding:12px;
+    }
+    .slide .n{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:26px;height:26px;
+      border-radius:9px;
+      font-family:var(--mono);
+      font-size:12px;
+      border:1px solid var(--stroke2);
+      background:rgba(7,10,18,.50);
+      margin-right:8px;
+    }
+    .slide h3{
+      margin:0 0 6px;
+      font-size:14px;
+    }
+    .slide p{margin:0; color:var(--muted); font-size:13px}
+
+    .tag{
+      display:inline-block;
+      font-family:var(--mono);
+      font-size:11.5px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      color:rgba(234,240,255,.80);
+      margin:4px 6px 0 0;
+      background:rgba(7,10,18,.35);
+    }
+    .gradText{background:var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="top">
+        <div class="badgeRow">
+          <div class="badge"><strong>Nicho</strong>: Social Media</div>
+          <div class="badge"><strong>Dia</strong>: 9</div>
+          <div class="badge"><strong>Formato</strong>: Carrossel</div>
+          <div class="badge"><strong>Pilar</strong>: Bastidores</div>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DVLp3q9Dr_R/" target="_blank" rel="noreferrer">
+          <span>Post original</span>
+          <strong>abrir ↗</strong>
+        </a>
+      </div>
+      <div class="title">10 coisas performáticas que todo <span class="gradText">Social Media</span> faz (e não assume)</div>
+      <p class="subtitle">Carrossel de humor + identificação com repetição intencional (prefixo fixo) para leitura rápida, retenção e comentários. Use frames/fotos com expressão forte e texto branco com overlay escuro.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <div class="pill">Objetivo: alcance + comentários</div>
+        </div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="box"><div class="t">Arquitetura</div><div class="v">Capa + 8 itens + pergunta</div></div>
+            <div class="box"><div class="t">Padrão</div><div class="v">Prefixo repetido (âncora)</div></div>
+            <div class="box"><div class="t">Tom</div><div class="v">Humor observacional + “verdade”</div></div>
+          </div>
+          <div class="callout"><b>Regra de ouro:</b> 1 ideia por slide. 3–6 linhas no máximo. Exagero + detalhe específico + (punchline) opcional.</div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Instrução curta</h2>
+          <div class="pill">Execução em 45–60 min</div>
+        </div>
+        <div class="bd">
+          <p class="muted" style="margin:0">Monte 10 slides: (1) capa com promessa + tensão, (2–9) lista com prefixo fixo e 1 comportamento por slide, (10) pergunta que puxa comentário + pedido de parte 2.</p>
+          <div class="hr"></div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <span class="tag">#humor</span><span class="tag">#relatable</span><span class="tag">#comunidade</span><span class="tag">#socialmedia</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Estrutura (reproduzível)</h2>
+          <div class="pill">Template</div>
+        </div>
+        <div class="bd">
+          <h3 class="sectionTitle">Sequência</h3>
+          <ol class="list">
+            <li><b>Capa:</b> Hook + tema + promessa (com punchline “(e não assume)”).</li>
+            <li><b>Slides 2–9:</b> Lista serializada com <b>prefixo fixo</b> + item curto (exagero + detalhe específico).</li>
+            <li><b>Slide 10:</b> Pergunta aberta (<i>“Faltou alguma?”</i>) + micro-CTA (<i>“comenta / marca / pede parte 2”</i>).</li>
+          </ol>
+          <div class="hr"></div>
+          <h3 class="sectionTitle">Fórmula de título (pra qualquer nicho)</h3>
+          <div class="scriptArea" id="formulaTitulo">[LISTA + recorte] que [PERSONA] faz (e [verdade/tensão que ninguém admite])
+
+Exemplos:
+- “Coisas ‘inofensivas’ que você faz no trabalho (e te sabotam)”
+- “Erros silenciosos que [persona] comete (e ninguém te conta)”
+- “Sinais de que você tá [estado] (mesmo dizendo que não)”</div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Roteiro (texto pronto)</h2>
+          <div class="actions">
+            <button class="primary" id="copyBtn">Copiar roteiro</button>
+            <span class="toast" id="toast"></span>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="scriptArea" id="roteiro">
+SLIDE 1 (CAPA)
+Topo (marca): [SUA MARCA]
+Título: Coisas performáticas que o Social Media faz
+Sub: (e não assume)
+
+SLIDE 2
+Prefixo: Coisas performáticas do Social Media:
+Item: Atualiza o dashboard a cada 30s
+(pra “sentir” que tá no controle)
+
+SLIDE 3
+Prefixo: Coisas performáticas do Social Media:
+Item: Confere 5x se o link tá certo antes de postar
+(e mesmo assim abre de novo depois)
+
+SLIDE 4
+Prefixo: Coisas performáticas do Social Media:
+Item: Diz “é só um ajuste rápido”
+…e some por 2 horas
+
+SLIDE 5
+Prefixo: Coisas performáticas do Social Media:
+Item: Faz ajuste de 1px na capa
+(que ninguém vai notar, mas você vai)
+
+SLIDE 6
+Prefixo: Coisas performáticas do Social Media:
+Item: Salva 200 referências
+…e usa 1 (na pressa)
+
+SLIDE 7
+Prefixo: Coisas performáticas do Social Media:
+Item: Cria o arquivo “final_v7_agora_vai”
+(e já aceita que vem a v8)
+
+SLIDE 8
+Prefixo: Coisas performáticas do Social Media:
+Item: Gasta mais tempo na capa do que no roteiro
+(prioridades, né?)
+
+SLIDE 9
+Prefixo: Coisas performáticas do Social Media:
+Item: Abre 15 abas “pra pesquisar”
+(e termina com ansiedade + café)
+
+SLIDE 10 (FECHAMENTO)
+Pergunta: Faltou alguma aqui?
+Micro-CTA: Comenta a sua e marca um(a) Social Media.
+Opcional: Quer parte 2? Comenta “PARTE 2”.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <div class="pill">Direção de arte</div>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Base:</b> frames de cultura pop ou fotos/stock com expressão forte (foco, desespero, alívio, ansiedade, orgulho).</li>
+            <li><b>Tratamento:</b> overlay preto 20–40% ou vinheta no local do texto; contraste + nitidez leves.</li>
+            <li><b>Tipografia:</b> Serif editorial na capa/fechamento + Sans neutra nos itens (peso 600 no prefixo).</li>
+            <li><b>Layout:</b> texto sempre na mesma área (miolo/terço inferior), margens seguras ~8–10% laterais e ~10–12% topo/baixo.</li>
+            <li><b>Branding:</b> nome da página pequeno no topo, caixa alta, tracking alto.</li>
+          </ul>
+          <div class="callout"><b>Dica:</b> padronize o prefixo em negrito para acelerar leitura e dar “colecionabilidade”.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <div class="pill">Pronto pra adaptar</div>
+        </div>
+        <div class="bd">
+          <h3 class="sectionTitle">Ganchos de capa (varie 1 por post)</h3>
+          <ul class="list">
+            <li>“Coisas que todo Social Media faz (e finge que não)”</li>
+            <li>“Se você trabalha com social, você vai se expor aqui”</li>
+            <li>“Checklist de sobrevivência do Social Media (não recomendado)”</li>
+            <li>“Coisas ‘normais’ no social… que não são normais”</li>
+          </ul>
+          <div class="hr"></div>
+          <h3 class="sectionTitle">Fórmula de item (para produzir 20 em 10 min)</h3>
+          <div class="scriptArea">PREFIXO FIXO: “Coisas performáticas do(a) [PERSONA]:”
+ITEM = Verbo forte + situação específica + exagero
+(opcional) (punchline de 3–7 palavras)
+
+Exemplos de verbos fortes:
+- Confere / Atualiza / Refaz / Ajusta / Reescreve / Renomeia / Compara / Reposta / Compensa / “Só mais uma…”</div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>CTA</h2>
+          <div class="pill">Comentários + marcações</div>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>CTA principal (slide 10):</b> “Faltou alguma aqui? Comenta a sua.”</li>
+            <li><b>CTA de marcação:</b> “Marca um(a) Social Media que faz isso.”</li>
+            <li><b>CTA de continuidade:</b> “Quer parte 2? Comenta ‘PARTE 2’.”</li>
+            <li><b>CTA de salvamento (opcional):</b> “Salva pra lembrar quando bater a crise do calendário.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <div class="pill">Do zero ao post</div>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li>Defina <b>persona</b> (quem é o “alvo” da identificação) e <b>recorte</b> (performático, ansioso, perfeccionista, etc.).</li>
+            <li>Escreva <b>10–14 itens brutos</b>; selecione os 8 melhores (mais específicos e engraçados).</li>
+            <li>Garanta <b>1 ideia por slide</b> e no máximo 3–6 linhas.</li>
+            <li>Padronize: prefixo fixo + quebras de linha consistentes.</li>
+            <li>Escolha imagens com expressão clara; aplique overlay para legibilidade.</li>
+            <li>Revise ritmo: alternar itens de “ansiedade”, “perfeccionismo”, “organização”, “improviso”.</li>
+            <li>Finalize com pergunta + pedido de parte 2.</li>
+            <li>Legenda curta: 1 frase + pergunta + instrução de comentário.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações</h2>
+          <div class="pill">Reaproveite o modelo</div>
+        </div>
+        <div class="bd">
+          <h3 class="sectionTitle">Trocas rápidas (sem mudar a estrutura)</h3>
+          <ul class="list">
+            <li><b>Recorte:</b> “coisas silenciosas”, “coisas de sobrevivência”, “coisas que ninguém admite”.</li>
+            <li><b>Persona:</b> designer, gestor de tráfego, atendimento, copywriter, founder, freelancer.</li>
+            <li><b>Fechamento alternativo:</b> “Qual slide é você hoje? Comenta o número.”</li>
+          </ul>
+          <div class="hr"></div>
+          <h3 class="sectionTitle">3 listas prontas (novas)</h3>
+          <ul class="list">
+            <li><b>Versão ‘cliente’:</b> “Coisas performáticas de cliente: pede ‘só um detalhezinho’ às 23:48…”</li>
+            <li><b>Versão ‘lançamento’:</b> “Coisas performáticas em lançamento: atualiza checkout como se fosse day trade…”</li>
+            <li><b>Versão ‘freela’:</b> “Coisas performáticas de freela: manda ‘tô finalizando’ e começa do zero…”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Slides sugeridos (1..10)</h2>
+          <div class="pill">Mapa do carrossel</div>
+        </div>
+        <div class="bd">
+          <div class="slides">
+            <div class="slide"><h3><span class="n">1</span>Capa (hook + promessa)</h3><p>“Coisas performáticas que o Social Media faz (e não assume)” + marca no topo.</p></div>
+            <div class="slide"><h3><span class="n">2</span>Item 1 (ansiedade de métrica)</h3><p>Atualiza dashboard / insights compulsivamente.</p></div>
+            <div class="slide"><h3><span class="n">3</span>Item 2 (checagem dupla)</h3><p>Confere link, copy, tags, horário… várias vezes.</p></div>
+            <div class="slide"><h3><span class="n">4</span>Item 3 (tempo “rapidinho”)</h3><p>Promete 5 min e vira 2 horas.</p></div>
+            <div class="slide"><h3><span class="n">5</span>Item 4 (perfeccionismo)</h3><p>Ajuste de 1px / kerning / alinhamento.</p></div>
+            <div class="slide"><h3><span class="n">6</span>Item 5 (referências infinitas)</h3><p>Salva 200 ideias e usa 1.</p></div>
+            <div class="slide"><h3><span class="n">7</span>Item 6 (arquivos “final”)</h3><p>final_v7_agora_vai.psd</p></div>
+            <div class="slide"><h3><span class="n">8</span>Item 7 (prioridade invertida)</h3><p>Capa perfeita, roteiro improvisado.</p></div>
+            <div class="slide"><h3><span class="n">9</span>Item 8 (multitarefa caótica)</h3><p>15 abas + café + “tá tudo sob controle”.</p></div>
+            <div class="slide"><h3><span class="n">10</span>Fechamento (loop social)</h3><p>“Faltou alguma? Comenta a sua + marca alguém + pede parte 2”.</p></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const toast = document.getElementById('toast');
+      const roteiro = document.getElementById('roteiro');
+      function setToast(msg){ toast.textContent = msg; setTimeout(()=>{ toast.textContent=''; }, 1800); }
+
+      btn.addEventListener('click', async () => {
+        const text = roteiro.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          setToast('Roteiro copiado.');
+        } catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); setToast('Roteiro copiado.'); }
+          catch(err){ setToast('Não foi possível copiar.'); }
+          document.body.removeChild(ta);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
