@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Dia 28 — Trend Alerts (Carrossel)</title>
+<style>
+  :root{
+    --bg:#0b0f19;
+    --panel: rgba(255,255,255,.06);
+    --panel2: rgba(255,255,255,.04);
+    --stroke: rgba(255,255,255,.10);
+    --text:#e9eefc;
+    --muted: rgba(233,238,252,.72);
+    --muted2: rgba(233,238,252,.55);
+    --good:#33d6a6;
+    --blue:#4aa3ff;
+    --orange:#ff8a4c;
+    --shadow: 0 18px 60px rgba(0,0,0,.45);
+    --radius: 16px;
+    --radius2: 12px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background:
+      radial-gradient(900px 420px at 12% 10%, rgba(74,163,255,.14), transparent 55%),
+      radial-gradient(900px 420px at 78% 18%, rgba(51,214,166,.12), transparent 55%),
+      radial-gradient(900px 420px at 55% 92%, rgba(255,138,76,.10), transparent 55%),
+      var(--bg);
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px;}
+  header{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    padding:18px 18px 16px;
+    position: relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: linear-gradient(90deg, rgba(51,214,166,.30), rgba(74,163,255,.22), rgba(255,138,76,.22));
+    filter: blur(26px);
+    opacity:.35;
+    pointer-events:none;
+  }
+  .head-grid{display:flex; gap:14px; align-items:flex-start; justify-content:space-between; position:relative;}
+  .kicker{font-family: var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color: var(--muted);}
+  h1{margin:6px 0 8px; font-size:22px; line-height:1.15;}
+  .meta{display:flex; flex-wrap:wrap; gap:10px; align-items:center; color: var(--muted); font-size:13px;}
+  .pill{border:1px solid var(--stroke); background:rgba(255,255,255,.05); padding:7px 10px; border-radius:999px; font-family: var(--mono); font-size:12px; color: var(--muted);}
+  a{color: var(--text); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  .btns{display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap; position:relative;}
+  button{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius: 12px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  button:hover{background: rgba(255,255,255,.10)}
+  .primary{
+    border: 1px solid rgba(74,163,255,.35);
+    background: linear-gradient(90deg, rgba(74,163,255,.20), rgba(51,214,166,.16));
+  }
+  .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px;}
+  @media(min-width: 900px){ .grid{grid-template-columns: 1.1fr .9fr;} }
+  .card{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    padding:16px;
+  }
+  .card h2{margin:0 0 10px; font-size:16px;}
+  .card h3{margin:14px 0 8px; font-size:14px; color: var(--text);}
+  .muted{color: var(--muted);}
+  .muted2{color: var(--muted2);}
+  .divider{height:1px; background: var(--stroke); margin:14px 0;}
+  ul{margin:8px 0 0 18px; color: var(--muted);}
+  li{margin:6px 0;}
+  .callout{
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    border-radius: var(--radius2);
+    padding:12px;
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family: var(--mono);
+    font-size:12px;
+    color: var(--muted);
+    border:1px solid var(--stroke);
+    padding:7px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.04);
+  }
+  .dot{width:8px; height:8px; border-radius:99px; display:inline-block;}
+  .g{background: linear-gradient(90deg, var(--good), var(--blue));}
+  .b{background: linear-gradient(90deg, var(--blue), var(--orange));}
+  .o{background: linear-gradient(90deg, var(--orange), var(--good));}
+  pre{
+    margin:0;
+    padding:14px;
+    border-radius: var(--radius2);
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.22);
+    overflow:auto;
+    color: #dfe7ff;
+    font-family: var(--mono);
+    font-size:12.5px;
+    line-height:1.55;
+    white-space: pre-wrap;
+  }
+  .two{display:grid; grid-template-columns: 1fr; gap:12px;}
+  @media(min-width: 900px){ .two{grid-template-columns: 1fr 1fr;} }
+  .small{font-size:13px; color: var(--muted);}
+  .hl{background: linear-gradient(90deg, rgba(51,214,166,.18), rgba(74,163,255,.18), rgba(255,138,76,.16)); padding:2px 8px; border-radius: 999px; border:1px solid rgba(255,255,255,.08);}
+  .footer-note{margin-top:10px; font-size:12px; color: var(--muted2);}
+  .toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:rgba(10,14,26,.92); border:1px solid var(--stroke); color:var(--text); padding:10px 12px; border-radius:999px; box-shadow: var(--shadow); display:none; font-size:13px;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-grid">
+        <div>
+          <div class="kicker">Nicho: Social Media • Dia 28</div>
+          <h1>Trend Alerts do mês: 5 trends + como aplicar na sua marca</h1>
+          <div class="meta">
+            <span class="pill">Formato: carrossel</span>
+            <span class="pill">Pilar: Checklist</span>
+            <span class="pill">Objetivo: curadoria + aplicação + conversão</span>
+            <span class="pill"><a href="https://www.instagram.com/p/DTx3ke4jLKh/" target="_blank" rel="noopener">Post original</a></span>
+          </div>
+        </div>
+        <div class="btns">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="copyCaptionBtn">Copiar caption</button>
+        </div>
+      </div>
+      <div class="footer-note">Identidade sugerida neste guia: fundo escuro, cards com borda suave e destaques em degradê (verde/azul/laranja). Você pode aplicar o conteúdo em qualquer template.</div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <div class="callout small">
+          <span class="badge"><span class="dot g"></span> Promessa</span>
+          <div style="margin-top:8px" class="muted">Entregar uma lista de <span class="hl">5 trends do mês</span> com instruções rápidas para aplicar como marca, reduzindo fricção com: nome da trend, “o que é”, “por que funciona” e “como usar”.</div>
+        </div>
+        <div class="divider"></div>
+        <div class="two">
+          <div class="callout small">
+            <span class="badge"><span class="dot b"></span> Para quem</span>
+            <ul>
+              <li>Social media e gestores de conteúdo</li>
+              <li>Criadores que querem ideias rápidas e executáveis</li>
+              <li>Donos de negócio que precisam de conteúdo com estrutura</li>
+            </ul>
+          </div>
+          <div class="callout small">
+            <span class="badge"><span class="dot o"></span> Métrica-alvo</span>
+            <ul>
+              <li>Salvamentos (conteúdo de referência)</li>
+              <li>Comentários (palavra-chave para entrega no DM)</li>
+              <li>Compartilhamentos (time/cliente)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Metadados (calendário)</h2>
+        <div class="callout small">
+          <div><span class="muted2">Título:</span> <strong>Trend Alerts do mês: 5 trends + como aplicar na sua marca</strong></div>
+          <div style="margin-top:8px"><span class="muted2">Instrução curta:</span> Monte um carrossel 7–10 slides com 5 trends do mês e finalize com CTA por palavra-chave.</div>
+          <div style="margin-top:8px"><span class="muted2">Pilar:</span> Checklist</div>
+          <div style="margin-top:8px"><span class="muted2">Formato:</span> Carrossel</div>
+        </div>
+        <div class="divider"></div>
+        <h3>Sequência macro (por que prende)</h3>
+        <ul>
+          <li><strong>Curadoria</strong> ("alertas do mês")</li>
+          <li><strong>Lista numerada</strong> (efeito coleção)</li>
+          <li><strong>Template repetível</strong> (baixo esforço cognitivo)</li>
+          <li><strong>Microdado acionável</strong> (áudio/gancho/formato)</li>
+          <li><strong>CTA rastreável</strong> (palavra-chave)</li>
+        </ul>
+      </aside>
+
+      <section class="card" style="grid-column:1/-1">
+        <h2>Estrutura</h2>
+        <div class="two">
+          <div class="callout small">
+            <span class="badge"><span class="dot g"></span> Estrutura recomendada (7–10 slides)</span>
+            <ul>
+              <li><strong>Slide 1:</strong> Capa (tema + mês + promessa + “Parte X”)</li>
+              <li><strong>Slides 2–6:</strong> 5 trends (template fixo por trend)</li>
+              <li><strong>Slide 7:</strong> CTA final (seguir + comentário com palavra-chave + salvar)</li>
+              <li><strong>Opcional (slides 8–10):</strong> “Bônus: 3 ideias de aplicação” ou “Erros comuns ao usar trends”</li>
+            </ul>
+          </div>
+          <div class="callout small">
+            <span class="badge"><span class="dot b"></span> Template de cada trend (replicável)</span>
+            <ul>
+              <li><strong>Nome + número</strong> (ex.: “2. The ‘Before/After’ Cut”)</li>
+              <li><strong>Microdado</strong>: “ÁUDIO: …” ou “FORMATO: …”</li>
+              <li><strong>O que é</strong> (1–2 frases)</li>
+              <li><strong>Por que funciona</strong> (1 frase: gatilho/psicologia)</li>
+              <li><strong>Como usar como marca</strong> (2 bullets + 1 exemplo de frase)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1">
+        <h2>Slides sugeridos (1..7)</h2>
+        <div class="callout small">
+          <ul>
+            <li><strong>Slide 1 — Capa:</strong> “Trend Alerts • [Mês]” + “5 trends para usar como marca (com exemplos)” + seta “→ deslize”.</li>
+            <li><strong>Slide 2 — Trend #1:</strong> Nome curto + “ÁUDIO/FORMATO” + O que é + Como usar (2 bullets) + frase pronta.</li>
+            <li><strong>Slide 3 — Trend #2:</strong> Mesmo template.</li>
+            <li><strong>Slide 4 — Trend #3:</strong> Mesmo template.</li>
+            <li><strong>Slide 5 — Trend #4:</strong> Mesmo template.</li>
+            <li><strong>Slide 6 — Trend #5:</strong> Mesmo template.</li>
+            <li><strong>Slide 7 — CTA:</strong> Oferta (recurso) + palavra-chave para comentar + “Salvar / Compartilhar / Seguir”.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro (copiável)</h2>
+        <pre id="scriptText">CARROSSEL — TREND ALERTS (MODELO REPRODUZÍVEL)
+
+SLIDE 1 — CAPA
+Título grande: “Trend Alerts • [MÊS]”
+Subtítulo: “5 trends para usar como marca (com exemplos)”
+Microgancho: “Parte [X] • Atualizado”
+Direção: “→ deslize”
+Nota visual: coloque 2 miniaturas/prints de Reels para criar curiosidade.
+
+SLIDE 2 — TREND 1
+Topo (marca): [SEU @/LOGO]
+Headline: “1) [NOME CURTO DA TREND]”
+Linha utilitária: “FORMATO/ÁUDIO: [nome do áudio] | [duração ideal]”
+O que é: “Trend em que [mecânica em 1 frase].”
+Por que funciona: “Funciona porque [gatilho: contraste / curiosidade / prova / identificação].”
+Como usar como marca:
+• Use para: [objetivo: atrair topo / educar / prova / conversão]
+• Estrutura: [passo 1] → [passo 2] → [passo 3]
+Exemplo de frase: “Se você [dor], faça [ação] antes de [erro].”
+
+SLIDE 3 — TREND 2
+(repita o mesmo template)
+
+SLIDE 4 — TREND 3
+(repita o mesmo template)
+
+SLIDE 5 — TREND 4
+(repita o mesmo template)
+
+SLIDE 6 — TREND 5
+(repita o mesmo template)
+
+SLIDE 7 — CTA (CONVERSÃO)
+Headline: “Quer meus exemplos prontos + checklist de trends?”
+Oferta: “Eu te envio um PDF com: 10 ganchos + 5 estruturas + prompts.”
+CTA principal: “Comente ‘TRENDS’ que eu mando no DM.”
+MicroCTAs: “Salvar • Compartilhar • Seguir para o próximo alert”
+
+REGRAS DE TEXTO (pra manter escaneável)
+- 1 ideia por bloco
+- No máximo 2 bullets em “Como usar”
+- O ‘Por que funciona’ sempre em 1 frase
+- Título do item com 3–6 palavras</pre>
+      </section>
+
+      <aside class="card">
+        <h2>Copy e ganchos</h2>
+        <div class="callout small">
+          <span class="badge"><span class="dot g"></span> Ganchos de capa</span>
+          <ul>
+            <li>“5 trends do mês que ainda estão baratas (e como usar)”</li>
+            <li>“Trend Alerts: copie e cole na sua estratégia (com exemplos)”</li>
+            <li>“Se você posta todo dia e não cresce, teste essas 5 trends”</li>
+          </ul>
+        </div>
+        <div class="divider"></div>
+        <div class="callout small">
+          <span class="badge"><span class="dot b"></span> Frases prontas por trend (modelos)</span>
+          <ul>
+            <li>“Ninguém te conta, mas [verdade]. Então eu faço [processo].”</li>
+            <li>“Eu parei de [erro] e comecei a [ação]. Deu nisso:”</li>
+            <li>“3 sinais de que você precisa de [solução] (o #2 é o mais comum)”</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column:1/-1">
+        <h2>Elementos visuais (UX + identidade high-tech)</h2>
+        <div class="two">
+          <div class="callout small">
+            <span class="badge"><span class="dot g"></span> Sistema visual por slide</span>
+            <ul>
+              <li><strong>Fundo:</strong> escuro, com leve textura/gradiente</li>
+              <li><strong>Card principal:</strong> borda suave + sombra</li>
+              <li><strong>Destaque:</strong> chip em degradê (verde/azul/laranja) para “ÁUDIO/FORMATO”</li>
+              <li><strong>Mockup:</strong> celular à esquerda (frame do Reel/print)</li>
+              <li><strong>Leitura:</strong> títulos grandes, subtítulos fixos (“O que é” / “Como usar”)</li>
+            </ul>
+          </div>
+          <div class="callout small">
+            <span class="badge"><span class="dot o"></span> Regras de legibilidade (mobile)</span>
+            <ul>
+              <li>Não passe de 35–45 palavras por slide</li>
+              <li>Use 2 colunas só se o texto estiver curto; senão, empilhe</li>
+              <li>Crie consistência: mesma hierarquia em todos os itens</li>
+              <li>Setas/linhas para guiar o olhar até o mockup</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <div class="callout small">
+          <span class="badge"><span class="dot b"></span> CTA principal (1 ação)</span>
+          <ul>
+            <li><strong>Comentário com palavra-chave:</strong> “Comente ‘TRENDS’ que eu te envio o pack no DM.”</li>
+          </ul>
+        </div>
+        <div class="divider"></div>
+        <div class="callout small">
+          <span class="badge"><span class="dot g"></span> CTAs secundários (rodapé do último slide)</span>
+          <ul>
+            <li>“Salve para consultar quando for gravar”</li>
+            <li>“Compartilhe com o time/cliente”</li>
+            <li>“Siga para o alerta da próxima semana”</li>
+          </ul>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Checklist de criação (antes de postar)</h2>
+        <div class="callout small">
+          <ul>
+            <li>[ ] Capa promete <strong>lista + benefício</strong> (não só “trends”)</li>
+            <li>[ ] Cada item tem: <strong>O que é</strong> + <strong>Por que funciona</strong> + <strong>Como usar</strong></li>
+            <li>[ ] “Como usar” tem <strong>até 2 bullets</strong> + 1 frase pronta</li>
+            <li>[ ] Um <strong>microdado acionável</strong> por item (áudio/formato/duração)</li>
+            <li>[ ] Template visual repetido (numeração, subtítulos fixos)</li>
+            <li>[ ] Último slide com <strong>1 CTA principal</strong> (palavra-chave) + incentivo a salvar</li>
+            <li>[ ] Revisão final: ortografia, contraste, margens e respiro</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column:1/-1">
+        <h2>Variações (pra replicar sem enjoar)</h2>
+        <div class="two">
+          <div class="callout small">
+            <span class="badge"><span class="dot g"></span> Variação A — “Trend + ideia pronta”</span>
+            <ul>
+              <li>Troque “Por que funciona” por “Ângulo de conteúdo”</li>
+              <li>Inclua 1 mini roteiro de 15s (3 falas)</li>
+            </ul>
+          </div>
+          <div class="callout small">
+            <span class="badge"><span class="dot o"></span> Variação B — “Trend vs Marca”</span>
+            <ul>
+              <li>Inclua: “Serve para:” (segmentos) e “Não serve para:” (alerta)</li>
+              <li>Último slide: “Quer que eu faça pro seu nicho? Comente [NICHO]”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="callout small">
+          <span class="badge"><span class="dot b"></span> Caption sugerida (copiável)</span>
+          <pre id="captionText">TREND ALERTS • [MÊS]
+
+Separei 5 trends que estão funcionando AGORA — e como você pode adaptar como marca sem ficar “genérico”.
+
+Como usar este carrossel:
+1) Escolha 1 trend
+2) Copie a estrutura
+3) Troque só o contexto pelo seu nicho
+
+Quer o pack com exemplos prontos (ganchos + roteiros + checklist)?
+Comente “TRENDS” que eu envio no DM.
+
+Salvar • compartilhar • seguir</pre>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Copiado.</div>
+
+<script>
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg || 'Copiado.';
+    t.style.display = 'block';
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(()=>{ t.style.display='none'; }, 1800);
+  }
+
+  async function copyText(id){
+    const el = document.getElementById(id);
+    const text = el ? el.innerText : '';
+    try{
+      await navigator.clipboard.writeText(text);
+      toast('Copiado para a área de transferência.');
+    }catch(e){
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      toast('Copiado (modo compatibilidade).');
+    }
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', ()=>copyText('scriptText'));
+  document.getElementById('copyCaptionBtn').addEventListener('click', ()=>copyText('captionText'));
+</script>
+</body>
+</html>
