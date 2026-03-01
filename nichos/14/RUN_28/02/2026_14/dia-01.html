@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha Reproduzível — Social Media (Dia 1)</title>
+  <style>
+    :root{
+      --bg0:#06070a;
+      --bg1:#0b0f17;
+      --card:#0e1420cc;
+      --stroke:#1b2a3d;
+      --text:#eaf0ff;
+      --muted:#a9b6d3;
+      --muted2:#7f8bb0;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg, #7CFF00 0%, #00D2FF 45%, #FF8A00 100%);
+      --g2: linear-gradient(135deg, rgba(124,255,0,.18), rgba(0,210,255,.18) 55%, rgba(255,138,0,.18));
+      --g3: linear-gradient(90deg, rgba(124,255,0,.95), rgba(0,210,255,.95));
+      --green:#7CFF00;
+      --blue:#00D2FF;
+      --orange:#FF8A00;
+      --danger:#ff4d6d;
+      --ok:#2cff9a;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(0,210,255,.14), transparent 55%),
+        radial-gradient(900px 500px at 85% 15%, rgba(124,255,0,.12), transparent 60%),
+        radial-gradient(1000px 600px at 50% 95%, rgba(255,138,0,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 64px}
+
+    header{
+      border:1px solid var(--stroke);
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    header::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:var(--g2);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .head{
+      position:relative;
+      padding:22px 22px 18px;
+      display:flex;
+      gap:18px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .kicker{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      font-family:var(--mono);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(10,14,22,.55);
+      padding:7px 10px;
+      border-radius:999px;
+      backdrop-filter: blur(10px);
+    }
+    .pill strong{color:var(--text); font-weight:700}
+
+    h1{
+      margin:10px 0 0;
+      font-size:22px;
+      line-height:1.15;
+      letter-spacing:-.02em;
+    }
+    .subtitle{
+      margin:10px 0 0;
+      color:var(--muted);
+      max-width:78ch;
+      font-size:14px;
+      line-height:1.5;
+    }
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px}
+    .btn{
+      border:1px solid rgba(255,255,255,.13);
+      background:rgba(10,14,22,.55);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      cursor:pointer;
+      transition:transform .12s ease, border-color .12s ease, background .12s ease;
+      backdrop-filter: blur(10px);
+    }
+    .btn:hover{transform:translateY(-1px); border-color: rgba(255,255,255,.22)}
+    .btn.primary{
+      background:linear-gradient(135deg, rgba(124,255,0,.18), rgba(0,210,255,.16) 55%, rgba(255,138,0,.14));
+      border-color: rgba(124,255,0,.28);
+    }
+    .link{
+      color:var(--muted);
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px dashed rgba(255,255,255,.18);
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(10,14,22,.4);
+    }
+    .link span{font-family:var(--mono); font-size:12px; color:var(--muted2)}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.3fr .7fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:rgba(14,20,32,.78);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card .topline{
+      height:3px;
+      background:var(--g1);
+    }
+    .card .content{padding:18px 18px 16px}
+    .card h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:rgba(234,240,255,.88);
+    }
+    .card p, .card li{color:var(--muted); font-size:14px; line-height:1.55}
+    .card ul{margin:10px 0 0; padding-left:18px}
+    .card li{margin:6px 0}
+
+    .tagrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .tag{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:7px 9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(10,14,22,.55);
+      color:var(--muted);
+    }
+    .tag b{color:var(--text); font-weight:700}
+
+    .hr{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+
+    .script{
+      font-family:var(--sans);
+      white-space:pre-wrap;
+      background:rgba(7,10,16,.55);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:14px;
+      color:rgba(234,240,255,.92);
+      line-height:1.55;
+      font-size:14px;
+    }
+    .script code{font-family:var(--mono)}
+
+    .cols{display:grid; grid-template-columns: 1fr; gap:10px}
+    @media (min-width: 980px){
+      .cols{grid-template-columns: 1fr 1fr}
+    }
+
+    .callout{
+      border-radius:14px;
+      border:1px solid rgba(124,255,0,.22);
+      background:linear-gradient(180deg, rgba(124,255,0,.10), rgba(0,0,0,0));
+      padding:12px 12px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .callout strong{color:var(--text)}
+
+    .checklist{list-style:none; padding:0; margin:10px 0 0}
+    .checklist li{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 10px;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      background:rgba(10,14,22,.35);
+      margin:8px 0;
+    }
+    .box{
+      width:16px; height:16px; border-radius:4px;
+      border:1px solid rgba(255,255,255,.20);
+      margin-top:2px;
+      background:rgba(255,255,255,.03);
+      flex:0 0 auto;
+    }
+
+    .footer-note{color:var(--muted2); font-size:12px; margin-top:10px; font-family:var(--mono)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head">
+        <div>
+          <div class="kicker">
+            <div class="pill">Nicho: <strong>Social Media</strong></div>
+            <div class="pill">Dia: <strong>1</strong></div>
+            <div class="pill">Pilar: <strong>Mito vs Verdade</strong></div>
+            <div class="pill">Formato: <strong>Carrossel</strong></div>
+          </div>
+          <h1>O mito do “planejamento em 2 horas” (e como enquadrar isso)</h1>
+          <p class="subtitle">Roteiro reproduzível para carrossel opinativo: usar controvérsia + validação emocional para quebrar uma promessa irreal do mercado e reposicionar expectativa com uma frase “printável” + CTA único.</p>
+          <div class="actions">
+            <a class="link" href="https://www.instagram.com/p/DTvzolEkSBk/" target="_blank" rel="noopener noreferrer">Abrir post original <span>instagram.com</span></a>
+            <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+            <button class="btn" id="copyCaptionBtn">Copiar legenda</button>
+          </div>
+          <div class="footer-note" id="copyState"></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="topline"></div>
+        <div class="content">
+          <h2>Resumo</h2>
+          <p><strong>Ideia:</strong> confrontar um “mito produtivista” (ex.: “dá pra planejar conteúdo em 2h”) sem atacar pessoas, e sim a expectativa/marketing por trás.</p>
+          <div class="tagrow">
+            <div class="tag"><b>Objetivo</b>: identificação + salvamentos</div>
+            <div class="tag"><b>Retenção</b>: pergunta polêmica → escalada → alívio</div>
+            <div class="tag"><b>Tom</b>: direto (ajustável)</div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout"><strong>Fórmula:</strong> Hook debatível → enquadre o problema → verdade incômoda com exemplos → frase memorável → resolução + CTA único.</div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="topline"></div>
+        <div class="content">
+          <h2>Metas do post</h2>
+          <ul>
+            <li><strong>Salvar:</strong> leitor guarda para “quando bater culpa”.</li>
+            <li><strong>Comentar:</strong> leitor relata experiência com promessas irreais.</li>
+            <li><strong>Compartilhar:</strong> leitor manda para amigo/cliente/sócio.</li>
+          </ul>
+          <div class="hr"></div>
+          <h2>Única ação (escolha 1)</h2>
+          <ul>
+            <li>Salvar</li>
+            <li>Comentar palavra-chave</li>
+            <li>Enviar no direct</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="topline"></div>
+        <div class="content">
+          <h2>Estrutura</h2>
+          <div class="cols">
+            <div>
+              <p><strong>Versão curta (5 slides):</strong></p>
+              <ul>
+                <li><strong>S1 Capa:</strong> pergunta + número/tempo + palavra-chave.</li>
+                <li><strong>S2 Enquadramento:</strong> “não é ataque, é alerta” + contexto do mercado.</li>
+                <li><strong>S3 Verdade incômoda:</strong> “humanamente falando…” + lista de tarefas reais.</li>
+                <li><strong>S4 Frase printável:</strong> confronto curto + reposicionamento.</li>
+                <li><strong>S5 Resolução:</strong> analogia + validação + direção + CTA.</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Versão completa (7 slides):</strong></p>
+              <ul>
+                <li>Adicione um slide de <strong>exemplo</strong> (o que entra no planejamento de verdade).</li>
+                <li>Adicione um slide de <strong>reenquadramento prático</strong> (quanto tempo é realista + “depende de…”).</li>
+              </ul>
+              <div class="callout"><strong>Regra de ritmo:</strong> 1 ideia por slide. 1 frase grande + 1 apoio (no máximo).</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="topline"></div>
+        <div class="content">
+          <h2>Slides sugeridos (1..7)</h2>
+          <div class="script" id="roteiro">
+SLIDE 1 — CAPA (HOOK)
+• Headline: “Que história é essa de [TEMA] em [X HORAS]?”
+• Selo/adesivo: “[X HORAS]?”
+• Sub (pequeno): “spoiler: expectativa ≠ realidade”
+
+SLIDE 2 — ENQUADRE (SEM ATAQUE)
+• H1: “NÃO É CRÍTICA.”
+• H2 (manuscrito): “É um alerta.”
+• Body: “O mercado vende [PROMESSA RÁPIDA] e você acha que o problema é você.”
+
+SLIDE 3 — VERDADE INCÔMODA (REALIDADE)
+• Tag pequeno: “humanamente falando,”
+• H1: “VOCÊ NÃO FAZ [RESULTADO]”
+• Caixa destaque: “Roteiro + pesquisa + referências + criação + revisão + agendamento”
+• Fecho curto: “Isso em [X] é improvável.”
+
+SLIDE 4 — POR QUE ISSO PEGA (CAUSA)
+• H1: “O CULTO À PRODUTIVIDADE”
+• Body: “Quanto mais ‘rápido e fácil’ parece, mais você se compara — e mais culpa aparece.”
+
+SLIDE 5 — FRASE PRINTÁVEL (CONFRONTO)
+• H1: “PARE DE [COMPORTAMENTO].”
+  Ex.: “PARE DE SE MEDIR POR PROMESSA ALHEIA.”
+• Body (1 linha): “Seu processo não precisa caber no cronômetro dos outros.”
+
+SLIDE 6 — RESOLUÇÃO (ANALOGIA + ALÍVIO)
+• H1: “ENTENDA UMA COISA:”
+• Destaque: “[PROCESSO] não é como [ANALOGIA SIMPLES].”
+  Ex.: “Planejar content não é como fazer miojo.”
+• H2: “Leva tempo, sim.”
+
+SLIDE 7 — DIREÇÃO + CTA ÚNICO
+• Body: “Compare só com o seu histórico: consistência > velocidade.”
+• CTA (escolha 1):
+  A) “Salva pra reler quando bater culpa.”
+  B) “Comenta ‘MODELO’ que eu mando um planejamento realista.”
+  C) “Manda pra alguém que vive no ‘tudo em 2h’.”
+
+(Preenchimentos rápidos)
+[TEMA]=planejamento de conteúdo | [X HORAS]=2 horas | [RESULTADO]=um mês inteiro de posts pronto
+[PROMESSA RÁPIDA]=‘faça tudo em 2 horas’ | [COMPORTAMENTO]=se comparar / se cobrar / jogar seu processo no lixo
+[PROCESSO]=planejar conteúdo com estratégia | [ANALOGIA]=miojo / checklist de 3 passos / apertar um botão
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="topline"></div>
+        <div class="content">
+          <h2>Elementos visuais</h2>
+          <ul>
+            <li><strong>Fundo:</strong> branco “papel” OU dark clean (mantendo alto contraste).</li>
+            <li><strong>Paleta:</strong> base P&B + 1 acento neon (verde) + suportes (azul/laranja pontual).</li>
+            <li><strong>Assinatura:</strong> 1 ícone recorrente (alerta/triângulo), 1 rabisco, 1 sticker de selo.</li>
+            <li><strong>Ritmo:</strong> alternar slide tipográfico (limpo) e slide com foto (humaniza).</li>
+            <li><strong>Hierarquia:</strong> H1 enorme (1–2 linhas) + apoio curto.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout"><strong>Tipografia sugerida:</strong> H1 (Anton/Montserrat ExtraBold) + H2 (marker/grunge legível) + Body (Inter/Poppins).</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="topline"></div>
+        <div class="content">
+          <h2>Copy e ganchos</h2>
+          <p><strong>Ganchos de capa (escolha 1):</strong></p>
+          <ul>
+            <li>“Você ainda acredita em <strong>[PROMESSA IRREAL]</strong>?”</li>
+            <li>“Pare de cair no mito do <strong>[TEMA]</strong> em <strong>[X]</strong>.”</li>
+            <li>“<strong>[X]</strong> minutos pra <strong>[RESULTADO]</strong>? Vamos conversar.”</li>
+            <li>“Ninguém fala isso sobre <strong>[TEMA]</strong>…”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Frases printáveis (S5):</strong></p>
+          <ul>
+            <li>“Consistência não é pressa.”</li>
+            <li>“Processo bom não cabe em promessa rápida.”</li>
+            <li>“O problema não é você. É a régua.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Tom (ajuste por nicho):</strong> duro → “vamos com calma” | “isso é impossível” → “na prática, é bem difícil”.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="topline"></div>
+        <div class="content">
+          <h2>CTA</h2>
+          <p><strong>Escolha 1 CTA por post</strong> (para não dividir ação):</p>
+          <ul>
+            <li><strong>Salvamento:</strong> “Salva pra reler quando bater culpa por produtividade.”</li>
+            <li><strong>Comentário:</strong> “Comenta ‘MODELO’ que eu te mando um template realista.”</li>
+            <li><strong>Compartilhar:</strong> “Manda pra alguém que vive no ‘tudo em 2 horas’.”</li>
+          </ul>
+          <div class="callout"><strong>Dica:</strong> se o CTA for “MODELO”, responda com um recurso real (PDF/Notion/Google Doc), ou um comentário fixado com o link.</div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="topline"></div>
+        <div class="content">
+          <h2>Checklist (criação e publicação)</h2>
+          <ul class="checklist">
+            <li><div class="box"></div><div><strong>Defina o mito:</strong> qual promessa “fácil e rápida” você vai quebrar? (1 frase)</div></li>
+            <li><div class="box"></div><div><strong>Escolha o número/tempo:</strong> algo memorável e debatível (ex.: 2h, 30min, 7 dias)</div></li>
+            <li><div class="box"></div><div><strong>Liste 5 tarefas reais:</strong> para provar complexidade (pesquisa, roteiro, criativo, revisão, agendamento…)</div></li>
+            <li><div class="box"></div><div><strong>Escreva a frase printável (S5):</strong> curta, direta, compartilhável</div></li>
+            <li><div class="box"></div><div><strong>Analogia (S6):</strong> transforme abstrato em concreto (miojo, botão, checklist mágico)</div></li>
+            <li><div class="box"></div><div><strong>Defina 1 CTA:</strong> salvar OU comentar palavra-chave OU compartilhar</div></li>
+            <li><div class="box"></div><div><strong>Design:</strong> 1 cor de acento + 1 textura + 3 stickers recorrentes</div></li>
+            <li><div class="box"></div><div><strong>Revisão:</strong> máx. 12–18 palavras no bloco grande; 1 ideia por slide</div></li>
+            <li><div class="box"></div><div><strong>Publicação:</strong> fixe um comentário com o CTA e/ou o recurso prometido</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="topline"></div>
+        <div class="content">
+          <h2>Variações (para repetir sem cansar)</h2>
+          <div class="cols">
+            <div>
+              <p><strong>Variação 1 — “Mito do feed perfeito”</strong></p>
+              <ul>
+                <li>Hook: “Que história é essa de feed perfeito em 1 tarde?”</li>
+                <li>Verdade: envolve direção de arte, consistência, testes.</li>
+                <li>CTA: “Salva pra lembrar que progresso > estética.”</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Variação 2 — “Reels viral em 24h”</strong></p>
+              <ul>
+                <li>Hook: “Reels viral em 24h? Vamos falar de realidade.”</li>
+                <li>Verdade: demanda volume, aprendizagem, iteração.</li>
+                <li>CTA: “Comenta ‘CHECK’ que eu mando checklist de produção.”</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Variação 3 — “Cliente que quer tudo pra ontem”</strong></p>
+              <ul>
+                <li>Hook: “Briefing hoje, campanha amanhã? Não é miojo.”</li>
+                <li>Verdade: aprovações, alinhamento, riscos.</li>
+                <li>CTA: “Manda pra quem precisa entender processo.”</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Variação 4 — Versão “soft” (nichos sensíveis)</strong></p>
+              <ul>
+                <li>Trocar confronto por acolhimento: “vamos com calma”.</li>
+                <li>Foco: reduzir culpa e aumentar aderência ao processo.</li>
+                <li>CTA: salvamento (menos atrito).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <h2>Legenda sugerida (copiável)</h2>
+          <div class="script" id="legenda">
+Você não é lento(a). Você só está tentando fazer um processo complexo caber numa promessa simples.
+
+“Planejamento em 2 horas” pode até acontecer em cenários específicos… mas vender isso como regra é o jeito mais rápido de criar culpa e comparação.
+
+Planejar conteúdo de verdade envolve: pesquisa, escolha de pauta, estrutura, criação, revisão, ajustes e agendamento.
+
+Consistência > velocidade.
+
+CTA: Salva pra reler quando bater a culpa da produtividade.
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    function copyFrom(id){
+      const el = document.getElementById(id);
+      const text = el ? el.innerText.trim() : "";
+      return navigator.clipboard.writeText(text);
+    }
+
+    const state = document.getElementById('copyState');
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      try{
+        await copyFrom('roteiro');
+        state.textContent = 'Roteiro copiado para a área de transferência.';
+      }catch(e){
+        state.textContent = 'Não foi possível copiar automaticamente. Selecione e copie manualmente.';
+      }
+    });
+
+    document.getElementById('copyCaptionBtn').addEventListener('click', async () => {
+      try{
+        await copyFrom('legenda');
+        state.textContent = 'Legenda copiada para a área de transferência.';
+      }catch(e){
+        state.textContent = 'Não foi possível copiar automaticamente. Selecione e copie manualmente.';
+      }
+    });
+  </script>
+</body>
+</html>
