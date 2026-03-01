@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 21 — Social Media — Template Carrossel (Rant útil + doodles)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1224;
+      --card:#0E1730CC;
+      --card2:#0B1224CC;
+      --text:#EAF0FF;
+      --muted:#AAB6D6;
+      --line:#1F2A4A;
+      --ok:#39D98A;
+      --warn:#FFB020;
+      --info:#4EA1FF;
+      --hot:#FF6A3D;
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --grad: linear-gradient(90deg, rgba(57,217,138,1) 0%, rgba(78,161,255,1) 45%, rgba(255,176,32,1) 75%, rgba(255,106,61,1) 100%);
+      --grad-soft: linear-gradient(135deg, rgba(57,217,138,.18), rgba(78,161,255,.14), rgba(255,176,32,.12), rgba(255,106,61,.12));
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1100px 600px at 20% 10%, rgba(78,161,255,.20), transparent 55%),
+        radial-gradient(900px 500px at 80% 15%, rgba(57,217,138,.16), transparent 55%),
+        radial-gradient(900px 600px at 80% 85%, rgba(255,176,32,.14), transparent 60%),
+        radial-gradient(800px 600px at 20% 85%, rgba(255,106,61,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{ color: #B9D6FF; text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .wrap{ max-width: 1080px; margin: 0 auto; padding: 28px 18px 46px; }
+
+    .header{
+      background: var(--grad-soft);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .header::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(600px 120px at 30% 0%, rgba(255,255,255,.10), transparent 60%),
+        radial-gradient(700px 180px at 70% 0%, rgba(255,255,255,.06), transparent 60%);
+      pointer-events:none;
+    }
+    .header-inner{ padding: 22px 22px 18px; position:relative; }
+
+    .topline{ display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center; }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(12,18,36,.55);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing:.2px;
+      backdrop-filter: blur(10px);
+    }
+    .dot{ width:10px; height:10px; border-radius:99px; background: var(--grad); }
+
+    h1{ margin: 14px 0 8px; font-size: clamp(20px, 2.6vw, 34px); line-height:1.15; }
+    .subtitle{ margin: 0; color: var(--muted); max-width: 72ch; }
+
+    .grid{ display:grid; grid-template-columns: 1fr; gap: 14px; margin-top: 14px; }
+    @media (min-width: 880px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .span2{ grid-column: span 2; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(14,23,48,.84), rgba(11,18,36,.72));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 28px rgba(0,0,0,.35);
+      padding: 16px 16px;
+    }
+
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 15px;
+      letter-spacing:.3px;
+      text-transform: uppercase;
+      color: #D7E3FF;
+    }
+
+    .tagrow{ display:flex; flex-wrap:wrap; gap:8px; margin-top: 12px; }
+    .tag{
+      font-size: 12px;
+      color: #D7E3FF;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.09);
+      padding: 8px 10px;
+      border-radius: 999px;
+    }
+    .tag strong{ font-family: var(--mono); font-weight: 700; }
+
+    ul{ margin: 10px 0 0; padding-left: 18px; color: var(--muted); }
+    li{ margin: 7px 0; }
+
+    .kpi{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px; }
+    .kpi .chip{
+      flex: 1 1 160px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .chip .label{ color: var(--muted); font-size: 12px; }
+    .chip .value{ font-family: var(--mono); font-size: 13px; margin-top: 4px; color: #EAF0FF; }
+
+    .hr{
+      height:1px; background: rgba(255,255,255,.08);
+      margin: 14px 0;
+    }
+
+    .codeblock{
+      background: rgba(3,6,14,.55);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 16px;
+      padding: 14px;
+      overflow:auto;
+    }
+    pre{ margin:0; white-space: pre-wrap; color:#EAF0FF; }
+
+    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 600;
+    }
+    .btn.primary{
+      border: none;
+      background: var(--grad);
+      color: #091021;
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .hint{ color: var(--muted); font-size: 12px; margin: 10px 0 0; }
+
+    .accent{
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip:text;
+      color: transparent;
+      font-weight: 800;
+    }
+
+    .footer{
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:10px;
+      opacity:.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="header-inner">
+        <div class="topline">
+          <div class="pill"><span class="dot"></span><span><strong>Nicho:</strong> Social Media</span></div>
+          <div class="pill"><span><strong>Dia:</strong> 21</span></div>
+          <div class="pill"><span><strong>Formato:</strong> Carrossel</span></div>
+          <div class="pill"><span><strong>Original:</strong> <a href="https://www.instagram.com/p/DTlpcSwDjhA/" target="_blank" rel="noreferrer">instagram.com/p/DTlpcSwDjhA</a></span></div>
+        </div>
+        <h1><span class="accent">Top 5 coisas que eu odeio no social media</span> (e você também)</h1>
+        <p class="subtitle">Modelo reproduzível de carrossel no estilo “rant útil + doodles”: humor irritado, um erro por slide, punchlines e um fechamento com síntese + CTA direto.</p>
+        <div class="tagrow">
+          <span class="tag"><strong>Pilar:</strong> Erro comum</span>
+          <span class="tag"><strong>Arquitetura:</strong> 8 slides</span>
+          <span class="tag"><strong>Mecânica:</strong> Top N + moral + CTA</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card span2">
+        <h2>Resumo</h2>
+        <div class="kpi">
+          <div class="chip"><div class="label">Promessa</div><div class="value">Validar frustrações + entregar um ajuste prático por item</div></div>
+          <div class="chip"><div class="label">Retenção</div><div class="value">Lista Top 5 + palavra grande + doodle + nota irônica</div></div>
+          <div class="chip"><div class="label">Objetivo</div><div class="value">Saves + follows + comentários (identificação)</div></div>
+        </div>
+        <div class="hr"></div>
+        <ul>
+          <li><strong>Ideia central:</strong> o que funciona em social media é <em>claridade + utilidade + personalidade</em>; o resto é performance vazia.</li>
+          <li><strong>Tom:</strong> direto, anti-guru, humor ácido (sem perder o “ponto prático”).</li>
+          <li><strong>Regra:</strong> cada slide reclama, mas termina com uma orientação simples (o “no lugar, faça…”).</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Estrutura</h2>
+        <ul>
+          <li><strong>Slide 1:</strong> Capa (hook + promessa + “e você também”).</li>
+          <li><strong>Slides 2–6:</strong> Top 5 (1 erro por slide; desabafo → explicação → alternativa).</li>
+          <li><strong>Slide 7:</strong> Síntese (causa raiz + crença central).</li>
+          <li><strong>Slide 8:</strong> Fechamento (quebra + CTA direto).</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Elementos visuais (guia rápido)</h2>
+        <ul>
+          <li><strong>Identidade do post:</strong> “feito à mão” + high-contrast (texto grande) + micro-notas.</li>
+          <li><strong>Regras por slide:</strong> 1 doodle simples + 1 “palavra grande” (a cada 1–2 slides).</li>
+          <li><strong>Consistência:</strong> handle pequeno no topo em todos os slides.</li>
+          <li><strong>Doodles sugeridos:</strong> luva de boxe, megafone, xícara, foguete quebrado, lente de aumento, carimbo “vazio”.</li>
+        </ul>
+      </article>
+
+      <article class="card span2">
+        <h2>Slides sugeridos (1..8)</h2>
+        <div class="codeblock">
+<pre id="slidesText">SLIDE 1 — CAPA
+@seuuser (pequeno no topo)
+H1: TOP 5 coisas que eu mais ODEIO no social media
+H2: (e você também)
+Doodle: celular + carinha irritada
+Micro-promessa: “e o que fazer no lugar” (pequeno)
+
+SLIDE 2 — #1 A pressa por resultado
+Título: “A PRESSA”
+Corpo: “Ninguém vai morrer se um post não performar.”
+Reframe: “Isso é processo, não emergência.”
+No lugar: “Define 1 métrica por objetivo e repete por 2 semanas.”
+Palavra grande: CHEGA
+Nota: “sim, eu sei que ‘o cliente pediu pra ontem’.”
+
+SLIDE 3 — #2 Conteúdo pra agradar algoritmo
+Título: “OBCECADO PELO ALGORITMO”
+Corpo: “Todo mundo quer viral. Ninguém quer consistência.”
+No lugar: “Escreve pro humano: dor específica + promessa específica.”
+Punch: “VOCÊ TÁ FALANDO COM ROBÔ, NÃO COM PESSOAS.”
+Doodle: robozinho com coração quebrado
+
+SLIDE 4 — #3 Jargão vazio (buzzwords)
+Título: “PAPO DE ‘ESTRATÉGICO’”
+Corpo: “Se você não consegue explicar, não é estratégia: é frase bonita.”
+Perguntas (bullets):
+- “Pra QUEM?”
+- “Pra FAZER O QUÊ?”
+- “Em QUANTO TEMPO?”
+Fecho: “Se não é concreto, não ajuda.”
+Doodle: carimbo “vazio”
+
+SLIDE 5 — #4 Modinha sem definição
+Título: “’CONTEÚDO DE VALOR’”
+Corpo: “Todo mundo fala. Pouca gente define.”
+Definição simples: “Valor = o que a pessoa consegue aplicar hoje.”
+No lugar: “Dá 1 passo, 1 exemplo, 1 erro pra evitar.”
+Palavra grande: DEFINE ISSO
+Doodle: dicionário
+
+SLIDE 6 — #5 ‘Diferencial’ que é só o mínimo
+Título: “’ATENDIMENTO HUMANIZADO’”
+Corpo: “Isso não é diferencial. É obrigação.”
+Diferencial de verdade: “prova, método, opinião clara, recorte.”
+No lugar: “Mostra bastidores + critérios + antes/depois.”
+Doodle: troféu com a palavra “mínimo” riscada
+
+SLIDE 7 — SÍNTESE
+Pergunta: “Sabe o que tudo isso tem em comum?”
+Lista curta:
+- zero CLAREZA
+- zero UTILIDADE
+- zero PERSONALIDADE
+Fecho: “Se seu objetivo é vender, isso não serve pra NADA.”
+Doodle: alvo
+
+SLIDE 8 — FECHAMENTO + CTA
+Quebra: “Quer que eu fale do PIOR de todos?”
+CTA grande: ME SEGUE
+CTAs pequenos: “Salva pra lembrar / manda pra quem vive no ‘estratégico’”
+Doodle: personagem apontando pro botão de seguir</pre>
+        </div>
+      </article>
+
+      <article class="card span2">
+        <h2>Roteiro (copiável e reproduzível)</h2>
+        <div class="btnrow">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="copySlidesBtn">Copiar slides (1..8)</button>
+        </div>
+        <p class="hint">Dica: personalize os 5 itens com erros reais do seu público (freelas, agência, social in-house, infoproduto etc.).</p>
+        <div class="codeblock">
+<pre id="roteiroText">FICHA REPRODUZÍVEL — CARROSSEL “RANT ÚTIL + DOODLES” (8 SLIDES)
+
+1) OBJETIVO
+- Gerar identificação (“eu também passo por isso”) + entregar direção prática.
+- Conversão alvo: follows + saves + comentários.
+
+2) FORMATO
+- 8 slides (ideal 6–10).
+- Estrutura: Capa → Top 5 (um por slide) → Síntese → CTA.
+
+3) VOZ / TOM
+- Direto, anti-guru, sarcasmo leve.
+- Regra: toda reclamação precisa terminar com 1 ação concreta.
+- Linguagem pessoal (“eu”) + concordância implícita (“e você também”).
+
+4) TEMPLATE DE SLIDE (para os itens 2–6)
+- Título curto (2–4 palavras): “A PRESSA”, “ALGORITMO”, “JARGÃO VAZIO”…
+- Desabafo (1–2 linhas): valida a frustração.
+- Verdade simples (1 linha): reframe.
+- Alternativa prática (1 linha): “No lugar, faça X”.
+- Palavra grande (impacto): CHEGA / SÉRIO / PARA / DEFINE ISSO.
+- Doodle + nota irônica (rodapé).
+
+5) GANCHOS PRONTOS (escolha 1)
+- “Top 5 coisas que eu odeio em [tema] (e você também)”
+- “5 erros que eu não aguento mais ver em [tema]”
+- “O que mais me irrita em [tema] (e o que fazer no lugar)”
+
+6) TEMA (preencha)
+- Tema do post: __________________________
+- Público: _______________________________
+- Oferta/serviço que isso encaminha: _______
+
+7) LISTA TOP 5 (preencha com o seu nicho)
+#1 __________________ (dor comum + ajuste simples)
+#2 __________________
+#3 __________________
+#4 __________________
+#5 __________________
+
+8) CTA (último slide)
+- CTA principal (1): ME SEGUE / SALVA / COMENTA “EU” / QUERO PARTE 2
+- CTA secundário (opcional): “manda pra alguém que precisa ler isso”.
+- Quebra antes do CTA: “eu odeio mais coisa que isso…” / “quer o pior?”
+
+9) CHECK DE QUALIDADE (antes de postar)
+- Cada slide tem 1 ideia só?
+- Tem punchline (palavra grande) no ritmo certo?
+- Tem alternativa prática em todos os itens?
+- A síntese (slide 7) amarra a causa raiz?
+- CTA está direto e coerente com o objetivo?</pre>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Copy e ganchos</h2>
+        <ul>
+          <li><strong>Hook de capa:</strong> “TOP 5 coisas que eu odeio no social media (e você também)”.</li>
+          <li><strong>Sub-hook:</strong> “vou reclamar, mas vou te dar o conserto em 1 linha.”</li>
+          <li><strong>Frases-martelo:</strong> “Se não é concreto, não ajuda.” / “Você tá falando com robô, não com pessoas.”</li>
+          <li><strong>Notas de rodapé:</strong> ironia curta que humaniza (sem atacar pessoas; ataque comportamentos).</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>CTA</h2>
+        <ul>
+          <li><strong>Primário:</strong> “ME SEGUE” (grande).</li>
+          <li><strong>Alternativas (mesmo estilo):</strong> “Comenta ‘EU’ se isso te irrita” • “Salva pra usar quando bater a crise” • “Quer parte 2? comenta ‘QUERO’”.</li>
+          <li><strong>Compartilhamento:</strong> “manda pra quem vive chamando tudo de ‘estratégico’”.</li>
+        </ul>
+      </article>
+
+      <article class="card span2">
+        <h2>Checklist (criação + design + postagem)</h2>
+        <ul>
+          <li><strong>Definição:</strong> escolhi 1 tema e 1 público específico (não “social media” genérico)?</li>
+          <li><strong>Roteiro:</strong> Top 5 com 1 aprendizado aplicável por item (1 linha).</li>
+          <li><strong>Economia de texto:</strong> no máximo 35–45 palavras por slide (exceto bullets).</li>
+          <li><strong>Ritmo:</strong> 1 palavra grande a cada 1–2 slides.</li>
+          <li><strong>Visual:</strong> 1 doodle simples por slide; margens amplas; mesmo posicionamento do @.</li>
+          <li><strong>Legibilidade:</strong> contraste alto; títulos grandes; quebras de linha curtas.</li>
+          <li><strong>Slide 7:</strong> síntese com 3–4 linhas (causa raiz) + frase final forte.</li>
+          <li><strong>Slide 8:</strong> quebra + CTA único (não encher de pedidos).</li>
+          <li><strong>Legenda:</strong> 1 parágrafo curto reforçando a moral + pergunta para comentário.</li>
+          <li><strong>Final:</strong> revisar tom (sem ofensa gratuita; “rant útil”).</li>
+        </ul>
+      </article>
+
+      <article class="card span2">
+        <h2>Variações (para repostar sem saturar)</h2>
+        <ul>
+          <li><strong>Variação 1 (Top 7):</strong> “Top 7 coisas que eu não aguento mais em social media”. Mantém 10 slides (capa + 7 + síntese + CTA).</li>
+          <li><strong>Variação 2 (Mito vs Verdade):</strong> trocar itens por “Mito: ____ / Verdade: ____ / Faça: ____”.</li>
+          <li><strong>Variação 3 (Checklist):</strong> “Se você quer [resultado], confere se tem: A, B, C…” (menos rant, mais utilitário).</li>
+          <li><strong>Variação 4 (Prova):</strong> cada item termina com mini-case (“quando eu fiz X, aconteceu Y”).</li>
+          <li><strong>Variação 5 (Nichado):</strong> “no social media de e-commerce / clínicas / infoproduto / SaaS”.</li>
+        </ul>
+      </article>
+    </section>
+
+    <div class="footer">
+      <div>High-tech dark UI • Cards com borda suave • Destaques em degradê (verde/azul/laranja)</div>
+      <div style="font-family:var(--mono);">v1.0 • Dia 21</div>
+    </div>
+  </div>
+
+  <script>
+    function copyFromPre(preId){
+      const el = document.getElementById(preId);
+      const text = el ? el.innerText : "";
+      if(!text) return;
+      navigator.clipboard.writeText(text).then(()=>{
+        const btn = preId === 'roteiroText' ? document.getElementById('copyBtn') : document.getElementById('copySlidesBtn');
+        const original = btn.innerText;
+        btn.innerText = 'Copiado!';
+        setTimeout(()=> btn.innerText = original, 1200);
+      }).catch(()=>{
+        alert('Não foi possível copiar automaticamente. Selecione e copie manualmente.');
+      });
+    }
+    document.getElementById('copyBtn').addEventListener('click', ()=> copyFromPre('roteiroText'));
+    document.getElementById('copySlidesBtn').addEventListener('click', ()=> copyFromPre('slidesText'));
+  </script>
+</body>
+</html>
