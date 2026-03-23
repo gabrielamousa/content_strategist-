@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 4 — Consultoria de Imagem — Rotina real da consultora de imagem (sem glamour)</title>
+<style>
+  :root{
+    --bg:#0b0f17;
+    --panel:#0f1626;
+    --panel2:#0c1322;
+    --text:#e8eefc;
+    --muted:#a9b4d0;
+    --line:rgba(255,255,255,.10);
+    --shadow: 0 18px 50px rgba(0,0,0,.55);
+    --radius:18px;
+    --g1: linear-gradient(90deg, #32d583 0%, #2e90fa 45%, #f79009 100%);
+    --g2: linear-gradient(135deg, rgba(50,213,131,.20), rgba(46,144,250,.16), rgba(247,144,9,.14));
+    --ok:#32d583;
+    --warn:#f79009;
+    --info:#2e90fa;
+    --chip:#111b31;
+    --focus: rgba(46,144,250,.35);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    background:
+      radial-gradient(1200px 700px at 20% -10%, rgba(46,144,250,.20), transparent 60%),
+      radial-gradient(900px 600px at 95% 10%, rgba(247,144,9,.18), transparent 55%),
+      radial-gradient(900px 700px at 40% 110%, rgba(50,213,131,.16), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    line-height:1.45;
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 42px}
+  header{
+    background: var(--g2);
+    border:1px solid var(--line);
+    border-radius: calc(var(--radius) + 6px);
+    box-shadow: var(--shadow);
+    padding:20px 20px 16px;
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g1);
+    filter: blur(24px);
+    opacity:.18;
+    z-index:0;
+  }
+  header > *{position:relative; z-index:1}
+  .topbar{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .chip{
+    background: rgba(17,27,49,.78);
+    border:1px solid var(--line);
+    padding:8px 10px;
+    border-radius:999px;
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.2px;
+  }
+  .chip strong{color:var(--text); font-weight:650}
+  .title{
+    margin:12px 0 10px;
+    font-weight:780;
+    letter-spacing:-.3px;
+    font-size: clamp(20px, 2.4vw, 30px);
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    font-size:14px;
+  }
+  .linkrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:14px}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background: rgba(15,22,38,.65);
+    color:var(--text);
+    font-weight:650;
+    font-size:13px;
+  }
+  .btn:hover{border-color: rgba(255,255,255,.18); box-shadow: 0 0 0 4px rgba(46,144,250,.10)}
+  .btn.primary{
+    background: linear-gradient(135deg, rgba(50,213,131,.18), rgba(46,144,250,.16), rgba(247,144,9,.14));
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+    margin-top:16px;
+  }
+  @media (min-width: 980px){
+    .grid{grid-template-columns: 1.1fr .9fr}
+  }
+  .card{
+    background: rgba(15,22,38,.72);
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 32px rgba(0,0,0,.40);
+    overflow:hidden;
+  }
+  .card h2{
+    margin:0;
+    padding:14px 16px 10px;
+    font-size:15px;
+    letter-spacing:.2px;
+  }
+  .card .content{padding: 0 16px 16px; color:var(--muted); font-size:14px}
+  .hr{height:1px; background: var(--line); margin:0}
+  .kpi{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:10px;
+  }
+  @media (min-width: 580px){
+    .kpi{grid-template-columns: 1fr 1fr}
+  }
+  .mini{
+    background: rgba(12,19,34,.65);
+    border:1px solid var(--line);
+    border-radius: 14px;
+    padding:12px;
+  }
+  .mini .label{font-size:12px; color:var(--muted)}
+  .mini .value{margin-top:6px; font-weight:760; color:var(--text)}
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(17,27,49,.65);
+    color:var(--muted);
+  }
+  .dot{width:9px; height:9px; border-radius:50%}
+  .dot.ok{background:var(--ok)}
+  .dot.info{background:var(--info)}
+  .dot.warn{background:var(--warn)}
+  .cols{display:grid; grid-template-columns:1fr; gap:12px}
+  @media (min-width: 980px){
+    .cols{grid-template-columns:1fr 1fr}
+  }
+  ul{margin:10px 0 0 18px; padding:0}
+  li{margin:6px 0}
+  .callout{
+    border:1px solid var(--line);
+    background: rgba(12,19,34,.55);
+    border-radius:14px;
+    padding:12px;
+    color:var(--muted);
+  }
+  .callout strong{color:var(--text)}
+  .scriptbox{
+    margin-top:10px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(8,12,20,.65);
+    border-radius: 16px;
+    overflow:hidden;
+  }
+  .scripthead{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
+    background: rgba(17,27,49,.55);
+    gap:10px;
+  }
+  .scripthead .left{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .scripthead .left .tag{
+    background: rgba(255,255,255,.06);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    padding:6px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+  }
+  textarea{
+    width:100%;
+    min-height: 360px;
+    resize: vertical;
+    border:0;
+    outline:none;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    padding:12px;
+  }
+  .toast{
+    position:fixed;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+    background: rgba(17,27,49,.92);
+    border:1px solid var(--line);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .2s ease;
+    font-size:13px;
+  }
+  .toast.show{opacity:1}
+  .muted{color:var(--muted)}
+  .accent{
+    background: var(--g1);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color: transparent;
+    font-weight: 800;
+  }
+  .small{font-size:12px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div class="chips">
+          <span class="chip"><strong>Nicho:</strong> Consultoria de Imagem</span>
+          <span class="chip"><strong>Dia:</strong> 4</span>
+          <span class="chip"><strong>Formato:</strong> Reels</span>
+          <span class="chip"><strong>Pilar:</strong> Bastidores</span>
+        </div>
+        <div class="chips">
+          <span class="badge"><span class="dot ok"></span>Hook + rotina real</span>
+          <span class="badge"><span class="dot info"></span>Cortes rápidos</span>
+          <span class="badge"><span class="dot warn"></span>Final abrupto</span>
+        </div>
+      </div>
+
+      <div class="title">Rotina real da consultora de imagem <span class="accent">(sem glamour)</span></div>
+      <p class="sub">Objetivo: gerar identificação + autoridade sem ostentação, usando microcenas e áudio ambiente para aumentar replays, comentários e salvamentos.</p>
+
+      <div class="linkrow">
+        <a class="btn primary" href="https://www.instagram.com/p/DT0Z37gDp2E/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+        <button class="btn" id="copyBtn" type="button">Copiar roteiro</button>
+        <span class="chip small">Duração alvo: <strong>8–20s</strong> • Cortes: <strong>0,5–1,5s</strong> • Texto na tela: <strong>3–7 palavras</strong></span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <div class="hr"></div>
+        <div class="content">
+          <div class="kpi">
+            <div class="mini">
+              <div class="label">A ideia central</div>
+              <div class="value">Rotina real + bastidores (com interrupções) antes de um atendimento</div>
+            </div>
+            <div class="mini">
+              <div class="label">Por que funciona</div>
+              <div class="value">Contraste, autenticidade e ritmo acelerado geram retenção e replay</div>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:12px">
+            <strong>Regra de ouro:</strong> você não “explica” tudo — você <strong>mostra</strong> em microcenas e termina no pico (corte seco) para incentivar reassistir.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Metadados (para calendário)</h2>
+        <div class="hr"></div>
+        <div class="content">
+          <div class="mini"><div class="label">Título</div><div class="value">Rotina real da consultora de imagem (sem glamour)</div></div>
+          <div style="height:10px"></div>
+          <div class="mini"><div class="label">Execução rápida</div><div class="value">Hook de identidades + 6–10 microcenas + áudio ambiente + CTA “parte 2”.</div></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="cols" style="margin-top:14px">
+      <section class="card">
+        <h2>Estrutura (sequência reproduzível)</h2>
+        <div class="hr"></div>
+        <div class="content">
+          <ul>
+            <li><strong>0–2s (Hook):</strong> Identidade + contraste + promessa.</li>
+            <li><strong>2–15s (Montagem):</strong> 6–10 microcenas (tarefas) + 1 detalhe inesperado + 1 interrupção humana.</li>
+            <li><strong>Últimos 1–2s (Fechamento):</strong> corte seco no auge + CTA único (comentário ou salvar).</li>
+          </ul>
+          <div class="callout" style="margin-top:12px">
+            <strong>Ângulo:</strong> “Profissional por trás do resultado” (autoridade) + “vida real” (conexão). Sem glamour forçado.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais (para aumentar retenção)</h2>
+        <div class="hr"></div>
+        <div class="content">
+          <ul>
+            <li><strong>Jump cuts</strong> e planos curtos (mãos, cabides, sapatos, maquiagem, cronômetro, porta tocando).</li>
+            <li><strong>Texto grande</strong> e curto por cena (3–7 palavras).</li>
+            <li><strong>1 cena “imperfeita”</strong>: arara bagunçada, criança chamando, café improvisado, atraso real.</li>
+            <li><strong>Som do ambiente</strong> priorizado (passos, voz, notificações, “fulana chegou”).</li>
+            <li><strong>Final abrupto</strong>: corta no meio da ação (ex.: “já tô descendo!”).</li>
+          </ul>
+          <div class="callout" style="margin-top:12px">
+            <strong>Identidade visual do Reels:</strong> use 1 cor de destaque (verde/azul/laranja) no texto e mantenha a mesma fonte para virar “série”.
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Roteiro (pronto para gravar)</h2>
+      <div class="hr"></div>
+      <div class="content">
+        <div class="scriptbox">
+          <div class="scripthead">
+            <div class="left">
+              <span class="tag">Reels 8–20s</span>
+              <span class="tag">6–10 microcenas</span>
+              <span class="tag">Corte seco</span>
+            </div>
+            <button class="btn" type="button" id="copyBtn2">Copiar roteiro</button>
+          </div>
+          <textarea id="roteiro" spellcheck="false">ROTEIRO — “ROTINA REAL (SEM GLAMOUR) | CONSULTORA DE IMAGEM”
+
+[0–2s | HOOK | câmera frontal, sem pose]
+TEXTO NA TELA: “Consultora de imagem + vida real”
+FALA (ou texto): “Sou consultora de imagem, [2–3 identidades suas: mãe / empresária / atendendo sozinha]… e essa foi minha manhã REAL antes de um atendimento.”
+
+[2–4s | microcena 1]
+VISUAL: close na agenda / WhatsApp da cliente / horário
+TEXTO: “Cliente em 30 min”
+ÁUDIO: notificação + respiração/risada curta
+
+[4–5.5s | microcena 2]
+VISUAL: cabides / arara / “cadê o blazer?”
+TEXTO: “Cadê meu blazer?”
+ÁUDIO: você falando “não acredito…”
+
+[5.5–7s | microcena 3]
+VISUAL: sapato + cinto + acessórios em cima da cama
+TEXTO: “Acessórios salvam”
+ÁUDIO: barulho de metal / pulseiras
+
+[7–8.5s | microcena 4 (interrupção humana)]
+VISUAL: alguém chama / criança aparece / campainha / você vira o rosto
+TEXTO: “Interrupção #1”
+ÁUDIO: “Mãe!” / “Amor, você viu…?” (áudio real)
+
+[8.5–10s | microcena 5 (detalhe inesperado)]
+VISUAL: café improvisado / lanche rápido
+TEXTO: “Café da manhã improvável”
+FALA curta: “Isso não é rotina, tá?”
+
+[10–12s | microcena 6]
+VISUAL: você montando 1 look em 20s (take rápido)
+TEXTO: “Look pronto em 20s”
+ÁUDIO: cabides + “ok, funciona!”
+
+[12–14s | microcena 7]
+VISUAL: você arrumando a bolsa/kit (fita dupla face, lencinho, pin)
+TEXTO: “Kit emergências”
+ÁUDIO: zíper fechando
+
+[14–16s | microcena 8 (clímax)]
+VISUAL: você saindo correndo / fechando porta / elevador
+TEXTO: “Já tô descendo!”
+ÁUDIO: passos rápidos
+
+[16–18s | FINAL | CORTE SECO]
+TEXTO (rápido): “Quer parte 2?”
+CTA (escolher 1):
+- “Comenta ‘ROTINA’ que eu posto a parte 2.”
+OU
+- “Salva pra ver quando tiver na correria.”
+
+OBS DE PERFORMANCE:
+- Cortes a cada 0,5–1,5s.
+- Texto na tela: 3–7 palavras.
+- Mantenha 1 som recorrente (notificação / “mãe!” / campainha) como padrão de continuidade.
+- Não explique demais. Mostre e corte.</textarea>
+        </div>
+      </div>
+    </section>
+
+    <div class="cols" style="margin-top:14px">
+      <section class="card">
+        <h2>Copy e ganchos (templates prontos)</h2>
+        <div class="hr"></div>
+        <div class="content">
+          <div class="callout"><strong>Hook (copiável):</strong> “Eu sou [identidades] e essa foi minha [manhã] antes de [situação] — na vida real.”</div>
+          <ul>
+            <li><strong>Contraste:</strong> “Todo mundo acha que consultora de imagem vive no glamour… olha isso.”</li>
+            <li><strong>Curiosidade:</strong> “O que ninguém te mostra antes de um atendimento.”</li>
+            <li><strong>Autoridade leve:</strong> “Atendo clientes todos os dias e ainda assim… eu também me atraso.”</li>
+            <li><strong>Humanização:</strong> “Sem filtro, sem cenário, do jeito que é.”</li>
+          </ul>
+          <div class="callout" style="margin-top:12px"><strong>Legenda curta sugerida:</strong> “Rotina real antes do atendimento: caos + solução em minutos. Sua manhã também é assim?”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA (escolha 1)</h2>
+        <div class="hr"></div>
+        <div class="content">
+          <ul>
+            <li><strong>Comentários (melhor p/ engajamento):</strong> “Comenta <strong>ROTINA</strong> que eu posto a parte 2 (tarde/noite).”</li>
+            <li><strong>Salvamento (melhor p/ alcance contínuo):</strong> “Salva se você também vive no modo correria.”</li>
+            <li><strong>Compartilhar:</strong> “Manda pra uma amiga que acha que consultora de imagem vive glamurosa.”</li>
+            <li><strong>Conversão soft:</strong> “Quer se arrumar mais rápido? Me chama no direct.”</li>
+          </ul>
+          <div class="callout" style="margin-top:12px"><strong>Dica:</strong> fixe um comentário seu: “Quer parte 2? Responde ‘ROTINA’ aqui embaixo.”</div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Checklist (criação rápida, sem travar)</h2>
+      <div class="hr"></div>
+      <div class="content">
+        <div class="cols">
+          <div class="callout">
+            <strong>Pré-gravação (5 min)</strong>
+            <ul>
+              <li>Definir 1 janela: “minha manhã / pré-atendimento / pré-evento”.</li>
+              <li>Escolher 1 contraste: “expectativa x realidade”.</li>
+              <li>Listar 6–10 microcenas (tarefas + interrupções).</li>
+              <li>Decidir 1 detalhe inesperado (algo humano/improvável).</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Gravação</strong>
+            <ul>
+              <li>Captar áudio ambiente (não dublar se puder).</li>
+              <li>Planos curtos: 1–2s, ângulos variados (mãos, rosto, ambiente).</li>
+              <li>Mostrar 1 take de “caos real” (bagunça/atraso/interrupção).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="cols" style="margin-top:12px">
+          <div class="callout">
+            <strong>Edição</strong>
+            <ul>
+              <li>Jump cuts (sem transição elaborada).</li>
+              <li>Texto grande: 3–7 palavras por tela.</li>
+              <li>Legenda embutida das falas-chave.</li>
+              <li>Final abrupto + CTA único.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Publicação</strong>
+            <ul>
+              <li>Legenda com pergunta: “Sua manhã também é assim?”</li>
+              <li>Escolher só 1 CTA.</li>
+              <li>Fixar comentário pedindo “parte 2”.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Variações (para virar série)</h2>
+      <div class="hr"></div>
+      <div class="content">
+        <ul>
+          <li><strong>Variação 1 — “Look em 5 min”:</strong> foco nas decisões rápidas + 1 “erro que quase cometi”.</li>
+          <li><strong>Variação 2 — “Bastidores do atendimento”:</strong> chegada da cliente (sem expor), organização do espaço, check de coloração/biotipo (sutil).</li>
+          <li><strong>Variação 3 — “Armário real”:</strong> microcenas de triagem + 1 peça “polêmica” que você quase doa.</li>
+          <li><strong>Variação 4 — “Pré-evento”:</strong> cliente manda foto de último minuto + você salva com 1 ajuste (barra, terceiro ponto de cor, acessório).</li>
+          <li><strong>Variação 5 — “Vida real x expectativa”:</strong> texto na tela: “acham que é glamour / é isso aqui”.</li>
+        </ul>
+        <div class="callout" style="margin-top:12px"><strong>Padronização:</strong> mantenha a mesma frase de abertura por 5 vídeos para treinar o público a reconhecer a série.</div>
+      </div>
+    </section>
+
+    <div class="toast" id="toast">Roteiro copiado.</div>
+  </div>
+
+<script>
+  function copyRoteiro(){
+    const el = document.getElementById('roteiro');
+    const text = el.value;
+    navigator.clipboard.writeText(text).then(() => showToast('Roteiro copiado.')).catch(() => {
+      el.focus();
+      el.select();
+      try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
+      catch(e){ showToast('Não foi possível copiar automaticamente.'); }
+    });
+  }
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1600);
+  }
+  document.getElementById('copyBtn').addEventListener('click', copyRoteiro);
+  document.getElementById('copyBtn2').addEventListener('click', copyRoteiro);
+</script>
+</body>
+</html>
