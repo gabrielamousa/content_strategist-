@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roteiro Reproduzível — Consultoria de Imagem (Dia 18)</title>
+  <style>
+    :root{
+      --bg0:#0b0f14;
+      --bg1:#0e141b;
+      --card:#101a24cc;
+      --card2:#0f1721;
+      --stroke:#1d2a3a;
+      --text:#eaf0f7;
+      --muted:#a9b6c6;
+      --muted2:#7f91a6;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --r12: 14px;
+      --r16: 18px;
+      --g1: linear-gradient(90deg, #22c55e 0%, #38bdf8 45%, #fb923c 100%);
+      --g2: linear-gradient(180deg, rgba(34,197,94,.18), rgba(56,189,248,.10) 45%, rgba(251,146,60,.12));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(56,189,248,.20), transparent 55%),
+        radial-gradient(900px 600px at 90% 0%, rgba(34,197,94,.16), transparent 55%),
+        radial-gradient(900px 700px at 60% 110%, rgba(251,146,60,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:#8bd7ff; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 48px}
+
+    header{
+      background: linear-gradient(180deg, rgba(16,26,36,.75), rgba(16,26,36,.45));
+      border:1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      border-radius: var(--r16);
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      opacity:.7;
+      pointer-events:none;
+    }
+    .head-grid{position:relative; display:grid; gap:12px; grid-template-columns: 1.25fr .75fr; align-items:start}
+    @media (max-width:860px){.head-grid{grid-template-columns:1fr;}}
+
+    .kicker{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+    .pill{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(15,23,33,.55);
+      padding:6px 10px;
+      border-radius:999px;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .title{
+      font-size:24px;
+      line-height:1.15;
+      margin:10px 0 6px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      color:var(--muted);
+      margin:0;
+      max-width:70ch;
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    @media (max-width:860px){.actions{justify-content:flex-start}}
+
+    .btn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(15,23,33,.70);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:600;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      box-shadow: 0 10px 26px rgba(0,0,0,.28);
+    }
+    .btn:hover{border-color: rgba(255,255,255,.24); background: rgba(17,28,40,.78)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      border:0;
+      background: var(--g1);
+      color:#071018;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width:980px){.grid{grid-template-columns:1fr;}}
+
+    .card{
+      background: linear-gradient(180deg, rgba(16,26,36,.72), rgba(16,26,36,.52));
+      border: 1px solid var(--stroke);
+      border-radius: var(--r16);
+      padding:16px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .card h2{
+      font-size:14px;
+      margin:0 0 10px;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      color:#d7e4f4;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .card h2 .bar{
+      width:36px;
+      height:2px;
+      border-radius:999px;
+      background: var(--g1);
+      opacity:.9;
+    }
+
+    .card p, .card li{color:var(--muted); font-size:14px; line-height:1.55}
+    .card ul{margin:10px 0 0; padding-left:18px}
+
+    .mono{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: #cfe3ff;
+      background: rgba(11,15,20,.55);
+      border: 1px solid rgba(255,255,255,.10);
+      padding:12px;
+      border-radius: 14px;
+      overflow:auto;
+      white-space:pre-wrap;
+      line-height:1.5;
+    }
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+    @media (max-width:760px){.two{grid-template-columns:1fr;}}
+
+    .tag{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(15,23,33,.45);
+      color: var(--muted);
+      font-size:12px;
+      margin-right:8px;
+      margin-top:8px;
+    }
+
+    .hr{height:1px; background: rgba(255,255,255,.08); margin:12px 0 10px}
+
+    .toast{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: rgba(10,14,20,.82);
+      border: 1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(10px);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      display:none;
+      max-width: 320px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-grid">
+        <div>
+          <div class="kicker">
+            <span class="pill"><strong>Nicho</strong>: Consultoria de Imagem</span>
+            <span class="pill"><strong>Dia</strong>: 18</span>
+            <span class="pill"><strong>Formato</strong>: Carrossel</span>
+            <span class="pill"><strong>Pilar</strong>: Passo a passo</span>
+          </div>
+          <h1 class="title">Foto de perfil por arquétipo: guia visual em slides</h1>
+          <p class="sub">Modelo editorial (fundo escuro + 2 imagens lado a lado + box curto). Repetível para qualquer tema com categorias/arquétipos/perfis e prova visual.</p>
+          <p class="sub" style="margin-top:8px">Post original: <a href="https://www.instagram.com/p/DWHIvpykRDM/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DWHIvpykRDM/</a></p>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <a class="btn" href="https://www.instagram.com/p/DWHIvpykRDM/" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; justify-content:center">Abrir post</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="bar"></span>Resumo</h2>
+        <p><strong>O que é:</strong> carrossel em série (ex.: 7–12 categorias) que ajuda a audiência a <strong>se identificar</strong> e aplicar uma escolha prática (ex.: foto de perfil, look, paleta, acessórios).</p>
+        <p><strong>Por que funciona:</strong> promessa de coleção + layout repetível que acelera leitura + prova visual (2 imagens) + texto curto guiando intenção de imagem.</p>
+        <div class="hr"></div>
+        <p><span class="tag">Hook de capa</span><span class="tag">Prova visual</span><span class="tag">Autoidentificação</span><span class="tag">CTA de comentário + salvar</span></p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Estrutura</h2>
+        <ul>
+          <li><strong>Slide 1 (Capa):</strong> hook + promessa + contexto (microtags).</li>
+          <li><strong>Slides 2..N-1 (Categorias):</strong> 1 categoria por slide, com 2 imagens e box com 2–4 linhas.</li>
+          <li><strong>Slide N (Fechamento):</strong> recapitula, direciona próximo passo e CTA claro (com palavra-chave no DM).</li>
+        </ul>
+        <div class="hr"></div>
+        <p><strong>Regras de repetição:</strong> mesmo fundo, mesma tipografia de título, mesmo grid das imagens, box sempre no mesmo lugar.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Slides sugeridos (1..12)</h2>
+        <p>Use 7, 10 ou 12 (o impacto “coleção” cresce com 10–12). Exemplo com 12:</p>
+        <ol style="margin:10px 0 0; padding-left:18px; color: var(--muted); font-size:14px; line-height:1.55">
+          <li><strong>Capa</strong> — “FOTO DE PERFIL • [N] perfis/arquétipos • posicionamento”</li>
+          <li><strong>Categoria 1</strong> — Nome + 2 referências + atributos</li>
+          <li><strong>Categoria 2</strong></li>
+          <li><strong>Categoria 3</strong></li>
+          <li><strong>Categoria 4</strong></li>
+          <li><strong>Categoria 5</strong></li>
+          <li><strong>Categoria 6</strong></li>
+          <li><strong>Categoria 7</strong></li>
+          <li><strong>Categoria 8</strong></li>
+          <li><strong>Categoria 9</strong></li>
+          <li><strong>Categoria 10</strong></li>
+          <li><strong>Fechamento/CTA</strong> — “Qual é o seu? + próximos passos + DM”</li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Roteiro (copiável e reproduzível)</h2>
+        <div class="mono" id="roteiroText">ROTEIRO — CARROSSEL (CATEGORIAS/PERFIS COM PROVA VISUAL)
+
+[CONFIG]
+- Formato: 1080×1350 (4:5)
+- Quantidade: 7–12 slides (recomendado: 10–12)
+- Regra: 1 ideia por slide, texto curto e repetível
+
+SLIDE 1 — CAPA (Hook + Promessa)
+Topo (microtags): [TEMA MACRO] • [Nº de categorias] • [benefício]
+Título grande: [ASSUNTO PRINCIPAL]
+Subtítulo: [DOS PERFIS/ARQUÉTIPOS] ou [PARA (OCASIÃO/OBJETIVO)]
+Imagem: retrato/hero image coerente com o tema
+Mini-promessa (opcional): “Escolha o seu e copie o padrão”
+
+SLIDES 2..(N-1) — 1 CATEGORIA POR SLIDE (Padrão repetível)
+Título: DA/DO [NOME DA CATEGORIA]
+Imagens (2):
+- A: referência clássica (o “padrão” do perfil)
+- B: variação moderna (mesma intenção, outra execução)
+Box (2–4 linhas):
+Linha 1: “A imagem precisa transmitir: [resultado 1], [resultado 2], [resultado 3].”
+Linha 2: “[Categoria] é: [atributo 1], [atributo 2], [atributo 3].”
+Linha 3 (opcional): “Ideal para: [contexto/objetivo].”
+Rodapé: @seuuser
+
+SLIDE N — FECHAMENTO (Próximo passo + CTA)
+Título: QUAL É O SEU?
+Bullets (curtos):
+1) Defina sua intenção de imagem
+2) Ajuste: roupa + pose + expressão + luz
+3) Compare 2 versões e escolha a mais coerente
+CTA engajamento: “Comente: [CATEGORIA]”
+CTA salvamento: “Salve para consultar antes da próxima foto”
+CTA conversão: “Me chama no DM com a palavra [PALAVRA-CHAVE] que eu te indico o melhor caminho”
+
+LEGENDA (opcional, curta)
+- 1º parágrafo: o problema/benefício (por que foto/visual importa)
+- 2º parágrafo: como usar o carrossel (identifique-se + copie elementos)
+- 3º parágrafo: CTA (comentar/salvar/DM)</div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Elementos visuais</h2>
+        <div class="two">
+          <div>
+            <p><strong>Identidade (high-tech + editorial):</strong></p>
+            <ul>
+              <li>Fundo escuro com leve vinheta/gradiente.</li>
+              <li>Cards com borda suave (sem excesso de ornamentos).</li>
+              <li>Destaques em degradê (verde→azul→laranja) para barras/linhas.</li>
+              <li>Consistência máxima de grid entre slides.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Layout do slide de categoria:</strong></p>
+            <ul>
+              <li>Topo: título em caixa alta.</li>
+              <li>Meio: 2 imagens verticais lado a lado (mesma altura).</li>
+              <li>Base: box com 2–4 linhas (alto contraste).</li>
+              <li>Rodapé: @/assinatura pequena e fixa.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Copy e ganchos</h2>
+        <p><strong>Ganchos de capa (substituíveis mantendo o impacto):</strong></p>
+        <ul>
+          <li>“[ELEMENTO] para [OBJETIVO] em [N] perfis”</li>
+          <li>“O guia visual de [ASSUNTO] que evita [ERRO]”</li>
+          <li>“Se você quer transmitir [RESULTADO], use este padrão”</li>
+          <li>“Escolha 1 perfil e copie: [3 alavancas]”</li>
+        </ul>
+        <div class="hr"></div>
+        <p><strong>Microcopy do box (fórmulas curtas):</strong></p>
+        <ul>
+          <li>“Transmita: [3 resultados].”</li>
+          <li>“O perfil [X] é: [3 atributos].”</li>
+          <li>“Evite: [1 erro] (quebra a intenção).”</li>
+          <li>“Melhor para: [1 contexto].”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>CTA</h2>
+        <p><strong>CTA de engajamento (1 escolha):</strong></p>
+        <ul>
+          <li>“Qual perfil você é hoje? Comenta: <strong>[categoria]</strong>.”</li>
+          <li>“Qual slide descreve melhor sua marca pessoal? Escreve o número.”</li>
+        </ul>
+        <p><strong>CTA de salvar/compartilhar (sempre):</strong></p>
+        <ul>
+          <li>“Salve para usar na próxima foto/ensaio.”</li>
+          <li>“Envie para alguém que precisa atualizar a imagem profissional.”</li>
+        </ul>
+        <p><strong>CTA de conversão (com palavra-chave):</strong></p>
+        <ul>
+          <li>“Quer um direcionamento do seu perfil + ajustes práticos? DM: <strong>PERFIL</strong>.”</li>
+          <li>Alternativa: DM: <strong>IMAGEM</strong> / <strong>FOTO</strong> / <strong>ESTILO</strong> (troque conforme o tema).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Checklist (criação e revisão)</h2>
+        <div class="two">
+          <div>
+            <p><strong>Antes de criar:</strong></p>
+            <ul>
+              <li>Definir <strong>objetivo</strong> do post: educar / atrair DM / vender.</li>
+              <li>Escolher <strong>N</strong> categorias (7, 10 ou 12).</li>
+              <li>Listar para cada categoria: 3 resultados + 3 atributos + 1 contexto.</li>
+              <li>Separar 2 imagens por categoria (A/B) com enquadramento semelhante.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>No design:</strong></p>
+            <ul>
+              <li>Fundo escuro uniforme + vinheta leve.</li>
+              <li>Padrão fixo: título no topo, 2 imagens no meio, box embaixo.</li>
+              <li>Texto do box: no máximo 4 linhas (ideal 2–3).</li>
+              <li>Contraste e margens consistentes (respiro).</li>
+              <li>Slide final com CTA explícito (comentar + salvar + DM).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p><strong>Checklist de publicação:</strong></p>
+        <ul>
+          <li>Legenda com instrução de uso (“Escolha um perfil e copie…”) + CTA.</li>
+          <li>Primeiro comentário com palavra-chave do DM (reforço).</li>
+          <li>Alt text e capa do carrossel legível em miniatura.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Variações (para outro tema com o mesmo impacto)</h2>
+        <p><strong>Trocas seguras (mantêm performance):</strong></p>
+        <ul>
+          <li><strong>Arquétipos →</strong> estilos universais / cargos / dress codes / ocasiões / níveis (iniciante→avançado) / "pontos de atenção".</li>
+          <li><strong>Foto de perfil →</strong> look de trabalho / paleta de cores / acessórios / maquiagem / cabelo / poses / fundos.</li>
+          <li><strong>2 imagens (A/B) →</strong> certo vs quase / antes vs depois / básico vs refinado / presencial vs online.</li>
+        </ul>
+        <div class="hr"></div>
+        <p><strong>Exemplos prontos (títulos de capa):</strong></p>
+        <ul>
+          <li>“LOOKS PARA PALESTRA • 10 perfis • autoridade sem rigidez”</li>
+          <li>“CORES QUE PASSAM AUTORIDADE • 7 combinações • fácil de copiar”</li>
+          <li>“TERCEIRA PEÇA • 12 jeitos • da casual à executiva”</li>
+          <li>“FOTO DE PERFIL • 7 intenções • do acolhedor ao líder”</li>
+        </ul>
+        <p><strong>Como adaptar rápido:</strong> mantenha a mesma estrutura e só substitua: <span class="tag">ASSUNTO PRINCIPAL</span> <span class="tag">N CATEGORIAS</span> <span class="tag">RESULTADOS</span> <span class="tag">ATRIBUTOS</span> <span class="tag">CONTEXTO</span>.</p>
+      </section>
+    </div>
+
+    <div class="toast" id="toast">Roteiro copiado para a área de transferência.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const txt = document.getElementById('roteiroText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>{ toast.style.display = 'none'; }, 2200);
+      }
+
+      async function copy(){
+        const content = txt.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(content);
+          showToast('Roteiro copiado para a área de transferência.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = content;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado (modo compatibilidade).');
+        }
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
