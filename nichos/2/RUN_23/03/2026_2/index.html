@@ -1,0 +1,768 @@
+```html
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arquitetura — Calendário de Conteúdo (30 dias)</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0B1020;
+      --card:#0F1731;
+      --stroke:rgba(255,255,255,.08);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.68);
+      --shadow:0 18px 45px rgba(0,0,0,.45);
+      --r:18px;
+      --pad:18px;
+      --max:1120px;
+      --grad:linear-gradient(90deg,#22C55E 0%,#3B82F6 52%,#F59E0B 100%);
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(59,130,246,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% 0%, rgba(34,197,94,.18), transparent 60%),
+        radial-gradient(900px 650px at 70% 110%, rgba(245,158,11,.16), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:28px 16px 56px}
+    .topbar{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius:calc(var(--r) + 6px);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .hero{
+      padding:22px 18px 18px;
+      position:relative;
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0 0 auto 0;
+      height:6px;
+      background:var(--grad);
+    }
+    .hrow{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; justify-content:space-between}
+    .hleft{min-width:260px}
+    .kicker{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+    .title{margin:6px 0 0; font-size:28px; line-height:1.15}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+    .chip{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:7px 10px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      color:var(--muted);
+    }
+    .nav{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:14px 18px 18px;
+      border-top:1px solid var(--stroke);
+      background:rgba(0,0,0,.16);
+    }
+    .nav a{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+    }
+    .section{
+      margin-top:18px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--stroke);
+      border-radius:calc(var(--r) + 6px);
+      overflow:hidden;
+    }
+    .shead{
+      padding:16px 18px;
+      border-bottom:1px solid var(--stroke);
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .shead h2{margin:0; font-size:16px}
+    .sbody{padding:18px}
+    .grid2{display:grid; grid-template-columns:1.2fr .8fr; gap:14px}
+    @media (max-width: 980px){ .grid2{grid-template-columns:1fr} .title{font-size:24px} }
+    .card{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      padding:var(--pad);
+    }
+    .card h3{margin:0 0 10px; font-size:14px}
+    .card p, .card li{color:var(--muted); line-height:1.55}
+    .list{margin:0; padding-left:18px}
+    .filters{display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:12px;}
+    .group{display:flex; gap:8px; flex-wrap:wrap}
+    .btn{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:9px 11px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      cursor:pointer;
+    }
+    .btn.active{outline:2px solid rgba(59,130,246,.55); background:rgba(59,130,246,.10)}
+    .count{font-family:var(--mono); font-size:12px; color:var(--muted)}
+    .calgrid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width: 980px){ .calgrid{grid-template-columns:repeat(2, minmax(0,1fr))} }
+    @media (max-width: 640px){ .calgrid{grid-template-columns:1fr} }
+    .day{
+      display:block;
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      padding:16px;
+      transition:transform .12s ease, border-color .12s ease;
+    }
+    .day:hover{transform:translateY(-2px); border-color:rgba(255,255,255,.14)}
+    .daytop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .dnum{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--stroke);
+      color:var(--muted);
+    }
+    .dtitle{margin:10px 0 8px; font-size:14px; line-height:1.25}
+    .meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .small{font-size:12px; color:var(--muted); line-height:1.45}
+    .footer{
+      margin-top:18px;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.55);
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="hero">
+        <div class="hrow">
+          <div class="hleft">
+            <div class="kicker">Calendário de Conteúdo • 30 dias</div>
+            <h1 class="title">Arquitetura</h1>
+            <div class="chips">
+              <span class="chip">Nicho: Arquitetura</span>
+              <span class="chip">Run ID: ARQ-30D-001</span>
+            </div>
+          </div>
+          <div class="chips">
+            <span class="chip">Formatos: Reels • Carrossel</span>
+            <span class="chip">Foco: decisão de projeto + prova</span>
+          </div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#framework">#framework</a>
+        <a href="#calendario">#calendario</a>
+        <a href="#como-usar">#como-usar</a>
+      </nav>
+    </header>
+
+    <section class="section" id="framework">
+      <div class="shead">
+        <h2>Framework prático (Arquitetura)</h2>
+        <div class="count">Use como guia para gravar, escrever e editar</div>
+      </div>
+      <div class="sbody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Pilares editoriais (o que postar)</h3>
+            <ul class="list">
+              <li><strong>Passo a passo</strong>: microdecisões de projeto, “cirurgias”, listas e sequências.</li>
+              <li><strong>Mito vs Verdade</strong>: crenças populares, reframes e provas (visual + técnica).</li>
+              <li><strong>Erro comum</strong>: o que evitar, por quê, e alternativa simples aplicável.</li>
+              <li><strong>Prova</strong>: antes/depois, métricas, especificações, prints e validações.</li>
+              <li><strong>Bastidores</strong>: obra, marcenaria, compatibilização, decisões e processos.</li>
+              <li><strong>Autoridade</strong>: tese + mecanismo + aplicação, com fonte ou referência.</li>
+              <li><strong>Desejo</strong>: cenas sensoriais e estética guiada por decisão técnica.</li>
+              <li><strong>Checklist</strong>: escolhas rápidas, quando usar cada solução, padronização.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Ganchos (copie e cole)</h3>
+            <ul class="list">
+              <li>“Não é sobre <em>X</em>, é sobre <em>Y</em>.”</li>
+              <li>“Isso encurta o ambiente por um motivo específico.”</li>
+              <li>“Parecia certo, mas na planta deu errado.”</li>
+              <li>“Troque A por B e ganhe luz/fluxo/armazenamento.”</li>
+              <li>“O detalhe que separa ‘bonito’ de ‘bem resolvido’.”</li>
+              <li>“Antes/depois: a mesma metragem, outra sensação.”</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Estruturas que performam</h3>
+            <ul class="list">
+              <li><strong>Reels (25–60s)</strong>: Hook (1–2s) → problema → 3–6 decisões → prova → CTA (salvar/comentar).</li>
+              <li><strong>Carrossel (7–12)</strong>: capa de tensão → entrega no slide 2 → mecanismo → exemplos → checklist → CTA.</li>
+              <li><strong>Antes/Depois</strong>: contexto → 3 etiquetas de detalhe → regra do porquê → “como replicar”.</li>
+              <li><strong>Lista</strong>: 5–8 itens com alternativa simples em 1 linha cada.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Checklist de produção</h3>
+            <ul class="list">
+              <li>Mostrar <strong>planta</strong> ou esquema (mesmo que simplificado) sempre que possível.</li>
+              <li>Usar <strong>números</strong> (medida, tempo, custo relativo, quantidade).</li>
+              <li>Inserir <strong>rótulos</strong> (encosto, encontro, folga, paginação, eixo, alinhamento).</li>
+              <li>Fechar com <strong>CTA único</strong> (palavra-chave, salvar, comentar, DM).</li>
+              <li>Garantir 1 “momento uau” (revelação, antes/depois, plot twist).</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Erros a evitar</h3>
+            <ul class="list">
+              <li>Falar só de estética sem explicar <strong>mecanismo</strong> (por que funciona).</li>
+              <li>Antes/depois sem <strong>etiquetas</strong> (o público não entende a mudança).</li>
+              <li>Excesso de tópicos no mesmo post (tente 1 ideia por slide/corte).</li>
+              <li>CTA genérico (“me siga”) em vez de CTA de ação (salvar, comentar, palavra-chave).</li>
+              <li>Reels sem roteiro: grave com lista numerada e corte guiado por B-roll.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Banco de CTAs por objetivo</h3>
+            <ul class="list">
+              <li><strong>Comentários</strong>: “Comente a palavra-chave <em>CURADORIA</em>.”</li>
+              <li><strong>Salvamentos</strong>: “Salve para usar no seu próximo briefing.”</li>
+              <li><strong>Leads</strong>: “Me chame no direct com <em>DIAGNÓSTICO</em>.”</li>
+              <li><strong>Pesquisa</strong>: “Escolha: I, II ou III.”</li>
+              <li><strong>Autoridade</strong>: “Quer a referência/fonte? Comente <em>FONTE</em>.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="calendario">
+      <div class="shead">
+        <h2>Calendário (30 dias)</h2>
+        <div class="count"><span id="countText">Exibindo 30 de 30</span></div>
+      </div>
+      <div class="sbody">
+        <div class="filters" aria-label="Filtros">
+          <div class="group" aria-label="Formato">
+            <button class="btn active" type="button" data-filter-formato="Todos">Formato: Todos</button>
+            <button class="btn" type="button" data-filter-formato="Reels">Reels</button>
+            <button class="btn" type="button" data-filter-formato="Carrossel">Carrossel</button>
+          </div>
+          <div class="group" id="pillarGroup" aria-label="Pilar"></div>
+        </div>
+
+        <div class="calgrid" id="grid">
+          <a class="day" href="./dia-01.html" data-formato="Reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 01</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reels de 25–45s com hook + 3 dicas de detalhamento (proporção, encontros e acabamento) e finalize com CTA de palavra-chave nos comentários.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-02.html" data-formato="Reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 02</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Grave um Reel contrarian: mostre o erro comum (parede de destaque), explique o efeito no espaço (encurta vs alonga) e entregue uma alternativa + CTA por palavra-chave.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-03.html" data-formato="Reels" data-pilar="Erro comum">
+            <div class="daytop">
+              <span class="dnum">Dia 03</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Erro comum</div>
+            <div class="small">Grave um Reel em formato lista com 6–8 erros visuais + alternativa simples. Finalize com CTA por palavra‑chave para gerar comentários.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Erro comum</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-04.html" data-formato="Reels" data-pilar="Erro comum">
+            <div class="daytop">
+              <span class="dnum">Dia 04</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Erro comum</div>
+            <div class="small">Grave um Reel em lista (1–5) com opinião forte + motivo prático + alternativa. Feche pedindo a palavra-chave para enviar uma curadoria.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Erro comum</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-05.html" data-formato="Reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 05</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel em formato Top 5 com prova pessoal + open loop no #5 e CTA de comentário para enviar referências.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-06.html" data-formato="Reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 06</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel em loop “Troque A por B” com 5–7 trocas + motivo curto. Finalize com CTA de palavra-chave para pedir curadoria e incentivar salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-07.html" data-formato="Reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 07</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel de 45–60s usando: paradoxo + problema técnico + solução + plot twist + pergunta final. Use 1 número específico e cortes guiados por B-roll.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-08.html" data-formato="Reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 08</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel de 45–60s analisando 1 obra (sua ou referência): apresente a limitação, a grande sacada, 2 números e 3 “parece X, mas é Y”, e feche com pergunta binária + CTA de salvar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-09.html" data-formato="Reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 09</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reel de 30–45s com confronto + números + 3–5 sacadas técnicas em sequência. Feche com pergunta comparativa para gerar comentários.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-10.html" data-formato="Reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 10</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Grave um tour de 60s quebrando uma crença (acabamento = luxo) e prove com 2 soluções passivas + lista clara da planta. Feche com frase-manifesto e CTA de comentário/salvamento.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-11.html" data-formato="Reels" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 11</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Grave um tour de 35–50s quebrando um mito e provando com 5 decisões de projeto (solução → benefício). Feche com tese + créditos + CTA de salvar/comentar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-12.html" data-formato="Reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 12</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um tour rápido com pergunta identitária, 1 problema clássico e 2 “cirurgias” que mudaram a casa. Feche com pergunta simples pra puxar comentários e salvamentos.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-13.html" data-formato="Carrossel" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 13</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Monte um carrossel 7 slides: gancho X vs Y + conceito (biofilia) + evidência + mantra + contraste + síntese + CTA para comentar/salvar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-14.html" data-formato="Carrossel" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 14</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Monte um carrossel de 9 slides alternando tese + respiro visual + evidência + virada e finalize com CTA de DM para diagnóstico/briefing.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-15.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 15</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Crie um carrossel 7 slides: pergunta forte + prova (prints) + definição + 2 exemplos + ‘segredo’ técnico + pergunta final com CTA de marcar/salvar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-16.html" data-formato="Carrossel" data-pilar="Autoridade">
+            <div class="daytop">
+              <span class="dnum">Dia 16</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Autoridade</div>
+            <div class="small">Crie um carrossel de 7 slides com: tese forte → contexto → prova → mecanismo → aplicação no espaço → reframing + pergunta → CTA duplo. Use 1 ideia por slide e inclua 1 print de fonte.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Autoridade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-17.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 17</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Crie um carrossel 7–10 slides seguindo a sequência: referência/gancho → diagnóstico → quebra de expectativa → conceito → ações → microação → CTA. Use 1 frase-placa e 3–5 bullets práticos.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-18.html" data-formato="Reels" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 18</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Prova</div>
+            <div class="small">Use: hook filosófico + notícia quente + 5 provas visuais + manifesto + pergunta final. Grave em 60s com cortes rápidos e texto-guia numerado na tela.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-19.html" data-formato="Reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 19</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um tour de 25–45s mostrando 4–6 soluções funcionais em sequência e um “momento uau”. Feche com transformação + teaser e 1 CTA de comentário/salvar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-20.html" data-formato="Carrossel" data-pilar="Bastidores">
+            <div class="daytop">
+              <span class="dnum">Dia 20</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Bastidores</div>
+            <div class="small">Crie um carrossel 4:5 com tour do ambiente + anotações + 2 slides editoriais + prova de processo e técnico. Feche com CTA de baixa fricção (salvar/comentar/direct).</div>
+            <div class="meta">
+              <span class="badge">Pilar: Bastidores</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-21.html" data-formato="Carrossel" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 21</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Monte um carrossel de 12–15 slides com: hook (quebra de crença) + antes/depois + conceito + detalhes etiquetados + truques + bastidores + briefing + portfólio + CTA.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-22.html" data-formato="Reels" data-pilar="Bastidores">
+            <div class="daytop">
+              <span class="dnum">Dia 22</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Bastidores</div>
+            <div class="small">Grave um bastidor real (obra/marcenaria) e conte: problema do cliente → solução → 3 detalhes funcionais → especificações. Finalize com CTA de salvar/comentar e promessa de “parte 2” na finalização.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Bastidores</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-23.html" data-formato="Carrossel" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 23</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Prova</div>
+            <div class="small">Monte um carrossel 8–11 slides com promessa 2 em 1, antes/depois, 3 soluções, 1 prova técnica e CTA por DM/link. Use anotações e variação de ritmo para retenção.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-24.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 24</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Monte um carrossel com capa de curiosidade e entrega imediata (planta/solução) no slide 2. Use CTA de comentário/DM para captar leads e incentive salvamentos.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-25.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 25</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Crie um carrossel 4:5 com 1 gancho (pergunta + restrição) e 3 variações visuais da solução. Feche com CTA de escolha (I/II/III) para gerar comentários.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-26.html" data-formato="Carrossel" data-pilar="Desejo">
+            <div class="daytop">
+              <span class="dnum">Dia 26</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Desejo</div>
+            <div class="small">Crie um carrossel A vs B com 2 slides (foto + tarja). Feche com pergunta de escolha (1 ou 2) e CTA de comentário/salvar.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Desejo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-27.html" data-formato="Carrossel" data-pilar="Desejo">
+            <div class="daytop">
+              <span class="dnum">Dia 27</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Desejo</div>
+            <div class="small">Crie um carrossel 7–9 slides com hook emocional + microcenas sensoriais e traduza tudo em 3 decisões de projeto. Finalize com CTA leve (comentário/salvar/DM).</div>
+            <div class="meta">
+              <span class="badge">Pilar: Desejo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-28.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 28</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Checklist</div>
+            <div class="small">Crie um carrossel 1:1 com hook em pergunta e 5–8 opções visuais padronizadas. Feche com um slide de decisão (quando usar cada) + CTA para comentar/salvar/DM.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-29.html" data-formato="Carrossel" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 29</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Mito vs Verdade</div>
+            <div class="small">Crie um carrossel (7–9 slides) com gancho “Não é sobre X, é sobre Y”, prova visual antes/depois e feche com checklist + CTA de comentário/DM.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-30.html" data-formato="Reels" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 30</span>
+              <span class="badge">Reels</span>
+            </div>
+            <div class="dtitle">Passo a passo</div>
+            <div class="small">Grave um Reels de 25–45s com hook + 3 dicas de detalhamento (proporção, encontros e acabamento) e finalize com CTA de palavra-chave nos comentários.</div>
+            <div class="meta">
+              <span class="badge">Pilar: Passo a passo</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="como-usar">
+      <div class="shead">
+        <h2>Como usar (5 passos)</h2>
+        <div class="count">Ritmo simples para manter consistência</div>
+      </div>
+      <div class="sbody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Execução em 20–40 minutos</h3>
+            <ul class="list">
+              <li>Escolha o dia e leia a instrução como roteiro.</li>
+              <li>Separe 6–12 takes curtos (detalhes, planta, etiquetas, antes/depois).</li>
+              <li>Escreva o hook e uma frase final (tese + CTA).</li>
+              <li>Edite com cortes rápidos e texto-guia numerado quando for lista.</li>
+              <li>Publique e responda comentários com a palavra-chave/DM prometida.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Rotina semanal</h3>
+            <ul class="list">
+              <li>2 Reels de “Passo a passo” para alcance e salvamentos.</li>
+              <li>1 “Mito vs Verdade” para narrativa e autoridade.</li>
+              <li>1 “Prova” ou “Bastidores” para confiança e conversão.</li>
+              <li>1 Carrossel checklist/decisão para comentários e leads.</li>
+              <li>Reaproveite: Reels viram carrossel (prints + rótulos) e vice‑versa.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">© 2026</footer>
+  </div>
+
+  <script>
+    (function(){
+      const days = Array.from(document.querySelectorAll('.day'));
+      const countText = document.getElementById('countText');
+
+      const formatoButtons = Array.from(document.querySelectorAll('[data-filter-formato]'));
+      const pillarGroup = document.getElementById('pillarGroup');
+
+      const normalize = (s) => (s || '').trim();
+
+      const pilares = Array.from(new Set(days.map(d => normalize(d.getAttribute('data-pilar'))).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+
+      const makeBtn = (label, value) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn';
+        b.textContent = label;
+        b.setAttribute('data-filter-pilar', value);
+        return b;
+      };
+
+      const allPillarBtn = makeBtn('Pilar: Todos', 'Todos');
+      allPillarBtn.classList.add('active');
+      pillarGroup.appendChild(allPillarBtn);
+
+      pilares.forEach(p => pillarGroup.appendChild(makeBtn(p, p)));
+
+      let currentFormato = 'Todos';
+      let currentPilar = 'Todos';
+
+      const setActive = (buttons, matcherAttr, value) => {
+        buttons.forEach(btn => {
+          const v = btn.getAttribute(matcherAttr);
+          if (v === value) btn.classList.add('active');
+          else btn.classList.remove('active');
+        });
+      };
+
+      const apply = () => {
+        let shown = 0;
+        days.forEach(d => {
+          const f = normalize(d.getAttribute('data-formato'));
+          const p = normalize(d.getAttribute('data-pilar'));
+
+          const okFormato = (currentFormato === 'Todos') || (f === currentFormato);
+          const okPilar = (currentPilar === 'Todos') || (p === currentPilar);
+
+          const show = okFormato && okPilar;
+          d.style.display = show ? '' : 'none';
+          if (show) shown++;
+        });
+
+        countText.textContent = 'Exibindo ' + shown + ' de ' + days.length;
+      };
+
+      formatoButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentFormato = btn.getAttribute('data-filter-formato');
+          setActive(formatoButtons, 'data-filter-formato', currentFormato);
+          apply();
+        });
+      });
+
+      const pillarButtons = () => Array.from(document.querySelectorAll('[data-filter-pilar]'));
+      pillarGroup.addEventListener('click', (e) => {
+        const t = e.target;
+        if (!(t instanceof HTMLElement)) return;
+        if (!t.hasAttribute('data-filter-pilar')) return;
+        currentPilar = t.getAttribute('data-filter-pilar');
+        setActive(pillarButtons(), 'data-filter-pilar', currentPilar);
+        apply();
+      });
+
+      apply();
+    })();
+  </script>
+</body>
+</html>
+```
