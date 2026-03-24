@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 27 — Arquitetura — Um lar que abraça</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1120;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.56);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --r16:16px;
+      --r12:12px;
+      --g1:linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+      --g2:linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.16), rgba(251,146,60,.16));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 12% 10%, rgba(56,189,248,.12), transparent 55%),
+        radial-gradient(900px 600px at 85% 18%, rgba(34,197,94,.10), transparent 52%),
+        radial-gradient(1000px 700px at 55% 95%, rgba(251,146,60,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      line-height:1.45;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+    header{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:var(--shadow);
+      border-radius:22px;
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g2);
+      opacity:.85;
+      filter: blur(18px);
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1}
+    .topline{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .chip{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .chip strong{color:var(--text); font-weight:650}
+    .title{
+      margin:10px 0 6px;
+      font-size:22px;
+      letter-spacing:-.3px;
+      font-weight:750;
+    }
+    .subtitle{color:var(--muted); margin:0; font-size:14px}
+    .linkrow{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .link{
+      display:inline-flex; gap:10px; align-items:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.22);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .link span{font-family:var(--mono); font-size:12px; color:var(--muted2)}
+    .btn{
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.08);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:650;
+      letter-spacing:.2px;
+    }
+    .btn:hover{background:rgba(255,255,255,.12)}
+
+    .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:16px}
+    @media (min-width: 920px){
+      .grid{grid-template-columns: 1.1fr .9fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      border-radius:var(--r16);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:15px;
+      letter-spacing:.2px;
+      font-weight:780;
+      display:flex; align-items:center; gap:10px;
+    }
+    .badge{
+      display:inline-block;
+      height:10px; width:10px; border-radius:99px;
+      background:var(--g1);
+      box-shadow:0 0 0 4px rgba(255,255,255,.04);
+      flex:0 0 auto;
+    }
+    .card p{margin:8px 0; color:var(--muted); font-size:14px}
+    .card ul{margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:14px}
+    .card li{margin:7px 0}
+    .k{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--stroke);
+      padding:2px 7px;
+      border-radius:999px;
+      background:rgba(0,0,0,.22);
+      white-space:nowrap;
+    }
+    .hr{
+      height:1px; background:rgba(255,255,255,.10);
+      margin:14px 0;
+    }
+
+    .script{
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.12));
+      border-radius:14px;
+      padding:14px;
+      overflow:auto;
+    }
+    pre{
+      margin:0;
+      color:rgba(234,240,255,.92);
+      font-family:var(--mono);
+      font-size:12.8px;
+      line-height:1.45;
+      white-space:pre-wrap;
+    }
+
+    .two{display:grid; grid-template-columns: 1fr; gap:14px}
+    @media (min-width: 920px){
+      .two{grid-template-columns: 1fr 1fr}
+    }
+
+    .small{font-size:12px; color:var(--muted2)}
+    .pillrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .pill{border:1px solid var(--stroke); background:rgba(0,0,0,.18); padding:7px 10px; border-radius:999px; font-size:12px; color:var(--muted)}
+
+    .footer{
+      margin-top:14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      color:var(--muted2);
+      font-size:12px;
+    }
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,.65);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:12px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-4px)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <div class="chip"><strong>Nicho</strong>: Arquitetura</div>
+          <div class="chip"><strong>Dia</strong>: 27</div>
+          <div class="chip"><strong>Pilar</strong>: Desejo</div>
+          <div class="chip"><strong>Formato</strong>: Carrossel</div>
+        </div>
+        <button class="btn" id="copyBtn">Copiar roteiro</button>
+      </div>
+      <div class="title">Um lar que abraça: transforme sensação em projeto</div>
+      <p class="subtitle">Roteiro reproduzível para criar carrosséis emocionais (poéticos) com ponte prática para decisões de arquitetura.</p>
+      <div class="linkrow">
+        <a class="link" href="https://www.instagram.com/p/DVuBKGiFOGU/" target="_blank" rel="noreferrer">
+          <strong>Post original</strong>
+          <span>instagram.com/p/DVuBKGiFOGU</span>
+        </a>
+        <div class="small">Identidade sugerida: fundo escuro + destaques em degradê verde/azul/laranja (aqui aplicado no template).</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="badge"></span>Resumo</h2>
+        <p><strong>Ideia central:</strong> “lar com significado &gt; casa perfeita”. A peça ganha força por rejeitar o padrão irreal (anti-Instagram) e criar <strong>microcenas sensoriais</strong> que o público sente antes de entender.</p>
+        <div class="pillrow">
+          <span class="pill">Promessa: acolhimento + pertencimento</span>
+          <span class="pill">Tom: poético, íntimo, sem tecnicismo</span>
+          <span class="pill">Estratégia: emoção → ponte → dica prática</span>
+        </div>
+        <div class="hr"></div>
+        <p><strong>Objetivo do carrossel:</strong> fazer a pessoa pensar “eu quero isso na minha casa” e, em seguida, mostrar que isso é projetável (layout, luz, materialidade, circulação).</p>
+      </section>
+
+      <aside class="card">
+        <h2><span class="badge"></span>Metadados (calendário)</h2>
+        <ul>
+          <li><span class="k">Título</span> Um lar que abraça: transforme sensação em projeto</li>
+          <li><span class="k">Execução</span> Hook emocional + microcenas + 3 dicas + CTA leve</li>
+          <li><span class="k">Pilar</span> Desejo</li>
+          <li><span class="k">Formato</span> Carrossel (7–9 slides)</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="small"><strong>Boa prática:</strong> mantenha a capa com frase incompleta (“Um lar que…”) + 1 verbo gigante (âncora). Isso aumenta curiosidade e memorização.</p>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <h2><span class="badge"></span>Estrutura</h2>
+      <ul>
+        <li><strong>1) Capa</strong>: frase incompleta + verbo forte (1 palavra âncora).</li>
+        <li><strong>2) Quebra de expectativa</strong>: anti-perfeição / anti-tendência.</li>
+        <li><strong>3) Definição humana</strong>: o que significa “abraçar” (sem jargão).</li>
+        <li><strong>4) Microcenas sensoriais</strong>: 3 cenas do cotidiano (o público se vê ali).</li>
+        <li><strong>5) Ponte</strong>: emoção → decisões de projeto (3–5 itens).</li>
+        <li><strong>6) Dicas aplicáveis</strong>: 3 ações de baixa fricção (prático e salvável).</li>
+        <li><strong>7) Acolhimento</strong>: serve para diferentes orçamentos e tipos de casa.</li>
+        <li><strong>8) Fecho memorável</strong>: frase curta (estilo mantra).</li>
+        <li><strong>9) CTA</strong>: comentário + salvar + (opcional) DM com palavra-chave.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2><span class="badge"></span>Slides sugeridos (1..9)</h2>
+      <div class="two">
+        <div>
+          <p><strong>Slide 1 — Capa (hook)</strong><br><span class="k">máx 8–12 palavras</span> <span class="k">verbo 2–3x maior</span></p>
+          <div class="script"><pre>UM LAR QUE…
+ABRAÇA!</pre></div>
+
+          <p><strong>Slide 2 — Anti-perfeição</strong></p>
+          <div class="script"><pre>NÃO PRECISA SER PERFEITO.
+PRECISA FAZER SENTIDO.</pre></div>
+
+          <p><strong>Slide 3 — Definição humana</strong></p>
+          <div class="script"><pre>“LAR QUE ABRAÇA” É
+QUANDO A CASA TE RECEBE
+DO JEITO QUE VOCÊ É.</pre></div>
+
+          <p><strong>Slide 4 — Microcenas (3 cenas)</strong></p>
+          <div class="script"><pre>QUANDO VOCÊ…
+• CHEGA E RESPIRA ALIVIADO(A)
+• SENTE A LUZ DA TARDE ENTRAR
+• ENCOSTA NO SOFÁ E “DESARMA”</pre></div>
+        </div>
+
+        <div>
+          <p><strong>Slide 5 — Ponte (emoção → projeto)</strong></p>
+          <div class="script"><pre>ISSO SE DESENHA COM:
+• CIRCULAÇÃO SEM TRAVAS
+• LUZ (NATURAL + INDIRETA)
+• MATERIAIS TÁTEIS + CALMOS
+• CANTOS DE PAUSA</pre></div>
+
+          <p><strong>Slide 6 — 3 dicas (salváveis)</strong></p>
+          <div class="script"><pre>3 AJUSTES QUE MUDAM TUDO:
+1) UMA LUZ MAIS QUENTE À NOITE
+2) UM “CANTO DE CHEGADA” (GANCHO/PRATELEIRA)
+3) UMA TEXTURA QUE CONVIDA (MADEIRA/TECIDO)</pre></div>
+
+          <p><strong>Slide 7 — Acolhimento de realidades</strong></p>
+          <div class="script"><pre>NÃO É SOBRE ORÇAMENTO.
+É SOBRE INTENÇÃO
++ ESCOLHAS CERTAS.</pre></div>
+
+          <p><strong>Slide 8 — Fecho memorável</strong></p>
+          <div class="script"><pre>NÃO É A CASA MAIS BONITA.
+É A QUE É A SUA.</pre></div>
+
+          <p><strong>Slide 9 — CTA</strong></p>
+          <div class="script"><pre>O QUE FAZ SUA CASA “ABRAÇAR” VOCÊ?
+COMENTE: ABRAÇO
+(SALVE PRA LEMBRAR)</pre></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2><span class="badge"></span>Roteiro (template reproduzível)</h2>
+      <p class="small">Use como “modelo-mãe” para qualquer tema (arquitetura, interiores, paisagismo, reforma, iluminação, organização, até serviços fora do nicho). Substitua apenas os campos entre colchetes.</p>
+      <div class="script" id="scriptBlock"><pre>[SLIDE 1 — CAPA]
+UM(A) [AMBIENTE/TEMA] QUE…
+[VERBO FORTE]!
+
+[SLIDE 2 — QUEBRA DE EXPECTATIVA]
+NÃO PRECISA SER [PADRÃO/PERFEIÇÃO].
+PRECISA SER [SENSAÇÃO/NECESSIDADE REAL].
+
+[SLIDE 3 — DEFINIÇÃO HUMANA]
+“[CONCEITO]” É QUANDO
+[EXPLICAÇÃO CURTA, SEM JARGÃO].
+
+[SLIDE 4 — MICRO-CENAS (3)]
+QUANDO VOCÊ…
+• [CENA SENSORIAL 1]
+• [CENA SENSORIAL 2]
+• [CENA SENSORIAL 3]
+
+[SLIDE 5 — PONTE (EMOÇÃO → DECISÃO)]
+ISSO SE DESENHA COM:
+• [DECISÃO DE PROJETO 1]
+• [DECISÃO 2]
+• [DECISÃO 3]
+(+ opcional: [DECISÃO 4])
+
+[SLIDE 6 — DICAS APLICÁVEIS (3)]
+3 AJUSTES QUE MUDAM TUDO:
+1) [AÇÃO SIMPLES 1]
+2) [AÇÃO SIMPLES 2]
+3) [AÇÃO SIMPLES 3]
+
+[SLIDE 7 — ACOLHIMENTO]
+NÃO É SOBRE [ORÇAMENTO/REGRA].
+É SOBRE [INTENÇÃO] + [ESCOLHAS CERTAS].
+
+[SLIDE 8 — FECHO MEMORÁVEL]
+NÃO É O(A) [MAIS X].
+É O(A) QUE [FAZ SENTIDO PRA VOCÊ].
+
+[SLIDE 9 — CTA]
+QUER QUE EU TE AJUDE A [OBJETIVO]?
+COMENTE [PALAVRA] OU ME CHAME NO DIRECT.</pre></div>
+      <div class="footer">
+        <div>Dica de ritmo: slides 1–4 = emoção; 5–6 = ponte/prática; 7–9 = acolhimento + marca + ação.</div>
+        <div class="small">Palavra-chave de DM: curta, concreta, em CAPS (ex.: LAR, ABRAÇO, PAZ).</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2><span class="badge"></span>Elementos visuais</h2>
+      <ul>
+        <li><strong>Imagem base</strong>: foto real (com vida) + luz quente. Se estiver “fria”, adicione leve aquecimento e contraste suave.</li>
+        <li><strong>Composição</strong>: texto sobre área respirável (céu/parede/piso) + margens de segurança 8–10%.</li>
+        <li><strong>Tipografia</strong>: capa com serif (editorial); slides de dicas com sans (simples e legível).</li>
+        <li><strong>Legibilidade</strong>: overlay preto em gradiente de 10–25% atrás do texto; sombra mínima.</li>
+        <li><strong>Marca</strong>: logo/monograma discreto no canto inferior direito, 40–70% de opacidade.</li>
+        <li><strong>Regra de ouro</strong>: 1 ideia por slide. Poucas palavras. Um verbo âncora grande.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2><span class="badge"></span>Copy e ganchos</h2>
+      <div class="two">
+        <div>
+          <p><strong>Ganchos de capa (preencha e use)</strong></p>
+          <ul>
+            <li>“Um(a) [ambiente] que… <strong>[verbo]</strong>!”</li>
+            <li>“Não é sobre [perfeição]. É sobre [sensação].”</li>
+            <li>“A casa certa não é a mais pronta. É a mais sua.”</li>
+            <li>“Se a sua casa te acalma, ela já está certa.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Verbos fortes (âncora)</strong></p>
+          <div class="pillrow">
+            <span class="pill">abraça</span><span class="pill">acalma</span><span class="pill">descansa</span><span class="pill">reúne</span><span class="pill">respira</span><span class="pill">convida</span><span class="pill">protege</span><span class="pill">organiza</span><span class="pill">expande</span>
+          </div>
+        </div>
+        <div>
+          <p><strong>Microcenas (substituições com mesmo impacto)</strong></p>
+          <ul>
+            <li><span class="k">tátil</span> “pé descalço no [piso/material]”</li>
+            <li><span class="k">luz</span> “luz da manhã no [canto]”</li>
+            <li><span class="k">som</span> “o silêncio bom / chuva na [varanda]”</li>
+            <li><span class="k">cheiro</span> “cheiro de [café / madeira / roupa limpa]”</li>
+            <li><span class="k">ritual</span> “chegou, largou as chaves, respirou”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Ponte (emoção → projeto): frases prontas</strong></p>
+          <ul>
+            <li>“Acolhimento nasce de circulação fácil + pontos de pausa.”</li>
+            <li>“Calma é luz controlada + materiais menos reflexivos.”</li>
+            <li>“Pertencimento é casa com memória: objetos à vista, não escondidos.”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2><span class="badge"></span>CTA</h2>
+      <div class="two">
+        <div>
+          <p><strong>CTA leve (comentários)</strong></p>
+          <ul>
+            <li>“O que faz sua casa te <strong>[verbo]</strong>? Me conta em 1 frase.”</li>
+            <li>“Qual cantinho da sua casa te dá paz hoje?”</li>
+            <li>“Você é time ‘casa perfeita’ ou ‘casa com alma’?”</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>CTA de conversão (DM)</strong></p>
+          <ul>
+            <li>“Quer ajuda para traduzir seu jeito de viver em projeto? Me chama no direct com <strong>[PALAVRA]</strong>.”</li>
+            <li>“Se você me disser <strong>3 rotinas</strong> da sua casa, eu te devolvo <strong>3 ideias</strong> de layout. Direct: <strong>[PALAVRA]</strong>.”</li>
+          </ul>
+          <p class="small">Sugestão: use a palavra-chave como continuidade do conceito (ABRAÇO, LAR, CALMA, PAZ).</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2><span class="badge"></span>Checklist (criação e publicação)</h2>
+      <div class="two">
+        <div>
+          <p><strong>Checklist de conteúdo</strong></p>
+          <ul>
+            <li>Escolhi 1 verbo âncora (ex.: “abraça”) e mantive ele como fio condutor.</li>
+            <li>Incluí 3 microcenas sensoriais (sem jargão; linguagem humana).</li>
+            <li>Fiz a ponte emoção → 3 decisões de projeto (objetivas e plausíveis).</li>
+            <li>Entreguei 3 dicas simples (baixa fricção; fáceis de salvar).</li>
+            <li>Escrevi um fecho memorável (1–2 linhas) + CTA coerente.</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Checklist de design/UX do carrossel</strong></p>
+          <ul>
+            <li>Formato 1080×1350; margens de segurança 8–10%.</li>
+            <li>Texto grande e poucos caracteres por slide (até 8–12 palavras).</li>
+            <li>Overlay leve aplicado apenas quando necessário para legibilidade.</li>
+            <li>Consistência: mesma posição do título + logo fixo no canto.</li>
+            <li>Revisão final: ortografia, contraste, cortes no feed, ordem do storytelling.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2><span class="badge"></span>Variações (para outro tema, mesmo impacto)</h2>
+      <p><strong>Troca guiada (mantenha a estrutura, só substitua os “módulos”):</strong></p>
+      <ul>
+        <li><strong>Verbo âncora</strong>: escolha um verbo que represente o benefício emocional final (ex.: “organiza”, “ilumina”, “silencia”, “expande”).</li>
+        <li><strong>Microcenas</strong>: troque por cenas do universo do tema (rotina, fricções, pequenos prazeres).</li>
+        <li><strong>Ponte</strong>: transforme sensação em 3 alavancas reais (processo, ferramenta, decisão, hábito ou item de projeto).</li>
+        <li><strong>Dicas</strong>: mantenha “3 ajustes” (funciona muito para salvar) e foque em ações pequenas.</li>
+      </ul>
+      <div class="hr"></div>
+      <div class="two">
+        <div>
+          <p><strong>Exemplos em arquitetura (prontos)</strong></p>
+          <ul>
+            <li><strong>Uma sala que acolhe</strong>: assentos voltados pra conversa + luz indireta + mesa de apoio.</li>
+            <li><strong>Um quarto que descansa</strong>: blackout/controle de luz + acústica (tapete/cortina) + tons baixos.</li>
+            <li><strong>Uma cozinha que reúne</strong>: bancada de apoio + circulação sem conflito + mesa bem posicionada.</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Exemplos fora do nicho (para reutilizar o template)</strong></p>
+          <ul>
+            <li><strong>Um treino que sustenta</strong>: 3 micro-hábitos + 3 ajustes de rotina + CTA “comente CONSTÂNCIA”.</li>
+            <li><strong>Um atendimento que acalma</strong>: quebra de expectativa + cenas do cliente + 3 melhorias no processo.</li>
+            <li><strong>Um planejamento que libera</strong>: microcenas do caos → 3 alavancas → 3 passos práticos.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer" style="margin-top:18px">
+      <div>Uso recomendado: publique em dias de topo/Meio de funil (desejo), e reaproveite a mesma estrutura com verbos diferentes.</div>
+      <div>Versão template — Dia 27</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const block = document.getElementById('scriptBlock');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=> toast.classList.remove('show'), 1400);
+      }
+
+      async function copyText(){
+        const text = block.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
+          catch(err){ showToast('Não foi possível copiar automaticamente.'); }
+          document.body.removeChild(ta);
+        }
+      }
+
+      btn.addEventListener('click', copyText);
+    })();
+  </script>
+</body>
+</html>
