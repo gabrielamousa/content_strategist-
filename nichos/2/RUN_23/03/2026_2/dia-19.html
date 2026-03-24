@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 19 — Arquitetura — Tour + transformação</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630CC;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.58);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --g1: linear-gradient(90deg,#22c55e 0%,#3b82f6 45%,#f97316 100%);
+      --g2: radial-gradient(800px 400px at 20% 0%, rgba(59,130,246,.25), transparent 60%),
+            radial-gradient(700px 380px at 90% 10%, rgba(34,197,94,.22), transparent 58%),
+            radial-gradient(600px 450px at 50% 100%, rgba(249,115,22,.18), transparent 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        var(--g2),
+        linear-gradient(180deg,var(--bg0) 0%, var(--bg1) 100%);
+      min-height:100vh;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 60px}
+
+    .topbar{
+      display:flex; gap:14px; align-items:stretch; justify-content:space-between;
+      padding:16px;
+      background:rgba(14,22,48,.55);
+      border:1px solid var(--stroke);
+      border-radius:var(--r20);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .top-left{min-width:0}
+    .kicker{display:flex; flex-wrap:wrap; gap:10px; align-items:center; color:var(--muted); font-size:13px}
+    .pill{
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background:rgba(255,255,255,.03);
+    }
+    .title{
+      margin:10px 0 0;
+      font-size:22px;
+      line-height:1.15;
+      letter-spacing:-.02em;
+    }
+    .meta{
+      margin-top:8px;
+      color:var(--muted2);
+      font-size:13px;
+      display:flex; flex-wrap:wrap; gap:10px;
+    }
+    .link{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      white-space:nowrap;
+      transition: transform .12s ease, border-color .12s ease;
+    }
+    .link:hover{transform: translateY(-1px); border-color:var(--stroke2)}
+    .grad{
+      background:var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      background:rgba(14,22,48,.55);
+      border:1px solid var(--stroke);
+      border-radius:var(--r16);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0;
+      padding:16px 16px 10px;
+      font-size:15px;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+      color:rgba(234,240,255,.86);
+    }
+    .card .body{padding:0 16px 16px; color:var(--muted); font-size:14px; line-height:1.55}
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:0 16px}
+
+    .callout{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      padding:12px;
+      margin-top:10px;
+    }
+    .callout strong{color:rgba(234,240,255,.92)}
+
+    .script{
+      font-family:var(--mono);
+      font-size:12.7px;
+      line-height:1.6;
+      color:rgba(234,240,255,.82);
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:14px;
+      overflow:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .row{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;
+      padding:12px 16px 16px;
+    }
+    .btn{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      color:rgba(234,240,255,.90);
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:600;
+      letter-spacing:.01em;
+      display:inline-flex; gap:10px; align-items:center;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.22); background:rgba(255,255,255,.07)}
+    .btn-primary{
+      border:none;
+      background: linear-gradient(90deg, rgba(34,197,94,.18), rgba(59,130,246,.18), rgba(249,115,22,.18));
+      outline: 1px solid rgba(255,255,255,.16);
+    }
+    .hint{color:var(--muted2); font-size:12.8px}
+
+    ul{margin:10px 0 0 18px; padding:0}
+    li{margin:6px 0}
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 680px){
+      .cols{grid-template-columns:1fr}
+    }
+
+    .taglist{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .tag{
+      font-size:12px;
+      color:rgba(234,240,255,.78);
+      border:1px solid rgba(255,255,255,.12);
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.03);
+    }
+
+    .foot{
+      margin-top:14px;
+      color:rgba(234,240,255,.52);
+      font-size:12px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="top-left">
+        <div class="kicker">
+          <span class="pill">Nicho: <span class="grad"><strong>Arquitetura</strong></span></span>
+          <span class="pill">Dia: <strong>19</strong></span>
+          <span class="pill">Formato: <strong>Reels</strong></span>
+          <span class="pill">Pilar: <strong>Passo a passo</strong></span>
+        </div>
+        <h1 class="title"><span class="grad">Tour + transformação</span>: 6 ideias que mudam qualquer corredor</h1>
+        <div class="meta">
+          <span>Objetivo: retenção por micro-revelações + “momento uau”</span>
+          <span>Tempo alvo: 25–45s</span>
+        </div>
+      </div>
+      <div>
+        <a class="link" href="https://www.instagram.com/p/DWILjI6jGsR/" target="_blank" rel="noopener noreferrer" aria-label="Abrir post original">
+          <span style="font-family:var(--mono); font-size:12px; opacity:.9">Post original</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <div class="body">
+          <p><strong>Ideia central:</strong> mostrar um ambiente “comum” (ex.: corredor) com <strong>soluções de rotina</strong> em sequência, subindo o interesse até um <strong>detalhe surpresa</strong> (articulado/embutido/iluminação/textura). Fechar com <strong>transformação</strong> + <strong>teaser</strong> de continuação.</p>
+          <div class="callout">
+            <strong>O que faz funcionar:</strong> promessa implícita (tour + transformação), detalhes específicos do dia a dia, autoridade leve (justificativas de projeto), prova social discreta (“o cliente pediu”), e gancho de série (“essa parte eu mostro outro dia”).
+          </div>
+          <div class="taglist">
+            <span class="tag">micro-revelações</span>
+            <span class="tag">design que resolve rotina</span>
+            <span class="tag">antes/depois sem mostrar antes</span>
+            <span class="tag">serialização</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura (reproduzível)</h2>
+        <div class="divider"></div>
+        <div class="body">
+          <ul>
+            <li><strong>1) Hook (1–2s):</strong> promessa + cenário.</li>
+            <li><strong>2) Contexto (1–2s):</strong> “o problema comum”.</li>
+            <li><strong>3) Sequência 1→N (15–30s):</strong> 4–6 soluções (cada uma 2–4s).</li>
+            <li><strong>4) Decisão estética (3–6s):</strong> material/forma + motivo (benefício).</li>
+            <li><strong>5) Clímax “momento uau” (2–4s):</strong> mecanismo / iluminação / detalhe.</li>
+            <li><strong>6) Fechamento (3–6s):</strong> transformação + teaser + 1 CTA.</li>
+          </ul>
+          <div class="callout">
+            <strong>Regra de retenção:</strong> troque o plano a cada 1–2s e escreva overlays de 3–6 palavras (1 ideia por tela).
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Roteiro (fala + planos) — modelo pronto</h2>
+        <div class="body">
+          <div class="row" style="padding:0 0 12px;">
+            <div class="hint">Dica: substitua os campos entre colchetes para adaptar a qualquer tema/ambiente.</div>
+            <button class="btn btn-primary" id="copyBtn" type="button">Copiar roteiro</button>
+          </div>
+          <div id="script" class="script">[Duração: 25–45s | Edição: cortes secos | Texto na tela: 1 linha por item]
+
+0:00–0:02 (Hook — plano de entrada / walking shot)
+FALA: “Esse é o [AMBIENTE] e eu vou te mostrar [NÚMERO] soluções que transformaram ele sem aumentar área.”
+TEXTO: “Tour rápido: [AMBIENTE]”
+
+0:02–0:05 (Contexto — plano geral + apontar)
+FALA: “Aqui o desafio era [PROBLEMA COMUM: bagunça na entrada / falta de apoio / circulação estreita].”
+TEXTO: “Problema: [PROBLEMA]”
+
+0:05–0:10 (Solução 1 — close + uso real)
+FALA: “Primeiro: lugar de [OBJETO DO DIA A DIA] bem aqui, porque vira hábito.”
+TEXTO: “[Solução 1] em 1 passo”
+PLANO: close do nicho/gaveta/cesto + mão colocando o objeto.
+
+0:10–0:14 (Solução 2 — prova social discreta)
+FALA: “Isso aqui foi pedido dos clientes: [PEDIDO] — e faz muita diferença na rotina.”
+TEXTO: “Pedido real do cliente”
+PLANO: detalhe do item + ponto de vista de uso.
+
+0:14–0:18 (Solução 3 — localização estratégica)
+FALA: “E repara na posição: ficou perto de [PONTO DE USO: porta / quartos], então você usa sem pensar.”
+TEXTO: “Localização é projeto”
+PLANO: câmera mostra o caminho/fluxo (pan curto).
+
+0:18–0:24 (Solução 4 — escadinha de interesse)
+FALA: “Aqui tem [Solução 4] pra [BENEFÍCIO: apoio / organização / conforto].”
+TEXTO: “+1 solução: [benefício]”
+PLANO: close do detalhe (puxador, textura, acabamento).
+
+0:24–0:30 (Momento UAU — o ‘acontecimento’)
+FALA: “Agora o detalhe que muda tudo… olha isso.”
+TEXTO: “O detalhe que muda tudo”
+PLANO: mostrar funcionando (articulado/embutido/retrátil/LED acendendo). SFX leve (click/whoosh).
+
+0:30–0:36 (Decisão estética com justificativa)
+FALA: “A gente usou [MATERIAL/RECURSO] pra valorizar [ELEMENTO EXISTENTE] e deixar mais [SENSAÇÃO: acolhedor/leve/alto].”
+TEXTO: “[Material] com propósito”
+PLANO: pega textura + uma diagonal bonita.
+
+0:36–0:45 (Fechamento + teaser + CTA)
+FALA: “No fim, era [ANTES: sem graça/sem função] e virou [DEPOIS: organizado/acolhedor/prático]. Quer que eu mostre o [PRÓXIMO AMBIENTE/DETALHE]? Comenta ‘[PALAVRA-CHAVE]’.”
+TEXTO: “De [ANTES] → [DEPOIS]”
+PLANO: plano geral final + 1 segundo extra de respiro.
+
+[Legenda sugerida — 3 bullets + pergunta]
+• 1 decisão de layout que melhora rotina: [____]
+• 1 detalhe ‘uau’ que vale o investimento: [____]
+• 1 erro que evitamos: [____]
+Pergunta: “O que mais te incomoda no seu [AMBIENTE] hoje?”</div>
+          <div class="callout">
+            <strong>Campos para preencher (rápido):</strong> [AMBIENTE], [NÚMERO], [PROBLEMA], [OBJETO], [PEDIDO], [PONTO DE USO], [SOLUÇÃO 4], [BENEFÍCIO], [MATERIAL], [ELEMENTO EXISTENTE], [SENSAÇÃO], [ANTES], [DEPOIS], [PALAVRA-CHAVE].
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <div class="divider"></div>
+        <div class="body">
+          <div class="cols">
+            <div>
+              <strong>Planos obrigatórios</strong>
+              <ul>
+                <li>Entrada (walking shot) situando o ambiente</li>
+                <li>1 take por solução (close + mão em ação)</li>
+                <li>1 take “momento uau” (funcionando)</li>
+                <li>Plano final geral (resultado)</li>
+              </ul>
+            </div>
+            <div>
+              <strong>Edição/ritmo</strong>
+              <ul>
+                <li>Troca de plano a cada 1–2s</li>
+                <li>Texto na tela sincronizado (1 linha por item)</li>
+                <li>SFX leve no “uau” (click/whoosh)</li>
+                <li>Se tiver antes: flash de 0,5–1s no começo ou no final</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>Overlay pronto (copiar/colar):</strong>
+            <div class="taglist">
+              <span class="tag">“Tour rápido: [ambiente]”</span>
+              <span class="tag">“Problema: [x]”</span>
+              <span class="tag">“Localização é projeto”</span>
+              <span class="tag">“Detalhe que muda tudo”</span>
+              <span class="tag">“[Material] com propósito”</span>
+              <span class="tag">“De [antes] → [depois]”</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos</h2>
+        <div class="divider"></div>
+        <div class="body">
+          <strong>Hooks (escolha 1):</strong>
+          <ul>
+            <li>“Se você tem um <strong>[problema]</strong> no(a) <strong>[ambiente]</strong>, copia isso aqui.”</li>
+            <li>“Olha como esse <strong>[espaço esquecido]</strong> virou <strong>[benefício]</strong> sem aumentar área.”</li>
+            <li>“Vou te mostrar <strong>[número]</strong> decisões que mudaram o uso desse <strong>[ambiente]</strong>.”</li>
+          </ul>
+          <strong>Frases de autoridade (sem ficar técnico):</strong>
+          <ul>
+            <li>“Colocamos isso aqui porque <strong>[motivo de uso]</strong>.”</li>
+            <li>“A posição é intencional: fica perto de <strong>[ponto de uso]</strong>.”</li>
+            <li>“Escolhi <strong>[material]</strong> pra valorizar <strong>[existente]</strong>.”</li>
+          </ul>
+          <strong>Prova social discreta:</strong>
+          <ul>
+            <li>“O cliente pediu <strong>[pedido]</strong> e eu amei porque resolve <strong>[dor]</strong>.”</li>
+          </ul>
+          <strong>Teaser (continuação):</strong>
+          <ul>
+            <li>“Essa outra parte eu mostro outro dia: <strong>[tema do próximo vídeo]</strong>.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <div class="divider"></div>
+        <div class="body">
+          <strong>Escolha 1 CTA (apenas um):</strong>
+          <ul>
+            <li>“Quer que eu mostre o antes? Comenta <strong>‘ANTES’</strong>.”</li>
+            <li>“Salva esse Reel pra usar no seu projeto.”</li>
+            <li>“Quer uma solução dessas no seu <strong>[ambiente]</strong>? Me chama no direct.”</li>
+            <li>“Qual item você colocaria aqui? Comenta <strong>‘1, 2, 3 ou 4’</strong>.”</li>
+          </ul>
+          <div class="callout">
+            <strong>Regra:</strong> CTA de comentário aumenta distribuição; CTA de salvar aumenta ranqueamento; CTA de direct converte (use quando o público já está quente).
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Checklist de criação (para replicar em qualquer tema)</h2>
+        <div class="divider"></div>
+        <div class="body">
+          <div class="cols">
+            <div>
+              <strong>Pré-produção (10–15 min)</strong>
+              <ul>
+                <li>Escolha 1 <strong>ambiente comum</strong> (ou 1 “ponto chato” da casa).</li>
+                <li>Defina a promessa: <strong>“X virou Y”</strong> (função + estética).</li>
+                <li>Liste <strong>4–6 soluções</strong> em ordem crescente de interesse.</li>
+                <li>Escolha 1 <strong>momento uau</strong> (mecanismo/iluminação/oculto/material).</li>
+                <li>Separe 1 frase de <strong>prova social</strong> + 1 de <strong>justificativa</strong>.</li>
+              </ul>
+            </div>
+            <div>
+              <strong>Gravação + edição</strong>
+              <ul>
+                <li>Grave 1 take de entrada + 1 take por solução (2–4s).</li>
+                <li>Grave o “uau” funcionando (mão em quadro).</li>
+                <li>Cortes a cada 1–2s, com texto na tela sincronizado.</li>
+                <li>Som leve no “uau”; volume da fala claro (prioridade).</li>
+                <li>Finalize com plano geral (resultado) + teaser.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>Checklist de qualidade (antes de postar):</strong>
+            <ul>
+              <li>O hook promete algo específico em até 2s?</li>
+              <li>Cada solução tem <strong>função + porquê</strong> (não só “olha que lindo”)?</li>
+              <li>Tem um clímax claro (o “detalhe que muda tudo”)?</li>
+              <li>O CTA está único e explícito?</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Variações (substituições com o mesmo impacto)</h2>
+        <div class="divider"></div>
+        <div class="body">
+          <div class="cols">
+            <div>
+              <strong>Troque o ambiente</strong>
+              <ul>
+                <li>Hall/entrada</li>
+                <li>Lavabo pequeno</li>
+                <li>Cozinha compacta</li>
+                <li>Área de serviço</li>
+                <li>Varanda pequena</li>
+                <li>Home office</li>
+              </ul>
+              <div class="callout">
+                <strong>Regra:</strong> escolha ambientes com alta identificação (bagunça, falta de espaço, rotina corrida).
+              </div>
+            </div>
+            <div>
+              <strong>Troque o “momento uau”</strong>
+              <ul>
+                <li>Cabideiro articulado / trilho deslizante</li>
+                <li>Marcenaria oculta (porta camuflada)</li>
+                <li>Iluminação indireta com sensor</li>
+                <li>Nicho embutido (poucos cm, muito impacto)</li>
+                <li>Material inesperado (textura/volume) com justificativa</li>
+              </ul>
+              <div class="callout">
+                <strong>Regra:</strong> o “uau” precisa ser visível em 1–2 segundos e fácil de entender sem áudio.
+              </div>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top:12px;">
+            <strong>Adaptações para outros temas (fora de Arquitetura):</strong>
+            <ul>
+              <li><strong>Nicho beleza:</strong> “3 passos + 1 truque final” (o uau = produto/tecnologia/antes-depois).</li>
+              <li><strong>Nicho fitness:</strong> sequência de exercícios (o uau = variação que destrava o movimento).</li>
+              <li><strong>Nicho finanças:</strong> 4 ajustes no orçamento (o uau = automação/regra simples que muda tudo).</li>
+              <li><strong>Nicho educação:</strong> 5 micro-hábitos de estudo (o uau = método/atajo prático demonstrável).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Slides sugeridos (1..N)</h2>
+        <div class="divider"></div>
+        <div class="body">
+          <p class="hint">Mesmo sendo um Reels, esta sequência funciona como storyboard (e também pode virar carrossel):</p>
+          <ol style="margin:10px 0 0 18px; color:rgba(234,240,255,.72); line-height:1.55;">
+            <li>Hook: “Tour rápido: [ambiente]”</li>
+            <li>Problema comum (1 frase)</li>
+            <li>Solução 1 (função + close)</li>
+            <li>Solução 2 (pedido do cliente)</li>
+            <li>Solução 3 (localização estratégica)</li>
+            <li>Solução 4 (subindo interesse)</li>
+            <li>Detalhe que muda tudo (uau em ação)</li>
+            <li>Material com propósito (justificativa)</li>
+            <li>Transformação (de X → Y) + teaser</li>
+            <li>CTA único (comentar/salvar/direct)</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <div class="foot">Identidade: fundo escuro • cards com borda suave • destaques em degradê (verde/azul/laranja) • layout limpo e high-tech</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('script');
+      btn.addEventListener('click', async () => {
+        const text = script.innerText;
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = old, 1400);
+        }catch(e){
+          const range = document.createRange();
+          range.selectNodeContents(script);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          document.execCommand('copy');
+          sel.removeAllRanges();
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = old, 1400);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
