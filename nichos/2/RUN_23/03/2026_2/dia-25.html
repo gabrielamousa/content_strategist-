@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roteiro IG — Arquitetura (Dia 25)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630cc;
+      --card2:#0C1228cc;
+      --text:#EAF0FF;
+      --muted:#AEB9D6;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:18px;
+      --r2:14px;
+      --grad: linear-gradient(90deg, #33D17A 0%, #2D8CFF 45%, #FF8A2A 100%);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", sans-serif;
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(45,140,255,.28), transparent 60%),
+        radial-gradient(900px 600px at 90% 0%, rgba(51,209,122,.22), transparent 55%),
+        radial-gradient(900px 700px at 60% 105%, rgba(255,138,42,.18), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      line-height:1.35;
+    }
+
+    .wrap{max-width:1080px; margin:0 auto; padding:28px 18px 80px;}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.75), rgba(12,18,40,.55));
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--radius) + 6px);
+      padding:18px 18px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--grad);
+      opacity:.14;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+
+    .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+
+    .pillRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      padding:8px 10px;
+      border-radius:999px;
+      color:var(--muted);
+      font-size:13px;
+      letter-spacing:.2px;
+      backdrop-filter: blur(8px);
+    }
+    .dot{width:8px; height:8px; border-radius:99px; background: var(--grad);}
+
+    h1{
+      margin:12px 0 6px;
+      font-size:20px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .link{
+      color:var(--text);
+      text-decoration:none;
+      border-bottom:1px solid rgba(255,255,255,.18);
+    }
+    .link:hover{border-bottom-color:rgba(255,255,255,.45)}
+
+    .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px;}
+    @media(min-width: 900px){
+      .grid{grid-template-columns: 1.1fr .9fr;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.66), rgba(12,18,40,.45));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card.tight{padding:14px;}
+
+    .card .title{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom:10px;
+    }
+    .card h2{
+      margin:0;
+      font-size:15px;
+      letter-spacing:.2px;
+    }
+    .badge{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      padding:6px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+
+    .card:after{
+      content:"";
+      position:absolute;
+      left:14px; right:14px; top:0;
+      height:2px;
+      background: var(--grad);
+      opacity:.65;
+      border-radius:999px;
+    }
+
+    ul{margin:10px 0 0; padding-left:18px; color:var(--muted)}
+    li{margin:6px 0}
+
+    .callout{
+      border:1px dashed rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      border-radius: var(--r2);
+      padding:12px;
+      color:var(--muted);
+    }
+
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12.5px;
+      color: #DCE6FF;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--r2);
+      padding:12px;
+      margin-top:10px;
+    }
+
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+    button{
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:600;
+      letter-spacing:.2px;
+    }
+    button.primary{
+      background: linear-gradient(90deg, rgba(51,209,122,.22), rgba(45,140,255,.22), rgba(255,138,42,.22));
+      border-color: rgba(255,255,255,.22);
+    }
+    button:hover{border-color: rgba(255,255,255,.32)}
+
+    .two{display:grid; grid-template-columns: 1fr; gap:12px;}
+    @media(min-width: 900px){.two{grid-template-columns: 1fr 1fr;}}
+
+    .k{color:#DDE7FF}
+    .muted{color:var(--muted)}
+
+    .divider{height:1px; background: rgba(255,255,255,.10); margin:12px 0;}
+
+    .slides{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin-top: 10px;
+    }
+    @media(min-width: 720px){
+      .slides{grid-template-columns: 1fr 1fr;}
+    }
+    .slide{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .slide .n{font-weight:700; font-size:12px; color:#DCE6FF; opacity:.9;}
+    .slide .t{margin-top:6px; color:var(--muted); font-size:13px;}
+
+    footer{margin-top:16px; color:var(--muted); font-size:12.5px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header>
+      <div class="topline">
+        <div class="pillRow">
+          <div class="pill"><span class="dot"></span><span><span class="k">Nicho:</span> Arquitetura</span></div>
+          <div class="pill"><span class="k">Dia:</span> 25</div>
+          <div class="pill"><span class="k">Formato:</span> Carrossel</div>
+          <div class="pill"><span class="k">Pilar:</span> Passo a passo</div>
+        </div>
+        <div class="pill"><span class="k">Original:</span> <a class="link" href="https://www.instagram.com/p/DVlthJbFk9W/" target="_blank" rel="noopener">instagram.com/p/DVlthJbFk9W</a></div>
+      </div>
+      <h1>Dá pra melhorar <span style="background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;">[X]</span> sem <span style="background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;">[Y]</span>? (3 versões)</h1>
+      <p class="sub">Roteiro reproduzível para posts comparativos: 1 gancho + 3 alternativas visuais + CTA de escolha.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="title">
+          <h2>Resumo</h2>
+          <span class="badge">Objetivo: retenção + comentários</span>
+        </div>
+        <div class="callout">
+          <div><span class="k">Mecânica:</span> pergunta com restrição → promessa de “3 versões” → comparação visual → convite de escolha (I/II/III).</div>
+          <div class="divider"></div>
+          <div><span class="k">Quando usar:</span> antes/depois, estudos de fachada, layout, iluminação, marcenaria, paisagismo, paleta, materiais, soluções low cost vs premium.</div>
+        </div>
+
+        <div class="title" style="margin-top:14px;">
+          <h2>Estrutura (macro)</h2>
+          <span class="badge">4 slides</span>
+        </div>
+        <ul>
+          <li><span class="k">Slide 1:</span> Gancho (pergunta) + contexto/limitação + promessa “Deslize pra ver 3 versões”.</li>
+          <li><span class="k">Slide 2:</span> Versão I (solução A) — diferença clara e legível.</li>
+          <li><span class="k">Slide 3:</span> Versão II (solução B) — contraste real (material/paleta/layout).</li>
+          <li><span class="k">Slide 4:</span> Versão III (solução C) + CTA de comentário (“I/II/III”).</li>
+        </ul>
+      </section>
+
+      <section class="card tight">
+        <div class="title">
+          <h2>Botões rápidos</h2>
+          <span class="badge">UX</span>
+        </div>
+        <p class="muted" style="margin:0;">Copie o roteiro abaixo e substitua os campos <span class="k">[ ]</span>.</p>
+        <div class="btns">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="selectBtn">Selecionar texto</button>
+        </div>
+        <footer>Funciona melhor com imagens hero (foto/render) e texto em “etiqueta” curta. Evite parágrafos.</footer>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="title">
+        <h2>Roteiro (texto copiável)</h2>
+        <span class="badge">substituível</span>
+      </div>
+      <div class="mono" id="scriptText">CARROSSEL 4 SLIDES — MODELO
+
+SLIDE 1 — GANCHO + PROMESSA
+Título (2 linhas):
+“Dá pra [BENEFÍCIO PRINCIPAL]
+sem [RESTRIÇÃO]?”
+Micro-CTA (base): “Deslize pra ver 3 versões.”
+Contexto opcional (bem curto, se precisar): “Situação: [2–5 palavras]”
+
+SLIDE 2 — VERSÃO I (Solução A)
+Topo: “Versão I”
+Rodapé opcional (1 linha): “Foco: [CONCEITO 1]”
+
+SLIDE 3 — VERSÃO II (Solução B)
+Topo: “Versão II”
+Rodapé opcional (1 linha): “Foco: [CONCEITO 2]”
+
+SLIDE 4 — VERSÃO III (Solução C) + CTA
+Topo: “Versão III”
+CTA (base): “Qual você faria? I, II ou III?”
+CTA bônus (pequeno, opcional): “Comenta I/II/III que eu digo prós e contras.”
+
+CAMPOS PARA PREENCHER
+[BENEFÍCIO PRINCIPAL] = (ex.: ampliar, iluminar, modernizar, integrar, organizar)
+[RESTRIÇÃO] = (ex.: sem quebrar, sem trocar esquadrias, sem obra molhada, com baixo orçamento, mantendo o piso)
+[CONCEITO 1/2] = (ex.: tons claros, iluminação, layout, marcenaria, paisagismo, textura, contraste)
+</div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="title">
+        <h2>Elementos visuais</h2>
+        <span class="badge">high-tech clean</span>
+      </div>
+      <div class="two">
+        <div class="callout">
+          <div class="k">Composição (reproduzível)</div>
+          <ul>
+            <li>Imagem hero em tela cheia (foto/render).</li>
+            <li>Texto em etiquetas brancas (1 ideia por etiqueta).</li>
+            <li>Seta discreta nos slides 1–3 (indicando “arraste”).</li>
+            <li>Assinatura/logo fixo no canto (consistência).</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <div class="k">Especificação prática</div>
+          <ul>
+            <li>Tamanho: 1080×1350 (4:5).</li>
+            <li>Margens de segurança: 6–8% nas bordas.</li>
+            <li>Etiqueta: padding confortável, sombra suave p/ legibilidade.</li>
+            <li>Tipografia: 1 família (sans elegante) + pesos consistentes.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="title">
+        <h2>Copy e ganchos</h2>
+        <span class="badge">modelos</span>
+      </div>
+      <div class="two">
+        <div class="callout">
+          <div class="k">Fórmulas que mantêm o impacto</div>
+          <ul>
+            <li><span class="k">Pergunta + restrição:</span> “Dá pra [X] sem [Y]?”</li>
+            <li><span class="k">Troca de prioridade:</span> “Como ganhar [X] sem perder [Y]?”</li>
+            <li><span class="k">Promessa quantificada:</span> “3 versões/3 caminhos/3 soluções.”</li>
+            <li><span class="k">Comparação:</span> “Qual opção faz mais sentido pro seu caso?”</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <div class="k">Banco rápido (Arquitetura)</div>
+          <ul>
+            <li>“Dá pra <span class="k">modernizar a fachada</span> sem <span class="k">trocar janelas</span>?”</li>
+            <li>“Dá pra <span class="k">iluminar melhor</span> sem <span class="k">rebaixar o forro</span>?”</li>
+            <li>“Dá pra <span class="k">criar home office</span> sem <span class="k">perder o quarto</span>?”</li>
+            <li>“Dá pra <span class="k">ganhar armazenamento</span> sem <span class="k">pesar o ambiente</span>?”</li>
+            <li>“Dá pra <span class="k">integrar cozinha e sala</span> sem <span class="k">mudar hidráulica</span>?”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="title">
+        <h2>CTA</h2>
+        <span class="badge">comentários + salvamentos</span>
+      </div>
+      <div class="two">
+        <div class="callout">
+          <div class="k">CTA principal (simples de responder)</div>
+          <ul>
+            <li>“Qual você faria? <span class="k">I, II ou III</span>?”</li>
+            <li>“Qual é mais a sua cara: <span class="k">I/II/III</span>?”</li>
+            <li>“Comenta <span class="k">I/II/III</span> que eu te digo os prós e contras.”</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <div class="k">CTA secundário (opcional)</div>
+          <ul>
+            <li>“Salve pra usar como referência.”</li>
+            <li>“Quer que eu adapte pro seu caso? Comente <span class="k">‘[TEMA]’</span> + sua maior dificuldade.”</li>
+            <li>“Me diga: sua restrição é <span class="k">orçamento</span>, <span class="k">prazo</span> ou <span class="k">obra</span>?”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="title">
+        <h2>Checklist de criação</h2>
+        <span class="badge">pré + produção + publicação</span>
+      </div>
+      <div class="two">
+        <div class="callout">
+          <div class="k">Antes (clareza)</div>
+          <ul>
+            <li>Defina <span class="k">problema</span>: pequeno/escuro/datado/sem storage etc.</li>
+            <li>Defina <span class="k">restrição real</span>: sem quebrar/sem trocar X/baixo orçamento/prazo curto.</li>
+            <li>Escolha <span class="k">3 abordagens diferentes</span> (não “3 variações mínimas”).</li>
+            <li>Garanta que dá pra entender em <span class="k">1 segundo</span> por slide.</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <div class="k">Produção (execução)</div>
+          <ul>
+            <li>Use a <span class="k">mesma câmera/ângulo</span> nas 3 versões (comparação justa).</li>
+            <li>Mantenha texto em <span class="k">1–2 etiquetas</span> por slide.</li>
+            <li>Adicione seta nos slides 1–3; remova no slide final.</li>
+            <li>Revise contraste: etiqueta legível em áreas “calmas” da imagem.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="two">
+        <div class="callout">
+          <div class="k">Legenda (rápida e funcional)</div>
+          <ul>
+            <li>Repita a pergunta do slide 1 na 1ª linha.</li>
+            <li>Em 3 bullets, descreva o foco de cada versão.</li>
+            <li>Feche com a pergunta “I/II/III?” + “salve”.</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <div class="k">Publicação</div>
+          <ul>
+            <li>Hashtags: 3–8 específicas (ex.: #arquitetura #reforma #interiores + tema).</li>
+            <li>Capa: use o slide 1 (gancho) como capa.</li>
+            <li>Responder comentários: incentive justificativa (“por quê?”) para aumentar a thread.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="title">
+        <h2>Variações (para outros temas sem perder o efeito)</h2>
+        <span class="badge">substituições equivalentes</span>
+      </div>
+      <div class="two">
+        <div class="callout">
+          <div class="k">Trocas que mantêm a estrutura</div>
+          <ul>
+            <li><span class="k">3 versões</span> → 3 níveis: “Essencial / Intermediário / Premium”.</li>
+            <li><span class="k">Versão I/II/III</span> → “Opção A/B/C” (se não quiser numeração romana).</li>
+            <li><span class="k">Sem [Y]</span> → “mantendo [Y]” (mesmo gatilho, tom mais suave).</li>
+            <li><span class="k">CTA de escolha</span> → CTA de diagnóstico: “Qual é sua restrição? (1) orçamento (2) prazo (3) obra”.</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <div class="k">Temas plug-and-play</div>
+          <ul>
+            <li><span class="k">Iluminação:</span> “clarear sem rebaixar / sem quebrar”.</li>
+            <li><span class="k">Fachada:</span> “atualizar sem trocar esquadrias”.</li>
+            <li><span class="k">Apartamento compacto:</span> “ampliar sensação sem ampliar área”.</li>
+            <li><span class="k">Cozinha:</span> “integrar sem mexer na hidráulica”.</li>
+            <li><span class="k">Quarto:</span> “mais armazenamento sem pesar”.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="title">
+        <h2>Slides sugeridos (1..4)</h2>
+        <span class="badge">wireframe textual</span>
+      </div>
+      <div class="slides">
+        <div class="slide"><div class="n">Slide 1</div><div class="t"><span class="k">Topo (etiqueta):</span> “Dá pra [X] sem [Y]?”<br><span class="k">Base (etiqueta):</span> “Deslize pra ver 3 versões.”<br><span class="k">Fundo:</span> “antes” ou cenário neutro.</div></div>
+        <div class="slide"><div class="n">Slide 2</div><div class="t"><span class="k">Topo:</span> “Versão I”<br><span class="k">Opcional:</span> “Foco: [conceito 1]”<br><span class="k">Fundo:</span> solução A (mudança evidente).</div></div>
+        <div class="slide"><div class="n">Slide 3</div><div class="t"><span class="k">Topo:</span> “Versão II”<br><span class="k">Opcional:</span> “Foco: [conceito 2]”<br><span class="k">Fundo:</span> solução B (contraste real).</div></div>
+        <div class="slide"><div class="n">Slide 4</div><div class="t"><span class="k">Topo:</span> “Versão III”<br><span class="k">Base (CTA):</span> “Qual você faria? I, II ou III?”<br><span class="k">Fundo:</span> solução C (a mais “polêmica” ou a mais forte).</div></div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    (function(){
+      const textEl = document.getElementById('scriptText');
+      const copyBtn = document.getElementById('copyBtn');
+      const selectBtn = document.getElementById('selectBtn');
+
+      function selectText(){
+        const range = document.createRange();
+        range.selectNodeContents(textEl);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+
+      async function copyText(){
+        const text = textEl.innerText;
+        try{
+          await navigator.clipboard.writeText(text);
+          copyBtn.innerText = 'Copiado!';
+          setTimeout(()=> copyBtn.innerText = 'Copiar roteiro', 1200);
+        }catch(e){
+          selectText();
+          document.execCommand('copy');
+          copyBtn.innerText = 'Copiado!';
+          setTimeout(()=> copyBtn.innerText = 'Copiar roteiro', 1200);
+        }
+      }
+
+      copyBtn.addEventListener('click', copyText);
+      selectBtn.addEventListener('click', selectText);
+    })();
+  </script>
+</body>
+</html>
