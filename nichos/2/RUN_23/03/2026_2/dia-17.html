@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Roteiro reproduzível — Arquitetura (Dia 17)</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.04);
+      --card2: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --green:#28E98C;
+      --blue:#42A5FF;
+      --orange:#FFB45A;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --grad: linear-gradient(90deg, rgba(40,233,140,.95), rgba(66,165,255,.95) 50%, rgba(255,180,90,.95));
+      --gradSoft: linear-gradient(90deg, rgba(40,233,140,.18), rgba(66,165,255,.18) 50%, rgba(255,180,90,.18));
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(66,165,255,.22), transparent 60%),
+        radial-gradient(1000px 600px at 85% 10%, rgba(40,233,140,.18), transparent 60%),
+        radial-gradient(900px 700px at 50% 120%, rgba(255,180,90,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    a{color:inherit; text-decoration:none;}
+    a.underline{text-decoration:underline; text-decoration-color: rgba(255,255,255,.25);}
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 64px;
+    }
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+
+    .headerTop{
+      padding:18px 18px 0;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .pillRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .pill{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.25);
+      color: var(--muted);
+    }
+    .pill strong{color: var(--text); font-weight:700;}
+    .pill.grad{
+      border-color: rgba(255,255,255,.12);
+      background: var(--gradSoft);
+      color: var(--text);
+    }
+
+    .titleBlock{padding:12px 18px 18px;}
+    h1{
+      margin:10px 0 6px;
+      font-size:26px;
+      line-height:1.15;
+      letter-spacing:-0.02em;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size:14px;
+      line-height:1.5;
+      max-width:78ch;
+    }
+    .linkRow{
+      margin-top:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size:14px;
+      transition: transform .08s ease, background .18s ease, border-color .18s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn:hover{background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18);}
+    .btn:active{transform: translateY(1px);}
+
+    .btnPrimary{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border-color: rgba(255,255,255,.18);
+      position:relative;
+    }
+    .btnPrimary::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius: 12px;
+      padding:1px;
+      background: var(--grad);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    main{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 920px){
+      main{grid-template-columns:1fr;}
+    }
+
+    .card{
+      border-radius: var(--radius);
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding:14px 14px 10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: rgba(234,240,255,.85);
+    }
+
+    .tag{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .tag.grad{background: var(--gradSoft); color: var(--text);}
+
+    .bd{padding:14px;}
+    .bd p{margin:0 0 10px; color: var(--muted); line-height:1.6; font-size:14px;}
+    .bd p:last-child{margin-bottom:0;}
+
+    .list{
+      margin:10px 0 0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:10px;
+    }
+
+    .li{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius2);
+      padding:12px;
+    }
+    .li .k{
+      font-family: var(--mono);
+      font-size:12px;
+      color: var(--muted2);
+      margin-bottom:6px;
+    }
+    .li .v{font-size:14px; line-height:1.55; color: var(--text);}
+    .li .v b{
+      background: var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight:800;
+    }
+
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media (max-width: 680px){ .grid2{grid-template-columns:1fr;} }
+
+    .callout{
+      border-radius: var(--radius);
+      border:1px dashed rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
+      padding:12px;
+      color: var(--muted);
+      line-height:1.6;
+      font-size:14px;
+    }
+    .callout b{
+      background: var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+    }
+
+    textarea{
+      width:100%;
+      min-height: 520px;
+      resize: vertical;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      padding:14px;
+      font-size:13px;
+      line-height:1.5;
+      font-family: var(--mono);
+      outline:none;
+    }
+
+    .footerNote{
+      margin-top:12px;
+      color: var(--muted2);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(10,12,18,.86);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      box-shadow: 0 16px 50px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(-2px);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headerTop">
+        <div class="pillRow">
+          <div class="pill"><strong>Nicho</strong>: Arquitetura</div>
+          <div class="pill"><strong>Dia</strong>: 17</div>
+          <div class="pill grad"><strong>Formato</strong>: Carrossel (7–10 slides)</div>
+          <div class="pill"><strong>Pilar</strong>: Passo a passo</div>
+        </div>
+        <div class="pillRow">
+          <a class="btn" href="https://www.instagram.com/p/DHlEjCXN-Xy/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <div class="titleBlock">
+        <h1>Carrossel que prende: gancho + tese + prova + solução</h1>
+        <p class="sub">Roteiro reproduzível para Arquitetura (e adaptável para qualquer tema): use referência/cena real, faça um diagnóstico curto, quebre a expectativa com um “culpado não óbvio”, apresente um conceito e entregue ações práticas + microação + CTA.</p>
+        <div class="linkRow">
+          <a class="underline" href="https://www.instagram.com/p/DHlEjCXN-Xy/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DHlEjCXN-Xy/</a>
+          <div class="pill" style="margin-left:auto;"><span style="opacity:.75;">Identidade:</span> fundo escuro • cards suaves • destaques em degradê</div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="hd">
+          <h2>Roteiro</h2>
+          <span class="tag grad">Cole no Canva / Notion</span>
+        </div>
+        <div class="bd">
+          <textarea id="roteiro" spellcheck="false">TEMPLATE — CARROSSEL (7–10 SLIDES)
+
+[PREPARO RÁPIDO — preencha antes]
+Tema central: ______________________________
+Público: __________________________________
+Dor principal: ______________________________
+Desejo/resultado: __________________________
+“Vilão óbvio” (o que todos culpam): __________
+Causa real (sua tese): ______________________
+Conceito (sua lente): _______________________
+Provas/sinais (3): 1) ______ 2) ______ 3) ______
+Ações práticas (4): 1) ______ 2) ______ 3) ______ 4) ______
+Microação (1º passo hoje): __________________
+CTA final (engajamento ou direct): ___________
+
+--------------------------------------------
+SLIDE 1 — CAPA (HOOK + CONTEXTO POP)
+Linha pequena (contexto): “O(a) [referência/assunto do momento] traz um alerta:”
+Headline (gigante): “A [termo forte / ideia curta]”
+Micro-CTA: “Vem entender →”
+
+Opções de substituição (mesmo impacto):
+- Referência cultural: série/filme/notícia/tendência do TikTok
+- Termo forte: “a casa que cansa”, “a planta que separa”, “o conforto que falta”, “o erro invisível”
+
+SLIDE 2 — PONTE PARA VIDA REAL (VALIDAÇÃO)
+Texto (2–3 linhas): descreva uma cena cotidiana do público.
+Fecho: “Isso já está acontecendo.” / “E pode ser por um motivo bem específico.”
+
+SLIDE 3 — DIAGNÓSTICO (AMPLIA O PROBLEMA)
+Parágrafo único (até 6–8 linhas):
+Use CONTRASTE: “mais ______ / menos ______”
+Ex.: “Mais tempo em casa, menos descanso. Mais estímulo, menos silêncio.”
+
+SLIDE 4 — QUEBRA DE EXPECTATIVA (CULPADO NÃO ÓBVIO)
+Abertura: “E não é só culpa de [vilão óbvio].”
+Em seguida, 2–4 bullets apontando fatores estruturais/espaciais/processuais.
+Ex. (Arquitetura): fluxo ruim, iluminação inadequada, acústica, falta de apoio/armazenamento.
+
+SLIDE 5 — FRASE-PLACA (MEMORÁVEL)
+Headline (gigante): “Menos ______. Mais ______.”
+Linha de apoio (1–2 linhas): traduza para emoção/rotina.
+Objetivo: frase compartilhável.
+
+SLIDE 6 — TESE + CONCEITO (AUTORIDADE SEM JARGÃO)
+Headline: “A arquitetura influencia ______.”
+Sub: “Minha lente: [conceito].”
+3 bullets:
+— O que é (em 1 linha)
+— Onde aparece (em 1 linha)
+— Por que importa (em 1 linha)
+
+SLIDE 7 — AÇÕES PRÁTICAS (LISTA ACIONÁVEL)
+4 bullets curtos (verbo no imperativo):
+— ______
+— ______
+— ______
+— ______
+Fecho: “Isso já muda a sensação do espaço.”
+
+SLIDE 8 — FECHAMENTO ESPERANÇOSO (MICROAÇÃO)
+Frase: “Você não precisa fazer tudo agora.”
+Microação: “Comece por: ______ (um cômodo / 1 ajuste / 15 min).”
+
+SLIDE 9 — CTA DIRETO (ENGAJAMENTO/CONVERSÃO)
+Headline: “Qual parte da sua casa mais te atrapalha hoje?”
+Opções de CTA:
+- Engajamento: “Comente [cômodo] + o que te incomoda.”
+- Salvamento: “Salve para revisar quando for mexer no layout.”
+- Compartilhamento: “Envie para alguém que está reformando.”
+- Conversão (direct): “Me mande ‘PLANTA’ no direct que eu sugiro 1 melhoria rápida.”
+
+--------------------------------------------
+CHECK DE QUALIDADE (antes de postar)
+- 1 ideia por slide
+- 1 palavra-chave destacada por slide (máx. 2)
+- 1 slide “respiro” (frase-placa)
+- 3–5 ações realmente aplicáveis
+- CTA claro (uma única ação)
+- Texto legível com overlay escuro na foto
+
+DICA DE RITMO
+Slides 1–2: curiosidade + identificação
+Slides 3–4: explicação + quebra de expectativa
+Slides 5–7: memorável + utilidade
+Slides 8–9: esperança + ação</textarea>
+          <div class="footerNote">Sugestão de tamanho: 1080×1350 (4:5). Use fotos escuras + overlay 50–70% para legibilidade.</div>
+        </div>
+      </section>
+
+      <aside style="display:grid; gap:14px;">
+        <section class="card">
+          <div class="hd">
+            <h2>Resumo</h2>
+            <span class="tag">Objetivo: retenção + salvamento</span>
+          </div>
+          <div class="bd">
+            <p><b style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">Fórmula</b>: referência/gancho → validação → diagnóstico → “não é só X” → frase-placa → conceito → ações → microação → CTA.</p>
+            <div class="callout"><b>O que torna reproduzível</b>: a estrutura é fixa, e você só troca (1) referência, (2) dor, (3) vilão óbvio, (4) tese, (5) conceito, (6) lista de ações.</div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <h2>Estrutura</h2>
+            <span class="tag grad">Macroformato</span>
+          </div>
+          <div class="bd">
+            <ul class="list">
+              <li class="li"><div class="k">Slides</div><div class="v">7–10 (ideal: <b>9</b>)</div></li>
+              <li class="li"><div class="k">Tipo</div><div class="v">Narrativo + tese + prova + solução + convite</div></li>
+              <li class="li"><div class="k">Ritmo</div><div class="v">Alternar <b>texto</b> (explica) com <b>frase grande</b> (respira)</div></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <h2>Slides sugeridos (1..9)</h2>
+            <span class="tag">Sequência pronta</span>
+          </div>
+          <div class="bd">
+            <ul class="list">
+              <li class="li"><div class="k">1</div><div class="v"><b>Hook</b> + referência + “vem entender”</div></li>
+              <li class="li"><div class="k">2</div><div class="v">Cena real: <b>isso já acontece</b></div></li>
+              <li class="li"><div class="k">3</div><div class="v">Diagnóstico com <b>contraste</b></div></li>
+              <li class="li"><div class="k">4</div><div class="v">Quebra: <b>não é só</b> o vilão óbvio</div></li>
+              <li class="li"><div class="k">5</div><div class="v">Frase-placa <b>compartilhável</b></div></li>
+              <li class="li"><div class="k">6</div><div class="v">Tese + <b>conceito</b> (3 bullets)</div></li>
+              <li class="li"><div class="k">7</div><div class="v"><b>Exemplos práticos</b> (4–5 bullets)</div></li>
+              <li class="li"><div class="k">8</div><div class="v">Fechamento: <b>microação</b></div></li>
+              <li class="li"><div class="k">9</div><div class="v"><b>CTA</b> (1 ação clara)</div></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <h2>Elementos visuais</h2>
+            <span class="tag grad">Direção de arte</span>
+          </div>
+          <div class="bd">
+            <div class="grid2">
+              <div class="li">
+                <div class="k">Base</div>
+                <div class="v">Foto em tela cheia + <b>overlay escuro</b> (50–70%)</div>
+              </div>
+              <div class="li">
+                <div class="k">Destaque</div>
+                <div class="v">1 palavra-chave em <b>cor quente</b> (laranja/amarelo)</div>
+              </div>
+              <div class="li">
+                <div class="k">Tipografia</div>
+                <div class="v">Sans condensada bold (manchete) + corpo na mesma família</div>
+              </div>
+              <div class="li">
+                <div class="k">Consistência</div>
+                <div class="v">Mesmas margens, tamanhos e estilo de destaque em todos os slides</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <h2>Copy e ganchos</h2>
+            <span class="tag">Modelos</span>
+          </div>
+          <div class="bd">
+            <ul class="list">
+              <li class="li"><div class="k">Gancho de referência</div><div class="v">“O(a) [série/notícia] traz um alerta: <b>[termo]</b>.”</div></li>
+              <li class="li"><div class="k">Validação</div><div class="v">“Se você sente ______ no fim do dia, isso pode ter uma causa no espaço.”</div></li>
+              <li class="li"><div class="k">Quebra</div><div class="v">“E não é só culpa de <b>[vilão óbvio]</b>.”</div></li>
+              <li class="li"><div class="k">Frase-placa</div><div class="v">“Menos ______. Mais <b>______</b>.”</div></li>
+              <li class="li"><div class="k">Promessa</div><div class="v">“Aqui vão 4 ajustes que mudam a sensação sem obra grande.”</div></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <h2>CTA</h2>
+            <span class="tag grad">Escolha 1</span>
+          </div>
+          <div class="bd">
+            <ul class="list">
+              <li class="li"><div class="k">Engajamento</div><div class="v">“Comente: qual espaço mais te incomoda e por quê?”</div></li>
+              <li class="li"><div class="k">Salvamento</div><div class="v">“Salve para revisar quando for mexer na planta/layout.”</div></li>
+              <li class="li"><div class="k">Compartilhar</div><div class="v">“Envie para alguém que está reformando.”</div></li>
+              <li class="li"><div class="k">Conversão (Direct)</div><div class="v">“Me mande <b>‘PLANTA’</b> no direct que eu sugiro 1 melhoria rápida.”</div></li>
+            </ul>
+            <p style="margin-top:10px;">Regra: <b>um CTA por post</b> (para não dividir ação).</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <h2>Checklist</h2>
+            <span class="tag">Criação e revisão</span>
+          </div>
+          <div class="bd">
+            <ul class="list">
+              <li class="li"><div class="k">Conteúdo</div><div class="v">Dor definida + tese em 1 frase + vilão óbvio definido</div></li>
+              <li class="li"><div class="k">Slides</div><div class="v">1 ideia/slide • 1 frase-placa • 4 ações • microação</div></li>
+              <li class="li"><div class="k">Texto</div><div class="v">Frases curtas • sem jargão • contraste “mais/menos” no slide 3</div></li>
+              <li class="li"><div class="k">Design</div><div class="v">Overlay suficiente • alto contraste • margens 8–10%</div></li>
+              <li class="li"><div class="k">Publicação</div><div class="v">Legenda reforça tese + repete CTA • 3–8 hashtags nichadas (opcional)</div></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <h2>Variações</h2>
+            <span class="tag grad">Adaptações</span>
+          </div>
+          <div class="bd">
+            <ul class="list">
+              <li class="li"><div class="k">Sem referência cultural</div><div class="v">Troque por: “Um padrão que vejo em toda reforma: <b>______</b>.”</div></li>
+              <li class="li"><div class="k">Mais técnico (sem perder o simples)</div><div class="v">No slide 6, adicione 1 linha: “Sinal de que isso existe: ______.”</div></li>
+              <li class="li"><div class="k">Tema fora de Arquitetura</div><div class="v">Mantenha: vilão óbvio → causa real → conceito → ações → microação. Só substitua “espaço/arquitetura” pelo seu <b>sistema</b> (processo, rotina, produto, treino).</div></li>
+              <li class="li"><div class="k">Versão curta (7 slides)</div><div class="v">Junte 2+3 e 8+9. Mantenha a frase-placa e a lista prática.</div></li>
+            </ul>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado para a área de transferência</div>
+
+  <script>
+    const btn = document.getElementById('copyBtn');
+    const ta = document.getElementById('roteiro');
+    const toast = document.getElementById('toast');
+
+    function showToast(){
+      toast.classList.add('show');
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=>toast.classList.remove('show'), 1600);
+    }
+
+    btn.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(ta.value);
+        showToast();
+      }catch(e){
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        showToast();
+      }
+    });
+  </script>
+</body>
+</html>
