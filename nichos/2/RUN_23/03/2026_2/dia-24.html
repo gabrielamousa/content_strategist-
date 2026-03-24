@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 24 — Arquitetura — Reveal de projeto + planta</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B132B;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.58);
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg, #35F2A6 0%, #39B6FF 45%, #FF9F3F 100%);
+      --g2: radial-gradient(1000px 400px at 20% 0%, rgba(57,182,255,.18), transparent 60%),
+            radial-gradient(900px 380px at 80% 10%, rgba(53,242,166,.16), transparent 60%),
+            radial-gradient(900px 420px at 50% 90%, rgba(255,159,63,.14), transparent 65%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+    }
+    a{color:inherit; text-decoration:none}
+    .container{max-width:1100px; margin:0 auto; padding:28px 18px 64px}
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.82), rgba(11,19,43,.72));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.12;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .topline{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      position:relative;
+      z-index:1;
+    }
+    .badges{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .badge{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .badge strong{color:var(--text); font-weight:600}
+    h1{
+      margin:12px 0 6px;
+      font-size:22px;
+      line-height:1.18;
+      letter-spacing:-.3px;
+      position:relative;
+      z-index:1;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.5;
+      position:relative;
+      z-index:1;
+    }
+    .linkrow{margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; position:relative; z-index:1}
+    .pill{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.03);
+      padding:10px 12px;
+      border-radius: 999px;
+      font-size:13px;
+      color:var(--muted);
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      max-width:100%;
+    }
+    .pill code{font-family:var(--mono); font-size:12px; color:rgba(234,240,255,.82)}
+    .btn{
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      padding:10px 14px;
+      border-radius: 12px;
+      font-size:13px;
+      color:var(--text);
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.22)}
+    .btn:active{transform:translateY(0px)}
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.72), rgba(11,19,43,.62));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      left:-40px; top:-40px;
+      width:160px; height:160px;
+      background: var(--g1);
+      opacity:.10;
+      filter: blur(18px);
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:15px;
+      letter-spacing:.2px;
+      position:relative;
+      z-index:1;
+    }
+    .card p, .card li{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+      position:relative;
+      z-index:1;
+    }
+    .card ul{margin:10px 0 0; padding-left:18px}
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      margin:14px 0;
+      border:0;
+    }
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:10px;
+      position:relative;
+      z-index:1;
+    }
+    @media (max-width: 520px){
+      .kpi{grid-template-columns:1fr}
+    }
+    .kpi .mini{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .mini .label{font-size:12px; color:var(--muted2)}
+    .mini .value{margin-top:4px; font-size:13px; color:var(--text)}
+
+    .sectionTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .tag{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color:rgba(234,240,255,.76);
+      white-space:nowrap;
+    }
+
+    .scriptBox{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(4,8,18,.55);
+      border-radius: var(--radius2);
+      padding:14px;
+      font-family: var(--mono);
+      font-size: 12.8px;
+      line-height: 1.55;
+      color: rgba(234,240,255,.86);
+      white-space: pre-wrap;
+      word-break: break-word;
+      position:relative;
+      z-index:1;
+    }
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(12,18,40,.92);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(-2px)}
+    .muted{color:var(--muted2)}
+    .gradText{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="topline">
+        <div class="badges">
+          <span class="badge"><strong>Nicho</strong>: Arquitetura</span>
+          <span class="badge"><strong>Dia</strong>: 24</span>
+          <span class="badge"><strong>Formato</strong>: Carrossel</span>
+          <span class="badge"><strong>Pilar</strong>: Passo a passo</span>
+        </div>
+        <button class="btn" id="copyBtn" type="button">Copiar roteiro</button>
+      </div>
+      <h1><span class="gradText">Reveal</span> de projeto + planta: roteiro replicável</h1>
+      <p class="sub">Modelo de carrossel baseado em <strong>curiosidade → entrega imediata</strong> (a recompensa aparece no slide 2). Ideal para planta, layout, detalhe técnico, antes/depois ou solução de circulação.</p>
+      <div class="linkrow">
+        <a class="pill" href="https://www.instagram.com/p/DWC070cFt69/" target="_blank" rel="noreferrer">Post original: <code>instagram.com/p/DWC070cFt69</code></a>
+        <span class="pill">Objetivo: <code>retenção por swipe</code> + <code>autoridade visual</code> + <code>captação via CTA</code></span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="sectionTitle">
+          <h2>Resumo</h2>
+          <span class="tag">Use em 15–25 min de criação</span>
+        </div>
+        <p><strong>Estratégia:</strong> capa com promessa única + seta de swipe; no slide seguinte, entregue o “segredo” (planta/solução) grande e legível. A legenda e/ou último slide fazem a conversão (salvar, comentar palavra-chave, direct).</p>
+        <div class="kpi">
+          <div class="mini">
+            <div class="label">Retenção</div>
+            <div class="value">“Desliza pra ver…” + recompensa no slide 2</div>
+          </div>
+          <div class="mini">
+            <div class="label">Autoridade</div>
+            <div class="value">Entregar técnico sem “aula longa”</div>
+          </div>
+          <div class="mini">
+            <div class="label">Conversão</div>
+            <div class="value">CTA com palavra-chave (comentário/DM)</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="sectionTitle">
+          <h2>Metadados para calendário</h2>
+          <span class="tag">pronto pra colar</span>
+        </div>
+        <ul>
+          <li><strong>Título curto:</strong> Desliza pra ver a planta (reveal) + roteiro replicável</li>
+          <li><strong>Instrução curta:</strong> Capa com curiosidade + entrega imediata no slide 2; CTA por comentário/DM.</li>
+          <li><strong>Pilar:</strong> Passo a passo</li>
+          <li><strong>Formato:</strong> Carrossel</li>
+        </ul>
+        <hr class="hr" />
+        <p class="muted"><strong>Dica de consistência:</strong> mantenha o logo sempre no mesmo canto e repita a mesma “faixa de título” em todas as capas dessa série.</p>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="sectionTitle">
+        <h2>Estrutura</h2>
+        <span class="tag">mínimo (2) + escalável (5–8)</span>
+      </div>
+      <ul>
+        <li><strong>Lógica:</strong> Curiosidade (Slide 1) → Entrega visual/técnica (Slide 2) → (Opcional) Guiar leitura → Decisão de projeto → Prova → CTA.</li>
+        <li><strong>Regra de ouro:</strong> a promessa da capa precisa ser cumprida <em>imediatamente</em> no slide 2.</li>
+        <li><strong>Fricção baixa:</strong> pouco texto, leitura por imagem.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="sectionTitle">
+        <h2>Slides sugeridos (1..7)</h2>
+        <span class="tag">se quiser manter 2 slides, use só 1–2</span>
+      </div>
+      <ol style="margin:10px 0 0; padding-left:18px">
+        <li><strong>Capa (gancho):</strong> imagem hero + faixa de texto “Desliza pra ver [PROMESSA ÚNICA]” + seta de swipe + logo fixo.</li>
+        <li><strong>Entrega principal:</strong> planta/diagrama/antes-depois em full frame (legível em celular).</li>
+        <li><strong>Leitura guiada:</strong> 3 callouts com setas (ex.: setor social / íntimo / serviço) ou 3 pontos de atenção.</li>
+        <li><strong>Decisão de projeto:</strong> “Por que ficou melhor?” (3 bullets curtos).</li>
+        <li><strong>Variação A/B:</strong> 2 opções de layout (quando fizer sentido) com 1 frase de trade-off.</li>
+        <li><strong>Erro comum:</strong> 1 erro frequente + como corrigir (educacional e compartilhável).</li>
+        <li><strong>CTA forte:</strong> peça palavra-chave nos comentários/DM + incentivo de salvar.</li>
+      </ol>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="sectionTitle">
+        <h2>Roteiro (reproduzível)</h2>
+        <span class="tag">com campos substituíveis</span>
+      </div>
+      <div class="scriptBox" id="script">
+CARROSSEL — REVEAL (Arquitetura) | Modelo “Curiosidade → Entrega”
+
+[CONFIG]
+• Tema: [ex.: planta para terreno estreito | cozinha integrada | reforma apto 60m²]
+• Entrega principal (o que será revelado): [PLANTA | LAYOUT | SETORIZAÇÃO | DETALHE TÉCNICO | ANTES/DEPOIS]
+• Público: [ex.: casal | família | investidor | cliente de reforma]
+• Palavra-chave do CTA: [ex.: PLANTA | BRIEFING | LAYOUT]
+
+SLIDE 1 — CAPA (GANCHO)
+• Imagem: [foto/render/ambiente/antes-depois com maior apelo]
+• Texto (faixa): “Desliza pra ver [ENTREGA PRINCIPAL] desse(a) [TIPO DE PROJETO]”
+  Alternativas:
+  1) “Desliza pra ver como resolvi [PROBLEMA] nessa planta”
+  2) “Desliza pra ver 3 opções de layout para [AMBIENTE]”
+  3) “Desliza pra ver o antes/depois da circulação”
+• Elementos: seta de swipe + logo fixo
+• Regra: 1 promessa só (sem subtítulo longo)
+
+SLIDE 2 — ENTREGA IMEDIATA (RECOMPENSA)
+• Conteúdo: [planta/diagrama/visual principal] em full frame
+• Opcional (mini-box, se não poluir):
+  – Área: [xx m²]
+  – Programa: [x quartos | x banhos | home office…]
+  – Destaque: [1 benefício claro: “circulação sem corredor”, “mais luz”, “cozinha funcional”]
+• Regra: legibilidade no celular (teste 1 segundo)
+
+SLIDE 3 — LEITURA GUIADA (3 CHAMADAS)
+• Coloque 3 marcadores/setas apontando:
+  1) [ponto 1]
+  2) [ponto 2]
+  3) [ponto 3]
+• Texto máximo por marcador: 2–5 palavras
+
+SLIDE 4 — DECISÃO DE PROJETO (3 MOTIVOS)
+• Título: “Por que ficou melhor?”
+• Bullets (curtos):
+  – [motivo 1: fluxo/circulação]
+  – [motivo 2: iluminação/ventilação]
+  – [motivo 3: armazenamento/uso do espaço]
+
+SLIDE 5 — VARIAÇÃO (A/B) OU ANTES/DEPOIS
+• Mostre:
+  – Opção A: [vantagem principal]
+  – Opção B: [vantagem principal]
+• Fecho: “Qual você faria? A ou B?”
+
+SLIDE 6 — ERRO COMUM (EDUCACIONAL)
+• “Erro comum em [TEMA]: [erro]”
+• “Como evitar: [correção em 1 frase]”
+
+SLIDE 7 — CTA (CONVERSÃO)
+• Texto do slide:
+  “Quer ajuda com [TEMA]? Comenta ‘[PALAVRA-CHAVE]’ que eu te envio [recurso]”
+  Recursos possíveis:
+  – checklist de briefing
+  – mini-guia de medidas
+  – lista de pontos para avaliar a planta
+  – modelo de programa de necessidades
+• Apoio: “Salva pra usar como referência.”
+
+LEGENDA (MODELO PRONTO)
+“Projeto: [tipo]. Entrega de hoje: [entrega principal].
+
+3 coisas que guiaram essa solução:
+1) [critério 1]
+2) [critério 2]
+3) [critério 3]
+
+Quer que eu analise o seu caso? Comenta ‘[PALAVRA-CHAVE]’ ou manda no direct:
+• metragem
+• cidade/insolação (se souber)
+• programa de necessidades
+
+(Se isso te ajudou, salva e envia pra alguém que está planejando/reformando.)”
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="sectionTitle">
+        <h2>Elementos visuais</h2>
+        <span class="tag">clean + high-tech</span>
+      </div>
+      <ul>
+        <li><strong>Capa:</strong> imagem 100% + <strong>faixa sólida</strong> (alto contraste) + seta minimalista de swipe + logo fixo (mesmo canto).</li>
+        <li><strong>Entrega:</strong> planta/visual grande; evite poluir com muitos rótulos. Se precisar, use <strong>3 callouts</strong> no máximo.</li>
+        <li><strong>Tipografia:</strong> título com fonte editorial (serif) ou sans contemporânea; labels e medidas em sans legível.</li>
+        <li><strong>Cores:</strong> base neutra; use 1 cor de destaque para medidas/chamadas (consistência).</li>
+        <li><strong>Teste de legibilidade:</strong> abra no celular e veja se dá para entender em <strong>1 segundo</strong> sem zoom.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="sectionTitle">
+        <h2>Copy e ganchos</h2>
+        <span class="tag">promessa única</span>
+      </div>
+      <ul>
+        <li><strong>Fórmula:</strong> Verbo + promessa + objeto específico.
+          <br /><span class="muted">Ex.: “Desliza pra ver a planta dessa casa.”</span></li>
+        <li><strong>Ganchos (substituíveis):</strong>
+          <ul>
+            <li>“Desliza pra ver como resolvi <strong>[problema]</strong> nessa planta.”</li>
+            <li>“Desliza pra ver <strong>[número]</strong> opções de layout para <strong>[ambiente]</strong>.”</li>
+            <li>“Desliza pra ver o antes/depois de <strong>[parte do projeto]</strong>.”</li>
+            <li>“Desliza pra ver a solução de <strong>[circulação/armazenamento/luz]</strong>.”</li>
+          </ul>
+        </li>
+        <li><strong>Palavras que performam bem (ajuste ao seu tom):</strong> “planta”, “layout”, “medidas”, “setorização”, “circulação”, “erro comum”, “opção A/B”, “antes/depois”.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="sectionTitle">
+        <h2>CTA</h2>
+        <span class="tag">converta sem forçar</span>
+      </div>
+      <ul>
+        <li><strong>Dentro do carrossel:</strong> “Desliza pra ver…” (retém).</li>
+        <li><strong>Legenda (comentários):</strong> “Comenta ‘<strong>PLANTA</strong>’ que eu te envio um checklist de briefing.”</li>
+        <li><strong>Direct (qualificação):</strong> “Me chama no direct com ‘<strong>PLANTA</strong>’ + metragem + programa.”</li>
+        <li><strong>Salvamento:</strong> “Salva pra usar como referência quando for revisar a sua planta.”</li>
+        <li><strong>Enquete (slide A/B):</strong> “Qual você prefere: A ou B?”</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="sectionTitle">
+        <h2>Checklist</h2>
+        <span class="tag">pré-publicação</span>
+      </div>
+      <ul>
+        <li><strong>Promessa cumprida:</strong> o slide 2 entrega exatamente o que a capa prometeu?</li>
+        <li><strong>Contraste:</strong> a faixa do título está realmente legível em qualquer fundo?</li>
+        <li><strong>Swipe visível:</strong> seta + “Desliza” aparecem sem competir com a foto?</li>
+        <li><strong>Zoom test:</strong> a planta/entrega dá para entender em 1 segundo no celular?</li>
+        <li><strong>Consistência:</strong> logo no mesmo canto; mesma tipografia/cores da série.</li>
+        <li><strong>CTA acionável:</strong> tem palavra-chave clara + recompensa (checklist, guia, análise)?</li>
+        <li><strong>Legenda enxuta:</strong> 3 bullets no máximo antes do CTA.</li>
+        <li><strong>Publicação:</strong> capa escolhida também funciona no grid (sem texto pequeno).</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="sectionTitle">
+        <h2>Variações (para outros temas, mesmo impacto)</h2>
+        <span class="tag">substituições prontas</span>
+      </div>
+      <ul>
+        <li><strong>Se não tiver planta:</strong> substitua por <strong>diagrama</strong> (setorização), <strong>corte</strong> com pé-direito, <strong>explodido 3D</strong>, <strong>detalhe construtivo</strong> ou <strong>antes/depois</strong>.</li>
+        <li><strong>Se o tema for “dúvida comum”:</strong>
+          <ul>
+            <li>Slide 1: “Desliza pra ver a verdade sobre [mito]”</li>
+            <li>Slide 2: resposta visual (ex.: esquema) + 1 frase objetiva</li>
+          </ul>
+        </li>
+        <li><strong>Se o tema for “produto/serviço”:</strong>
+          <ul>
+            <li>Slide 1: “Desliza pra ver o que inclui [serviço]”</li>
+            <li>Slide 2: entrega (ex.: exemplo real, print de prancha, cronograma)</li>
+            <li>Último: CTA “Comenta ‘ORÇAMENTO’ que eu te mando como funciona”</li>
+          </ul>
+        </li>
+        <li><strong>Se quiser aumentar comentários:</strong> inclua A/B (slide 5) e finalize com pergunta fechada.</li>
+        <li><strong>Se quiser aumentar salvamentos:</strong> transforme slide 4 em “3 critérios” e nomeie como mini-checklist.</li>
+      </ul>
+    </section>
+
+    <div class="toast" id="toast">Roteiro copiado para a área de transferência.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('script');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=>toast.classList.remove('show'), 1600);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = script.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado para a área de transferência.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado (modo compatibilidade).');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
