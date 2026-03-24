@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 13 — Arquitetura | Carrossel (Ensaio visual + tese)</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,0.06);
+      --card2:rgba(255,255,255,0.08);
+      --stroke:rgba(255,255,255,0.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,0.72);
+      --muted2:rgba(234,240,255,0.55);
+      --shadow: 0 18px 60px rgba(0,0,0,0.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --grad: linear-gradient(90deg, #22C55E 0%, #3B82F6 45%, #F97316 100%);
+      --grad2: radial-gradient(1200px 600px at 20% 0%, rgba(34,197,94,0.18) 0%, rgba(59,130,246,0.16) 35%, rgba(249,115,22,0.10) 60%, rgba(0,0,0,0) 70%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg0);
+      background-image: var(--grad2);
+      line-height:1.35;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border-radius: var(--radius);
+      padding:18px 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--grad);
+      opacity:0.10;
+      filter: blur(24px);
+      pointer-events:none;
+    }
+    .toprow{display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap}
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .badge{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:7px 10px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      color: var(--muted);
+    }
+    .badge strong{color:var(--text); font-weight:600}
+    .title{
+      margin:10px 0 6px;
+      font-size:26px;
+      letter-spacing:-0.02em;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size:14px;
+      max-width: 78ch;
+    }
+    .linkRow{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .link{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-size:13px;
+    }
+    .link .dot{width:10px; height:10px; border-radius:999px; background: var(--grad)}
+
+    .grid{display:grid; grid-template-columns: 1.15fr 0.85fr; gap:14px; margin-top:14px}
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .head{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      background: rgba(255,255,255,0.04);
+    }
+    .card h2{margin:0; font-size:14px; letter-spacing:0.02em; text-transform:uppercase; color: var(--muted)}
+    .chip{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius: 999px;
+      background: rgba(0,0,0,0.25);
+      color: var(--muted);
+    }
+    .content{padding:14px 16px}
+    .content p{margin:0 0 10px; color: var(--muted)}
+    .content ul{margin:10px 0 0; padding:0 0 0 18px; color: var(--muted)}
+    .content li{margin:7px 0}
+
+    .hi{
+      display:inline;
+      padding:0.08em 0.45em;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+      box-decoration-break: clone;
+    }
+    .hi.grad{
+      background: linear-gradient(90deg, rgba(34,197,94,0.20), rgba(59,130,246,0.18), rgba(249,115,22,0.16));
+      border:1px solid rgba(255,255,255,0.16);
+    }
+
+    .scriptWrap{
+      position: relative;
+    }
+    pre{
+      margin:0;
+      padding:14px 14px 14px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.35);
+      color: rgba(234,240,255,0.9);
+      overflow:auto;
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.45;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+    }
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-size:13px;
+    }
+    button.primary{
+      background: linear-gradient(90deg, rgba(34,197,94,0.22), rgba(59,130,246,0.20), rgba(249,115,22,0.18));
+      border:1px solid rgba(255,255,255,0.18);
+    }
+    .note{font-size:12px; color: var(--muted2); margin-top:10px}
+
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 700px){ .cols{grid-template-columns:1fr} }
+
+    .kpi{
+      display:grid; grid-template-columns:1fr 1fr; gap:10px
+    }
+    @media (max-width: 520px){ .kpi{grid-template-columns:1fr} }
+    .mini{
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      padding:12px;
+    }
+    .mini .t{font-family: var(--mono); font-size:12px; color: var(--muted2)}
+    .mini .v{margin-top:6px; font-size:13px; color: var(--muted)}
+    .mini .v strong{color: var(--text); font-weight:600}
+
+    .footer{margin-top:14px; color: var(--muted2); font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div>
+          <div class="badgeRow">
+            <div class="badge"><strong>Nicho</strong>: Arquitetura</div>
+            <div class="badge"><strong>Dia</strong>: 13</div>
+            <div class="badge"><strong>Formato</strong>: Carrossel</div>
+            <div class="badge"><strong>Pilar</strong>: Mito vs Verdade</div>
+          </div>
+          <h1 class="title">Por que madeira acolhe mais que o branco total?</h1>
+          <p class="sub">Roteiro reproduzível no modelo “ensaio visual + tese”: gancho forte → conceito nomeado → evidência → mantra → contraste → síntese humana → fechamento com CTA.</p>
+          <div class="linkRow">
+            <a class="link" href="https://www.instagram.com/p/DV_hIAUDHEn/" target="_blank" rel="noopener noreferrer"><span class="dot"></span> Post original (referência)</a>
+          </div>
+        </div>
+        <div class="btnRow">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="copySlidesBtn">Copiar slides (1..7)</button>
+        </div>
+      </div>
+      <div class="note" id="copyStatus" aria-live="polite"></div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="head"><h2>Resumo</h2><span class="chip">Objetivo: salvar + compartilhar</span></div>
+        <div class="content">
+          <p>Carrossel para Arquitetura que explica uma preferência estética com base em um conceito (ex.: <span class="hi grad">biofilia</span>) e traduz isso para sensação corporal (conforto, calma, pertencimento). Funciona muito bem com fotos sensoriais e contraste (natural x clínico/frio).</p>
+          <div class="kpi">
+            <div class="mini"><div class="t">Promessa</div><div class="v"><strong>“Tem motivo”</strong> (psicologia/neurônios/ergonomia)</div></div>
+            <div class="mini"><div class="t">Retenção</div><div class="v">Pergunta X vs Y + conceito nomeado + mantra compartilhável</div></div>
+            <div class="mini"><div class="t">Ritmo</div><div class="v">2 slides densos (2–3) + 2 slides impacto (4–5)</div></div>
+            <div class="mini"><div class="t">CTA</div><div class="v">Comentar preferência + salvar como referência</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="head"><h2>Estrutura</h2><span class="chip">7 slides (ideal)</span></div>
+        <div class="content">
+          <ul>
+            <li><span class="hi">Slide 1</span>: Gancho polarizado + promessa “a ciência explica” + micro-CTA de swipe</li>
+            <li><span class="hi">Slide 2</span>: Conceito nomeado (1 termo) + definição simples</li>
+            <li><span class="hi">Slide 3</span>: Evidência / causa-efeito + fonte discreta</li>
+            <li><span class="hi">Slide 4</span>: Mantra (frase curta memorável)</li>
+            <li><span class="hi">Slide 5</span>: Contraste/antagonista + rótulo (“casa para visitas”)</li>
+            <li><span class="hi">Slide 6</span>: Síntese humana (habitar, bem-estar, identidade)</li>
+            <li><span class="hi">Slide 7</span>: Fechamento com alerta + CTA explícito</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="head"><h2>Roteiro</h2><span class="chip">template + exemplo pronto</span></div>
+      <div class="content">
+        <div class="cols">
+          <div>
+            <p><span class="hi grad">Como reproduzir</span>: escolha um par X vs Y (materiais, layout, luz, cores). Nomeie um conceito e conecte com sensação no corpo. Termine com pergunta simples para comentários.</p>
+            <p><strong>Fórmula do título:</strong> “Por que <span class="hi">X</span> atraem mais que <span class="hi">Y</span>?” + subpromessa (“A psicologia explica”).</p>
+          </div>
+          <div class="scriptWrap">
+            <pre id="roteiroText">TEMA (X vs Y): Madeira/texturas naturais vs branco total/ultra minimalista
+
+SLIDE 1 — GANCHO
+“Por que ambientes com MADEIRA parecem mais acolhedores que os TOTALMENTE BRANCOS?”
+Sub: “A psicologia ambiental explica.”
+Micro-CTA: “Arraste >>>”
+
+SLIDE 2 — CONCEITO NOMEADO
+“Isso tem muito a ver com BIOFILIA.”
+Biofilia é a nossa tendência a responder melhor a sinais de natureza: textura, variação, imperfeição, luz e materiais ‘vivos’.
+
+SLIDE 3 — EVIDÊNCIA (SEM AULA)
+“Quando você entra num espaço com textura + tons quentes…”
+Seu corpo lê o ambiente como mais seguro e ‘habitável’, o que pode reduzir tensão e aumentar sensação de conforto.
+Rodapé (pequeno): “Base: psicologia ambiental / estudos de biofilia (ex.: Kellert).”
+
+SLIDE 4 — MANTRA (COMPARTILHÁVEL)
+“Conforto não é luxo.
+É um sinal de segurança.”
+
+SLIDE 5 — CONTRASTE / LADO B
+“O branco total pode funcionar… mas fácil virar ‘cenário’.”
+Frase: “Casa pra visitas.”
+(Quando tudo é intocável, a gente para de habitar.)
+
+SLIDE 6 — SÍNTESE HUMANA
+“No fim, não buscamos só estética.”
+“Buscamos pertencimento: um lugar que aceite bagunça, rotina, silêncio e vida.”
+“Arquitetura boa não impressiona. Acolhe.”
+
+SLIDE 7 — FECHAMENTO + CTA
+“Se a gente troca acolhimento por aparência o tempo todo, não é só o espaço que esfria.”
+CTA: “Você prefere: MADEIRA/tonalidades quentes ou BRANCO total? Comenta. Salve pra usar como referência.”</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="head"><h2>Slides sugeridos (1..7)</h2><span class="chip">texto + intenção + imagem</span></div>
+      <div class="content">
+        <ul id="slidesText">
+          <li><strong>Slide 1 (gancho):</strong> Pergunta X vs Y + “a psicologia explica” + “Arraste >>>”. <em>Imagem:</em> sala com madeira + luz natural (close de textura).</li>
+          <li><strong>Slide 2 (conceito):</strong> “Existe um conceito chamado BIOFILIA” + 2–4 linhas. <em>Imagem:</em> detalhe de madeira + planta + sombra de janela.</li>
+          <li><strong>Slide 3 (prova):</strong> causa-efeito no corpo + fonte pequena no rodapé. <em>Imagem:</em> ambiente com materiais naturais (tons quentes) e pessoas/objetos do cotidiano.</li>
+          <li><strong>Slide 4 (mantra):</strong> 10–18 palavras, alto contraste. <em>Imagem:</em> foto com espaço negativo (parede/cortina) para texto.</li>
+          <li><strong>Slide 5 (contraste):</strong> “lado B” do Y + rótulo memorável (“casa pra visitas”). <em>Imagem:</em> interior branco/clinico/frio (minimalista).</li>
+          <li><strong>Slide 6 (síntese):</strong> tom poético + habitar/bem-estar/identidade. <em>Imagem:</em> cena de rotina (mesa posta, livro, luz da tarde).</li>
+          <li><strong>Slide 7 (CTA):</strong> alerta + pergunta simples + “salve/compartilhe”. <em>Imagem:</em> composição equilibrada e calma (fechamento).</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:14px">
+      <section class="card">
+        <div class="head"><h2>Elementos visuais</h2><span class="chip">direção de arte</span></div>
+        <div class="content">
+          <ul>
+            <li><strong>Estética:</strong> editorial sensorial (realismo, textura, cotidiano, luz natural).</li>
+            <li><strong>Paleta:</strong> neutros quentes + 1 acento (barra). Texto branco com sombra leve.</li>
+            <li><strong>Composição:</strong> título grande em blocos/retângulos; corpo em 3–6 linhas; respiro.</li>
+            <li><strong>Alternância:</strong> slides 2–3 mais explicativos; 4–5 mais “impacto”.</li>
+            <li><strong>Autoridade:</strong> fonte/link discreto no rodapé (não competir com a tese).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="head"><h2>Copy e ganchos</h2><span class="chip">prontos para trocar X/Y</span></div>
+        <div class="content">
+          <p><strong>Ganchos (Slide 1):</strong></p>
+          <ul>
+            <li>“Por que <span class="hi">X</span> parecem mais confortáveis que <span class="hi">Y</span>?”</li>
+            <li>“O que ninguém te conta sobre <span class="hi">Y</span> (e por que <span class="hi">X</span> funciona).”</li>
+            <li>“Isso não é ‘gosto’. Tem padrão.”</li>
+          </ul>
+          <p style="margin-top:10px"><strong>Mantras (Slide 4):</strong></p>
+          <ul>
+            <li>“A casa não é vitrine. É refúgio.”</li>
+            <li>“O belo que não acolhe, cansa.”</li>
+            <li>“Textura é silêncio que conforta.”</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid" style="margin-top:14px">
+      <section class="card">
+        <div class="head"><h2>CTA</h2><span class="chip">1 ação principal</span></div>
+        <div class="content">
+          <ul>
+            <li><strong>Comentário:</strong> “Você prefere <span class="hi">A</span> ou <span class="hi">B</span>? Por quê?”</li>
+            <li><strong>Salvar:</strong> “Salve pra usar como referência no seu próximo projeto.”</li>
+            <li><strong>Compartilhar:</strong> “Manda pra alguém que ama ambientes acolhedores.”</li>
+            <li><strong>Gatilho de palavra:</strong> “Quer a lista de elementos? Comenta ‘CHECKLIST’.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="head"><h2>Checklist</h2><span class="chip">produção + revisão</span></div>
+        <div class="content">
+          <ul>
+            <li><strong>Definir X vs Y</strong> (1 frase, polarizado e real).</li>
+            <li><strong>Escolher 1 conceito</strong> (biofilia, ergonomia, percepção térmica, acústica, iluminação circadiana).</li>
+            <li><strong>Separar 4–6 fotos</strong>: 3 sensoriais + 1 contraste + 1 rotina + 1 espaço negativo.</li>
+            <li><strong>Texto por slide</strong>: S1 8–14 palavras; S2–3 40–80; S4 8–16; S5–6 25–60; S7 15–35 + CTA.</li>
+            <li><strong>Tipografia</strong>: 2 fontes (título forte + sans legível) e 3 tamanhos fixos.</li>
+            <li><strong>Legibilidade</strong>: blocos atrás do título; evitar áreas poluídas; sombra leve no texto solto.</li>
+            <li><strong>Autoridade</strong>: 1 referência no rodapé (pequena, sem “cara de TCC”).</li>
+            <li><strong>Revisão final</strong>: pergunta clara no S1; mantra no S4; antagonista no S5; CTA no S7.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="head"><h2>Variações</h2><span class="chip">3 temas prontos</span></div>
+      <div class="content">
+        <ul>
+          <li><strong>Iluminação:</strong> “Por que luz natural acalma mais que luz branca direta?” Conceito: ritmo circadiano. Contraste: plafon frio e uniforme.</li>
+          <li><strong>Layout:</strong> “Por que alguns amam integração e outros se estressam?” Conceito: controle/territorialidade. Contraste: ausência de limites e ruído visual.</li>
+          <li><strong>Acabamentos:</strong> “Por que textura ‘imperfeita’ parece mais humana que o ultra liso?” Conceito: fluência perceptiva / wabi-sabi. Contraste: superfícies clínicas.</li>
+        </ul>
+        <p class="footer">Dica: mantenha a mesma estrutura (gancho → conceito → evidência → mantra → contraste → síntese → CTA) e troque apenas X/Y + conceito + imagens.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    (function(){
+      const status = document.getElementById('copyStatus');
+      const roteiro = document.getElementById('roteiroText');
+      const slides = document.getElementById('slidesText');
+
+      async function copyText(text){
+        try{
+          await navigator.clipboard.writeText(text);
+          status.textContent = 'Roteiro copiado para a área de transferência.';
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          status.textContent = 'Roteiro copiado (modo compatibilidade).';
+        }
+        setTimeout(()=> status.textContent = '', 2200);
+      }
+
+      document.getElementById('copyBtn').addEventListener('click', ()=>{
+        copyText(roteiro.innerText.trim());
+      });
+
+      document.getElementById('copySlidesBtn').addEventListener('click', ()=>{
+        const items = Array.from(slides.querySelectorAll('li')).map((li,i)=> `${i+1}. ${li.innerText}`);
+        copyText(items.join('\n\n'));
+      });
+    })();
+  </script>
+</body>
+</html>
