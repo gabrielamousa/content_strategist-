@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Roteiro Instagram — Arquitetura (Dia 16)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1220;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.08);
+    --stroke: rgba(255,255,255,.10);
+    --text:#EAF0FF;
+    --muted:#A9B4D0;
+    --muted2:#7F8AA8;
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+
+    --g1: linear-gradient(90deg, #34D399 0%, #60A5FA 45%, #F59E0B 100%);
+    --g2: radial-gradient(80% 80% at 20% 10%, rgba(52,211,153,.20) 0%, rgba(96,165,250,.18) 38%, rgba(245,158,11,.12) 70%, rgba(0,0,0,0) 100%);
+    --g3: radial-gradient(90% 90% at 90% 20%, rgba(96,165,250,.20) 0%, rgba(245,158,11,.10) 35%, rgba(0,0,0,0) 70%);
+
+    --radius: 18px;
+    --radius2: 14px;
+
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    background:
+      var(--g2),
+      var(--g3),
+      radial-gradient(1200px 800px at 10% 110%, rgba(52,211,153,.12) 0%, rgba(0,0,0,0) 55%),
+      radial-gradient(900px 600px at 110% -10%, rgba(245,158,11,.10) 0%, rgba(0,0,0,0) 55%),
+      linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+    color: var(--text);
+    line-height: 1.45;
+  }
+
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 80px;}
+
+  header{
+    background: linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.05) 100%);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 18px 16px;
+    position: relative;
+    overflow:hidden;
+  }
+
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g1);
+    opacity:.16;
+    filter: blur(16px);
+    z-index:0;
+  }
+
+  header > *{position:relative;z-index:1;}
+
+  .toprow{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;}
+
+  .meta{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .pill{
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 999px;
+    padding: 6px 10px;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+  }
+  .dot{
+    width:8px;height:8px;border-radius:999px;
+    background: var(--g1);
+  }
+
+  h1{
+    margin:10px 0 8px;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+  }
+
+  .sub{
+    margin:0;
+    color: var(--muted);
+    max-width: 80ch;
+    font-size: 14px;
+  }
+
+  .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .btn{
+    appearance:none;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor:pointer;
+    font-weight: 650;
+    font-size: 13px;
+    transition: .15s ease;
+  }
+  .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09)}
+  .btn.primary{
+    border-color: rgba(255,255,255,.22);
+    background: linear-gradient(180deg, rgba(52,211,153,.18) 0%, rgba(96,165,250,.14) 50%, rgba(245,158,11,.10) 100%);
+  }
+  .link{
+    color: #BBD3FF;
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(187,211,255,.35);
+    padding-bottom: 2px;
+  }
+  .link:hover{border-bottom-color: rgba(187,211,255,.65)}
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+    margin-top: 14px;
+  }
+
+  @media (min-width: 900px){
+    .grid{grid-template-columns: 1.15fr .85fr; align-items:start;}
+  }
+
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,.05) 100%);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    overflow:hidden;
+    position:relative;
+  }
+  .card:before{
+    content:"";
+    position:absolute;
+    inset:-1px;
+    background: var(--g1);
+    opacity:.07;
+    filter: blur(18px);
+    z-index:0;
+  }
+  .card > *{position:relative;z-index:1;}
+
+  .card h2{
+    margin:0 0 10px;
+    font-size: 14px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .card h3{
+    margin: 14px 0 8px;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .card p{margin: 8px 0;color: var(--text);}
+  .muted{color: var(--muted);}
+  .fine{color: var(--muted2); font-size: 12.5px;}
+
+  ul{margin: 8px 0 0; padding-left: 18px; color: var(--text)}
+  li{margin: 6px 0;}
+  .k{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: #D6E4FF;
+    background: rgba(0,0,0,.25);
+    border: 1px solid rgba(255,255,255,.10);
+    padding: 2px 7px;
+    border-radius: 999px;
+    display:inline-block;
+  }
+
+  .hr{
+    height:1px;
+    background: rgba(255,255,255,.10);
+    margin: 12px 0;
+  }
+
+  textarea{
+    width:100%;
+    min-height: 420px;
+    resize: vertical;
+    border-radius: var(--radius2);
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.22);
+    color: var(--text);
+    padding: 12px;
+    font-family: var(--mono);
+    font-size: 12.8px;
+    line-height: 1.5;
+    outline: none;
+  }
+
+  .toast{
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,.65);
+    border: 1px solid rgba(255,255,255,.16);
+    padding: 10px 12px;
+    border-radius: 999px;
+    color: var(--text);
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: .18s ease;
+    backdrop-filter: blur(8px);
+  }
+  .toast.show{opacity:1;}
+
+  .twocol{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 780px){
+    .twocol{grid-template-columns: 1fr 1fr;}
+  }
+
+  .callout{
+    border-radius: var(--radius2);
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.05);
+    padding: 12px;
+  }
+  .callout strong{background: var(--g1); -webkit-background-clip:text; background-clip:text; color: transparent;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div>
+          <div class="meta">
+            <span class="pill"><span class="dot"></span><span><strong>Nicho</strong>: Arquitetura</span></span>
+            <span class="pill"><span><strong>Dia</strong>: 16</span></span>
+            <span class="pill"><span><strong>Formato</strong>: Carrossel</span></span>
+            <span class="pill"><span><strong>Pilar</strong>: Autoridade</span></span>
+          </div>
+          <h1>Carrossel “tese + evidência + aplicação” (7 slides)</h1>
+          <p class="sub">Sequência reproduzível para posts que começam com uma afirmação forte, sustentam com prova (print) e traduzem para uma decisão de projeto. Link do original: <a class="link" href="https://www.instagram.com/p/DVYujGXjJBD/" target="_blank" rel="noopener">https://www.instagram.com/p/DVYujGXjJBD/</a></p>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <a class="btn" href="https://www.instagram.com/p/DVYujGXjJBD/" target="_blank" rel="noopener">Abrir post</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <p><strong>Modelo:</strong> tese emocional → contexto → prova → mecanismo → aplicação no espaço → reframing memorável + pergunta → CTA duplo.</p>
+        <div class="twocol">
+          <div class="callout">
+            <p class="muted"><strong>Quando usar</strong></p>
+            <ul>
+              <li>Quando você quer elevar percepção de valor com <span class="k">fonte</span> (estudo, norma, livro, dado).</li>
+              <li>Quando o tema tem um efeito humano claro (sono, foco, convivência, ansiedade, produtividade).</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p class="muted"><strong>Meta de retenção</strong></p>
+            <ul>
+              <li>Slide 1 abre loop; Slide 3 reduz ceticismo; Slide 6 puxa comentários.</li>
+              <li>1 ideia por tela, frases afirmativas, sem jargão.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Metadados prontos</h2>
+        <p class="muted"><strong>Título (fórmula):</strong> <span class="k">[Elemento/decisão] + gera + [efeito humano forte]</span></p>
+        <p class="muted"><strong>Subtítulo opcional:</strong> “E tem explicação (com evidência).”</p>
+        <div class="hr"></div>
+        <p class="muted"><strong>Banco de temas (Arquitetura):</strong></p>
+        <ul>
+          <li>iluminação natural</li>
+          <li>acústica</li>
+          <li>setorização/circulação</li>
+          <li>biofilia/verde</li>
+          <li>ventilação</li>
+          <li>materiais (tátil/temperatura)</li>
+          <li>cores</li>
+          <li>layout de home office</li>
+        </ul>
+      </aside>
+
+      <section class="card">
+        <h2>Estrutura</h2>
+        <h3>Sequência fixa (7 slides)</h3>
+        <ol>
+          <li><strong>Hook/Tese</strong> (impacto emocional + micro-CTA “Vem ver >>>”).</li>
+          <li><strong>Contexto</strong> (causa/efeito em linguagem humana).</li>
+          <li><strong>Prova</strong> (print de fonte + 1 frase de resumo).</li>
+          <li><strong>Mecanismo</strong> (como acontece: gatilho → resposta → comportamento).</li>
+          <li><strong>Aplicação</strong> (ponte para ambiente: decisão de projeto prática).</li>
+          <li><strong>Síntese/Reframing</strong> (“não é X; é Y”) + pergunta.</li>
+          <li><strong>Fechamento</strong> (CTA duplo: engajar + próximo passo).</li>
+        </ol>
+
+        <div class="hr"></div>
+        <h3>Regras de ouro (para ficar reproduzível)</h3>
+        <ul>
+          <li><strong>1 ideia por slide</strong> (se tiver “e”, provavelmente são 2 ideias).</li>
+          <li><strong>Verbos de ação</strong> e frases assertivas (sem “talvez”).</li>
+          <li><strong>Prova visual obrigatória</strong> no slide 3 (print de artigo, norma, livro, relatório).</li>
+          <li><strong>Pergunta no slide 6</strong> para abrir comentários.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Slides sugeridos (1..7)</h2>
+        <div class="callout">
+          <p class="fine">Use este bloco como “brief de cada slide” para design + texto.</p>
+        </div>
+        <h3>Slide 1 — Hook (H1 + micro-CTA)</h3>
+        <ul>
+          <li><span class="k">H1</span>: “[ELEMENTO/DECISÃO] <strong>gera</strong> [EFEITO HUMANO FORTE]”</li>
+          <li><span class="k">Sub</span>: “E tem explicação.”</li>
+          <li><span class="k">Rodapé</span>: “Vem ver >>>”</li>
+        </ul>
+
+        <h3>Slide 2 — Contexto (1 ideia)</h3>
+        <ul>
+          <li>“Quando [condição do espaço], o corpo tende a [reação].”</li>
+          <li>“Isso aparece em [cena cotidiana do público].”</li>
+        </ul>
+
+        <h3>Slide 3 — Prova (print + frase)</h3>
+        <ul>
+          <li>Texto: “Estudos/levantamentos indicam que [achado em 1 frase].”</li>
+          <li>Visual: print (PubMed/Google Scholar/norma ABNT/OMS/livro/capa).</li>
+        </ul>
+
+        <h3>Slide 4 — Mecanismo (como acontece)</h3>
+        <ul>
+          <li>“Por trás disso: 1) [gatilho] → 2) [resposta] → 3) [comportamento].”</li>
+        </ul>
+
+        <h3>Slide 5 — Aplicação arquitetônica (ponte)</h3>
+        <ul>
+          <li>“Na prática, [ambiente] vira o lugar onde [função emocional].”</li>
+          <li>“Ambientes que [característica 1 + 2] ajudam a [benefício].”</li>
+        </ul>
+
+        <h3>Slide 6 — Síntese memorável + pergunta</h3>
+        <ul>
+          <li>“Não é sobre [mito/explicação rasa]. É sobre [verdade/mecanismo].”</li>
+          <li>Pergunta: “Na sua casa, isso acontece onde?”</li>
+        </ul>
+
+        <h3>Slide 7 — CTA final (2 camadas)</h3>
+        <ul>
+          <li>Pergunta curta: “Sua casa tem [elemento]?”</li>
+          <li>CTA engajamento: “Comente e compartilhe com alguém que está reformando.”</li>
+          <li>CTA conversão leve: “Quer um checklist de [tema]? Chama no direct / link na bio.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro</h2>
+        <p class="muted">Copie, preencha os colchetes e publique. (O botão “Copiar roteiro” copia este texto.)</p>
+        <textarea id="script" spellcheck="false">TEMPLATE — CARROSSEL (7 SLIDES)
+
+ANTES DE MONTAR
+- Tema (arquitetura): [ex.: acústica | iluminação natural | setorização | biofilia | cores | materiais]
+- Público: [moradores | famílias | home office | consultórios | corporativo | pequenos apês]
+- Promessa (benefício humano): [sono | foco | calma | produtividade | convivência]
+- Fonte/autoridade: [estudo | norma | livro | dado | caso real]
+
+SLIDE 1 — HOOK (TESE)
+H1: [ELEMENTO/DECISÃO] gera [EFEITO HUMANO FORTE].
+Sub: E tem explicação.
+Rodapé: Vem ver >>>
+
+SLIDE 2 — CONTEXTO (1 IDEIA)
+Quando [condição do espaço], o corpo tende a [reação].
+Isso aparece em [cena cotidiana do público].
+
+SLIDE 3 — PROVA (PRINT)
+Estudos/levantamentos indicam que [achado em 1 frase].
+(Fonte: [nome/ano] — inserir print/capa/gráfico)
+
+SLIDE 4 — MECANISMO (COMO ACONTECE)
+Por trás disso:
+1) [gatilho ambiental] → 2) [resposta do corpo/mente] → 3) [hábito/comportamento].
+
+SLIDE 5 — APLICAÇÃO NO ESPAÇO (ARQUITETURA)
+Na prática, [casa/apê/escritório] vira o lugar onde [função emocional].
+Ambientes que [característica 1] + [característica 2] ajudam a [benefício].
+
+SLIDE 6 — SÍNTESE (REFRAMING) + PERGUNTA
+Não é sobre [mito/explicação rasa].
+É sobre [verdade/mecanismo].
+Pergunta: Na sua casa, isso acontece onde?
+
+SLIDE 7 — FECHAMENTO + CTA DUPLO
+Sua casa tem [elemento]?
+1) Engajamento: Comente e envie pra alguém que está reformando.
+2) Próximo passo: Quer um checklist de [tema]? Me chama no direct / link na bio.</textarea>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <h3>Identidade (para repetir sem pensar)</h3>
+        <ul>
+          <li><strong>Estética editorial/cinematográfica</strong>: fotos com clima emocional, tons quentes ou “filme”.</li>
+          <li><strong>Overlay escuro</strong> quando a foto competir com a leitura.</li>
+          <li><strong>Texto com alto contraste</strong> (branco / amarelo queimado) e margens amplas.</li>
+          <li><strong>Um slide com print</strong> (prova) bem legível; destaque com moldura suave.</li>
+        </ul>
+
+        <h3>Hierarquia tipográfica</h3>
+        <ul>
+          <li><span class="k">H1</span> grande (impacto) | <span class="k">Corpo</span> sans (clareza) | <span class="k">CTA</span> pequeno no rodapé.</li>
+          <li>Destaque de palavras-chave em negrito para leitura por varredura.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos</h2>
+        <h3>Fórmulas de hook (substituíveis)</h3>
+        <ul>
+          <li>“Se o seu [ambiente] tem [condição], você pode sentir [efeito] — <strong>mesmo sem perceber</strong>.”</li>
+          <li>“Não é frescura: [efeito] pode ser resposta a [gatilho do espaço].”</li>
+          <li>“O problema não é você. É o [elemento do ambiente].”</li>
+        </ul>
+
+        <h3>Biblioteca de palavras (pra manter o tom)</h3>
+        <ul>
+          <li><strong>Efeito humano</strong>: exaustão invisível, irritação, fadiga, ansiedade, queda de foco, sono leve, atrito, sensação de aperto.</li>
+          <li><strong>Decisão de projeto</strong>: luz, ruído, circulação, refúgio, materiais, ventilação, vista, natureza, organização.</li>
+          <li><strong>Verbos</strong>: amplifica, drena, sustenta, reduz, melhora, protege, prepara, facilita.</li>
+        </ul>
+
+        <div class="hr"></div>
+        <h3>Como adaptar para outro tema (mesmo impacto)</h3>
+        <ul>
+          <li>Troque <span class="k">ELEMENTO/DECISÃO</span> por qualquer variável do seu nicho (produto, rotina, comportamento).</li>
+          <li>Mantenha a lógica: <span class="k">tese forte</span> + <span class="k">prova visual</span> + <span class="k">mecanismo</span> + <span class="k">aplicação prática</span>.</li>
+          <li>A “ponte” do Slide 5 vira o “onde isso aparece no mundo real” do seu assunto.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <h3>CTA 1 — Engajamento (comentário)</h3>
+        <ul>
+          <li>“Você já sentiu isso na sua casa/apê/escritório?”</li>
+          <li>“Qual ambiente mais te acalma — e por quê?”</li>
+          <li>“Comente <span class="k">PLANTA</span> que eu mando um checklist.”</li>
+        </ul>
+
+        <h3>CTA 2 — Distribuição (salvar/compartilhar)</h3>
+        <ul>
+          <li>“Salve pra lembrar na próxima reforma.”</li>
+          <li>“Compartilhe com alguém que está construindo.”</li>
+        </ul>
+
+        <h3>CTA 3 — Conversão leve</h3>
+        <ul>
+          <li>“Quer aplicar isso no seu projeto? Me chama no direct.”</li>
+          <li>“Tenho um guia/checklist de [tema] — link na bio.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Checklist</h2>
+        <h3>Checklist de criação (produção rápida)</h3>
+        <ul>
+          <li>[ ] Definir <strong>tema</strong>, <strong>público</strong> e <strong>promessa</strong> (1 frase cada).</li>
+          <li>[ ] Escrever os 7 slides em rascunho (sem design).</li>
+          <li>[ ] Garantir <strong>1 ideia por slide</strong> e frases curtas.</li>
+          <li>[ ] Separar <strong>1 fonte</strong> confiável e preparar o <strong>print</strong> (legível no mobile).</li>
+          <li>[ ] Escolher 7 imagens com a mesma “temperatura” (coerência visual).</li>
+          <li>[ ] Aplicar overlay escuro quando necessário (contraste).</li>
+          <li>[ ] Inserir <strong>setas “>>>”</strong> no slide 1 e <strong>pergunta</strong> no slide 6.</li>
+          <li>[ ] Finalizar com <strong>CTA duplo</strong> no slide 7.</li>
+          <li>[ ] Revisar: ortografia, legibilidade (zoom 100%), e tempo de leitura (3–5s por slide).</li>
+        </ul>
+
+        <div class="hr"></div>
+        <h3>Checklist de qualidade (o que faz performar)</h3>
+        <ul>
+          <li>[ ] O hook é <strong>afirmativo</strong> e gera curiosidade?</li>
+          <li>[ ] A prova (slide 3) reduz “isso é achismo”?</li>
+          <li>[ ] O mecanismo (slide 4) explica <strong>sem jargão</strong>?</li>
+          <li>[ ] A aplicação (slide 5) dá 1–2 direções claras de projeto?</li>
+          <li>[ ] A pergunta (slide 6) dá vontade de responder?</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Variações</h2>
+        <h3>Variações de estrutura (mantendo o mesmo impacto)</h3>
+        <ul>
+          <li><strong>V1 — Dor → Solução</strong>: Hook (dor) → contexto → mecanismo → aplicação → prova → síntese + pergunta → CTA.</li>
+          <li><strong>V2 — Mito vs Verdade</strong>: Hook (mito popular) → “na prática…” → prova → mecanismo → “o que fazer” → pergunta → CTA.</li>
+          <li><strong>V3 — Caso real</strong>: Hook (padrão observado) → mini-história → prova/dado → mecanismo → decisão de projeto → pergunta → CTA.</li>
+        </ul>
+
+        <h3>Substituições rápidas (por slide)</h3>
+        <ul>
+          <li><strong>Slide 3 (Prova)</strong>: se não tiver estudo, use <span class="k">norma</span>, <span class="k">livro clássico</span>, <span class="k">relatório setorial</span> ou <span class="k">dado de pós-ocupação</span>.</li>
+          <li><strong>Slide 4 (Mecanismo)</strong>: se for complexo, simplifique em 2 etapas (gatilho → consequência).</li>
+          <li><strong>Slide 7 (Conversão)</strong>: troque “direct” por “agendar diagnóstico”, “baixar checklist”, “entrar na lista”.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+<script>
+  const btn = document.getElementById('copyBtn');
+  const ta = document.getElementById('script');
+  const toast = document.getElementById('toast');
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(window.__t);
+    window.__t = setTimeout(()=>toast.classList.remove('show'), 1400);
+  }
+
+  btn.addEventListener('click', async () => {
+    try{
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(ta.value);
+      } else {
+        document.execCommand('copy');
+      }
+      showToast('Roteiro copiado.');
+    } catch(e){
+      showToast('Não foi possível copiar. Selecione e copie manualmente.');
+    }
+  });
+</script>
+</body>
+</html>
