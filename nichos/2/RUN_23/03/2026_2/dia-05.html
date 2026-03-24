@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 5 — Arquitetura | Roteiro Reels</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --panel:#0f1620;
+      --card:#0e1520;
+      --stroke:rgba(255,255,255,.08);
+      --stroke2:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.58);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --r:18px;
+      --g1: linear-gradient(135deg,#20e3b2 0%, #2cccff 45%, #ffb656 100%);
+      --g2: linear-gradient(135deg, rgba(32,227,178,.18), rgba(44,204,255,.12), rgba(255,182,86,.14));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1200px 700px at 15% -10%, rgba(44,204,255,.20), transparent 55%),
+                  radial-gradient(900px 600px at 105% 5%, rgba(32,227,178,.16), transparent 50%),
+                  radial-gradient(900px 700px at 60% 110%, rgba(255,182,86,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    a{color:inherit; text-decoration:none;}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 16px 56px;}
+
+    header{
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius: calc(var(--r) + 6px);
+      padding:18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(18px);
+      opacity:.9;
+      z-index:0;
+    }
+    .head{
+      position:relative;
+      z-index:1;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .kicker{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(15,22,32,.62);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .title{
+      margin:10px 0 8px;
+      font-size:22px;
+      line-height:1.15;
+      letter-spacing:-.3px;
+    }
+    .sub{
+      color:var(--muted);
+      font-size:14px;
+      max-width:80ch;
+    }
+    .meta{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      border:1px solid var(--stroke2);
+      background: rgba(18,26,38,.66);
+      padding:10px 12px;
+      border-radius:12px;
+      color:var(--text);
+      font-size:13px;
+      cursor:pointer;
+      transition:.15s ease;
+      user-select:none;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.18);}
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(32,227,178,.18), rgba(44,204,255,.12));
+    }
+    .link{
+      font-size:13px;
+      color:var(--muted);
+      border:1px dashed var(--stroke);
+      padding:10px 12px;
+      border-radius:12px;
+      background: rgba(14,21,32,.35);
+      max-width: 520px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      display:inline-block;
+    }
+
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr;}
+      .meta{justify-content:flex-start;}
+      .link{max-width:100%;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius: var(--r);
+      padding:16px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.35);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:.18px;
+      color:rgba(255,255,255,.86);
+      text-transform:uppercase;
+    }
+    .card h3{
+      margin:14px 0 8px;
+      font-size:14px;
+      color:rgba(255,255,255,.88);
+    }
+    .muted{color:var(--muted);}
+    .muted2{color:var(--muted2);}
+    ul{margin:8px 0 0 18px; padding:0; color:var(--muted);}
+    li{margin:6px 0;}
+    .hr{height:1px; background:rgba(255,255,255,.08); margin:14px 0;}
+    .code{
+      font-family: var(--mono);
+      font-size:12.5px;
+      background: rgba(10,14,20,.55);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius: 14px;
+      padding:12px;
+      color:rgba(255,255,255,.86);
+      overflow:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(14,21,32,.45);
+      color: var(--muted);
+      margin-right:8px;
+      margin-bottom:8px;
+    }
+    .badge strong{color:rgba(255,255,255,.9); font-weight:600;}
+    .accent{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:700;
+    }
+    .twoCol{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 720px){
+      .twoCol{grid-template-columns:1fr;}
+    }
+    .toast{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      background: rgba(15,22,32,.82);
+      border:1px solid rgba(255,255,255,.12);
+      color:rgba(255,255,255,.90);
+      padding:10px 12px;
+      border-radius:12px;
+      box-shadow: var(--shadow);
+      opacity:0;
+      transform: translateY(10px);
+      transition:.18s ease;
+      pointer-events:none;
+      font-size:13px;
+      backdrop-filter: blur(10px);
+    }
+    .toast.show{opacity:1; transform: translateY(0);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head">
+        <div>
+          <div class="kicker">
+            <span class="pill">Nicho: <strong>Arquitetura</strong></span>
+            <span class="pill">Dia: <strong>5</strong></span>
+            <span class="pill">Formato: <strong>Reels</strong></span>
+            <span class="pill">Pilar: <strong>Passo a passo</strong></span>
+          </div>
+          <h1 class="title"><span class="accent">5 escolhas de arquitetura</span> que dão cara de projeto (sem obra)</h1>
+          <div class="sub">Template reproduzível: hook de lista + prova/autoridade leve + open loop no #5 + justificativa por item (efeito no ambiente) + CTA de comentário para enviar referências.</div>
+        </div>
+        <div class="meta">
+          <a class="link" href="https://www.instagram.com/p/DVvhffEDI1s/" target="_blank" rel="noopener noreferrer">Post original: https://www.instagram.com/p/DVvhffEDI1s/</a>
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <div class="muted">
+          Um Reel em formato <strong>Top 5</strong> que reduz indecisão: você recomenda 5 opções (materiais/iluminação/detalhes) com uma frase de <strong>por que funciona</strong> e <strong>onde usar</strong>. O motor do engajamento é: promessa específica + curadoria + open loop + CTA fácil (comentário).
+        </div>
+        <div class="hr"></div>
+        <div>
+          <span class="badge"><strong>Promessa</strong>: resultado rápido “sem obra”</span>
+          <span class="badge"><strong>Prova</strong>: “uso em projetos / já especifiquei”</span>
+          <span class="badge"><strong>Retenção</strong>: “o #5 é meu favorito”</span>
+          <span class="badge"><strong>CTA</strong>: comentar palavra-chave</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura</h2>
+        <ul>
+          <li><strong>0–2s (Hook):</strong> número + objeto + curadoria + benefício.</li>
+          <li><strong>2–5s (Prova + open loop):</strong> uso real + prometeu o #5.</li>
+          <li><strong>5–10s (Contexto):</strong> por que é “sem obra” e qual dor resolve.</li>
+          <li><strong>10–45s (Top 5):</strong> 5 blocos idênticos (nome + efeito + onde usar).</li>
+          <li><strong>últimos 3–5s (Fecho + CTA):</strong> pedir comentário para enviar referências.</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="muted2"><strong>Duração ideal:</strong> 25–45s. <strong>Cadência:</strong> cortes a cada 1–2 frases, 1 ideia por frase.</div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <h2>Roteiro</h2>
+        <div class="twoCol">
+          <div>
+            <h3>Opção A (universal — você adapta o tema)</h3>
+            <div class="code" id="scriptText">HOOK (0–2s)
+“5 escolhas de arquitetura que eu indico pra deixar seu [AMBIENTE] com cara de projeto — sem obra.”
+
+PROVA + OPEN LOOP (2–5s)
+“Eu uso isso em projeto e na minha casa. E o #5 é o meu favorito: fica até o final.”
+
+CONTEXTO (5–10s)
+“São detalhes que mudam a percepção do espaço: mais aconchego, mais ‘acabado’ e mais sofisticado, sem quebradeira.”
+
+LISTA TOP 5 (10–45s) — repetir o mesmo padrão
+1/5 — [ITEM 1]
+“Efeito: [1 benefício de percepção]. Melhor pra: [onde/quem].”
+
+2/5 — [ITEM 2]
+“Efeito: [1 benefício de percepção]. Combina com: [materiais/estilo].”
+
+3/5 — [ITEM 3]
+“Efeito: [1 benefício de percepção]. Funciona bem em: [ambiente pequeno/grande].”
+
+4/5 — [ITEM 4]
+“Efeito: [1 benefício de percepção]. Dica: [1 ajuste simples].”
+
+5/5 — [ITEM 5 — meu favorito]
+“Por quê: [motivo forte]. Se você fizer só um, faz esse.”
+
+FECHAMENTO + CTA (últimos 3–5s)
+“Quer que eu te mande as referências e uma lista do que comprar? Comenta ‘EU QUERO’ que eu envio.”
+“E comenta também qual ambiente: SALA, QUARTO ou COZINHA.”</div>
+          </div>
+          <div>
+            <h3>Opção B (exemplo pronto — Sala “sem obra”)</h3>
+            <div class="code">HOOK
+“5 detalhes pra sua sala ficar com cara de projeto — sem reforma.”
+
+PROVA + OPEN LOOP
+“Eu especifico isso direto em projeto. O #5 é o que mais muda o resultado, fica até o final.”
+
+CONTEXTO
+“É o tipo de ajuste que tira a vibe ‘casa provisória’ e deixa mais sofisticado, sem mexer em parede.”
+
+1/5 — Tapete maior (do tamanho certo)
+“Efeito: unifica o estar e ‘aumenta’ a sala. Melhor: frontais do sofá em cima do tapete.”
+
+2/5 — Cortina do teto ao piso
+“Efeito: teto parece mais alto. Dica: trilho no forro ou bem próximo do teto.”
+
+3/5 — Luz em camadas (geral + apoio)
+“Efeito: aconchego imediato. Faz: uma luminária de piso ou abajur + luz geral.”
+
+4/5 — Mesa de centro com escala certa
+“Efeito: sala mais equilibrada. Dica: 40–50 cm entre sofá e mesa.”
+
+5/5 — Paleta com 3 tons (meu favorito)
+“Efeito: tudo fica ‘coeso’. Base neutra + 1 cor + 1 madeira/metal como assinatura.”
+
+CTA
+“Quer as medidas + referências por faixa de preço? Comenta ‘EU QUERO SALA’ que eu mando.”</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <ul>
+          <li><strong>Formato:</strong> você em talking head + imagens/vídeos de referência (sobreposição ou tela dividida).</li>
+          <li><strong>Contador fixo:</strong> “1/5… 5/5” no canto.</li>
+          <li><strong>Texto por item:</strong> 6–8 palavras (máximo) + 1 benefício.</li>
+          <li><strong>B-roll:</strong> textura/material (close) + foto no ambiente (contexto).</li>
+          <li><strong>Ênfase no #5:</strong> melhor imagem + 0,5s a mais + frase de autoridade.</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="muted2"><strong>Dica de edição:</strong> corte no respiro; sem pausas longas; zoom leve ao citar “acabamento, textura, altura”.</div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos</h2>
+        <h3>Hooks prontos (escolha 1)</h3>
+        <ul>
+          <li>“5 escolhas que deixam seu [ambiente] com cara de projeto (sem obra)”</li>
+          <li>“5 soluções rápidas pra [dor] sem reformar”</li>
+          <li>“5 detalhes que arquitetos usam pra ‘arrumar’ o ambiente”</li>
+          <li>“5 combinações que não têm erro pra [resultado]”</li>
+        </ul>
+        <h3>Open loops</h3>
+        <ul>
+          <li>“O #5 é o meu favorito — fica até o final.”</li>
+          <li>“No #5 eu te falo o ajuste que mais muda a percepção.”</li>
+        </ul>
+        <h3>Frases de decisão (alto impacto)</h3>
+        <ul>
+          <li>“Se você fizer só um hoje, faz esse.”</li>
+          <li>“Isso tira o ‘cara de improviso’ na hora.”</li>
+          <li>“É barato perto do efeito que dá.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <div class="muted"><strong>CTA principal (comentário):</strong> baixo atrito + alto engajamento.</div>
+        <ul>
+          <li>“Comenta <strong>EU QUERO</strong> que eu te mando as referências.”</li>
+          <li>“Comenta <strong>EU QUERO + (SALA/QUARTO/COZINHA)</strong> pra eu te enviar a lista certa.”</li>
+          <li>“Quer versão econômica x alto padrão? Comenta <strong>ECONÔMICO</strong> ou <strong>ALTO PADRÃO</strong>.”</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="muted2"><strong>Operação:</strong> fixe um comentário com a palavra-chave e responda na primeira hora para acelerar distribuição.</div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <h2>Checklist</h2>
+        <div class="twoCol">
+          <div>
+            <h3>Pré-produção</h3>
+            <ul>
+              <li>Escolher <strong>1 ambiente</strong> e <strong>1 benefício</strong> (ex.: “aconchego sem obra”).</li>
+              <li>Selecionar <strong>5 opções</strong> com diferenças claras (não repetir o mesmo tipo).</li>
+              <li>Separar <strong>1 referência visual</strong> por item (foto/vídeo no contexto).</li>
+              <li>Definir o <strong>#5 (favorito)</strong> com melhor imagem.</li>
+              <li>Planejar <strong>palavras-chave</strong> do CTA (EU QUERO + ambiente).</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Gravação e edição</h3>
+            <ul>
+              <li>Gravar o hook em <strong>1 take curto</strong> (até 2s).</li>
+              <li>Inserir prova: “usei em projetos / já especifiquei”.</li>
+              <li>Adicionar contador “1/5…5/5” fixo.</li>
+              <li>Texto por item: <strong>nome + 1 benefício</strong>.</li>
+              <li>Cortes a cada 1–2 frases; trilha baixa; voz clara.</li>
+              <li>Fechar com CTA em tela + falado (3–5s).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <h3>Publicação</h3>
+        <ul>
+          <li>Legenda: repetir a promessa + 1 linha de prova + CTA.</li>
+          <li>Fixar comentário com a palavra-chave.</li>
+          <li>Responder rápido com “vou te mandar” + pergunta de segmentação (metragem/estilo/orçamento).</li>
+        </ul>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <h2>Variações</h2>
+        <div class="twoCol">
+          <div>
+            <h3>Temas prontos (Top 5)</h3>
+            <ul>
+              <li>“5 tipos de iluminação pra sala (efeito + onde usar)”</li>
+              <li>“5 revestimentos pra banheiro pequeno que ampliam”</li>
+              <li>“5 layouts de sala pequena que funcionam”</li>
+              <li>“5 escolhas de marcenaria que parecem sob medida (sem gastar tanto)”</li>
+              <li>“5 combinações de cores que deixam o apê mais ‘alto padrão’”</li>
+            </ul>
+          </div>
+          <div>
+            <h3>CTAs alternativos (mesma mecânica)</h3>
+            <ul>
+              <li>“Comenta <strong>LISTA</strong> que eu mando os itens por faixa de preço.”</li>
+              <li>“Comenta <strong>MEDIDAS</strong> que eu mando o guia rápido (tapete/cortina/mesa).”</li>
+              <li>“Comenta <strong>PDF</strong> que eu te envio o checklist.”</li>
+              <li>“Quer parte 2 (cozinha/quarto)? Comenta o ambiente.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=> toast.classList.remove('show'), 1600);
+      }
+
+      async function copyText(text){
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        } catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position='fixed';
+          ta.style.left='-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado.');
+        }
+      }
+
+      btn.addEventListener('click', function(){
+        const text = script.innerText.trim();
+        copyText(text);
+      });
+    })();
+  </script>
+</body>
+</html>
