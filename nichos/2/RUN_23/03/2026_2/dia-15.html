@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dia 15 — Arquitetura — Roteiro (Carrossel)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --r: 18px;
+      --r2: 14px;
+      --g1: linear-gradient(90deg, #2EE59D 0%, #2FA4FF 45%, #FF8A00 100%);
+      --g2: linear-gradient(135deg, rgba(46,229,157,.18), rgba(47,164,255,.16), rgba(255,138,0,.14));
+      --g3: radial-gradient(1000px 420px at 15% -10%, rgba(47,164,255,.22), transparent 55%),
+            radial-gradient(900px 380px at 90% 0%, rgba(255,138,0,.18), transparent 55%),
+            radial-gradient(900px 380px at 45% 110%, rgba(46,229,157,.16), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: var(--g3), linear-gradient(180deg, var(--bg0), var(--bg1));
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.4;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px;}
+    header{
+      border: 1px solid var(--stroke);
+      background: var(--g2);
+      box-shadow: var(--shadow);
+      border-radius: var(--r);
+      padding: 18px 18px;
+      position: relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background: var(--g1);
+      opacity:.12;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .toprow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;position:relative;}
+    .badge{
+      display:inline-flex;gap:10px;align-items:center;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      padding:10px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(10px);
+    }
+    .dot{width:9px;height:9px;border-radius:50%;background: var(--g1);}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color: var(--muted);font-size: 13px;}
+    .meta code{font-family:var(--mono);font-size:12px;color: rgba(234,240,255,.75)}
+    h1{margin:14px 0 8px;font-size: 22px;letter-spacing:.2px;position:relative;}
+    .subtitle{margin:0;color:var(--muted);font-size: 14px;max-width: 80ch;position:relative;}
+    .headactions{display:flex;gap:10px;flex-wrap:wrap;}
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      transition: transform .08s ease, background .15s ease;
+      display:inline-flex;gap:8px;align-items:center;
+      text-decoration:none;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(255,255,255,.09)}
+    .btn:active{transform: translateY(1px)}
+    .btn-primary{
+      border-color: rgba(47,164,255,.35);
+      background: rgba(47,164,255,.12);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media(min-width: 980px){
+      .grid{grid-template-columns: 1.15fr .85fr;}
+    }
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .inner{padding:16px 16px;}
+    .card h2{
+      margin:0 0 10px;
+      font-size: 15px;
+      letter-spacing:.3px;
+      text-transform:none;
+    }
+    .kicker{
+      display:inline-block;
+      font-size: 12px;
+      color: rgba(234,240,255,.75);
+      border: 1px solid var(--stroke);
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.18);
+    }
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      margin: 12px 0;
+    }
+    ul{margin:0;padding-left: 18px;color: var(--muted)}
+    li{margin: 6px 0}
+    .steps{counter-reset: step;display:flex;flex-direction:column;gap:10px;}
+    .step{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      border-radius: var(--r2);
+      padding: 12px 12px;
+      position:relative;
+    }
+    .step:before{
+      counter-increment: step;
+      content: counter(step);
+      position:absolute;top:10px;right:10px;
+      width: 26px;height: 26px;border-radius: 9px;
+      display:grid;place-items:center;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(234,240,255,.85);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .step b{color: var(--text)}
+    .pillrow{display:flex;gap:10px;flex-wrap:wrap;margin-top: 8px;}
+    .pill{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(234,240,255,.78);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      padding: 8px 10px;
+      border-radius: 999px;
+    }
+    .highlight{
+      background: var(--g1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 750;
+    }
+    .scriptbox{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      border-radius: var(--r);
+      padding: 14px;
+      margin-top: 10px;
+    }
+    pre{
+      margin:0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      color: rgba(234,240,255,.86);
+      font-family: var(--mono);
+      font-size: 12.8px;
+      line-height: 1.55;
+    }
+    .two{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media(min-width: 980px){
+      .two{grid-template-columns: 1fr 1fr;}
+    }
+    .footerNote{color: var(--muted2); font-size: 12px; margin-top: 10px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="badge">
+          <span class="dot"></span>
+          <div class="meta">
+            <span><b>Nicho:</b> Arquitetura</span>
+            <span>•</span>
+            <span><b>Dia:</b> 15</span>
+            <span>•</span>
+            <span><b>Formato:</b> <code>carrossel</code></span>
+            <span>•</span>
+            <span><b>Pilar:</b> <code>Passo a passo</code></span>
+          </div>
+        </div>
+        <div class="headactions">
+          <a class="btn" href="https://www.instagram.com/p/DGK45rmtVJw/" target="_blank" rel="noreferrer">Abrir post original</a>
+          <button class="btn btn-primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+      <h1><span class="highlight">E se seu apê parecesse maior</span> sem ganhar 1m²?</h1>
+      <p class="subtitle">Roteiro reproduzível (7 slides) com pergunta-gancho + prova social (prints) + definição + exemplos + “segredo” técnico + pergunta final com CTA de marcação/salvamento.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="inner">
+          <span class="kicker">Resumo</span>
+          <div class="hr"></div>
+          <ul>
+            <li><b>Objetivo:</b> aumentar retenção com storytelling informativo e gerar salvamentos.</li>
+            <li><b>Tese:</b> “Não é sobre aumentar área — é sobre <b>percepção</b> + <b>fluxo</b> + <b>luz</b>.”</li>
+            <li><b>Mecanismos:</b> pergunta aberta → validação externa → nome do conceito → exemplos → camada técnica → CTA.</li>
+          </ul>
+          <div class="pillrow">
+            <div class="pill">7 slides</div>
+            <div class="pill">texto curto + fotos fortes</div>
+            <div class="pill">prova social (prints)</div>
+            <div class="pill">insight técnico</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="inner">
+          <span class="kicker">Estrutura</span>
+          <div class="hr"></div>
+          <div class="steps">
+            <div class="step"><b>Gancho</b> em pergunta + micro-promessa.</div>
+            <div class="step"><b>Prova social</b> (prints/dados).</div>
+            <div class="step"><b>Definição</b> + nome da ideia/tendência.</div>
+            <div class="step"><b>Exemplo 1</b> (referência forte).</div>
+            <div class="step"><b>Exemplo 2</b> (traz para o Brasil/vida real).</div>
+            <div class="step"><b>O segredo técnico</b> (3–5 bullets aplicáveis).</div>
+            <div class="step"><b>Fechamento</b> + pergunta + CTA (marcar/salvar).</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="inner">
+        <span class="kicker">Roteiro</span>
+        <div class="hr"></div>
+
+        <div class="two">
+          <div>
+            <h2>Texto slide a slide (pronto para preencher)</h2>
+            <div class="scriptbox" id="script">
+              <pre>SLIDE 1 — GANCHO (pergunta + curiosidade)
+Headline: “E se seu apê parecesse maior sem ganhar 1m²?”
+Sub (rodapé): “Vem ver as 5 decisões que mudam tudo >>>”
+
+SLIDE 2 — PROVA SOCIAL (prints)
+Título: “Isso já está acontecendo.”
+Texto curto: “Materiais, portais e projetos têm repetido as mesmas estratégias para ‘ampliar’ sem ampliar.”
+(Use 2–3 prints: matéria/estudo/reel/antes-depois)
+
+SLIDE 3 — DEFINIÇÃO + NOME
+Termo (destaque): “AMPLIAÇÃO PERCEPTIVA”
+Definição (2–4 linhas): “Um conjunto de escolhas de layout, luz e materiais que faz o espaço parecer mais aberto, contínuo e leve — mesmo com a mesma metragem.”
+
+SLIDE 4 — EXEMPLO 1 (referência)
+Texto: “Em [cidade/país], um studio de [xx]m² parece maior porque: menos barreiras + alinhamento de eixos + luz conduzida.”
+Métrica opcional: “Studio de 28m² com sensação de 40m² (percepção).”
+
+SLIDE 5 — EXEMPLO 2 (Brasil / aplicável)
+Texto: “No Brasil, dá pra chegar perto com: integração bem setorizada + marcenaria contínua + paleta clara e coerente.”
+(Se tiver, cite um caso próprio: ‘No projeto X…’)
+
+SLIDE 6 — O ‘SEGREDO’ TÉCNICO (camada Arquitetura)
+Título: “O segredo: continuidade + hierarquia”
+Bullets (3–5):
+• 1 eixo visual livre (entrada → janela)
+• 1 linguagem de piso (menos recortes)
+• Marcenaria até o teto (reduz ruído)
+• Luz em camadas (geral + tarefa + destaque)
+• Portas/painéis de correr onde fizer sentido
+
+SLIDE 7 — FECHAMENTO + CTA
+Pergunta: “Você prefere apê integrado ou setorizado?”
+CTA destaque: “Marca alguém que vive dizendo que a casa ‘é pequena’.”
+Rodapé: “Salve pra usar na próxima reforma • Comente ‘PLANTA’ se quer exemplos.”</pre>
+            </div>
+            <p class="footerNote">Dica: troque “Ampliação perceptiva” pelo nome que você queira consolidar (ex.: “layout contínuo”, “planta fluida”, “minimalismo funcional”).</p>
+          </div>
+
+          <div>
+            <h2>Elementos visuais (direção de arte)</h2>
+            <div class="scriptbox">
+              <pre>FORMATO
+• 1080×1350 (4:5), 7 páginas
+
+ESTILO
+• Foto em tela cheia + overlay escuro 20–35%
+• Destaque em uma cor constante (ex.: amarelo) ou gradiente sutil
+• Tipos: 1 serif (gancho) + 1 sans (corpo)
+
+COMPOSIÇÃO (reproduzível)
+• Margens seguras: 8–10%
+• 1 termo destacado por slide (não gritar tudo)
+• Se fundo “poluído”: tarja inferior semitransparente
+
+SLIDES-CHAVE
+• Slide 2: colagem de prints (2–3 camadas, leve inclinação, sombra leve)
+• Slide 6: fundo de planta/linha técnica + bullets (sensação ‘high-tech’)</pre>
+            </div>
+
+            <h2 style="margin-top:14px;">Copy e ganchos</h2>
+            <div class="scriptbox">
+              <pre>GANCHOS (escolha 1)
+1) “E se seu apê parecesse maior sem ganhar 1m²?”
+2) “O erro que faz qualquer espaço parecer menor (mesmo sendo amplo).”
+3) “5 decisões de projeto que ‘aumentam’ a casa sem obra grande.”
+
+MICRO-PROMESSAS (rodapé do slide 1)
+• “Vem ver isso >>>”
+• “No fim tem o segredo do layout.”
+• “Slide 6: a regra que destrava.”
+
+COPYS CURTAS (para reforçar)
+• “Não é metragem. É percepção.”
+• “Menos recorte = mais continuidade.”
+• “Luz certa muda volume.”</pre>
+            </div>
+
+            <h2 style="margin-top:14px;">CTA</h2>
+            <div class="scriptbox">
+              <pre>CTA PRINCIPAL (slide 7)
+• “Marca alguém que precisa ver isso.”
+
+CTA SECUNDÁRIO (salvamento)
+• “Salve para aplicar na próxima reforma.”
+
+CTA DE COMENTÁRIO (gatilho)
+• “Comente: INTEGRADO ou SETORIZADO?”
+• “Comente ‘PLANTA’ que eu mando 3 layouts-base.”</pre>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="inner">
+        <span class="kicker">Slides sugeridos (1..7)</span>
+        <div class="hr"></div>
+        <div class="steps">
+          <div class="step"><b>Slide 1:</b> Foto aspiracional (ambiente pequeno bem resolvido) + pergunta-gancho + “Vem ver >>>”.</div>
+          <div class="step"><b>Slide 2:</b> Colagem de prints (matéria/estudo/reels/antes-depois) + “Isso já está acontecendo.”</div>
+          <div class="step"><b>Slide 3:</b> Definição + nome do conceito em destaque.</div>
+          <div class="step"><b>Slide 4:</b> Caso 1 (referência) + 1 detalhe técnico (eixo, luz, barreiras).</div>
+          <div class="step"><b>Slide 5:</b> Caso 2 (Brasil/vida real) + como adaptar.</div>
+          <div class="step"><b>Slide 6:</b> “O segredo” em bullets (3–5) com fundo técnico (planta/linhas).</div>
+          <div class="step"><b>Slide 7:</b> Pergunta de preferência + CTA de marcar + CTA de salvar + palavra-chave para comentar.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="inner">
+        <span class="kicker">Checklist</span>
+        <div class="hr"></div>
+        <div class="two">
+          <div class="scriptbox">
+            <pre>CHECKLIST DE CRIAÇÃO (conteúdo)
+[ ] Definir 1 promessa central (ex.: “parecer maior sem aumentar área”)
+[ ] Escolher 1 nome para a ideia (2–3 palavras)
+[ ] Separar 2–3 provas (prints: matéria, dado, case, antes/depois)
+[ ] Selecionar 2 exemplos (um ‘referência’ + um ‘vida real’)
+[ ] Escrever 3–5 bullets técnicos aplicáveis
+[ ] Criar 1 pergunta final (A/B) + 1 CTA de marcação
+[ ] Incluir CTA de salvamento + palavra-chave de comentário</pre>
+          </div>
+          <div class="scriptbox">
+            <pre>CHECKLIST DE DESIGN (Canva/Figma)
+[ ] 1080×1350, margens 8–10%
+[ ] Overlay 20–35% OU tarja (legibilidade)
+[ ] 2 fontes (serif gancho + sans corpo)
+[ ] 1 cor de destaque (consistente)
+[ ] No máx. 1 termo destacado por slide
+[ ] Slide 2 com recortes/prints em camadas
+[ ] Slide 6 com estética técnica (linhas/planta)
+[ ] Revisar contraste (acessibilidade)
+[ ] Exportar em alta (PNG) e checar nitidez no celular</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="inner">
+        <span class="kicker">Variações (para repostar sem cansar)</span>
+        <div class="hr"></div>
+        <div class="two">
+          <div class="scriptbox">
+            <pre>VARIAÇÃO 1 — “Erro comum”
+Slide 1: “O erro que faz seu apê parecer menor.”
+Slide 6: “A regra: menos recortes, mais continuidade.”
+
+VARIAÇÃO 2 — “Checklist rápido”
+Slide 1: “5 sinais de que seu layout está te apertando.”
+Slides 3–6: lista (1 por slide)
+
+VARIAÇÃO 3 — “Antes e depois”
+Slide 1: “O que muda mais: cor, luz ou layout?”
+Slide 2: antes/depois
+Slide 6: explicação do antes/depois (técnica)</pre>
+          </div>
+          <div class="scriptbox">
+            <pre>VARIAÇÃO 4 — “Objeção”
+Slide 1: “Dá pra melhorar sem quebrar tudo?”
+Slide 6: 3 ajustes de baixo impacto (iluminação, portas, marcenaria)
+
+VARIAÇÃO 5 — “Série”
+Post 1: sala
+Post 2: cozinha
+Post 3: quarto
+Sempre com a mesma estrutura (7 slides)</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('script');
+      function getText(){
+        return script ? script.innerText.trim() : '';
+      }
+      async function copy(){
+        const text = getText();
+        try{
+          await navigator.clipboard.writeText(text);
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>btn.textContent='Copiar roteiro', 1400);
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>btn.textContent='Copiar roteiro', 1400);
+        }
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
