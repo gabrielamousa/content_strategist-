@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 1 — Arquitetura — 3 dicas para usar bancada preta sem pesar a cozinha</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B132A;
+      --text:#EAF0FF;
+      --muted:#AAB6D6;
+      --line:rgba(255,255,255,.10);
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --r:18px;
+      --g1: linear-gradient(90deg, #38F9D7 0%, #2E7BFF 45%, #FF9A3D 100%);
+      --g2: linear-gradient(135deg, rgba(56,249,215,.18), rgba(46,123,255,.18), rgba(255,154,61,.18));
+      --good:#33E2A0;
+      --warn:#FFB65C;
+      --bad:#FF6B7A;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1100px 700px at 20% 0%, rgba(46,123,255,.25), transparent 55%),
+                  radial-gradient(900px 600px at 100% 10%, rgba(255,154,61,.18), transparent 60%),
+                  radial-gradient(900px 700px at 50% 120%, rgba(56,249,215,.14), transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      line-height:1.35;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: calc(var(--r) + 6px);
+      padding:18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background: var(--g2);
+      opacity:.9;
+      pointer-events:none;
+      filter: blur(18px);
+    }
+    header > *{position:relative;z-index:1}
+    .topline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .chips{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(8,12,26,.55);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      display:flex;gap:8px;align-items:center;
+    }
+    .chip b{color:var(--text);font-weight:700}
+    h1{margin:12px 0 8px;font-size:22px;letter-spacing:.2px}
+    .sub{margin:0;color:var(--muted);font-size:14px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(8,12,26,.65);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:14px;
+      text-decoration:none;
+      display:inline-flex;gap:10px;align-items:center;
+      cursor:pointer;
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+      user-select:none;
+    }
+    .btn:hover{border-color:rgba(255,255,255,.22); background: rgba(10,16,34,.72)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{border:0;background: var(--g1); color:#06101F; font-weight:800}
+    .grid{display:grid;grid-template-columns: 1.15fr .85fr; gap:14px; margin-top:16px}
+    @media (max-width: 920px){.grid{grid-template-columns:1fr}}
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border-radius: var(--r);
+      padding:16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+    }
+    .card h2{margin:0 0 10px;font-size:16px}
+    .kpi{display:grid;grid-template-columns:repeat(3,1fr); gap:10px}
+    @media (max-width: 520px){.kpi{grid-template-columns:1fr}}
+    .k{
+      border:1px solid var(--line);
+      background: rgba(8,12,26,.55);
+      border-radius:14px;
+      padding:10px;
+    }
+    .k .t{font-size:12px;color:var(--muted)}
+    .k .v{margin-top:4px;font-size:13px}
+    .tag{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background: rgba(8,12,26,.55);font-size:12px;color:var(--muted)}
+    .tag .dot{width:8px;height:8px;border-radius:50%;background: var(--g1)}
+
+    .section{margin-top:14px}
+    .section-title{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+    .bar{height:10px;flex:1;border-radius:999px;background: linear-gradient(90deg, rgba(56,249,215,.25), rgba(46,123,255,.25), rgba(255,154,61,.25)); border:1px solid var(--line)}
+
+    ul{margin:10px 0 0 18px;color:var(--text)}
+    li{margin:7px 0;color:var(--text)}
+    .muted{color:var(--muted)}
+    .callout{
+      margin-top:10px;
+      border:1px solid var(--line);
+      background: rgba(8,12,26,.55);
+      border-radius:14px;
+      padding:12px;
+    }
+    .callout b{display:block;margin-bottom:6px}
+
+    .script{
+      margin-top:10px;
+      border:1px solid var(--line);
+      background: rgba(8,12,26,.55);
+      border-radius:14px;
+      overflow:hidden;
+    }
+    .script .head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+    .script .head .meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{font-size:12px;color:var(--muted);border:1px solid var(--line);background: rgba(10,16,34,.65);padding:6px 10px;border-radius:999px}
+    pre{
+      margin:0;
+      padding:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family: var(--mono);
+      font-size: 12.8px;
+      line-height:1.35;
+      color: var(--text);
+    }
+    .cols{display:grid;grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 920px){.cols{grid-template-columns:1fr}}
+    .mini{border:1px solid var(--line);background: rgba(8,12,26,.55);border-radius:14px;padding:12px}
+    .mini h3{margin:0 0 8px;font-size:14px}
+    .hr{height:1px;background: var(--line);margin:12px 0}
+    .ok{color:var(--good)}
+    .warn{color:var(--warn)}
+    .bad{color:var(--bad)}
+    .footer{margin-top:16px;color:var(--muted);font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <div class="chip"><span>Nicho</span> <b>Arquitetura</b></div>
+          <div class="chip"><span>Dia</span> <b>1</b></div>
+          <div class="chip"><span>Formato</span> <b>Reels</b></div>
+          <div class="chip"><span>Pilar</span> <b>Passo a passo</b></div>
+        </div>
+        <span class="tag"><span class="dot"></span> Identidade: dark • high-tech • degradê</span>
+      </div>
+      <h1>3 dicas para usar bancada preta sem pesar a cozinha</h1>
+      <p class="sub">Baseado no post original: <a href="https://www.instagram.com/p/DVqX4oIiaVj/" target="_blank" rel="noopener">https://www.instagram.com/p/DVqX4oIiaVj/</a></p>
+      <div class="actions">
+        <a class="btn" href="https://www.instagram.com/p/DVqX4oIiaVj/" target="_blank" rel="noopener">Abrir post original</a>
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <button class="btn" id="copyHooks">Copiar ganchos</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card section">
+        <div class="section-title"><h2 style="margin:0">Resumo</h2><div class="bar"></div></div>
+        <p class="muted" style="margin:0">
+          Reels curto (25–45s) com promessa específica + lista numerada (3 dicas) para um elemento desejado e “arriscado”.
+          Mantém retenção com contraste (faça/não faça) e autoridade honesta (“aqui eu não recomendo”).
+          Finaliza com CTA por palavra-chave para aumentar comentários e qualificar leads.
+        </p>
+        <div class="hr"></div>
+        <div class="kpi">
+          <div class="k"><div class="t">Promessa</div><div class="v">3 decisões de projeto para ficar <b>leve, atual e elegante</b></div></div>
+          <div class="k"><div class="t">Critério-mestre</div><div class="v"><b>Leveza + limpeza visual</b></div></div>
+          <div class="k"><div class="t">CTA</div><div class="v">Comente <b>GUIA</b> para receber material</div></div>
+        </div>
+        <div class="callout">
+          <b>Quando usar este template</b>
+          <div class="muted">Sempre que o tema for “bonito, mas dá medo”: cores escuras, materiais marcantes, tendências, peças grandes.</div>
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="section-title"><h2 style="margin:0">Estrutura</h2><div class="bar"></div></div>
+        <ul>
+          <li><b>0–3s</b> Hook com promessa específica (lista curta).</li>
+          <li><b>3–8s</b> Validação + benefício + 1 limite honesto (onde não usar).</li>
+          <li><b>8–12s</b> Critério-mestre e por que isso funciona (resultado visual).</li>
+          <li><b>12–40s</b> Dica 1 / Dica 2 / Dica 3 (sempre: Faça / Evite / Por quê / Resultado).</li>
+          <li><b>40–45s</b> CTA: palavra-chave + entregar benefício claro.</li>
+        </ul>
+        <div class="callout">
+          <b>Regra de ouro de gravação</b>
+          <div class="muted">1 ideia por frase. Verbos imperativos. Corte a cada 1–2 frases.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card section">
+      <div class="section-title"><h2 style="margin:0">Roteiro</h2><div class="bar"></div></div>
+      <div class="script" id="scriptBox">
+        <div class="head">
+          <div class="meta">
+            <span class="pill">Duração: 25–45s</span>
+            <span class="pill">Estilo: direto + técnico traduzido</span>
+            <span class="pill">Fio condutor: leveza</span>
+          </div>
+          <span class="pill">Texto falado + texto na tela</span>
+        </div>
+        <pre id="scriptText">[0–2s | HOOK — câmera frontal]
+FALADO: “Quer usar bancada preta e tá com medo de pesar a cozinha? 3 dicas rápidas.”
+TELA: “3 dicas: bancada preta sem pesar”
+
+[2–7s | CONTEXTO + AUTORIDADE HONESTA]
+FALADO: “Ela fica super elegante, mas tem 3 escolhas que mudam tudo. E em banheiro eu geralmente não indico por causa de mancha e marca d’água.”
+TELA: “Elegante, mas tem 3 decisões” + “(No banheiro: atenção/evito)”
+
+[7–14s | CRITÉRIO-MESTRE]
+FALADO: “O segredo é: leveza e limpeza visual. Se você acertar isso, a bancada preta fica contemporânea — não ‘pesada’.”
+TELA: “Critério: leveza + limpeza visual”
+
+[14–23s | DICA 1 — PROPORÇÃO/ESPESSURA]
+FALADO: “Dica 1: evita engrossar a borda. Prefira espessura mais fina ou acabamento que pareça leve.”
+POR QUÊ: “Borda grossa deixa tudo mais pesado e datado.”
+TELA: “DICA 1: não engrosse a borda”
+B-ROLL: close na borda (comparativo fino vs grosso)
+
+[23–32s | DICA 2 — ENCONTROS/RECORTES]
+FALADO: “Dica 2: menos recortes e menos ‘informação’. Capricha no encontro com a parede e reduz emendas aparentes.”
+RESULTADO: “Isso deixa o conjunto mais clean e caro.”
+TELA: “DICA 2: menos recortes = mais clean”
+B-ROLL: encontro bancada/rodabanca/parede
+
+[32–40s | DICA 3 — ACABAMENTO]
+FALADO: “Dica 3: troca o muito brilhante por acetinado ou textura mais suave. Brilho demais marca e entrega a manutenção.”
+RESULTADO: “Acetinado costuma parecer mais sofisticado.”
+TELA: “DICA 3: prefira acetinado (menos brilho)”
+B-ROLL: polido vs acetinado (luz batendo)
+
+[40–45s | CTA]
+FALADO: “Quer um guia com combinações e cuidados? Comenta ‘GUIA’ que eu te mando.”
+TELA: “Comente: GUIA” + “Eu envio o material”</pre>
+      </div>
+    </div>
+
+    <div class="cols section">
+      <div class="card">
+        <div class="section-title"><h2 style="margin:0">Elementos visuais</h2><div class="bar"></div></div>
+        <div class="mini">
+          <h3>Edição (padrão replicável)</h3>
+          <ul>
+            <li>Jump cuts a cada 1–2 frases (ritmo).</li>
+            <li>Texto grande: “DICA 1 / DICA 2 / DICA 3”.</li>
+            <li>Zoom-in leve nos “não faça”.</li>
+            <li>Última tela 1s com palavra-chave e benefício.</li>
+          </ul>
+        </div>
+        <div class="mini" style="margin-top:12px">
+          <h3>B-roll mínimo (se não tiver obra pronta)</h3>
+          <ul>
+            <li>Fotos de referência (Pinterest/portfólio) com pan/zoom suave.</li>
+            <li>Close em amostras: pedra, quartzo, porcelanato, acabamentos.</li>
+            <li>Grave “detalhes de bancada” em showroom/loja (com permissão).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2 style="margin:0">Copy e ganchos</h2><div class="bar"></div></div>
+        <div class="mini">
+          <h3>Hooks prontos (escolha 1)</h3>
+          <pre id="hooksText">1) “3 dicas para usar [ELEMENTO] em [AMBIENTE] sem deixar pesado.”
+2) “Quer usar [MATERIAL/COR] e não sabe como? Faz isso.”
+3) “Se você vai colocar [ITEM], evita esses 2 detalhes…”
+4) “O erro que deixa [AMBIENTE] com cara de datado quando usa [ITEM].”</pre>
+        </div>
+        <div class="mini" style="margin-top:12px">
+          <h3>Frases de autoridade (sem parecer venda)</h3>
+          <ul>
+            <li>“Funciona muito bem em cozinha/lavanderia; no banheiro eu evito por X.”</li>
+            <li>“O detalhe é simples, mas muda totalmente o resultado final.”</li>
+            <li>“Se você quer mais contemporâneo, olha para encontros e acabamento.”</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card section">
+      <div class="section-title"><h2 style="margin:0">CTA</h2><div class="bar"></div></div>
+      <div class="cols">
+        <div class="mini">
+          <h3>CTA principal (comentários)</h3>
+          <ul>
+            <li><b>“Comenta ‘GUIA’</b> que eu te mando um checklist de escolhas + combinações.”</li>
+            <li>Fixe um comentário explicando o que a pessoa recebe.</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Variações rápidas</h3>
+          <ul>
+            <li>“Salva pra consultar quando for definir a bancada.”</li>
+            <li>“Comenta ‘PARTE2’ pra eu trazer combinações de cores e metais.”</li>
+            <li>“Comenta ‘PROJETO’ se você quer que eu analise o seu caso.”</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card section">
+      <div class="section-title"><h2 style="margin:0">Checklist</h2><div class="bar"></div></div>
+      <div class="cols">
+        <div class="mini">
+          <h3>Checklist de criação (reproduzível)</h3>
+          <ul>
+            <li><span class="ok">■</span> Escolher 1 elemento “desejado e arriscado” (ex.: bancada preta).</li>
+            <li><span class="ok">■</span> Escrever a promessa em 1 frase: “3 dicas para usar X sem Y”.</li>
+            <li><span class="ok">■</span> Definir 1 critério-mestre (leveza/limpeza/proporção/manutenção).</li>
+            <li><span class="ok">■</span> Listar 3 dicas na ordem: (1) proporção, (2) encontros, (3) acabamento.</li>
+            <li><span class="ok">■</span> Para cada dica: Faça / Evite / Por quê / Resultado.</li>
+            <li><span class="ok">■</span> Inserir 1 frase honesta de limite: “Em X eu não recomendo”.</li>
+            <li><span class="ok">■</span> Editar com textos “DICA 1/2/3” + cortes rápidos.</li>
+            <li><span class="ok">■</span> Finalizar com CTA de palavra-chave de 1 palavra.</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Checklist técnico (para não perder qualidade)</h3>
+          <ul>
+            <li><span class="warn">■</span> Áudio: voz clara (música baixa, -18 a -24 LUFS aprox.).</li>
+            <li><span class="warn">■</span> Legendas: alto contraste + poucas palavras por linha.</li>
+            <li><span class="warn">■</span> Luz: frente/45º, sem sombras duras no rosto.</li>
+            <li><span class="warn">■</span> Enquadramento: peito pra cima; espaço no topo para texto.</li>
+            <li><span class="bad">■</span> Evitar: introdução longa, explicação sem exemplo visual, termos técnicos sem traduzir.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card section">
+      <div class="section-title"><h2 style="margin:0">Variações</h2><div class="bar"></div></div>
+      <div class="cols">
+        <div class="mini">
+          <h3>Variação A (mesma estrutura, outro tema)</h3>
+          <ul>
+            <li><b>“3 dicas para usar porcelanato grande sem ‘matar’ o ambiente.”</b></li>
+            <li>Dicas: paginação/juntas, rejunte, recortes em quinas/encontros.</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Variação B (com “erro comum” no começo)</h3>
+          <ul>
+            <li>Hook: “O erro que deixa a bancada preta com cara de pesada…”</li>
+            <li>Depois: “Se você corrigir isso + mais 2 detalhes, fica perfeito.”</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mini" style="margin-top:12px">
+        <h3>Variação C (com prova: antes/depois)</h3>
+        <ul>
+          <li>Abrir com 1 foto “pesada” (borda grossa + brilho + muitos recortes) e depois 1 “leve”.</li>
+          <li>Repetir as 3 dicas apontando onde está a diferença.</li>
+        </ul>
+      </div>
+      <p class="footer">Dica: mantenha o mesmo template por 7 dias trocando apenas o “elemento arriscado”. Isso acelera produção e cria série.</p>
+    </div>
+  </div>
+
+  <script>
+    function copyTextFrom(elId){
+      const el = document.getElementById(elId);
+      const text = el ? el.innerText : "";
+      if(!text) return;
+      navigator.clipboard.writeText(text).then(()=>{
+        const btn = elId === 'scriptText' ? document.getElementById('copyBtn') : document.getElementById('copyHooks');
+        const original = btn.innerText;
+        btn.innerText = 'Copiado!';
+        setTimeout(()=>btn.innerText = original, 900);
+      });
+    }
+    document.getElementById('copyBtn').addEventListener('click', ()=>copyTextFrom('scriptText'));
+    document.getElementById('copyHooks').addEventListener('click', ()=>copyTextFrom('hooksText'));
+  </script>
+</body>
+</html>
