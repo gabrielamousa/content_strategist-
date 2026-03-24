@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 12 — Arquitetura — Casa com alma</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0C1220;
+      --panel2:#0A0F1C;
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.14);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:20px;
+      --g1: linear-gradient(90deg, #18E299 0%, #2BA8FF 45%, #FF9A3D 100%);
+      --g2: radial-gradient(900px 240px at 10% -10%, rgba(43,168,255,.22), rgba(7,10,18,0) 60%),
+            radial-gradient(800px 240px at 85% 0%, rgba(255,154,61,.18), rgba(7,10,18,0) 60%),
+            radial-gradient(900px 300px at 50% 110%, rgba(24,226,153,.16), rgba(7,10,18,0) 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--bg);
+      background-image: var(--g2);
+      line-height:1.45;
+    }
+    a{ color: #8CC7FF; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .wrap{ max-width:1100px; margin:0 auto; padding:28px 18px 54px; }
+
+    header{
+      position:relative;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      padding:22px 20px;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.12;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .toprow{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .chips{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .chip{
+      border:1px solid var(--line2);
+      background: rgba(255,255,255,.03);
+      padding:7px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .chip strong{ color: var(--text); font-weight:650; }
+
+    h1{ margin:10px 0 6px; font-size: 22px; letter-spacing:.2px; }
+    .subtitle{ margin:0; color: var(--muted); font-size: 14px; max-width: 78ch; }
+
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .btn{
+      border:1px solid var(--line2);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .05s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{ background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.20); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      border: 0;
+      background: var(--g1);
+      color:#061018;
+      font-weight:750;
+    }
+
+    .grid{ display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px; }
+    @media (min-width: 920px){
+      .grid{ grid-template-columns: 1.1fr .9fr; }
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(12,18,32,.92), rgba(10,15,28,.92));
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      padding:16px 16px 14px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+      flex: 0 0 auto;
+    }
+
+    .kpi{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .pill{
+      padding:8px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .pill b{ color: var(--text); }
+
+    ul{ margin:10px 0 0 18px; color: var(--muted); }
+    li{ margin:6px 0; }
+
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.14), rgba(255,255,255,.06));
+      margin: 12px 0;
+      border-radius: 99px;
+    }
+
+    .script{
+      white-space: pre-wrap;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: #DDE6FF;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .cols{ display:grid; grid-template-columns: 1fr; gap:12px; }
+    @media (min-width:920px){
+      .cols{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .micro{ color: var(--muted); font-size: 12px; }
+
+    .tagline{
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(90deg, rgba(24,226,153,.08), rgba(43,168,255,.06), rgba(255,154,61,.06));
+      color: #DDE6FF;
+      font-size: 13px;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(12,18,32,.92);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-2px); }
+
+    .muted{ color: var(--muted); }
+    .strong{ color: var(--text); font-weight:700; }
+
+    .footer{
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="chips">
+          <div class="chip"><strong>Nicho:</strong> Arquitetura</div>
+          <div class="chip"><strong>Dia:</strong> 12</div>
+          <div class="chip"><strong>Formato:</strong> Reels</div>
+          <div class="chip"><strong>Pilar:</strong> Passo a passo</div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DTz30L_Dpqc/" target="_blank" rel="noopener">Ver post original</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <h1>Casa com alma: o roteiro de 45s que gera comentários</h1>
+      <p class="subtitle">Estrutura reproduzível para transformar “tur” de obra em narrativa: pergunta identitária → problema clássico → 2 intervenções âncora → tour em 3 cenas → pergunta final que puxa opinião.</p>
+      <div class="tagline"><span class="strong">Objetivo do vídeo:</span> maximizar comentários + salvamentos sem parecer venda (CTA em forma de pergunta).</div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="dot"></span>Resumo</h2>
+        <div class="kpi">
+          <div class="pill"><b>Tempo:</b> 30–45s</div>
+          <div class="pill"><b>Gancho:</b> pergunta pessoal</div>
+          <div class="pill"><b>Prova:</b> imagens do espaço</div>
+          <div class="pill"><b>Motor de engajamento:</b> contraste + pergunta final</div>
+        </div>
+        <ul>
+          <li><span class="strong">Tema:</span> arquitetura como tradução de identidade + solução “cirúrgica” de um problema real.</li>
+          <li><span class="strong">Tese:</span> não é sobre a casa mais cara; é sobre a casa que parece “você”.</li>
+          <li><span class="strong">Entrega:</span> 1 problema concreto + 2 decisões de projeto + 3 benefícios em sequência (luz/ventilação/fluxo).</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="micro"><span class="strong">Quando usar:</span> retrofit, reforma de casa/apê, consultório, loja, escritório, área gourmet, fachada, iluminação, marcenaria, acessibilidade.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Estrutura (sequência fixa)</h2>
+        <ol class="muted" style="margin:10px 0 0 18px;">
+          <li><span class="strong">Hook (0–2s):</span> pergunta identitária + “me conta”.</li>
+          <li><span class="strong">Posicionamento (2–6s):</span> “pra mim não é X nem Y”.</li>
+          <li><span class="strong">Caso + tese (6–9s):</span> “se não te representa, dá pra resolver”.</li>
+          <li><span class="strong">Problema (9–12s):</span> 3 adjetivos concretos.</li>
+          <li><span class="strong">Intervenções âncora (12–20s):</span> 2 “cirurgias” + metáfora (pulmão/coração/costura).</li>
+          <li><span class="strong">Tour (20–35s):</span> 3 cenas em progressão espacial.</li>
+          <li><span class="strong">Fechamento (35–45s):</span> pergunta simples + identificação do projeto.</li>
+        </ol>
+        <div class="hr"></div>
+        <p class="micro"><span class="strong">Regra de ouro:</span> toda frase completa o triângulo <span class="strong">Problema → Intervenção → Benefício</span>.</p>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2><span class="dot"></span>Roteiro (template reproduzível)</h2>
+        <p class="micro">Preencha os campos entre colchetes. Mantém o ritmo e permite adaptar para qualquer obra.</p>
+        <div class="script" id="scriptText">[0–2s | câmera em você | legenda grande]
+“Onde você realmente se sente em casa? Me conta.”
+
+[2–6s | corte para 1 detalhe do projeto]
+“Pra mim, não é [casa que copia o passado] nem [a mais cara do condomínio].
+É um lugar que diz: ‘sou eu’.”
+
+[6–9s | volta em você + 1 take do ‘antes’/contexto]
+“E esse projeto prova uma coisa: se seu espaço não te representa mais, dá pra resolver com decisões certas.”
+
+[9–12s | imagem que mostre o problema]
+“O problema aqui era: [comprida], [estreita] e [escura].”
+
+[12–20s | ‘virada’ com 2 cortes rápidos]
+“A virada foi: [intervenção âncora 1] + [intervenção âncora 2].
+Isso virou o [pulmão/coração] da casa: mais [luz] e mais [ventilação].”
+
+[20–35s | tour em 3 cenas | 1 ideia por frase]
+“No [ambiente 1], a gente [ação que resolve o problema].”
+“No [ambiente 2], [ação] pra [benefício].”
+“E no [ambiente 3], [ação] que trouxe [convivência/fluxo/uso].”
+
+[35–45s | take final + nome do projeto]
+“Agora me diz: isso deu ou não deu uma nova alma?
+[Nome do projeto] — [cidade], [ano].”</div>
+        <div class="hr"></div>
+        <div class="cols">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px;">Bancos de frases (pra preencher rápido)</h3>
+            <ul>
+              <li><span class="strong">Problema (3 adjetivos):</span> escura / abafada / barulhenta / travada / apertada / sem privacidade / com circulação ruim.</li>
+              <li><span class="strong">Intervenções âncora:</span> abrir claraboia / pátio interno / derrubar parede / inverter cozinha e estar / criar porta de correr / brise / ventilação cruzada / integrar social.</li>
+              <li><span class="strong">Metáforas:</span> “cirurgia”, “costura”, “pulmões da casa”, “coração do projeto”, “filtro de luz”.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px;">Ritmo de gravação</h3>
+            <ul>
+              <li>Frases de <span class="strong">6–12 palavras</span>.</li>
+              <li>Corte a cada <span class="strong">0,5–1,5s</span>.</li>
+              <li>2–3 termos técnicos no máximo (ex.: “pátio interno”, “ventilação cruzada”, “laje”).</li>
+              <li>Progressão espacial: <span class="strong">entrada → social → íntimo/fundo</span> (ou “meio da planta → térreo → fundo”).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Elementos visuais (captação + edição)</h2>
+        <ul>
+          <li><span class="strong">Abertura:</span> você olhando pra câmera (energia alta) + legenda grande.</li>
+          <li><span class="strong">Prova:</span> alternar você narrando (credibilidade) + imagens do projeto (confirmação).</li>
+          <li><span class="strong">B-roll guiado pelo texto:</span> mostre exatamente o que você fala (pátio/abertura/cozinha/fluxo).</li>
+          <li><span class="strong">Fotos estáticas:</span> use zoom/motion suave (Ken Burns) para manter ritmo.</li>
+          <li><span class="strong">Texto na tela:</span> palavras-chave (não frases longas).</li>
+          <li><span class="strong">Áudio:</span> trilha baixa contínua + voz clara; micro-pausa antes da “virada”.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Copy e ganchos (prontos)</h2>
+        <div class="cols">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px;">Hooks (0–2s)</h3>
+            <ul>
+              <li>“Onde você se sente em casa de verdade?”</li>
+              <li>“O que uma casa precisa ter pra parecer ‘sua’?”</li>
+              <li>“A casa mais cara nem sempre é a mais ‘casa’.”</li>
+              <li>“Sua casa te representa… ou só funciona?”</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px;">Textos na tela (sequência)</h3>
+            <ul>
+              <li>“Onde você se sente em casa?”</li>
+              <li>“Não é sobre ser a mais cara.”</li>
+              <li>“É sobre parecer você.”</li>
+              <li>“Problema clássico: [3 adjetivos].”</li>
+              <li>“Virada: [intervenção 1] + [intervenção 2].”</li>
+              <li>“Mais luz | mais ar | mais fluxo”</li>
+              <li>“[Cozinha/estar] = coração da casa”</li>
+              <li>“Deu uma nova alma? Comenta.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>CTA</h2>
+        <ul>
+          <li><span class="strong">CTA principal (comentário):</span> “Pra você: isso é ‘casa’ ou não? Por quê?”</li>
+          <li><span class="strong">CTA alternativo:</span> “Qual é o maior problema da sua casa hoje: luz, barulho ou layout?”</li>
+          <li><span class="strong">CTA secundário (salvar/compartilhar):</span> “Salva pra usar quando for reformar” + “manda pra alguém que vive numa casa escura/fechada”.</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="micro"><span class="strong">Detalhe:</span> feche sempre com uma pergunta binária ou fácil (sim/não + “por quê”).</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Checklist de criação (copiar/colocar no Trello)</h2>
+        <div class="cols">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px;">Antes de gravar</h3>
+            <ul>
+              <li>[ ] Definir <span class="strong">1 pergunta identitária</span> (hook).</li>
+              <li>[ ] Escrever <span class="strong">1 frase de posicionamento</span> (o que NÃO é “casa” pra você).</li>
+              <li>[ ] Escolher <span class="strong">1 problema clássico</span> (bem concreto).</li>
+              <li>[ ] Selecionar <span class="strong">2 intervenções âncora</span> (as “cirurgias”).</li>
+              <li>[ ] Listar <span class="strong">3 benefícios em ordem</span> (luz → ar → fluxo/convivência).</li>
+              <li>[ ] Separar imagens por progressão espacial (entrada → social → fundo).</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px;">Gravação + edição + publicação</h3>
+            <ul>
+              <li>[ ] Abertura olhando pra câmera (2 takes).</li>
+              <li>[ ] Captar detalhes que “provam” a fala (aberturas, pátio, materiais).</li>
+              <li>[ ] Cortes a cada 0,5–1,5s (sem respiros longos).</li>
+              <li>[ ] Palavras-chave na tela (máx. 4–6 palavras por tela).</li>
+              <li>[ ] Inserir 1 metáfora forte (pulmão/coração/costura/cirurgia).</li>
+              <li>[ ] Final com pergunta + identificação do projeto (cidade/ano).</li>
+              <li>[ ] Legenda repete a pergunta final + “salve/mande”.</li>
+              <li>[ ] Hashtags mínimas e específicas (+ cidade): #reforma #retrofit #arquitetura + #Arquitetura[SeuBairro]</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2><span class="dot"></span>Variações (3 versões prontas)</h2>
+        <div class="cols">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px;">Variação 1 — Apartamento pequeno</h3>
+            <div class="script">Hook: “O que faz um apê pequeno parecer casa?”
+Problema: “Era escuro, lotado e sem respiro.”
+Virada: “Marcenaria até o teto + porta de correr pra integrar sem bagunça.”
+Tour: “Na sala, a circulação ficou solta. Na cozinha, o balcão virou mesa. No quarto, armário embutido liberou área.”
+Fechamento: “Ficou com cara de ‘você’? Sim ou não — por quê?”</div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px;">Variação 2 — Casa antiga (retrofit)</h3>
+            <div class="script">Hook: “Você prefere casa ‘original’ ou casa que funciona hoje?”
+Posicionamento: “Eu gosto de preservar… mas sem viver no escuro.”
+Problema: “Longa, fechada e abafada.”
+Virada: “Abrimos um pátio de luz + criamos ventilação cruzada.”
+Fechamento: “Isso é reforma com alma ou descaracterização? Me diz.”</div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px;">Variação 3 — Consultório/Comercial</h3>
+            <div class="script">Hook: “O seu espaço passa confiança… ou ansiedade?”
+Problema: “Acústica ruim, espera apertada, luz dura.”
+Virada: “Tratamento acústico + iluminação indireta + layout que separa fluxo.”
+Tour: “Recepção mais calma, atendimento mais privado, e circulação sem cruzar pessoas.”
+Fechamento: “Você se sentiria bem aqui? Por quê?”</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">Identidade visual: fundo escuro, cards com borda suave e destaques em degradê (verde/azul/laranja). Botão “Copiar roteiro” copia o template principal.</div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        window.clearTimeout(window.__t);
+        window.__t = window.setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = script.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado (fallback).');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
