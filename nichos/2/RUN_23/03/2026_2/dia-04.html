@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 4 — Arquitetura — Roteiro</title>
+<style>
+  :root{
+    --bg:#0b0f16;
+    --panel:#0f1623;
+    --card:#0e1521;
+    --text:#e7eefc;
+    --muted:#a9b7d0;
+    --line:rgba(255,255,255,.08);
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --r:18px;
+    --grad: linear-gradient(90deg, #22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --grad2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.16), rgba(251,146,60,.14));
+    --ok:#22c55e;
+    --warn:#fb923c;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    background: radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,.18), transparent 60%),
+                radial-gradient(900px 500px at 90% 0%, rgba(34,197,94,.14), transparent 55%),
+                radial-gradient(900px 700px at 50% 120%, rgba(251,146,60,.12), transparent 55%),
+                var(--bg);
+    color:var(--text);
+    line-height:1.35;
+  }
+  a{color:inherit}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 16px 60px}
+  header{
+    border:1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+    border-radius: calc(var(--r) + 6px);
+    padding:18px 18px 16px;
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--grad2);
+    opacity:.9;
+    pointer-events:none;
+    filter: blur(18px);
+  }
+  header > *{position:relative; z-index:1}
+  .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .badges{display:flex; gap:10px; flex-wrap:wrap}
+  .badge{
+    border:1px solid var(--line);
+    background: rgba(15,22,35,.72);
+    padding:7px 10px;
+    border-radius:999px;
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.2px;
+  }
+  .badge strong{color:var(--text); font-weight:650}
+  h1{
+    margin:12px 0 8px;
+    font-size:22px;
+    letter-spacing:.2px;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    font-size:13px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .sub a{
+    color:#cfe3ff;
+    text-decoration:none;
+    border-bottom:1px dashed rgba(207,227,255,.35);
+  }
+  .grid{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+  }
+  @media(min-width: 920px){
+    .grid{grid-template-columns: 1fr 1fr}
+    .span2{grid-column: 1 / -1}
+  }
+  .card{
+    border:1px solid var(--line);
+    background: rgba(14,21,33,.78);
+    border-radius: var(--r);
+    padding:16px;
+    box-shadow: var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+  .card:before{
+    content:"";
+    position:absolute;
+    left:0; top:0; right:0;
+    height:2px;
+    background: var(--grad);
+    opacity:.9;
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#cfe3ff;
+  }
+  .card p, .card li{color:var(--muted); font-size:13.5px}
+  .card ul{margin:8px 0 0; padding-left:18px}
+  .card ol{margin:8px 0 0; padding-left:18px}
+  .kpi{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .pill{
+    border:1px solid var(--line);
+    background: rgba(255,255,255,.03);
+    padding:7px 10px;
+    border-radius:12px;
+    font-size:12.5px;
+    color:var(--muted);
+  }
+  .pill b{color:var(--text)}
+  .split{display:grid; grid-template-columns: 1fr; gap:12px}
+  @media(min-width:700px){.split{grid-template-columns: 1fr 1fr}}
+  .callout{
+    border:1px solid rgba(56,189,248,.22);
+    background: rgba(56,189,248,.06);
+    padding:12px;
+    border-radius: 14px;
+    color: var(--muted);
+  }
+  .callout b{color:var(--text)}
+  .script{
+    border:1px solid var(--line);
+    background: rgba(7,10,16,.55);
+    border-radius: 14px;
+    padding:14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size:12.8px;
+    color:#dbe7ff;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+  }
+  .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  button{
+    border:1px solid var(--line);
+    background: rgba(255,255,255,.05);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius: 12px;
+    cursor:pointer;
+    font-weight:650;
+    letter-spacing:.2px;
+  }
+  button.primary{
+    background: linear-gradient(90deg, rgba(34,197,94,.18), rgba(56,189,248,.16), rgba(251,146,60,.14));
+    border-color: rgba(255,255,255,.14);
+  }
+  .hint{font-size:12px; color:var(--muted); margin-top:8px}
+  .hr{height:1px; background: var(--line); margin:12px 0}
+  .twoCol{display:grid; grid-template-columns:1fr; gap:12px}
+  @media(min-width:920px){.twoCol{grid-template-columns:1fr 1fr}}
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    color:var(--muted);
+    border:1px solid var(--line);
+    background: rgba(255,255,255,.03);
+    padding:6px 10px;
+    border-radius:999px;
+    margin:4px 6px 0 0;
+  }
+  .dot{width:8px;height:8px;border-radius:999px;background:var(--grad)}
+  .footer{
+    margin-top:16px;
+    color:var(--muted);
+    font-size:12px;
+    text-align:center;
+    opacity:.9;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badges">
+          <div class="badge"><strong>Nicho</strong>: Arquitetura</div>
+          <div class="badge"><strong>Dia</strong>: 4</div>
+          <div class="badge"><strong>Formato</strong>: Reels</div>
+          <div class="badge"><strong>Pilar</strong>: Erro comum</div>
+        </div>
+        <div class="badges">
+          <div class="badge"><strong>Original</strong>: <a href="https://www.instagram.com/p/DVyGO6zEbgO/" target="_blank" rel="noopener noreferrer">abrir post</a></div>
+        </div>
+      </div>
+      <h1>5 coisas que eu jamais colocaria no quarto (e o que usar no lugar)</h1>
+      <p class="sub">Objetivo: gerar retenção com lista + opinião forte, e comentários via palavra-chave para curadoria.</p>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Resumo</h2>
+        <p>Reel em lista (5 itens) mostrando <b>o que evitar no quarto</b> + <b>por que prejudica</b> (funcionalidade/estética/sensação) + <b>alternativa simples</b>. Fecha com CTA de palavra-chave para enviar recomendações personalizadas.</p>
+        <div class="kpi">
+          <div class="pill"><b>Duração</b>: 25–40s</div>
+          <div class="pill"><b>Cadência</b>: 1 item a cada 4–6s</div>
+          <div class="pill"><b>Textos</b>: curtos + numerados</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Estrutura (reproduzível)</h2>
+        <ol>
+          <li><b>Hook (0–2s)</b>: opinião forte + promessa de curadoria.</li>
+          <li><b>Lista (2–30s)</b>: Item 1→5 com: (a) nome, (b) frase forte, (c) motivo prático, (d) impacto na sensação, (e) substituição.</li>
+          <li><b>Fecho (30–40s)</b>: resumo + CTA por palavra-chave + pergunta simples.</li>
+        </ol>
+        <div class="hr"></div>
+        <p class="hint"><b>Regra de ouro:</b> critique com responsabilidade: sempre dê alternativa equivalente (preço/viabilidade) para não soar “elitista”.</p>
+      </div>
+
+      <div class="card span2">
+        <h2>Roteiro (pronto para gravar)</h2>
+        <div class="callout"><b>Texto na tela (fixo):</b> “5 coisas que eu NÃO teria no quarto (e o que usar no lugar)” + contador “1/5”.</div>
+        <div class="actions">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="selectBtn">Selecionar texto</button>
+        </div>
+        <div class="script" id="scriptText">ABERTURA (0–2s)
+“5 coisas que eu jamais colocaria no quarto — porque isso deixa o ambiente pesado e nada funcional.”
+
+ITEM 1 (2–7s)
+“1) Cortina curta. Nem pensar.”
+Por quê: “corta a altura do pé-direito e deixa o quarto menor.”
+Melhor: “cortina do teto ao piso (ou persiana bem alinhada se não der).”
+
+ITEM 2 (7–12s)
+“2) Luz branca direta no quarto.”
+Por quê: “fica com cara de consultório e cansa visualmente.”
+Melhor: “luz quente + indireta (abajur, fita em sanca, arandela).”
+
+ITEM 3 (12–18s)
+“3) Excesso de espelho mal posicionado.”
+Por quê: “reflete bagunça e multiplica ruído visual.”
+Melhor: “um espelho grande, bem enquadrado (e com o que você quer refletir).”
+
+ITEM 4 (18–24s)
+“4) Marcenaria ‘abraçando’ a cama sem respiro.”
+Por quê: “sufoca, pesa e às vezes atrapalha circulação.”
+Melhor: “módulos mais leves + laterais com espaço + cabeceira bem resolvida.”
+
+ITEM 5 (24–30s)
+“5) Muita informação no enxoval + parede + decoração ao mesmo tempo.”
+Por quê: “polui e tira a sensação de descanso.”
+Melhor: “uma base neutra + 1 ponto de contraste (textura OU cor OU estampa).”
+
+FECHAMENTO (30–40s)
+“Quarto bom é quarto que acalma: escolhas simples, bem pensadas.”
+“Comenta ‘CURADORIA’ que eu te digo a melhor alternativa pro seu quarto (tamanho, luz e estilo).”
+Pergunta (opcional): “Qual desses você tem hoje?”</div>
+        <p class="hint">Ajuste os itens para seu estilo de projeto: troque exemplos e mantenha o bloco “opinião forte → por quê → alternativa”.</p>
+      </div>
+
+      <div class="card">
+        <h2>Elementos visuais</h2>
+        <ul>
+          <li><b>On-screen text</b>: item + micro-motivo (ex.: “polui”, “aperta”, “envelhece”, “não funciona”).</li>
+          <li><b>Contador</b>: “1/5…5/5” no canto superior.</li>
+          <li><b>B-roll</b>: 0,5s do “erro” + 0,5s do “melhor” (se tiver imagens).</li>
+          <li><b>Composição</b>: fundo limpo, luz frontal suave, enquadramento peito para cima.</li>
+          <li><b>Cortes</b>: jump cuts a cada 1–2 frases; zoom leve no início de cada item.</li>
+        </ul>
+        <div class="kpi">
+          <span class="tag"><span class="dot"></span>Tipografia grande</span>
+          <span class="tag"><span class="dot"></span>Alto contraste</span>
+          <span class="tag"><span class="dot"></span>Ritmo em lista</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Copy e ganchos (biblioteca)</h2>
+        <div class="twoCol">
+          <div>
+            <p><b>Hooks (0–2s)</b></p>
+            <ul>
+              <li>“5 coisas que eu não faria jamais em um quarto (pra não ficar pesado).”</li>
+              <li>“Se seu quarto parece menor do que é, pode ser por causa disso aqui.”</li>
+              <li>“Quer um quarto mais elegante sem gastar mais? Evita esses 5.”</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Frases memoráveis</b></p>
+            <ul>
+              <li>“Isso sufoca o ambiente.”</li>
+              <li>“Multiplica ruído visual.”</li>
+              <li>“Quarto bom é quarto que acalma.”</li>
+              <li>“Não é sobre tendência; é sobre conforto.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="hint"><b>Tom recomendado:</b> firme + coloquial. Evite humilhar o público; critique a escolha, não a pessoa.</p>
+      </div>
+
+      <div class="card">
+        <h2>CTA</h2>
+        <ul>
+          <li><b>Primário (comentário)</b>: “Comenta <b>CURADORIA</b> que eu te digo a alternativa ideal pro seu quarto.”</li>
+          <li><b>Variações por tema</b>:
+            <ul>
+              <li>“Comenta <b>ILUMINAÇÃO</b> que eu te mando 3 combinações seguras.”</li>
+              <li>“Comenta <b>LAYOUT</b> que eu te falo o melhor posicionamento da cama.”</li>
+              <li>“Comenta <b>MARCENARIA</b> que eu te digo como ganhar espaço sem sufocar.”</li>
+            </ul>
+          </li>
+          <li><b>Extra (DM)</b>: “Se preferir, me manda ‘CURADORIA’ no direct com metragem + foto.”</li>
+        </ul>
+      </div>
+
+      <div class="card span2">
+        <h2>Checklist de criação (rápido e operacional)</h2>
+        <div class="split">
+          <div>
+            <p><b>Pré (10–15 min)</b></p>
+            <ul>
+              <li>Definir o espaço: quarto / quarto pequeno / quarto casal.</li>
+              <li>Escolher 5 itens comuns (o que mais aparece em obra/projeto).</li>
+              <li>Para cada item, escrever: opinião forte + 1 motivo técnico traduzido + 1 impacto sensorial + 1 alternativa viável.</li>
+              <li>Definir a palavra-chave do CTA (1 só).</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Gravação + edição</b></p>
+            <ul>
+              <li>Hook em até 2s (sem “Oi gente…”).</li>
+              <li>Falar em frases curtas; trocar a entonação a cada item.</li>
+              <li>Texto na tela: “1) … / Por quê: … / Melhor: …”.</li>
+              <li>Inserir contador 1/5.</li>
+              <li>Última tela: CTA + palavra-chave grande.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="hint">Publicação: legenda curta repetindo a promessa + pergunta final. Fixe um comentário com “Digite CURADORIA que eu respondo”.</p>
+      </div>
+
+      <div class="card span2">
+        <h2>Variações (mesmo DNA, novos temas)</h2>
+        <div class="twoCol">
+          <div>
+            <p><b>Variação 1 — Sala pequena</b></p>
+            <ul>
+              <li>Hook: “5 coisas que eu não faria numa sala pequena.”</li>
+              <li>Itens: sofá gigante, rack profundo, tapete pequeno, iluminação única no teto, excesso de quadros miúdos.</li>
+              <li>CTA: “Comenta SALA que eu te mando 3 combinações de layout.”</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Variação 2 — Cozinha</b></p>
+            <ul>
+              <li>Hook: “5 escolhas que dão trabalho na cozinha (e ninguém te conta).”</li>
+              <li>Itens: rejunte claro, puxador que enrosca, bancada porosa, poucas tomadas, iluminação fria e dura.</li>
+              <li>CTA: “Comenta COZINHA que eu te digo acabamentos mais seguros.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="twoCol">
+          <div>
+            <p><b>Variação 3 — Banheiro</b></p>
+            <ul>
+              <li>Hook: “5 erros que deixam banheiro com cara de ‘apertado’.”</li>
+              <li>Itens: vidro mal dimensionado, cuba alta demais, espelho pequeno, iluminação no topo, nicho fora do alcance.</li>
+              <li>CTA: “Comenta BANHEIRO que eu te mando um checklist de medidas.”</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Variação 4 — Quarto (versão polêmica)</b></p>
+            <ul>
+              <li>Hook: “Coisas ‘premium’ que eu evitaria no quarto.”</li>
+              <li>Itens: excesso de LED colorido, cabeceira muito alta e pesada, espelho frente à cama (se incomodar), muito preto sem luz, lustre pendente baixo.</li>
+              <li>CTA: “Comenta ESTILO que eu adapto pro seu gosto.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">Documento de roteiro — pronto para copiar, adaptar e gravar.</div>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const selectBtn = document.getElementById('selectBtn');
+    const el = document.getElementById('scriptText');
+
+    function selectText(){
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    selectBtn.addEventListener('click', function(){
+      selectText();
+    });
+
+    btn.addEventListener('click', async function(){
+      const text = el.innerText;
+      try{
+        await navigator.clipboard.writeText(text);
+        btn.innerText = 'Copiado!';
+        setTimeout(()=> btn.innerText = 'Copiar roteiro', 1400);
+      } catch(e){
+        selectText();
+        btn.innerText = 'Selecione e copie';
+        setTimeout(()=> btn.innerText = 'Copiar roteiro', 1400);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
