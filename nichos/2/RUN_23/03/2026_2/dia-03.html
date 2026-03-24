@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 3 — Arquitetura — 7 coisas que eu não colocaria no seu projeto (e por quê)</title>
+<style>
+  :root{
+    --bg:#0b0f17;
+    --panel:#0f1626;
+    --card:#0c1322;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.14);
+    --text:#e9eefc;
+    --muted:rgba(233,238,252,.72);
+    --muted2:rgba(233,238,252,.58);
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+
+    --g1: linear-gradient(135deg, #22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --g2: linear-gradient(90deg, rgba(34,197,94,.9), rgba(56,189,248,.9), rgba(251,146,60,.9));
+
+    --radius:16px;
+    --radius2:22px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,.18), transparent 60%),
+      radial-gradient(1000px 600px at 90% 0%, rgba(34,197,94,.14), transparent 55%),
+      radial-gradient(900px 600px at 60% 120%, rgba(251,146,60,.10), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    line-height:1.45;
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
+
+  header{
+    position:relative;
+    overflow:hidden;
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border-radius: var(--radius2);
+    padding:22px;
+    box-shadow: var(--shadow);
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g1);
+    opacity:.12;
+    filter: blur(18px);
+    z-index:0;
+  }
+  .hgrid{position:relative; z-index:1; display:grid; gap:14px}
+  .topline{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+  .badges{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+  .badge{
+    padding:7px 10px;
+    border:1px solid var(--stroke);
+    border-radius:999px;
+    background: rgba(15,22,38,.66);
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.2px;
+  }
+  .badge strong{color:var(--text); font-weight:650}
+  .title{
+    font-size:22px;
+    font-weight:780;
+    letter-spacing:-.2px;
+    margin:0;
+  }
+  .subtitle{margin:0; color:var(--muted); font-size:14px}
+  .linkrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .linkpill{
+    display:inline-flex; gap:8px; align-items:center;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--stroke);
+    background: rgba(12,19,34,.78);
+    color:var(--muted);
+    font-size:13px;
+  }
+  .dot{
+    width:8px; height:8px; border-radius:99px;
+    background: var(--g2);
+    box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap:14px;
+    margin-top:14px;
+  }
+  @media (max-width: 920px){
+    .grid{grid-template-columns:1fr}
+  }
+
+  .card{
+    border:1px solid var(--stroke);
+    background: rgba(15,22,38,.55);
+    border-radius: var(--radius);
+    padding:16px;
+    box-shadow: 0 10px 35px rgba(0,0,0,.35);
+    overflow:hidden;
+    position:relative;
+  }
+  .card .cap{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px;
+    margin-bottom:10px;
+  }
+  .card h2{
+    margin:0;
+    font-size:14px;
+    letter-spacing:.3px;
+    text-transform:uppercase;
+    color: rgba(233,238,252,.82);
+  }
+  .chip{
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    color:var(--muted);
+    background: rgba(12,19,34,.55);
+  }
+  .hr{
+    height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+    border:0; margin:12px 0;
+  }
+  .k{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:12px;
+    padding:2px 8px;
+    border-radius:10px;
+    border:1px solid var(--stroke);
+    color:var(--muted);
+    background: rgba(12,19,34,.55);
+  }
+  ul{margin:10px 0 0 18px; color:var(--muted)}
+  li{margin:6px 0}
+  .p{margin:0; color:var(--muted)}
+  .strong{color:var(--text); font-weight:700}
+  .hint{color:var(--muted2); font-size:12.5px}
+
+  .script{
+    border:1px solid var(--stroke2);
+    background: rgba(8,12,22,.62);
+    border-radius: 14px;
+    padding:14px;
+  }
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    color: rgba(233,238,252,.86);
+    font-family: var(--mono);
+    font-size: 12.8px;
+    line-height:1.5;
+  }
+
+  .btnrow{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px}
+  button{
+    cursor:pointer;
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    font-weight:650;
+    letter-spacing:.2px;
+  }
+  button:hover{border-color:rgba(255,255,255,.22)}
+  .ghost{
+    background: rgba(12,19,34,.55);
+    color: var(--muted);
+    font-weight:600;
+  }
+
+  .callout{
+    margin-top:10px;
+    padding:12px;
+    border-radius: 14px;
+    border: 1px solid var(--stroke);
+    background: linear-gradient(135deg, rgba(34,197,94,.12), rgba(56,189,248,.10), rgba(251,146,60,.10));
+  }
+  .callout .p{color: rgba(233,238,252,.80)}
+
+  .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+  @media (max-width: 700px){.cols{grid-template-columns:1fr}}
+
+  .footer{
+    margin-top:16px;
+    color: var(--muted2);
+    font-size:12px;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="hgrid">
+      <div class="topline">
+        <div class="badges">
+          <span class="badge"><strong>Nicho</strong>: Arquitetura</span>
+          <span class="badge"><strong>Dia</strong>: 3</span>
+          <span class="badge"><strong>Pilar</strong>: Erro comum</span>
+          <span class="badge"><strong>Formato</strong>: Reels</span>
+        </div>
+        <div class="linkrow">
+          <a class="linkpill" href="https://www.instagram.com/p/DVgEvKrlHqx/" target="_blank" rel="noopener noreferrer">
+            <span class="dot"></span>
+            <span>Ver post original</span>
+            <span class="k">instagram.com</span>
+          </a>
+        </div>
+      </div>
+      <h1 class="title">7 coisas que eu não colocaria no seu projeto (e por quê)</h1>
+      <p class="subtitle">Roteiro plug-and-play: lista rápida, julgamento estético claro, alternativa simples e CTA por palavra‑chave.</p>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <div class="cap">
+        <h2>Resumo</h2>
+        <span class="chip">Objetivo: retenção + comentários</span>
+      </div>
+      <p class="p">Um Reel em formato lista (6–8 itens) com linguagem definitiva (“empobrece”, “pesa”, “já era”), cada item com <span class="strong">erro → consequência → regra/alternativa</span>. Fecha com CTA de palavra‑chave para entregar “guia/checklist” e puxar conversa.</p>
+      <div class="callout">
+        <p class="p"><span class="strong">Promessa:</span> “Em menos de 40s, você vai saber o que evitar pra deixar seu ambiente mais elegante, atemporal e fácil de manter.”</p>
+        <p class="hint">Duração recomendada: 25–45s. Ritmo: 1 item a cada 3–5s.</p>
+      </div>
+      <hr class="hr" />
+      <div class="cols">
+        <div>
+          <p class="p"><span class="strong">Tom:</span> direto, curadoria profissional, sem rodeios.</p>
+          <p class="p"><span class="strong">Ambiente:</span> escolha 1 (cozinha, banheiro, sala, quarto, fachada, área gourmet).</p>
+        </div>
+        <div>
+          <p class="p"><span class="strong">DNA do conteúdo:</span> polêmica com autoridade + visual específico + regra simples.</p>
+          <p class="p"><span class="strong">CTA:</span> comentário com palavra‑chave.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cap">
+        <h2>Estrutura</h2>
+        <span class="chip">Sequência reproduzível</span>
+      </div>
+      <ul>
+        <li><span class="strong">0–2s (Hook):</span> “Coisas que eu não colocaria em [ambiente] — e você também não deveria.”</li>
+        <li><span class="strong">2–5s (Contexto 1 linha):</span> “Não é gosto pessoal: é proporção, harmonia e manutenção.”</li>
+        <li><span class="strong">5–35s (Lista 6–8 itens):</span> repetir padrão fixo por item.</li>
+        <li><span class="strong">Últimos 3–6s (Fecho + CTA):</span> palavra‑chave + benefício + próxima ação.</li>
+      </ul>
+      <hr class="hr" />
+      <p class="p"><span class="strong">Padrão por item (sempre igual):</span></p>
+      <ul>
+        <li><span class="k">NÃO</span> + erro visual nomeado</li>
+        <li><span class="k">POR QUÊ</span> + 1 consequência curta</li>
+        <li><span class="k">FAÇA</span> + regra simples/alternativa</li>
+      </ul>
+    </section>
+
+    <section class="card" style="grid-column: 1 / -1;">
+      <div class="cap">
+        <h2>Roteiro</h2>
+        <span class="chip">Pronto para gravar</span>
+      </div>
+      <div class="script">
+        <pre id="roteiro">
+[HOOK — 0–2s]
+“Coisas que eu NÃO colocaria em uma [COZINHA/SALA/BANHEIRO/FACHADA]… e se você quer um resultado mais elegante, você também não deveria.”
+
+[ENQUADRAMENTO — 2–5s]
+“Não é sobre moda. É sobre proporção, harmonia e manutenção no dia a dia.”
+
+[LISTA — 6 a 8 itens | 5–35s]
+Item 1
+“NÃO: [ERRO bem visual].
+Por quê? [martelo: ‘pesa’, ‘empobrece’, ‘envelhece’].
+Faça: [regra simples + alternativa].”
+
+Item 2
+“NÃO: [ERRO].
+Por quê? [1 consequência].
+Faça: [alternativa].”
+
+Item 3
+“NÃO: [ERRO].
+Por quê? [1 consequência].
+Faça: [alternativa].”
+
+Item 4
+“NÃO: [ERRO].
+Por quê? [1 consequência].
+Faça: [alternativa].”
+
+Item 5
+“NÃO: [ERRO].
+Por quê? [1 consequência].
+Faça: [alternativa].”
+
+Item 6
+“NÃO: [ERRO].
+Por quê? [1 consequência].
+Faça: [alternativa].”
+
+(+ Item 7/8 se couber)
+
+[FECHAMENTO + CTA — últimos 3–6s]
+“Quer um guia com critérios pra decidir isso no SEU caso? Comenta ‘GUIA’ que eu te mando a checklist.”
+“E me diz: qual desses você já ia fazer sem perceber?”
+        </pre>
+      </div>
+      <div class="btnrow">
+        <button id="copyBtn">Copiar roteiro</button>
+        <button class="ghost" id="copyCaptionBtn">Copiar legenda (modelo)</button>
+        <button class="ghost" id="copyShotsBtn">Copiar lista de takes</button>
+      </div>
+      <p class="hint" id="copyStatus" aria-live="polite" style="margin-top:10px"></p>
+    </section>
+
+    <section class="card">
+      <div class="cap">
+        <h2>Elementos visuais</h2>
+        <span class="chip">Edição high-retention</span>
+      </div>
+      <ul>
+        <li><span class="strong">Cortes secos</span> em cada “frase martelo”.</li>
+        <li><span class="strong">Texto grande</span> na tela (3 linhas no máximo).</li>
+        <li><span class="strong">Barra de progresso</span> ou “Item 1/7” para incentivar a assistir até o fim.</li>
+        <li><span class="strong">B-roll rápido</span> (0,5–1,5s) de “erro” vs “certo” (referências, prints, fotos próprias).</li>
+        <li><span class="strong">Zoom-in leve</span> nas palavras: “já era”, “empobrece”, “pesa”.</li>
+        <li><span class="strong">SFX discreto</span> a cada item (pop/click), sem poluir.</li>
+      </ul>
+      <hr class="hr" />
+      <p class="p"><span class="strong">Template de texto na tela:</span></p>
+      <ul>
+        <li>Tela 1: “Coisas que eu NÃO colocaria em uma [AMBIENTE]”</li>
+        <li>Por item: “NÃO: …” → “Por quê: …” → “FAÇA: …”</li>
+        <li>Final: “Quer o guia? Comenta: ‘GUIA’”</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <div class="cap">
+        <h2>Copy e ganchos</h2>
+        <span class="chip">Frases prontas</span>
+      </div>
+      <p class="p"><span class="strong">Hooks (escolha 1):</span></p>
+      <ul>
+        <li>“Coisas que eu não colocaria em [ambiente] — e você vai me agradecer depois.”</li>
+        <li>“7 escolhas que deixam seu [ambiente] com cara de antigo (sem você perceber).”</li>
+        <li>“O que empobrece um [ambiente] mesmo com material caro.”</li>
+        <li>“Se você quer um projeto atemporal, evita isso aqui.”</li>
+      </ul>
+      <hr class="hr" />
+      <p class="p"><span class="strong">Palavras-martelo (use 2–4):</span> “pesa”, “envelhece”, “dá cara de improviso”, “briga com o resto”, “marca tudo”, “não dá pra ‘desver’”, “já era”.</p>
+      <p class="p"><span class="strong">Mini-regras universais (encaixam em qualquer item):</span> alinhamento, proporção, menos informação, continuidade de linhas, repetição controlada, manutenção.</p>
+    </section>
+
+    <section class="card">
+      <div class="cap">
+        <h2>CTA</h2>
+        <span class="chip">Comentário por palavra‑chave</span>
+      </div>
+      <ul>
+        <li><span class="strong">Principal:</span> “Comenta <span class="k">GUIA</span> que eu te mando a checklist pra deixar seu [ambiente] mais leve e atemporal.”</li>
+        <li><span class="strong">Alternativas:</span> <span class="k">CHECKLIST</span>, <span class="k">MAPA</span>, <span class="k">CRITÉRIOS</span></li>
+        <li><span class="strong">Pergunta de amarração:</span> “Qual item você mais vê por aí?” / “Qual você quase escolheu?”</li>
+      </ul>
+      <div class="callout">
+        <p class="p"><span class="strong">Dica de operação:</span> fixe um comentário repetindo a palavra‑chave + o benefício. Responda cada comentário com 1 pergunta para prolongar a thread.</p>
+      </div>
+    </section>
+
+    <section class="card" style="grid-column: 1 / -1;">
+      <div class="cap">
+        <h2>Checklist</h2>
+        <span class="chip">Criação → gravação → edição → postagem</span>
+      </div>
+      <div class="cols">
+        <div>
+          <p class="p"><span class="strong">Antes de gravar</span></p>
+          <ul>
+            <li>Definir <span class="strong">1 ambiente</span> e avatar (cliente/obra/tipo de imóvel).</li>
+            <li>Listar <span class="strong">6–8 erros visuais</span> (fáceis de reconhecer em 1 segundo).</li>
+            <li>Para cada erro: <span class="strong">condenação curta</span> + <span class="strong">1 motivo</span> + <span class="strong">regra/alternativa</span>.</li>
+            <li>Separar <span class="strong">6–12 referências</span> (erro vs certo) para B-roll.</li>
+            <li>Escolher <span class="strong">palavra‑chave</span> do CTA e o “brinde” (checklist/guia).</li>
+          </ul>
+        </div>
+        <div>
+          <p class="p"><span class="strong">Gravando + editando</span></p>
+          <ul>
+            <li>Hook em <span class="strong">até 2s</span>.</li>
+            <li>Item 1 em <span class="strong">até 3s</span> após o hook.</li>
+            <li>Frases curtas: “Não: X. Por quê: Y. Faça: Z.”</li>
+            <li>Texto na tela sincronizado (NÃO / POR QUÊ / FAÇA).</li>
+            <li>Trocar frame a cada 1–2 linhas (jump cuts + B-roll).</li>
+            <li>Adicionar “Item 1/7” + barra de progresso.</li>
+            <li>Legenda curta com CTA repetido.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="grid-column: 1 / -1;">
+      <div class="cap">
+        <h2>Variações</h2>
+        <span class="chip">3 versões sem perder o DNA</span>
+      </div>
+      <div class="cols">
+        <div>
+          <p class="p"><span class="strong">Variação A — “Atemporalidade”</span></p>
+          <ul>
+            <li>Hook: “Se você não quer que seu projeto envelheça em 2 anos, evita isso.”</li>
+            <li>Critério dominante: proporção + repetição controlada + poucas linhas fortes.</li>
+            <li>CTA: “Comenta <span class="k">ATEMPORAL</span> que eu mando 10 regras.”</li>
+          </ul>
+        </div>
+        <div>
+          <p class="p"><span class="strong">Variação B — “Manutenção”</span></p>
+          <ul>
+            <li>Hook: “O erro que deixa sua casa linda na foto e péssima no dia a dia.”</li>
+            <li>Critério dominante: sujeira, marcas, rejunte, limpeza, durabilidade.</li>
+            <li>CTA: “Comenta <span class="k">MANUTENÇÃO</span> que eu mando a lista do que dá menos trabalho.”</li>
+          </ul>
+        </div>
+      </div>
+      <div class="cols" style="margin-top:12px">
+        <div>
+          <p class="p"><span class="strong">Variação C — “Custo inteligente”</span></p>
+          <ul>
+            <li>Hook: “Onde você acha que está economizando, mas está barateando o visual.”</li>
+            <li>Critério dominante: continuidade visual + pontos de investimento.</li>
+            <li>CTA: “Comenta <span class="k">CUSTO</span> que eu mando o mapa de prioridades.”</li>
+          </ul>
+        </div>
+        <div>
+          <p class="p"><span class="strong">Bônus — bancos de exemplos</span></p>
+          <ul>
+            <li>Use 2 colunas: “ERRO” (vermelho sutil) vs “CERTO” (verde/azul sutil).</li>
+            <li>Se não tiver obra própria: referências públicas + setas e rótulos.</li>
+            <li>Final: antes/depois (mesmo que seja mock/estudo) aumenta save.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="footer">Feito para execução rápida: copie, personalize com seu ambiente e grave em 30–45 minutos.</div>
+</div>
+
+<script>
+  const roteiroEl = document.getElementById('roteiro');
+  const statusEl = document.getElementById('copyStatus');
+
+  const captionModel = `Legenda (curta e objetiva)\n\nCoisas que eu NÃO colocaria em uma [AMBIENTE] se o objetivo é um resultado mais elegante e atemporal.\n\nQuer a checklist completa (com critérios + alternativas)?\nComenta: GUIA\n\nQual item você mais vê por aí?`;
+
+  const shotList = `Lista de takes (filmagem rápida)\n\n1) A-cam (você falando): HOOK (0–2s)\n2) A-cam: enquadramento 1 frase (2–5s)\n3) B-roll por item: ERRO (0,7s) + você falando em off\n4) B-roll por item: CERTO/alternativa (0,7s)\n5) A-cam: FECHO + CTA (últimos 3–6s)\n\nOverlay: Item 1/7 + barra de progresso + NÃO/POR QUÊ/FAÇA`;
+
+  async function copyText(text){
+    try{
+      await navigator.clipboard.writeText(text);
+      statusEl.textContent = 'Copiado! Agora é só personalizar os campos entre colchetes.';
+    } catch (e){
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      statusEl.textContent = 'Copiado (modo compatibilidade).';
+    }
+    setTimeout(()=>{ statusEl.textContent = ''; }, 2500);
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', ()=> copyText(roteiroEl.innerText.trim()));
+  document.getElementById('copyCaptionBtn').addEventListener('click', ()=> copyText(captionModel));
+  document.getElementById('copyShotsBtn').addEventListener('click', ()=> copyText(shotList));
+</script>
+</body>
+</html>
