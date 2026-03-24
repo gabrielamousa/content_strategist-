@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 7 — Arquitetura | Roteiro Reels</title>
+  <style>
+    :root{
+      --bg0:#06080f;
+      --bg1:#0b1020;
+      --card: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --text:#eaf0ff;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --r12: 14px;
+      --r16: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --g1: linear-gradient(90deg, #28f3a8 0%, #4aa3ff 45%, #ff8a2a 100%);
+      --g2: radial-gradient(1200px 600px at 20% 0%, rgba(40,243,168,.18), transparent 55%),
+            radial-gradient(900px 520px at 95% 10%, rgba(74,163,255,.16), transparent 60%),
+            radial-gradient(900px 520px at 70% 110%, rgba(255,138,42,.14), transparent 55%);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 54px}
+
+    .header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background: var(--g1);
+      opacity:.12;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .topbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;position:relative}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.24);
+      padding:7px 10px;
+      border-radius:999px;
+      color: var(--muted);
+      font-size:12.5px;
+      letter-spacing:.2px;
+    }
+    .chip strong{color:var(--text);font-weight:650}
+
+    .title{
+      position:relative;
+      margin:14px 0 8px;
+      font-size:20px;
+      line-height:1.15;
+      letter-spacing:-.02em;
+    }
+    .subtitle{position:relative;margin:0;color:var(--muted);font-size:13.5px;line-height:1.45}
+    .linkrow{position:relative;margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .link{
+      display:inline-flex;gap:8px;align-items:center;
+      color:var(--muted);
+      text-decoration:none;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.20);
+      padding:8px 10px;
+      border-radius: 10px;
+      transition: .2s ease;
+      font-size:13px;
+    }
+    .link:hover{border-color:var(--stroke2);transform: translateY(-1px)}
+
+    .grid{display:grid;grid-template-columns: 1.2fr .8fr;gap:14px;margin-top:14px}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0;
+      padding:14px 16px 0;
+      font-size:14px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color: rgba(234,240,255,.82);
+    }
+    .card .content{padding:12px 16px 16px}
+
+    .hr{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+
+    .kpi{display:flex;gap:10px;flex-wrap:wrap}
+    .kpi .pill{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      padding:10px 10px;
+      border-radius: 12px;
+      min-width: 160px;
+      flex:1;
+    }
+    .pill .label{font-size:12px;color:var(--muted2);margin-bottom:6px}
+    .pill .value{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.35}
+
+    ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.55}
+    li{margin:7px 0}
+    .note{color:var(--muted2);font-size:12.8px;line-height:1.55}
+
+    .script{
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(234,240,255,.88);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.28);
+      border-radius: 14px;
+      padding: 12px;
+      white-space: pre-wrap;
+    }
+
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+    .btn{
+      appearance:none;border:1px solid var(--stroke);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      transition:.2s ease;
+      font-weight:650;
+      letter-spacing:.2px;
+    }
+    .btn.primary{
+      border-color: rgba(74,163,255,.45);
+      background: linear-gradient(135deg, rgba(40,243,168,.16), rgba(74,163,255,.12), rgba(255,138,42,.10));
+    }
+    .btn:hover{transform: translateY(-1px); border-color: var(--stroke2)}
+    .toast{color:var(--muted);font-size:12.5px}
+
+    .badge{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      font-size:12px;
+      color: var(--muted);
+      margin-left:8px;
+      vertical-align: middle;
+    }
+
+    .accent{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight: 760;
+    }
+
+    .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 760px){.twoCol{grid-template-columns:1fr}}
+
+    .checklist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 860px){.checklist{grid-template-columns:1fr}}
+    .check{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.20);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .check h3{margin:0 0 6px;font-size:13px;color:rgba(234,240,255,.88);letter-spacing:.06em;text-transform:uppercase}
+    .check ul{padding-left:18px}
+
+    .footer{margin-top:14px;color:var(--muted2);font-size:12.5px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <section class="header">
+      <div class="topbar">
+        <div class="chips">
+          <div class="chip"><strong>Nicho</strong>: Arquitetura</div>
+          <div class="chip"><strong>Dia</strong>: 7</div>
+          <div class="chip"><strong>Formato</strong>: Reels</div>
+          <div class="chip"><strong>Pilar</strong>: Passo a passo</div>
+        </div>
+        <div class="chips">
+          <div class="chip">Meta: <span class="accent">retenção + comentários</span></div>
+        </div>
+      </div>
+
+      <h1 class="title">O roteiro em 60s que faz arquitetura viral (com plot twist)</h1>
+      <p class="subtitle">Use paradoxo + história + 1 detalhe técnico explicado com analogia + reviravolta + pergunta polarizadora. Feito para ser reproduzível em qualquer obra (icônica ou comum).</p>
+
+      <div class="linkrow">
+        <a class="link" href="https://www.instagram.com/p/DVN_sLVEbxh/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+        <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        <span class="toast" id="toast" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <div class="content">
+          <div class="kpi">
+            <div class="pill">
+              <div class="label">Ideia central</div>
+              <div class="value">Arquitetura como “investigação”: parece X, mas é Y — e a solução teve um efeito colateral inesperado.</div>
+            </div>
+            <div class="pill">
+              <div class="label">Gatilhos de performance</div>
+              <div class="value">Número específico + contraste de épocas + arco (problema→solução→twist) + opinião + pergunta final.</div>
+            </div>
+            <div class="pill">
+              <div class="label">Promessa</div>
+              <div class="value">Em 60s, entender por que funciona até hoje e copiar o raciocínio no seu projeto/obra.</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="note"><span class="accent">Como reproduzir:</span> escolha uma obra, pegue 1 detalhe “invisível” (estrutura, ventilação, iluminação, brise, modulação, drenagem, acústica) e conte como se fosse um caso com reviravolta.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura</h2>
+        <div class="content">
+          <ul>
+            <li><strong>0–3s:</strong> confronto + número (ano/idade/vão/m²/custo).</li>
+            <li><strong>3–7s:</strong> paradoxo (“parece novo, mas é antigo”).</li>
+            <li><strong>7–12s:</strong> contexto rápido (“volta pra [ano]”).</li>
+            <li><strong>12–20s:</strong> o problema (por que era difícil naquela condição/época).</li>
+            <li><strong>20–35s:</strong> solução (1 elemento-chave + analogia visual).</li>
+            <li><strong>35–45s:</strong> plot twist (consequência inesperada).</li>
+            <li><strong>45–55s:</strong> resolução + impacto no uso (conforto, amplitude, luz, manutenção).</li>
+            <li><strong>55–60s:</strong> nome/autor/local + pergunta polarizadora.</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="note">Regra de ritmo: <strong>1 virada a cada 5–8s</strong> + corte quando muda de ideia. Legenda destacando só palavras-chave.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro <span class="badge">template copiável</span></h2>
+        <div class="content">
+          <div class="script" id="scriptText">[Abertura (0–3s) — HOOK]
+“Você vai achar que eu tô mentindo… mas essa obra tem [X anos] / é de [ANO].”
+(visual: take forte da fachada/detalhe + texto grande: “Tem [X anos]”) 
+
+[Paradoxo (3–7s)]
+“E mesmo assim, olha a cara de [2015/2020/hoje]. Isso aqui dá um banho em muito projeto atual.”
+
+[Contexto (7–12s)]
+“Volta pra [ANO]. Naquela época, o ‘moderno’ era [1 referência rápida: material/estética/tecnologia].”
+
+[Problema (12–20s)]
+“O pedido era: [leve / muito vão / muita luz / privacidade com abertura / ventilação sem ar-condicionado / custo baixo / obra rápida].
+Só que [por que era difícil: tecnologia/material/mão de obra/clima/terreno/lei].”
+
+[Solução (20–35s)]
+“A sacada foi [1 elemento-chave]: [treliça/brise/pátio/shed/modulação/estrutura mista/ventilação cruzada].
+Pensa como se fosse [analogia simples].
+(visual: close no encontro/detalhe + seta/zoom)”
+
+[Plot twist (35–45s)]
+“E aqui vem o plot twist: o ‘problema’ não era [X]… era [Y].
+Ex.: ‘não era o teto cair… era o vento levar’ / ‘não era calor… era ofuscamento’ / ‘não era infiltração… era condensação’.”
+
+[Resolução + impacto (45–55s)]
+“Eles resolveram com [fixação/contraventamento/rufo/drenagem/sombreamento/vidro específico/veneziana/dupla pele].
+Resultado: [benefício no uso: conforto, amplitude, luz, manutenção, durabilidade].”
+
+[Fechamento (55–60s)]
+“Isso é evolução… ou a gente desaprendeu a projetar desse jeito?
+Comenta: ‘evoluiu’ ou ‘desaprendeu’. E salva pra rever quando for projetar/reformar.”</div>
+          <div class="btnrow">
+            <button class="btn" type="button" id="copyBtn2">Copiar roteiro</button>
+            <span class="toast" id="toast2" aria-live="polite"></span>
+          </div>
+          <div class="hr"></div>
+          <div class="twoCol">
+            <div>
+              <p class="note"><span class="accent">Campos obrigatórios</span> para completar antes de gravar: [X anos]/[ANO], 1 problema real, 1 solução concreta, 1 twist, 1 benefício no uso.</p>
+            </div>
+            <div>
+              <p class="note"><span class="accent">Dica de fala</span>: frases curtas + recomeços (“aí… só que… então…”) para manter ritmo e facilitar cortes.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <div class="content">
+          <ul>
+            <li><strong>Abertura:</strong> jump cut + texto grande em 0,3s (“Tem [X anos]”).</li>
+            <li><strong>B-roll guiado pela fala:</strong> quando disser “sem pilar”, mostre o vão; quando disser “amarrado”, mostre base/encaixe.</li>
+            <li><strong>Inserções rápidas (0,5–1s):</strong> foto antiga, planta, corte, detalhe construtivo.</li>
+            <li><strong>Punch-in nas viradas:</strong> ao dizer “plot twist” ou “só que…”.</li>
+            <li><strong>Legendas:</strong> destaque em cor só: ANO, solução, twist, benefício.</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="note">Paleta sugerida de destaque (na legenda/tela): <span class="accent">verde</span> para números, <span class="accent">azul</span> para solução, <span class="accent">laranja</span> para plot twist.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos</h2>
+        <div class="content">
+          <div class="twoCol">
+            <div>
+              <p class="note"><strong>Hooks prontos (escolha 1):</strong></p>
+              <ul>
+                <li>“Você vai achar que eu tô mentindo… isso tem [X anos].”</li>
+                <li>“Parece [2020], mas é de [ANO]. Como pode?”</li>
+                <li>“Isso aqui dá um banho em muito projeto de hoje.”</li>
+                <li>“A solução disso parece gambiarra… mas é genial.”</li>
+              </ul>
+            </div>
+            <div>
+              <p class="note"><strong>Frases de virada (para retenção):</strong></p>
+              <ul>
+                <li>“Só que tinha um problema…”</li>
+                <li>“A sacada foi o seguinte:”</li>
+                <li>“E aqui que ninguém percebe…”</li>
+                <li>“Plot twist: o medo não era [X]…”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="note"><strong>Texto na tela (sequência sugerida):</strong> 1) “Tem [X anos]” 2) “Parece [hoje], mas é [ANO]” 3) “Problema: [1 frase]” 4) “Solução: [1 palavra]” 5) “Plot twist: [1 palavra]” 6) “Evoluiu ou desaprendeu?”</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <div class="content">
+          <ul>
+            <li><strong>Comentários (debate):</strong> “Evoluiu ou desaprendeu? Comenta: ‘evoluiu’ ou ‘desaprendeu’.”</li>
+            <li><strong>Salvamento (utilidade):</strong> “Salva pra rever esse detalhe na próxima obra.”</li>
+            <li><strong>Direcionamento de pauta:</strong> “Quer que eu destrinche outra obra? Diz qual (cidade/arquitet@/tema).”</li>
+            <li><strong>Profissionais de obra:</strong> “Qual foi a gambiarra mais elegante que você já viu?”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="note">Escolha <strong>1 CTA principal</strong> (o mais importante) e, no máximo, 1 secundário (salvar).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Checklist</h2>
+        <div class="content">
+          <div class="checklist">
+            <div class="check">
+              <h3>Antes de gravar</h3>
+              <ul>
+                <li>[ ] Tenho um paradoxo (“parece X, mas é Y”).</li>
+                <li>[ ] Tenho <strong>1 número específico</strong> (ano, m², vão, custo, tempo).</li>
+                <li>[ ] Tenho 1 problema real (técnico/terreno/cliente/época).</li>
+                <li>[ ] Tenho 1 solução concreta (um detalhe/decisão do projeto).</li>
+                <li>[ ] Tenho 1 plot twist (efeito colateral inesperado).</li>
+                <li>[ ] Tenho 1 frase opinativa (personalidade).</li>
+                <li>[ ] Tenho 1 pergunta polarizadora no final.</li>
+              </ul>
+            </div>
+            <div class="check">
+              <h3>Gravação + edição</h3>
+              <ul>
+                <li>[ ] Primeira tela com texto grande em 0,3s.</li>
+                <li>[ ] Corte a cada 1–2 frases (sem blocos longos).</li>
+                <li>[ ] B-roll acompanha exatamente o que é dito.</li>
+                <li>[ ] Inserções rápidas (foto/planta/detalhe) nas viradas.</li>
+                <li>[ ] Palavras-chave destacadas (ANO, solução, twist).</li>
+                <li>[ ] Final com pergunta + CTA de comentário.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="note"><span class="accent">Checklist de copy</span>: evite jargão puro. Se usar termo técnico, traduza em imagem mental (“como se fosse…”).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Variações</h2>
+        <div class="content">
+          <ul>
+            <li><strong>Obra icônica:</strong> use 1 foto antiga + 1 detalhe construtivo + pergunta “hoje faríamos melhor?”</li>
+            <li><strong>Reforma comum (alto potencial):</strong> “parece caro, mas foi decisão de projeto” (luz, layout, marcenaria, pintura, paginação).</li>
+            <li><strong>Detalhe técnico (educação rápida):</strong> “o erro comum é [X]; o jeito certo é [Y] — e o motivo é [1 frase].”</li>
+            <li><strong>Clima/Conforto:</strong> twist pode ser “ventilou, mas deu ruído” / “iluminou, mas ofuscou” / “isolou, mas condensou”.</li>
+            <li><strong>Obra/execução:</strong> “não era estética… era cronograma/fornecedor” + solução de canteiro.</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="note">Mantenha a mesma espinha dorsal (paradoxo → problema → solução → twist → pergunta). Troque apenas o <strong>elemento-chave</strong> e o <strong>plot twist</strong>.</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">
+      <div class="card">
+        <h2>Ficha revisada (reproduzível)</h2>
+        <div class="content">
+          <ul>
+            <li><strong>Objetivo do Reel:</strong> fazer o público pensar “caramba, isso é inteligente” e comentar “evoluiu/desaprendeu”.</li>
+            <li><strong>Entrada:</strong> 1 obra + 1 detalhe técnico + 1 consequência inesperada.</li>
+            <li><strong>Saída:</strong> 45–60s com 8 blocos (tempo marcado) e texto na tela em 6 telas.</li>
+            <li><strong>Critério de qualidade:</strong> o “plot twist” precisa ser compreensível sem áudio (texto na tela).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function copyScript(){
+      const el = document.getElementById('scriptText');
+      const text = el ? el.innerText : '';
+      if(!text) return false;
+      return navigator.clipboard.writeText(text).then(() => true).catch(() => false);
+    }
+
+    function showToast(id, msg){
+      const t = document.getElementById(id);
+      if(!t) return;
+      t.textContent = msg;
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => { t.textContent = ''; }, 1800);
+    }
+
+    document.getElementById('copyBtn')?.addEventListener('click', async () => {
+      const ok = await copyScript();
+      showToast('toast', ok ? 'Roteiro copiado.' : 'Não foi possível copiar.');
+    });
+
+    document.getElementById('copyBtn2')?.addEventListener('click', async () => {
+      const ok = await copyScript();
+      showToast('toast2', ok ? 'Roteiro copiado.' : 'Não foi possível copiar.');
+    });
+  </script>
+</body>
+</html>
