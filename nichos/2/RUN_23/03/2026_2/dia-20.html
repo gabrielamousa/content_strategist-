@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 20 — Arquitetura — Tour do projeto</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.08);
+    --stroke:rgba(255,255,255,.12);
+    --stroke2:rgba(255,255,255,.18);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.55);
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --r12:12px;
+    --r16:16px;
+    --r20:20px;
+    --g1: linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --g2: linear-gradient(135deg, rgba(34,197,94,.22), rgba(56,189,248,.18), rgba(251,146,60,.18));
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--text);
+    background:
+      radial-gradient(1200px 900px at 10% 10%, rgba(56,189,248,.16), transparent 55%),
+      radial-gradient(1100px 800px at 90% 20%, rgba(34,197,94,.14), transparent 55%),
+      radial-gradient(1000px 900px at 50% 100%, rgba(251,146,60,.12), transparent 60%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{color:inherit}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px}
+  header{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+    border-radius:var(--r20);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .headTop{
+    display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    padding:18px 18px 0;
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:10px 12px;
+    border:1px solid var(--stroke);
+    border-radius:999px;
+    background:rgba(0,0,0,.22);
+    backdrop-filter: blur(8px);
+  }
+  .dot{width:10px; height:10px; border-radius:999px; background:var(--g1)}
+  .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .pill{
+    padding:8px 10px;
+    border:1px solid var(--stroke);
+    border-radius:999px;
+    background:rgba(255,255,255,.04);
+    color:var(--muted);
+    font-size:12px;
+  }
+  .titleBlock{padding:14px 18px 18px}
+  h1{
+    margin:6px 0 6px;
+    font-size:20px;
+    line-height:1.2;
+    letter-spacing:.2px;
+  }
+  .sub{
+    margin:0; color:var(--muted);
+    line-height:1.55;
+    max-width:85ch;
+  }
+  .linkRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px}
+  .link{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--stroke);
+    background:rgba(255,255,255,.04);
+    text-decoration:none;
+  }
+  .link small{color:var(--muted2)}
+  .grid{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+  }
+  @media (min-width: 920px){
+    .grid{grid-template-columns: 1fr 1fr}
+  }
+  .card{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    border-radius:var(--r16);
+    box-shadow: 0 12px 40px rgba(0,0,0,.45);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 14px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background: linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,0));
+  }
+  .card .hd h2{margin:0; font-size:14px; letter-spacing:.2px}
+  .chip{
+    font-size:12px;
+    color:rgba(255,255,255,.82);
+    border:1px solid var(--stroke);
+    background:rgba(0,0,0,.20);
+    padding:6px 10px;
+    border-radius:999px;
+  }
+  .card .bd{padding:14px}
+  .kpi{
+    display:grid; gap:10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .kpi .box{
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:var(--r12);
+    background:rgba(255,255,255,.04);
+    padding:10px;
+  }
+  .kpi .box b{display:block; font-size:12px; color:var(--muted)}
+  .kpi .box span{display:block; margin-top:4px; font-size:13px}
+  ul{margin:10px 0 0; padding-left:18px; color:var(--muted)}
+  li{margin:7px 0; line-height:1.55}
+  .hr{height:1px; background:rgba(255,255,255,.10); margin:12px 0}
+  .callout{
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:var(--r16);
+    background: var(--g2);
+    padding:12px;
+    margin-top:12px;
+  }
+  .callout b{display:block; margin-bottom:6px}
+  .callout p{margin:0; color:var(--muted); line-height:1.55}
+  .mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size:12.5px;
+    line-height:1.55;
+    color:rgba(234,240,255,.86);
+    background:rgba(0,0,0,.25);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:var(--r16);
+    padding:12px;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+  }
+  .btnRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px}
+  button{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    border-radius:14px;
+    padding:12px 14px;
+    color:var(--text);
+    background: linear-gradient(90deg, rgba(34,197,94,.92), rgba(56,189,248,.92), rgba(251,146,60,.92));
+    box-shadow: 0 12px 40px rgba(0,0,0,.45);
+    font-weight:650;
+    letter-spacing:.2px;
+  }
+  .ghost{
+    background:rgba(255,255,255,.06);
+    border:1px solid var(--stroke);
+    box-shadow:none;
+    font-weight:600;
+    color:rgba(234,240,255,.90);
+  }
+  .tiny{font-size:12px; color:var(--muted2)}
+  .cols{
+    display:grid; gap:12px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 920px){
+    .cols{grid-template-columns: 1.25fr .75fr}
+  }
+  .tagline{
+    display:inline-block;
+    background: var(--g1);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-weight:750;
+  }
+  .footerNote{margin-top:14px; color:var(--muted2); font-size:12px; line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headTop">
+        <div class="badge">
+          <span class="dot"></span>
+          <div>
+            <div style="font-size:12px; color: rgba(234,240,255,.7)">Nicho</div>
+            <div style="font-weight:700; letter-spacing:.2px">Arquitetura</div>
+          </div>
+        </div>
+        <div class="meta">
+          <span class="pill">Dia 20</span>
+          <span class="pill">Formato: Carrossel</span>
+          <span class="pill">Pilar: Bastidores</span>
+        </div>
+      </div>
+      <div class="titleBlock">
+        <h1>Tour do projeto: conceito, decisões e bastidores (12 slides)</h1>
+        <p class="sub">Carrossel em ritmo de “tour guiado” com alternância entre fotos cheias + lâminas editoriais (respiro), anotando decisões do projeto e fechando com prova de processo e CTA. Use como template para qualquer tema visual (arquitetura, interiores, produto, branding, paisagismo, moda, eventos).</p>
+        <div class="linkRow">
+          <a class="link" href="https://www.instagram.com/p/DV9cKl3D33f/" target="_blank" rel="noopener noreferrer">
+            <div>
+              <div style="font-weight:650">Post original</div>
+              <small>https://www.instagram.com/p/DV9cKl3D33f/</small>
+            </div>
+          </a>
+          <div class="link" style="border-style:dashed">
+            <div>
+              <div style="font-weight:650">Identidade</div>
+              <small>fundo escuro • cards suaves • destaques em degradê</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd"><h2>Resumo</h2><span class="chip"><span class="tagline">o que este post entrega</span></span></div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="box"><b>Objetivo</b><span>Gerar desejo + autoridade sem “aula longa”</span></div>
+            <div class="box"><b>Promessa</b><span>Toda foto revela 1 decisão + 1 motivo</span></div>
+            <div class="box"><b>Ritmo</b><span>Fotos (cheio) ↔ editorial (respiro)</span></div>
+            <div class="box"><b>Estrutura</b><span>Hook → tour → bastidor → técnico → CTA</span></div>
+          </div>
+          <div class="callout">
+            <b>Princípio-chave (reproduzível)</b>
+            <p>Não mostre só “o que ficou bonito”. Em cada slide, explique <b>por que</b> aquela escolha existe (função, fluxo, sensação, manutenção, custo ou durabilidade).</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Estrutura</h2><span class="chip">macro + regras</span></div>
+        <div class="bd">
+          <ul>
+            <li><b>Qtd. sugerida:</b> 12 slides (adaptável 10–18).</li>
+            <li><b>Formato:</b> 1080×1350 (4:5).</li>
+            <li><b>Constantes:</b> etiqueta do projeto/série no topo esquerdo + @/logo discreto no rodapé em todos.</li>
+            <li><b>Tipos de slide:</b> (1) capa emocional, (2) anotações no ambiente, (3) editorial (texto/manifesto), (4) tour por ambientes, (5) processo/obra/antes, (6) técnico (planta/detalhe), (7) CTA.</li>
+            <li><b>Regra de retenção:</b> 1 slide = 1 descoberta (não “foto por foto sem motivo”).</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="cols">
+            <div>
+              <div style="font-weight:700; margin-bottom:6px">Distribuição recomendada (12)</div>
+              <ul>
+                <li>1 capa (foto hero + frase curta)</li>
+                <li>6–7 slides de tour com 1–2 anotações</li>
+                <li>2 slides editoriais (respiro + narrativa + valor)</li>
+                <li>1 processo (antes/obra/sketch)</li>
+                <li>1 técnico (planta/detalhamento) + CTA</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-weight:700; margin-bottom:6px">Limites de texto</div>
+              <ul>
+                <li><b>Foto:</b> até 12–18 palavras (total).</li>
+                <li><b>Editorial:</b> 35–65 palavras (máx.).</li>
+                <li><b>Anotações:</b> 1 detalhe = 1 seta.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd"><h2>Slides sugeridos (1..12)</h2><span class="chip">copiável • adaptável</span></div>
+        <div class="bd">
+          <div class="mono" id="roteiro">S1 — CAPA (foto hero)
+Texto (headline): “Uma casa para [SENTIMENTO/DESEJO]”
+Subtexto (opcional): “arraste →”
+Etiqueta de série: “[NOME DO PROJETO]”
+
+S2 — CONCEITO EM 1 FRASE (foto)
+Headline: “O potencial de [RESULTADO] começa em [PRINCÍPIO]”
+Exemplos de [PRINCÍPIO]: luz natural / um layout honesto / armazenamento invisível / materiais atemporais.
+
+S3 — DECISÃO 1 (foto + anotação + seta)
+Anotação: “Escolhemos [COR/MATERIAL] para [FUNÇÃO + SENSAÇÃO]”
+Ex.: “madeira clara para aquecer sem escurecer”.
+
+S4 — DECISÃO 2 (foto + anotação)
+Anotação: “Este [MÓVEL/SOLUÇÃO] resolve [PROBLEMA] e cria [BENEFÍCIO]”
+Ex.: “marcenaria até o teto resolve bagunça e cria continuidade”.
+
+S5 — TOUR: AMBIENTE 1 (foto + 1 anotação)
+Anotação: “Aqui, o layout cria [FLUXO/SETORIZAÇÃO]”
+Ex.: “estar separado do jantar sem perder integração”.
+
+S6 — TOUR: AMBIENTE 2 (foto + 1 anotação)
+Anotação: “Iluminação em camadas = [EFEITO]”
+Ex.: “luz indireta para desacelerar à noite”.
+
+S7 — TOUR: AMBIENTE 3 (foto + 1 anotação)
+Anotação: “Paleta [X] para [OBJETIVO]”
+Ex.: “tons terrosos para acolhimento e menos ruído visual”.
+
+S8 — WOW DETAIL (foto detalhe + anotação)
+Anotação: “O ‘uau’ aqui é: [DETALHE] por [MOTIVO]”
+Ex.: “nicho oculto para ganhar bancada sem pesar”.
+
+S9 — PAUSA EDITORIAL (fundo claro / editorial)
+Título: “[FRASE-MANIFESTO CURTA]”
+Texto (3–5 linhas): conecte o projeto com o momento de vida/rotina do cliente e o porquê das escolhas.
+
+S10 — VALOR / METODOLOGIA (editorial + referências)
+Título: “A voz de quem vai morar” (ou equivalente)
+Texto: “Nosso processo nasce de [ROTINA + LIMITAÇÕES + OBJETIVOS]. Traduzimos isso em [2–3 decisões] e validamos em [etapa].”
+
+S11 — PROVA DE PROCESSO (antes/obra/sketch sobre foto)
+Headline: “Ver além: do vazio ao conceito”
+Sub: “Da obra ao acabamento: [1 insight técnico simples].”
+
+S12 — TÉCNICO + CTA (planta/detalhe/mosaico)
+Título: “Por trás do processo: muitos detalhes”
+Linha técnica: “Planta + paginação + compatibilização = menos surpresa na obra.”
+CTA (escolha 1):
+1) “Quer um projeto com a sua cara? Me chama no Direct.”
+2) “Comente ‘GUIA’ que eu te mando um checklist de [TEMA].”
+3) “Salve para usar como referência no seu projeto.”</div>
+
+          <div class="btnRow">
+            <button id="copyBtn" type="button">Copiar roteiro</button>
+            <button class="ghost" id="copyCaptionBtn" type="button">Copiar legenda (modelo)</button>
+            <span class="tiny" id="copyStatus" aria-live="polite"></span>
+          </div>
+
+          <div class="hr"></div>
+          <div style="display:grid; gap:10px; grid-template-columns:1fr;">
+            <div>
+              <div style="font-weight:700; margin-bottom:6px">Legenda (copy pronta — modelo adaptável)</div>
+              <div class="mono" id="caption">Uma casa para [SENTIMENTO].
+
+Neste projeto, cada escolha teve um motivo:
+• [Decisão 1] para [benefício]
+• [Decisão 2] para [benefício]
+• [Decisão 3] para [benefício]
+
+O que mais te chama atenção num tour assim: conceito, detalhes ou bastidores?
+
+👉 Salve para usar como referência.
+💬 Comente “[PALAVRA]” que eu te envio um checklist de [TEMA].</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Elementos visuais</h2><span class="chip">direção de arte</span></div>
+        <div class="bd">
+          <ul>
+            <li><b>Fotografia:</b> bem exposta, cores protagonistas do projeto, enquadramentos limpos.</li>
+            <li><b>Anotações:</b> “caderno de obra” (manuscrito) + setas; 1 seta por decisão.</li>
+            <li><b>Slides editoriais:</b> fundo claro/textura sutil (papel) com bastante respiro, 1 foto pequena ou grid.</li>
+            <li><b>Detalhe técnico:</b> planta, detalhe construtivo, paginação ou compatibilização (simplificado e legível).</li>
+            <li><b>Branding constante:</b> @ no rodapé; etiqueta do projeto no topo (sensação de série).</li>
+          </ul>
+          <div class="callout">
+            <b>Substituições com o mesmo impacto (para outros temas)</b>
+            <p><b>Antes/obra</b> → “rascunho/briefing”, “wireframe”, “protótipo”, “backstage”, “making-of”. <b>Planta</b> → “checklist”, “diagrama”, “mapa mental”, “fluxo do processo”, “quadro de medidas”.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><span class="chip">títulos + aberturas</span></div>
+        <div class="bd">
+          <div style="font-weight:700; margin-bottom:6px">Títulos de capa (até 7 palavras)</div>
+          <ul>
+            <li>“Uma casa para [SENTIMENTO]”</li>
+            <li>“O detalhe que muda [CÔMODO/EXPERIÊNCIA]”</li>
+            <li>“[X] escolhas que deixaram tudo mais [RESULTADO]”</li>
+            <li>“Como criamos [BENEFÍCIO] sem [OBJEÇÃO]”</li>
+          </ul>
+          <div class="hr"></div>
+          <div style="font-weight:700; margin-bottom:6px">Ganchos por slide (microcuriosidade)</div>
+          <ul>
+            <li>“Repare no [DETALHE] — ele resolve [PROBLEMA].”</li>
+            <li>“O ‘segredo’ desse ambiente é [DECISÃO].”</li>
+            <li>“Isso parece estética, mas é [FUNÇÃO].”</li>
+            <li>“A gente escolheu [X] para ganhar [Y] sem [Z].”</li>
+          </ul>
+          <div class="callout">
+            <b>Fórmula de anotação (sempre funciona)</b>
+            <p><b>Ação</b> (escolhemos/criamos/posicionamos) + <b>escolha</b> (material/solução) + <b>por quê</b> (função) + <b>resultado</b> (sensação/benefício).</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>CTA</h2><span class="chip">baixa fricção</span></div>
+        <div class="bd">
+          <ul>
+            <li><b>Salvar:</b> “Salve para usar como referência no seu projeto.”</li>
+            <li><b>Comentário com palavra-chave:</b> “Comente ‘GUIA’ que eu te mando um checklist de [TEMA].”</li>
+            <li><b>Direct:</b> “Quer um projeto com a sua cara? Me chama no Direct.”</li>
+            <li><b>Portfólio:</b> “Veja mais projetos semelhantes nos destaques: [NOME].”</li>
+            <li><b>Orçamento:</b> “Para orçamentos: link na bio.”</li>
+          </ul>
+          <div class="callout">
+            <b>Escolha 1 CTA principal</b>
+            <p>Use apenas um “pedido” como foco no último slide. Se quiser um segundo, coloque na legenda (não nos dois lugares).</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd"><h2>Checklist de criação</h2><span class="chip">produção rápida</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div style="font-weight:700; margin-bottom:6px">Pré-produção (15–30 min)</div>
+              <ul>
+                <li>[ ] Definir <b>sentimento</b> principal (1 palavra) + <b>resultado</b> (1 frase).</li>
+                <li>[ ] Selecionar 12 imagens: 1 hero + 7 tour + 2 editoriais + 1 processo + 1 técnico.</li>
+                <li>[ ] Listar 6–8 <b>decisões</b> (cada uma com motivo).</li>
+                <li>[ ] Definir etiqueta do projeto/série (ex.: “APÊ [X]”).</li>
+              </ul>
+              <div class="hr"></div>
+              <div style="font-weight:700; margin-bottom:6px">Design (60–90 min)</div>
+              <ul>
+                <li>[ ] Manter tipografia consistente (headline grande + parágrafo curto + manuscrito).</li>
+                <li>[ ] Em fotos: texto creme/branco quente em área “calma” da imagem.</li>
+                <li>[ ] Cada anotação com seta e alvo claro (sem poluir).</li>
+                <li>[ ] Alternar “cheio” (foto) e “respiro” (editorial) a cada 3–4 slides.</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-weight:700; margin-bottom:6px">Revisão (10 min)</div>
+              <ul>
+                <li>[ ] Capa comunica <b>desejo</b> (não tecnicismo).</li>
+                <li>[ ] Todo slide tem 1 “por quê”.</li>
+                <li>[ ] Há 1 slide de <b>prova de processo</b> (obra/antes/sketch).</li>
+                <li>[ ] Há 1 slide <b>técnico</b> (planta/detalhe) legível.</li>
+                <li>[ ] Último slide com <b>CTA único</b>.</li>
+                <li>[ ] @/assinatura e etiqueta presentes em todos.</li>
+              </ul>
+              <div class="callout">
+                <b>Teste final (retenção)</b>
+                <p>Se você esconder as fotos e ler só os textos, ainda dá vontade de avançar? Se não, faltou curiosidade (“repare em…”, “o segredo é…”, “parece X, mas é Y”).</p>
+              </div>
+            </div>
+          </div>
+          <p class="footerNote">Dica: salve um arquivo-mestre (PSD/Canva) com 3 páginas prontas: (1) foto com anotação, (2) editorial com título + parágrafo, (3) técnico com moldura e legenda.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd"><h2>Variações</h2><span class="chip">mesmo impacto • outros temas</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div style="font-weight:700; margin-bottom:6px">Variação A — “3 decisões que mudaram tudo” (10 slides)</div>
+              <ul>
+                <li>S1 capa + promessa</li>
+                <li>S2–S4: decisão 1 (antes/depois + anotação)</li>
+                <li>S5–S7: decisão 2</li>
+                <li>S8–S9: decisão 3</li>
+                <li>S10: técnico + CTA (salvar/comentar)</li>
+              </ul>
+              <div class="hr"></div>
+              <div style="font-weight:700; margin-bottom:6px">Variação B — “Mito vs Verdade do projeto” (12–14)</div>
+              <ul>
+                <li>Alterna: mito (editorial curto) → prova (foto anotada)</li>
+                <li>Fecha com processo + CTA “comente ‘MITO’”</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-weight:700; margin-bottom:6px">Substituições rápidas (campos)</div>
+              <ul>
+                <li><b>[SENTIMENTO]</b> → acolhimento, leveza, energia, silêncio, sofisticação, praticidade.</li>
+                <li><b>[RESULTADO]</b> → amplitude, organização, iluminação, conforto térmico, fluidez, personalidade.</li>
+                <li><b>[DETALHE UAU]</b> → solução escondida, encaixe, iluminação, textura, peça assinada, reaproveitamento.</li>
+                <li><b>[TÉCNICO]</b> → planta, detalhamento, cortes, paginação, compatibilização, memorial de materiais.</li>
+                <li><b>Para outros nichos:</b> ambiente → peça/serviço; planta → mapa/fluxo; obra → bastidor/protótipo.</li>
+              </ul>
+              <div class="callout">
+                <b>Como adaptar para outro tema em 3 passos</b>
+                <p>1) Troque “ambientes” por “etapas/partes”. 2) Troque “planta” por “diagrama/checklist”. 3) Mantenha a regra: <b>1 imagem = 1 decisão + 1 motivo</b>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+<script>
+  function copyTextFrom(elId){
+    const el = document.getElementById(elId);
+    const text = (el && el.innerText) ? el.innerText : '';
+    return navigator.clipboard.writeText(text);
+  }
+  function setStatus(msg){
+    const s = document.getElementById('copyStatus');
+    s.textContent = msg;
+    window.setTimeout(()=>{ s.textContent = ''; }, 2200);
+  }
+  document.getElementById('copyBtn').addEventListener('click', async ()=>{
+    try{
+      await copyTextFrom('roteiro');
+      setStatus('Roteiro copiado.');
+    }catch(e){
+      setStatus('Não foi possível copiar automaticamente.');
+    }
+  });
+  document.getElementById('copyCaptionBtn').addEventListener('click', async ()=>{
+    try{
+      await copyTextFrom('caption');
+      setStatus('Legenda copiada.');
+    }catch(e){
+      setStatus('Não foi possível copiar automaticamente.');
+    }
+  });
+</script>
+</body>
+</html>
