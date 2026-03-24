@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dia 18 — Arquitetura — Roteiro reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.58);
+      --stroke:rgba(255,255,255,.12);
+      --stroke2:rgba(255,255,255,.18);
+      --shadow: 0 14px 40px rgba(0,0,0,.55);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      --g1: linear-gradient(90deg, #22c55e 0%, #22d3ee 45%, #fb923c 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.35), rgba(34,211,238,.25), rgba(251,146,60,.25));
+      --g3: radial-gradient(1200px 600px at 20% -10%, rgba(34,211,238,.22), transparent 60%),
+            radial-gradient(900px 500px at 110% 10%, rgba(251,146,60,.18), transparent 55%),
+            radial-gradient(900px 700px at 40% 120%, rgba(34,197,94,.16), transparent 60%);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g3), linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    a{color:#7dd3fc; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 80px}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--r20);
+      padding:18px 18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      opacity:.75;
+      filter: blur(18px);
+      z-index:0;
+    }
+    header .inner{position:relative; z-index:1}
+
+    .topRow{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start; justify-content:space-between}
+    .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted)}
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      letter-spacing:.2px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .pill b{color:var(--text); font-weight:650}
+
+    h1{margin:10px 0 8px; font-size:22px; line-height:1.15; letter-spacing:.2px}
+    .sub{color:var(--muted); margin:0; font-size:14px; line-height:1.5}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+    .btn{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      border-radius: 12px;
+      padding:10px 12px;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.26)}
+    .btnPrimary{
+      border: none;
+      background: var(--g1);
+      color:#051015;
+      font-weight:700;
+    }
+    .btnPrimary:hover{filter: brightness(1.05)}
+
+    .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px}
+    @media (min-width: 920px){
+      .grid{grid-template-columns: 1.15fr .85fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.055);
+      border-radius: var(--r16);
+      padding:16px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.38);
+    }
+    .card h2{
+      font-size:14px;
+      margin:0 0 10px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:rgba(234,240,255,.82);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .bar{
+      height:10px; width:68px;
+      border-radius:999px;
+      background: var(--g1);
+      box-shadow: 0 10px 22px rgba(34,211,238,.12);
+    }
+
+    .card p{margin:10px 0; color:var(--muted); line-height:1.6; font-size:14px}
+    .card ul{margin:8px 0 0 18px; color:var(--muted); line-height:1.6; font-size:14px}
+    .card li{margin:6px 0}
+
+    .kbd{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(234,240,255,.86);
+      background: rgba(0,0,0,.28);
+      border: 1px solid var(--stroke);
+      border-bottom-color: rgba(255,255,255,.22);
+      border-radius: 10px;
+      padding: 10px 12px;
+      white-space: pre-wrap;
+      line-height: 1.55;
+    }
+
+    .twoCol{display:grid; grid-template-columns:1fr; gap:12px}
+    @media (min-width: 720px){
+      .twoCol{grid-template-columns:1fr 1fr}
+    }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--r16);
+      padding:12px 12px;
+    }
+
+    .tagRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .tag{
+      font-size:12px;
+      color: rgba(234,240,255,.78);
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+    }
+
+    .muted{color:var(--muted2)}
+
+    .divider{height:1px; background: rgba(255,255,255,.10); margin:10px 0}
+
+    .checklist{list-style:none; margin:0; padding:0}
+    .checklist li{
+      display:flex;
+      gap:10px;
+      padding:8px 0;
+      border-bottom:1px dashed rgba(255,255,255,.12);
+      color: var(--muted);
+      font-size:14px;
+    }
+    .checklist li:last-child{border-bottom:none}
+    .box{
+      width:18px; height:18px;
+      border-radius:5px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.18);
+      flex:0 0 auto;
+      margin-top:2px;
+    }
+
+    footer{margin-top:16px; color: rgba(234,240,255,.52); font-size:12px}
+
+    .toast{
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      color: rgba(234,240,255,.9);
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 14px 36px rgba(0,0,0,.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease;
+      z-index: 50;
+    }
+    .toast.show{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="inner">
+        <div class="topRow">
+          <div>
+            <div class="meta">
+              <span class="pill"><b>Nicho</b> Arquitetura</span>
+              <span class="pill"><b>Dia</b> 18</span>
+              <span class="pill"><b>Formato</b> Reels</span>
+              <span class="pill"><b>Pilar</b> Prova</span>
+              <span class="pill"><b>Original</b> <a href="https://www.instagram.com/p/DVQ2FZGjHq3/" target="_blank" rel="noopener noreferrer">abrir post</a></span>
+            </div>
+            <h1>Como transformar um projeto premiado em Reel que bomba</h1>
+            <p class="sub">Fórmula reproduzível: hook grande + notícia (autoridade emprestada) + 3–5 provas concretas + contraste com o “inimigo” + manifesto + pergunta final.</p>
+          </div>
+          <div class="actions">
+            <button class="btn btnPrimary" id="copyBtn" type="button">Copiar roteiro</button>
+            <a class="btn" href="#checklist">Ir para checklist</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="bar"></span>Resumo</h2>
+        <p><b>Objetivo:</b> pegar um fato validado (prêmio, publicação, viral, obra local) e transformar em um Reel com opinião + evidências visuais, gerando <b>retenção</b> e <b>comentários</b>.</p>
+        <div class="twoCol">
+          <div class="callout">
+            <p style="margin:0"><b>Por que funciona</b><br><span class="muted">Curiosidade + autoridade + emoção + conflito (padronização) + densidade (técnica/cultura/ética) + pergunta final.</span></p>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><b>Quando usar</b><br><span class="muted">Ao comentar: obra premiada, detalhe construtivo viral, projeto seu publicado, reforma com antes/depois, solução de conforto ambiental.</span></p>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <p><b>Promessa (modelo):</b> “Vou te mostrar por que <span class="muted">[projeto/fato]</span> foi reconhecido e quais <b>5 critérios</b> você pode copiar pra fazer arquitetura mais relevante (sem cair no ‘padrão Instagram’).”</p>
+        <div class="tagRow">
+          <span class="tag">hook filosófico</span>
+          <span class="tag">notícia quente</span>
+          <span class="tag">lista numerada</span>
+          <span class="tag">manifesto</span>
+          <span class="tag">b-roll materialidade</span>
+          <span class="tag">pergunta final</span>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2><span class="bar"></span>Metadados p/ calendário</h2>
+        <p><b>Título:</b> Como transformar um projeto premiado em Reel que bomba</p>
+        <p><b>Instrução curta:</b> Use: hook filosófico + notícia quente + 5 provas visuais + manifesto + pergunta final. Grave em 60s com cortes rápidos e texto-guia numerado na tela.</p>
+        <p><b>Pilar:</b> Prova</p>
+        <p><b>Formato:</b> Reels</p>
+        <div class="divider"></div>
+        <p class="muted"><b>Dica de performance:</b> mantenha mudança de energia a cada 5–8s (corte, zoom leve, B-roll, texto novo). Legendas completas.</p>
+      </aside>
+
+      <section class="card">
+        <h2><span class="bar"></span>Estrutura (reproduzível em qualquer tema)</h2>
+        <ul>
+          <li><b>A (0–3s) Hook + assunto do momento:</b> pergunta-tese OU contraste + “vocês viram isso?”</li>
+          <li><b>B (3–8s) Contexto:</b> o que aconteceu + onde + o que foi reconhecido</li>
+          <li><b>C (8–15s) Leitura/posição:</b> “isso não é só <span class="muted">[um prêmio]</span> — é <span class="muted">[um sinal do que importa]</span>”</li>
+          <li><b>D (15–35s) Provas (3–5 itens):</b> detalhes concretos com ritmo (1 frase por item)</li>
+          <li><b>E (35–45s) Conflito:</b> nomeie o “inimigo” (padronização, estética vazia, cópia, solução genérica)</li>
+          <li><b>F (45–55s) Tese final:</b> síntese + visão (“o futuro passa por…”) </li>
+          <li><b>G (55–60s) CTA:</b> pergunta direta + ação (salvar/compartilhar)</li>
+        </ul>
+        <div class="divider"></div>
+        <div class="twoCol">
+          <div class="callout">
+            <p style="margin:0"><b>Substituições que mantêm o impacto</b><br><span class="muted">“afeto” → escuta / função real / conforto / pertencimento / cuidado / uso cotidiano.</span></p>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><b>Autoridade emprestada (trocas)</b><br><span class="muted">prêmio → publicação / repost grande / dado de pesquisa / norma / case de obra / depoimento do cliente.</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Roteiro (60s) — copiar e gravar</h2>
+        <div class="kbd" id="scriptText">[0–3s | Hook]
+“Será que [VALOR HUMANO] vai dominar a arquitetura?”
+“Vocês viram isso? [PROJETO/OBRA] acabou de [GANHAR/SAIR EM/viralizar]…”
+
+[3–8s | Contexto]
+“Foi reconhecido em [PRÊMIO/PLATAFORMA], na categoria [CATEGORIA].”
+“E é em [CIDADE/REGIÃO] — isso importa porque [1 frase].”
+
+[8–15s | Minha leitura]
+“Pra mim, isso não é só um troféu. É o mundo dizendo que arquitetura relevante é [TESE EM 1 FRASE].”
+
+[15–35s | Provas: 5 critérios (1 frase cada)]
+“1) Começa numa história real: [ORIGEM/CLIENTE/CONTEXTO].”
+“2) Materiais do lugar: [MATERIAL/solução] — por [motivo].”
+“3) Processo que envolve gente: [mão de obra local/participação] — por [motivo].”
+“4) Necessidade humana primeiro: [saúde/rotina/acessibilidade] — por [motivo].”
+“5) Inteligência técnica: [ventilação/luz/sombreamento] — por [motivo].”
+
+[35–45s | Conflito/contraste]
+“E isso vira um manifesto contra [INIMIGO: padronização/estética vazia/cópia].”
+“Arquitetura que [VERBO: escuta/resolve] &gt; arquitetura que só [VERBO: aparece/performar].”
+
+[45–55s | Tese final]
+“Se eu tivesse que resumir: o futuro não é só [tecnologia/estética]. É [TESE: coerência com o lugar + vida real].”
+
+[55–60s | CTA]
+“Você concorda? O que pra você é ‘arquitetura de verdade’?”
+“Comenta 1 exemplo da sua cidade e salva pra usar esses 5 critérios no próximo projeto.”</div>
+        <p class="muted" style="margin-top:10px">Como personalizar rápido: preencha os campos em colchetes com um case (seu ou de terceiros) e mantenha a estrutura/ritmo. Se não tiver prêmio, use “publicado”, “repostado”, “solução que reduziu calor em X%”, “obra entregue com X semanas”.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Elementos visuais (captação + edição)</h2>
+        <div class="twoCol">
+          <div>
+            <p><b>B-roll (3–8 takes curtos):</b></p>
+            <ul>
+              <li>textura de material (parede, piso, adobe, madeira, concreto)</li>
+              <li>mão executando (assentamento, encaixe, detalhe)</li>
+              <li>entorno/implantação (rua, paisagem, sombreamento)</li>
+              <li>luz entrando (manhã/tarde) + vento (cortina/folhagem)</li>
+              <li>uso real (pessoa abrindo janela, circulando, sentando)</li>
+              <li>planta simples/diagrama (sobreposição na tela)</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Texto na tela (templates):</b></p>
+            <ul>
+              <li>Topo fixo: “Por que isso foi reconhecido”</li>
+              <li>Hook: “O [VALOR] vai dominar a arquitetura?”</li>
+              <li>Lista grande no centro: “1/2/3/4/5”</li>
+              <li>Manifesto (zoom leve): “escuta &gt; imposição”</li>
+              <li>Fecho: “E você, o que pensa?”</li>
+            </ul>
+            <p class="muted"><b>Edição:</b> cortes a cada 1–2 frases; música baixa e constante; legendas completas (muitos sem áudio).</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Copy e ganchos (biblioteca de opções)</h2>
+        <div class="twoCol">
+          <div class="callout">
+            <p style="margin:0"><b>Hooks (escolha 1)</b></p>
+            <ul>
+              <li>“Será que <b>[valor]</b> vai dominar a arquitetura?”</li>
+              <li>“Vocês viram isso? <b>[projeto]</b> acabou de <b>[ser reconhecido]</b>…”</li>
+              <li>“Isso aqui é <b>arquitetura de verdade</b> num mundo de <b>arquitetura ‘fake’</b>.”</li>
+              <li>“O futuro da arquitetura não é <b>[tendência]</b>. É <b>[tese]</b>.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><b>Frases de manifesto (trocas)</b></p>
+            <ul>
+              <li>“Arquitetura que escuta &gt; arquitetura que impõe.”</li>
+              <li>“Conforto não é luxo. É projeto.”</li>
+              <li>“Identidade não é ornamento. É coerência.”</li>
+              <li>“O ‘padrão’ resolve foto, não resolve vida.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <p><b>Legenda (modelo curta):</b> “Esse reconhecimento não é sobre ‘estilo’. É sobre <b>[tese]</b>. Listei 5 critérios copiáveis pra você aplicar no próximo projeto/obra. <b>Qual projeto da sua cidade representa isso?</b>”</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>CTA</h2>
+        <ul>
+          <li><b>Para comentários:</b> “Você acha que <span class="muted">[tema]</span> é tendência ou necessidade?”</li>
+          <li><b>Para saves:</b> “Salva pra lembrar desses <b>5 critérios</b> na próxima obra.”</li>
+          <li><b>Para compartilhamento:</b> “Manda pra alguém que acha que <span class="muted">[abordagem]</span> é ‘simples demais’.”</li>
+          <li><b>Pergunta direcionada:</b> “Qual exemplo na sua cidade mostra <span class="muted">[tese]</span>?”</li>
+        </ul>
+        <p class="muted">Regra de ouro: CTA em formato de pergunta + instrução simples (comentar/salvar/mandar).</p>
+      </section>
+
+      <section class="card" id="checklist">
+        <h2><span class="bar"></span>Checklist de criação (produção rápida)</h2>
+        <div class="twoCol">
+          <div>
+            <p><b>Pré-roteiro</b></p>
+            <ul class="checklist">
+              <li><span class="box"></span><span>Escolher a “notícia”: prêmio/publicação/repost/dado/case de obra/antes-depois</span></li>
+              <li><span class="box"></span><span>Definir 1 tese em 1 frase: “isso prova que <b>[X]</b>”</span></li>
+              <li><span class="box"></span><span>Separar 3–5 provas: material, processo, necessidade humana, técnica, contexto</span></li>
+              <li><span class="box"></span><span>Definir o “inimigo” (crítica à lógica, não a pessoas): padronização, estética vazia etc.</span></li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Captação + edição</b></p>
+            <ul class="checklist">
+              <li><span class="box"></span><span>Gravar A-roll em 1 take base (depois quebrar em cortes)</span></li>
+              <li><span class="box"></span><span>Captar 6–10 B-rolls (detalhe, entorno, uso real, luz/vento)</span></li>
+              <li><span class="box"></span><span>Cortes a cada 1–2 frases + mudança de energia a cada 5–8s</span></li>
+              <li><span class="box"></span><span>Texto na tela com “1/2/3/4/5” + legendas completas</span></li>
+              <li><span class="box"></span><span>Fechar com pergunta na tela + pausa de 1s antes de terminar</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Variações (mesma estrutura, outros temas)</h2>
+        <div class="twoCol">
+          <div>
+            <p><b>Variação 1 — Reforma/antes e depois</b></p>
+            <ul>
+              <li><b>Notícia:</b> “antes e depois que mais salvam” (gancho de comportamento)</li>
+              <li><b>Provas:</b> 5 decisões (luz, circulação, marcenaria, ventilação, custo)</li>
+              <li><b>Inimigo:</b> “reforma pra foto” vs “reforma pra uso”</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Variação 2 — Solução técnica (conforto térmico)</b></p>
+            <ul>
+              <li><b>Notícia:</b> onda de calor / conta de energia / norma</li>
+              <li><b>Provas:</b> sombreamento, ventilação cruzada, orientação, materiais, paisagismo</li>
+              <li><b>Inimigo:</b> “ar-condicionado como muleta de projeto”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="twoCol" style="margin-top:12px">
+          <div>
+            <p><b>Variação 3 — Projeto pequeno (compacto)</b></p>
+            <ul>
+              <li><b>Notícia:</b> metro quadrado caro / apartamentos menores</li>
+              <li><b>Provas:</b> setorização, armazenagem, iluminação, multipropósito, ergonomia</li>
+              <li><b>Inimigo:</b> “apertado” vs “bem resolvido”</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Variação 4 — Fachada/identidade</b></p>
+            <ul>
+              <li><b>Notícia:</b> rua mudando / patrimônio / aprovação em condomínio</li>
+              <li><b>Provas:</b> proporção, material, sombra, relação com vizinhança, manutenção</li>
+              <li><b>Inimigo:</b> “moda” vs “coerência com o lugar”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <p class="muted"><b>Regra de adaptação:</b> troque o tema, mas mantenha (1) grande pergunta, (2) autoridade emprestada, (3) lista de 5 provas, (4) contraste claro, (5) pergunta final.</p>
+      </section>
+    </div>
+
+    <footer>
+      <div>Identidade visual sugerida: fundo escuro + cards com borda suave + destaque em degradê (verde/azul/laranja) + layout limpo/high-tech.</div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      btn.addEventListener('click', async ()=>{
+        const text = textEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
+          catch(err){ showToast('Não foi possível copiar automaticamente.'); }
+          document.body.removeChild(ta);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
