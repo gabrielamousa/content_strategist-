@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 23 • Arquitetura • Ambiente 2 em 1</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1220;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.56);
+      --shadow: 0 12px 34px rgba(0,0,0,.45);
+      --radius: 16px;
+      --radius2: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --grad: linear-gradient(90deg, #2EE59D 0%, #2B86FF 45%, #FF8A2B 100%);
+      --grad2: radial-gradient(1100px 600px at 20% -10%, rgba(46,229,157,.18), transparent 50%),
+               radial-gradient(900px 520px at 90% 0%, rgba(43,134,255,.18), transparent 55%),
+               radial-gradient(900px 620px at 60% 115%, rgba(255,138,43,.14), transparent 50%);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background: var(--grad2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      color: var(--text);
+      line-height: 1.45;
+    }
+    a{color:inherit}
+    .wrap{max-width: 1100px; margin: 0 auto; padding: 28px 18px 48px}
+    header{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+      padding: 18px;
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--grad);
+      opacity:.10;
+      filter: blur(18px);
+      transform: translate3d(0,0,0);
+      pointer-events:none;
+    }
+    .h-left{position:relative; z-index:1}
+    .kicker{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .pill{
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+    h1{margin:10px 0 8px; font-size: 22px; letter-spacing:.2px}
+    .sub{margin:0; color: var(--muted); max-width: 72ch}
+    .h-right{
+      position:relative; z-index:1;
+      display:flex; flex-direction:column; gap:10px; align-items:flex-end;
+      min-width: 220px;
+    }
+    .btn{
+      appearance:none; border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 600;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      width: 100%;
+    }
+    .btn:hover{background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.18)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      border: none;
+      background: var(--grad);
+      color: #071018;
+      box-shadow: 0 10px 24px rgba(43,134,255,.14);
+    }
+    .btn.primary:hover{filter:saturate(1.05) brightness(1.03)}
+    .link{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(234,240,255,.25);
+      padding-bottom: 2px;
+    }
+
+    main{margin-top: 18px; display:grid; grid-template-columns: 1.1fr .9fr; gap: 14px}
+    @media (max-width: 980px){ main{grid-template-columns: 1fr} .h-right{align-items:stretch} }
+
+    section{
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .sec-h{
+      padding: 14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+    }
+    .sec-h h2{margin:0; font-size: 14px; letter-spacing:.7px; text-transform: uppercase; color: rgba(234,240,255,.82)}
+    .tag{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(234,240,255,.74);
+      padding: 5px 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+    }
+    .sec-b{padding: 14px 16px}
+
+    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap: 12px}
+    @media (max-width: 700px){ .grid2{grid-template-columns: 1fr} }
+
+    .card{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+    .card h3{margin:0 0 8px; font-size: 14px}
+    .card p, .card li{color: var(--muted); margin: 0}
+    .card ul{margin: 10px 0 0; padding-left: 18px}
+    .card li{margin: 6px 0}
+
+    .hr{height:1px; background: rgba(255,255,255,.10); margin: 12px 0}
+
+    .callout{
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(46,229,157,.10), rgba(43,134,255,.06) 55%, rgba(255,138,43,.06));
+      padding: 12px;
+    }
+    .callout b{color: rgba(234,240,255,.92)}
+    .muted{color: var(--muted)}
+    .muted2{color: var(--muted2)}
+
+    .script{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      background: rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    .mini{
+      display:flex; flex-wrap:wrap; gap:8px;
+      margin-top: 10px;
+    }
+    .mini .pill{font-size: 11px; color: rgba(234,240,255,.7)}
+
+    .checklist label{display:flex; gap:10px; align-items:flex-start; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,.10)}
+    .checklist label:last-child{border-bottom:none}
+    .checklist input{margin-top: 3px}
+
+    .toast{
+      position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(234,240,255,.92);
+      padding: 10px 12px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      display:none;
+      z-index: 999;
+      max-width: 90vw;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="h-left">
+        <div class="kicker">
+          <span class="pill">Nicho: Arquitetura</span>
+          <span class="pill">Dia: 23</span>
+          <span class="pill">Formato: Carrossel</span>
+          <span class="pill">Pilar: Prova</span>
+        </div>
+        <h1>Ambiente 2 em 1: Antes/Depois + detalhes que vendem</h1>
+        <p class="sub">Roteiro replicável para carrossel com narrativa editorial: promessa clara, diagnóstico (antes), soluções em detalhe, bastidor técnico como prova, portfólio e CTA que converte.</p>
+        <div class="mini">
+          <span class="pill">Retenção: quebra de ritmo</span>
+          <span class="pill">Autoridade: prancha/croqui</span>
+          <span class="pill">Venda: CTA por DM/link</span>
+        </div>
+      </div>
+      <div class="h-right">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <a class="link" href="https://www.instagram.com/p/DVq1IBPEcmq/" target="_blank" rel="noopener">Post original: https://www.instagram.com/p/DVq1IBPEcmq/</a>
+        <button class="btn" id="copyHookBtn">Copiar ganchos</button>
+      </div>
+    </header>
+
+    <main>
+      <div style="display:flex; flex-direction:column; gap:14px;">
+
+        <section>
+          <div class="sec-h">
+            <h2>Resumo</h2>
+            <span class="tag">Objetivo: reter + provar + captar lead</span>
+          </div>
+          <div class="sec-b">
+            <div class="callout">
+              <b>Ideia central:</b> mostrar um ambiente com <b>dupla função</b> e revelar, slide a slide, <b>micro-soluções</b> (marcenaria/integrações/armazenamento) apoiadas por <b>prova técnica</b> (croqui/prancha/medidas).
+            </div>
+            <div class="hr"></div>
+            <div class="grid2">
+              <div class="card">
+                <h3>Quando usar</h3>
+                <ul>
+                  <li>Projetos com transformação clara (antes/depois).</li>
+                  <li>Ambientes pequenos, multifuncionais, com marcenaria.</li>
+                  <li>Quando você quer vender sem parecer “panfleto”.</li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3>Motor de retenção</h3>
+                <ul>
+                  <li>Antes vs Depois no começo.</li>
+                  <li>Anotações guiando o olhar (setas/rabiscos).</li>
+                  <li>Quebra de ritmo: foto → editorial → detalhe → técnico → mosaico.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="sec-h">
+            <h2>Estrutura</h2>
+            <span class="tag">Promessa → Dor → Soluções → Prova → CTA</span>
+          </div>
+          <div class="sec-b">
+            <div class="grid2">
+              <div class="card">
+                <h3>Fórmula de título (replicável)</h3>
+                <p class="muted"><b>[Ambiente/tema]</b> que também é <b>[2ª função/benefício]</b></p>
+                <div class="hr"></div>
+                <ul>
+                  <li>“Cozinha que também é lavanderia”</li>
+                  <li>“Sala pequena que também vira home office”</li>
+                  <li>“Quarto infantil que também cresce com a criança”</li>
+                  <li>Variação: “Banheiro que parece spa (sem quebra-quebra)”</li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3>Regras de ouro</h3>
+                <ul>
+                  <li><b>1 ideia por slide</b>.</li>
+                  <li>Overlay: <b>12–18 palavras</b> (máx.).</li>
+                  <li>Texto longo só em slide com <b>base editorial</b>.</li>
+                  <li>Assinatura discreta em todos os slides.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="sec-h">
+            <h2>Slides sugeridos (1..11)</h2>
+            <span class="tag">8–11 slides (use 10 como padrão)</span>
+          </div>
+          <div class="sec-b">
+            <div class="card">
+              <ol class="muted" style="margin:0; padding-left:18px;">
+                <li><b>Capa (resultado + promessa)</b>: foto final forte + título 2 em 1.</li>
+                <li><b>Antes + potencial</b>: foto do antes + rabisco/markup “o desafio”.</li>
+                <li><b>Solução #1 (impacto)</b>: uma feature principal (ex.: cama/mesa/armário).</li>
+                <li><b>Dor/contexto</b>: história curta do cliente + restrição + objetivo.</li>
+                <li><b>Solução #2 (integração)</b>: close + anotação (encaixe, circulação, ergonomia).</li>
+                <li><b>Prova técnica</b>: croqui/prancha/diagrama + “o que ninguém vê”.</li>
+                <li><b>Portfólio</b>: mosaico com outros ângulos (mesmo projeto).</li>
+                <li><b>Solução #3 (detalhe extra)</b>: armazenamento/baú/iluminação/puxador.</li>
+                <li><b>Materiais</b>: tags com 2–4 escolhas + 1 razão rápida.</li>
+                <li><b>Imersão</b>: vídeo curto 3–6s (abrir/puxar/luz) ou foto “vida real”.</li>
+                <li><b>Encerramento + CTA</b>: convite objetivo (DM/link) + reforço de autoridade.</li>
+              </ol>
+            </div>
+            <div class="hr"></div>
+            <div class="callout">
+              <b>Dica de ritmo:</b> a cada 2–3 slides de foto, insira 1 slide “diferente” (editorial/técnico/mosaico) para resetar atenção.
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="sec-h">
+            <h2>Roteiro</h2>
+            <span class="tag">Texto pronto + campos para preencher</span>
+          </div>
+          <div class="sec-b">
+            <div class="script" id="scriptText">ROTEIRO REPRODUZÍVEL (CARROSSEL 8–11)
+
+PREENCHA:
+- Ambiente/tema: [ ]
+- 2ª função/benefício: [ ]
+- Perfil do cliente: [ ]
+- Restrição principal: [ ] (metragem, orçamento, sem quebra-quebra, prazo etc.)
+- 3 soluções: [S1], [S2], [S3]
+- Prova técnica disponível: [planta/croqui/render/detalhe executivo/medições]
+- CTA: [DM com palavra | link no perfil | comentário]
+
+SLIDE 1 — CAPA (PROMESSA)
+Título: “[AMBIENTE] que também é [2ª FUNÇÃO]”
+Sub (opcional): “Projeto: [tipo] • [cidade]”
+Microcopy (opcional): “Do antes ao detalhe (com bastidores)”.
+
+SLIDE 2 — ANTES + POTENCIAL
+Texto curto: “O desafio: [restrição em 5–7 palavras]”
+Elemento: rabisco branco apontando onde iria mudar.
+
+SLIDE 3 — SOLUÇÃO #1 (A GRANDE IDEIA)
+Texto: “[S1] em [X] funções: [lista curta]”
+Ex.: “Cama 3 em 1: dormir • guardar • receber”.
+
+SLIDE 4 — DOR / CONTEXTO (EDITORIAL)
+Título: “O cliente precisava de…”
+Texto (3–5 linhas):
+“[situação real].
+Com [restrição], o espaço precisava [objetivo].
+A prioridade era [benefício principal] sem perder [benefício secundário].”
+
+SLIDE 5 — SOLUÇÃO #2 (INTEGRAÇÃO)
+Texto: “[S2] para [benefício prático]”
+Ex.: “Mesa encaixada para liberar circulação”.
+
+SLIDE 6 — PROVA TÉCNICA (O QUE NINGUÉM VÊ)
+Texto: “Por trás do resultado: [prova técnica] + muitos detalhes.”
+Complemento (1 linha): “Aqui definimos: medidas • ferragens • elétrica/iluminação • folgas”.
+
+SLIDE 7 — PORTFÓLIO (OUTROS ÂNGULOS)
+Topo: “Mesmo projeto • outros ângulos”
+Legenda curta: “Repare em: [2 detalhes]”.
+
+SLIDE 8 — SOLUÇÃO #3 (DETALHE SURPRESA)
+Texto: “[S3] que resolve [dor]”
+Ex.: “Baú para roupa de cama sem bagunça”.
+
+SLIDE 9 — MATERIAIS (ESPECIFICAÇÃO)
+Tags: “[material 1] • [material 2] • [acabamento]”
+Linha de decisão: “Escolha por: [durabilidade/limpeza/textura/luz/custo-benefício]”.
+
+SLIDE 10 — IMERSÃO (VÍDEO OU FOTO ‘USO REAL’)
+Texto: “Em 5s dá pra sentir: [ação]”
+Ex.: “Abrir • puxar • acomodar”.
+
+SLIDE 11 — ENCERRAMENTO + CTA
+CTA principal (escolha 1):
+1) “Quer uma solução assim? Me mande ‘PROJETO’ no direct.”
+2) “Orçamentos e agenda: link no perfil.”
+3) “Comente ‘PLANTA’ que envio um checklist do que medir.”
+Reforço (1 linha): “Atendo: [cidade/online] • [tipo de projeto]”.</div>
+          </div>
+        </section>
+
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+
+        <section>
+          <div class="sec-h">
+            <h2>Elementos visuais</h2>
+            <span class="tag">Sistema replicável</span>
+          </div>
+          <div class="sec-b">
+            <div class="card">
+              <h3>Direção de arte (consistente)</h3>
+              <ul>
+                <li><b>Fundo de foto limpo</b> + textos em creme/bege (premium) ou branco com sombra leve.</li>
+                <li><b>Rabiscos</b> no “antes” (linhas brancas + setas).</li>
+                <li><b>Anotações manuscritas</b> apontando 1 detalhe por slide.</li>
+                <li><b>Tags de materiais</b> arredondadas (efeito “adesivo”).</li>
+                <li><b>Slide técnico</b> (planta/croqui/diagrama) para credibilidade.</li>
+              </ul>
+            </div>
+            <div class="hr"></div>
+            <div class="card">
+              <h3>Checklist de assets (antes de diagramar)</h3>
+              <ul>
+                <li>1 foto hero (capa) + 1 foto antes.</li>
+                <li>3–4 closes (puxadores, encaixes, iluminação, armazenamento).</li>
+                <li>1 prancha/croqui/print de layout (mesmo simples).</li>
+                <li>1 mosaico (3–6 imagens do mesmo projeto).</li>
+                <li>1 vídeo vertical curto (opcional, alto impacto).</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="sec-h">
+            <h2>Copy e ganchos</h2>
+            <span class="tag">Copie/cole e adapte</span>
+          </div>
+          <div class="sec-b">
+            <div class="card">
+              <h3>Ganchos de capa (escolha 1)</h3>
+              <ul>
+                <li>“[Ambiente] que também é [2ª função]”</li>
+                <li>“Como um [ambiente] virou 2 em 1 (sem perder conforto)”</li>
+                <li>“[X m²] com função dupla: o que mudou de verdade”</li>
+                <li>“Antes/Depois: a solução que liberou espaço”</li>
+              </ul>
+            </div>
+            <div class="hr"></div>
+            <div class="card">
+              <h3>Microcopies de retenção (para slides)</h3>
+              <ul>
+                <li>“Repare nesse detalhe →”</li>
+                <li>“O truque está aqui: [1 palavra]”</li>
+                <li>“O que ninguém vê (mas faz tudo funcionar)”</li>
+                <li>“Se você mora em apê pequeno, salva isso”</li>
+              </ul>
+            </div>
+            <div class="hr"></div>
+            <div class="script" id="hooksText">GANCHOS RÁPIDOS (VARIAÇÕES)
+
+1) “Um [ambiente] que também funciona como [2ª função].”
+2) “O antes tinha potencial — só faltava [prioridade].”
+3) “A restrição era [restrição] e a meta era [objetivo].”
+4) “Detalhe #1 que muda o uso: [solução].”
+5) “Bastidor técnico: [prova] (é aqui que o projeto acontece).”
+6) “Materiais escolhidos por: [razão].”
+7) “Quer uma versão disso no seu espaço? ‘PROJETO’ no direct.”</div>
+          </div>
+        </section>
+
+        <section>
+          <div class="sec-h">
+            <h2>CTA</h2>
+            <span class="tag">Baixa fricção → alta conversão</span>
+          </div>
+          <div class="sec-b">
+            <div class="card">
+              <h3>Escolha 1 CTA principal</h3>
+              <ul>
+                <li><b>DM com palavra-chave</b>: “Me mande ‘PROJETO’ no direct.”</li>
+                <li><b>Link</b>: “Orçamentos e agenda: link no perfil.”</li>
+                <li><b>Comentário</b>: “Comente ‘PLANTA’ que eu mando um checklist.”</li>
+              </ul>
+            </div>
+            <div class="hr"></div>
+            <div class="card">
+              <h3>CTA secundário (para salvar/compartilhar)</h3>
+              <ul>
+                <li>“Salve para lembrar dessas soluções 2 em 1.”</li>
+                <li>“Envie para alguém que está sem espaço.”</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="sec-h">
+            <h2>Checklist</h2>
+            <span class="tag">Criação + publicação</span>
+          </div>
+          <div class="sec-b">
+            <div class="checklist">
+              <label><input type="checkbox" /> <div><b>Definição</b><div class="muted2">Tema + promessa 2 em 1 + público + restrição + objetivo.</div></div></label>
+              <label><input type="checkbox" /> <div><b>Roteiro</b><div class="muted2">11 slides (ou 10): capa, antes, 3 soluções, dor, prova técnica, portfólio, materiais, imersão, CTA.</div></div></label>
+              <label><input type="checkbox" /> <div><b>Assets</b><div class="muted2">Hero, antes, 3–4 detalhes, 1 técnico, 1 mosaico, 1 vídeo (opcional).</div></div></label>
+              <label><input type="checkbox" /> <div><b>Design</b><div class="muted2">1 ideia/slide, margens generosas, contraste suave, tags padronizadas, assinatura.</div></div></label>
+              <label><input type="checkbox" /> <div><b>Legenda</b><div class="muted2">Resumo do problema + 3 soluções + prova + CTA + cidade/atendimento.</div></div></label>
+              <label><input type="checkbox" /> <div><b>Publicação</b><div class="muted2">Capa legível em miniatura + CTA no último slide + fixar comentário com palavra-chave.</div></div></label>
+              <label><input type="checkbox" /> <div><b>Pós</b><div class="muted2">Responder DMs com mensagem pronta + salvar leads + encaminhar formulário/orçamento.</div></div></label>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="sec-h">
+            <h2>Variações</h2>
+            <span class="tag">Adaptações com o mesmo impacto</span>
+          </div>
+          <div class="sec-b">
+            <div class="card">
+              <h3>Trocas “plug-and-play” (mantém a estrutura)</h3>
+              <ul>
+                <li><b>Ambiente</b> → cozinha / lavabo / varanda / quarto / sala / consultório.</li>
+                <li><b>2ª função</b> → armazenamento / home office / hóspedes / pets / lavanderia / brinquedoteca.</li>
+                <li><b>Prova técnica</b> → planta humanizada / diagrama de fluxo / detalhamento de marcenaria / luminotécnico.</li>
+                <li><b>Soluções</b> → marcenaria / iluminação / layout / cores / acústica / automação.</li>
+              </ul>
+            </div>
+            <div class="hr"></div>
+            <div class="card">
+              <h3>Mesma lógica para outros nichos (exemplos rápidos)</h3>
+              <ul>
+                <li><b>Design de interiores</b>: “Sala que também vira cinema” + prova: esquema de luz.</li>
+                <li><b>Marcenaria</b>: “Armário que também vira bancada” + prova: desenho de ferragens.</li>
+                <li><b>Iluminação</b>: “Quarto que também relaxa (3 cenas de luz)” + prova: diagrama de circuitos.</li>
+                <li><b>Paisagismo</b>: “Quintal que também é área de receber” + prova: planta de espécies e insolação.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <div class="toast" id="toast">Copiado.</div>
+  </div>
+
+  <script>
+    function toast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=>{ t.style.display = 'none'; }, 1400);
+    }
+
+    async function copyTextFromEl(elId){
+      const el = document.getElementById(elId);
+      const text = el ? el.innerText : '';
+      try{
+        await navigator.clipboard.writeText(text);
+        toast('Roteiro copiado para a área de transferência.');
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        toast('Roteiro copiado (modo compatibilidade).');
+      }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', ()=> copyTextFromEl('scriptText'));
+    document.getElementById('copyHookBtn').addEventListener('click', ()=> copyTextFromEl('hooksText'));
+  </script>
+</body>
+</html>
