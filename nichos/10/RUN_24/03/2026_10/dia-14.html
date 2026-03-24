@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dia 14 — Nutrição — Saúde ≠ performance</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0B1020;
+      --card:#0E1630;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.58);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --grad: linear-gradient(90deg, #22C55E 0%, #3B82F6 45%, #F59E0B 100%);
+      --grad2: radial-gradient(80% 120% at 20% 10%, rgba(34,197,94,.22) 0%, rgba(59,130,246,.16) 40%, rgba(245,158,11,.12) 85%, rgba(0,0,0,0) 100%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height:1.45;
+      background-image: var(--grad2);
+      background-attachment: fixed;
+    }
+    a{color:inherit}
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.78) 0%, rgba(11,16,32,.65) 100%);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: var(--grad);
+      opacity:.10;
+      pointer-events:none;
+    }
+    .head-inner{
+      padding: 20px 20px 18px;
+      display:flex;
+      gap:18px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .kicker{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .pill{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing:.2px;
+    }
+    .title{
+      margin: 8px 0 6px;
+      font-weight: 760;
+      font-size: clamp(20px, 3.2vw, 30px);
+      letter-spacing: -0.3px;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      max-width: 80ch;
+      font-size: 14px;
+    }
+    .head-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    .btn{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.22)}
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(34,197,94,.20), rgba(59,130,246,.18), rgba(245,158,11,.16));
+      border-color: rgba(255,255,255,.22);
+    }
+    .grid{
+      margin-top: 16px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+    }
+    @media(max-width: 900px){
+      .grid{grid-template-columns: 1fr}
+    }
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(14,22,48,.62);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      overflow:hidden;
+      position:relative;
+    }
+    .card .inner{padding: 16px 16px 14px}
+    .card h2{
+      margin:0 0 10px;
+      font-size: 14px;
+      letter-spacing: .6px;
+      color: rgba(255,255,255,.82);
+      text-transform: uppercase;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .tag{
+      font-size: 12px;
+      color: rgba(255,255,255,.75);
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--stroke);
+      text-transform:none;
+      letter-spacing:0;
+      white-space:nowrap;
+    }
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, rgba(34,197,94,.0), rgba(34,197,94,.55), rgba(59,130,246,.55), rgba(245,158,11,.55), rgba(245,158,11,.0));
+      opacity:.35;
+      margin: 12px 0;
+    }
+    .list{
+      margin:0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .list li{margin: 8px 0}
+    .callout{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 12px 12px;
+      color: rgba(255,255,255,.80);
+      font-size: 13px;
+    }
+    .callout strong{color: rgba(255,255,255,.94)}
+    .gradline{
+      height: 2px;
+      background: var(--grad);
+      opacity:.85;
+      border-radius: 999px;
+      margin-top: 4px;
+    }
+    .script{
+      font-family: var(--mono);
+      font-size: 12.7px;
+      color: rgba(255,255,255,.82);
+      background: rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow:auto;
+    }
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media(max-width: 700px){
+      .cols{grid-template-columns: 1fr}
+    }
+    .muted{color: var(--muted)}
+    .small{font-size: 12px; color: var(--muted2)}
+    .kbd{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 2px 7px;
+      border:1px solid rgba(255,255,255,.18);
+      border-bottom-color: rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      border-radius: 8px;
+      color: rgba(255,255,255,.82);
+      white-space:nowrap;
+    }
+    .toast{
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      background: rgba(10,14,28,.85);
+      border: 1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(10px);
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: rgba(255,255,255,.86);
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .18s ease, transform .18s ease;
+      pointer-events:none;
+      max-width: 320px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+    }
+    .toast.show{opacity: 1; transform: translateY(0)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-inner">
+        <div>
+          <div class="kicker">
+            <span class="pill">Nicho: <strong>Nutrição</strong></span>
+            <span class="pill">Dia: <strong>14</strong></span>
+            <span class="pill">Pilar: <strong>Mito vs Verdade</strong></span>
+            <span class="pill">Formato: <strong>Reels</strong></span>
+          </div>
+          <h1 class="title">Saúde ≠ performance: quando o “saudável” vira excesso</h1>
+          <p class="sub">Objetivo: criar um Reel replicável com tensão (contrarian), exemplo cotidiano, reframe e uma regra prática para a pessoa ajustar o comportamento hoje — sem virar pedante.</p>
+          <div class="gradline"></div>
+          <p class="small" style="margin:10px 0 0">Post original: <a href="https://www.instagram.com/p/DWANV4vjC9x/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DWANV4vjC9x/</a></p>
+        </div>
+        <div class="head-actions">
+          <a class="btn" href="https://www.instagram.com/p/DWANV4vjC9x/" target="_blank" rel="noreferrer">Abrir referência</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="inner">
+          <h2>Resumo <span class="tag">ideia central</span></h2>
+          <div class="callout">
+            <strong>Tese:</strong> um hábito “saudável” deixa de ser saúde quando melhora uma métrica, mas piora sua vida (sono, intestino, energia, social, ansiedade).
+            <div class="hr"></div>
+            <strong>Promessa:</strong> distinguir <em>saúde</em> de <em>performance</em> e aplicar um critério simples do corpo para ajustar o ponto.
+          </div>
+          <div class="hr"></div>
+          <h2>Estrutura <span class="tag">0–60s</span></h2>
+          <ol class="list">
+            <li><strong>Hook contrarian</strong> (0–2s): “Não adianta melhorar X piorando Y.”</li>
+            <li><strong>Exemplo cotidiano</strong> (2–6s): um “sintoma chato” e visual.</li>
+            <li><strong>Reframe</strong> (6–12s): “SAÚDE ≠ PERFORMANCE.”</li>
+            <li><strong>Regra-base + autoridade com nuance</strong> (12–22s): guideline + “depende do contexto”.</li>
+            <li><strong>Critério prático</strong> (22–32s): 1 sinal/heurística fácil.</li>
+            <li><strong>Pergunta de confronto</strong> (32–38s): “Se te custa X, ainda é saudável?”</li>
+            <li><strong>Lista de exemplos (3–5)</strong> (38–55s): ritmo alto, cortes rápidos.</li>
+            <li><strong>Fecho memorável + CTA</strong> (55–60s).</li>
+          </ol>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="inner">
+          <h2>Parâmetros de gravação <span class="tag">pra replicar</span></h2>
+          <ul class="list">
+            <li><strong>Duração:</strong> 45–60s</li>
+            <li><strong>Cadência:</strong> troca de “cena” a cada 2–4s</li>
+            <li><strong>Estética:</strong> close no rosto + textos curtos na tela</li>
+            <li><strong>Tom:</strong> “tapa com carinho” (provoca, mas entrega solução)</li>
+            <li><strong>Assunto base:</strong> “hábito saudável que virou cobrança”</li>
+          </ul>
+          <div class="hr"></div>
+          <h2>Escolha seu X/Y <span class="tag">modelos</span></h2>
+          <div class="callout">
+            <div class="small muted">Use 1 combinação por Reel:</div>
+            <ul class="list">
+              <li>Comer “limpo” <strong>vs</strong> viver em paz</li>
+              <li>Bater proteína <strong>vs</strong> piorar intestino</li>
+              <li>Déficit calórico <strong>vs</strong> perder sono</li>
+              <li>Jejum <strong>vs</strong> virar compulsão à noite</li>
+              <li>“Zero açúcar” <strong>vs</strong> ansiedade social</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="inner">
+          <h2>Roteiro <span class="tag">texto falado + texto na tela</span></h2>
+          <div class="cols">
+            <div>
+              <div class="callout">
+                <strong>Como usar:</strong> leia exatamente como está e apenas substitua <span class="kbd">X</span>, <span class="kbd">Y</span> e os exemplos.
+                <div class="small" style="margin-top:8px">Dica: grave em takes curtos (1–2 frases), depois costure com jump cuts.</div>
+              </div>
+              <div class="hr"></div>
+              <h3 style="margin:0 0 8px; font-size:14px; color:rgba(255,255,255,.86); text-transform:uppercase; letter-spacing:.6px;">Sinais práticos (seu “critério simples”)</h3>
+              <ul class="list">
+                <li><strong>Fome e saciedade:</strong> você consegue parar satisfeito ou “precisa” seguir a regra?</li>
+                <li><strong>Intestino:</strong> constipação, estufamento, gases fora do normal após “otimizações”.</li>
+                <li><strong>Sono:</strong> acorda de madrugada pensando em comida/dieta/horário?</li>
+                <li><strong>Energia e humor:</strong> irritação + queda de energia constante.</li>
+                <li><strong>Vida social:</strong> evita eventos por medo de sair do plano.</li>
+              </ul>
+            </div>
+            <div>
+              <pre class="script" id="roteiro">[0–2s | HOOK | TEXTO NA TELA: “Não adianta melhorar X piorando Y.”]
+“Vamos combinar uma coisa? Não adianta melhorar X piorando Y.”
+
+[2–6s | EXEMPLO COTIDIANO | TEXTO: “Se isso te custa o básico… atenção.”]
+“Por exemplo: tem gente que tá ‘comendo super saudável’… mas tá dormindo pior, vivendo tenso e com medo de qualquer refeição fora.”
+
+[6–12s | REFRAME | TEXTO: “SAÚDE ≠ PERFORMANCE”]
+“Isso não é saúde. Isso é performance disfarçada de saúde.”
+
+[12–22s | AUTORIDADE + NUANCE | TEXTO: “Cuidado com regra pronta”]
+“Diretriz nenhuma foi feita pra virar prisão. Recomendação é norte — e o seu contexto importa: rotina, sono, intestino, histórico com dieta.”
+
+[22–32s | CRITÉRIO PRÁTICO | TEXTO: “Pergunta-chave”]
+“Regra simples: se o ‘hábito saudável’ tá piorando seu sono, seu intestino ou sua vida social, você passou do ponto.”
+
+[32–38s | PERGUNTA DE CONFRONTO | TEXTO: “Ainda é saudável?”]
+“Se te custa qualidade de vida… ainda é saudável?”
+
+[38–55s | LISTA (3–5) | TEXTO: “Exemplos de excesso performático”]
+“Exemplos clássicos:
+1) ‘Comer limpo’ e viver ansioso.
+2) Bater proteína e ficar travado do intestino.
+3) Fazer déficit e perder o sono.
+4) Jejum que vira compulsão à noite.
+5) Evitar qualquer evento pra não ‘sair do plano’.”
+
+[55–60s | FECHO + CTA | TEXTO: “Você pode adoecer tentando ser ‘mais saudável’.”]
+“Você pode adoecer tentando ser ‘mais saudável’. Se você quiser, comenta ‘PERFORMANCE’ que eu te mando um checklist rápido pra achar o seu ponto de equilíbrio.”</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner">
+          <h2>Elementos visuais <span class="tag">edição high-retention</span></h2>
+          <ul class="list">
+            <li><strong>Hook:</strong> close no rosto + texto grande (até 8 palavras).</li>
+            <li><strong>Palavras destacadas (cor/caixa):</strong> “SAÚDE”, “PERFORMANCE”, “QUALIDADE DE VIDA”.</li>
+            <li><strong>Cortes:</strong> a cada exemplo da lista, 1 corte (ritmo).</li>
+            <li><strong>Zoom leve:</strong> na pergunta “ainda é saudável?” e no fecho.</li>
+            <li><strong>B-roll opcional:</strong> marmita “fit”, app de calorias, balança, despertador 03:00, convite social recusado.</li>
+            <li><strong>SFX:</strong> whoosh discreto nas transições (sem exagero).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner">
+          <h2>Copy e ganchos <span class="tag">prontos pra abrir</span></h2>
+          <div class="cols">
+            <div>
+              <h3 style="margin:0 0 8px; font-size:13px; letter-spacing:.5px; text-transform:uppercase; color:rgba(255,255,255,.82);">Hooks (escolha 1)</h3>
+              <ul class="list">
+                <li>“Não adianta melhorar X piorando Y.”</li>
+                <li>“Se o seu ‘saudável’ tá te atrapalhando, isso não é saúde.”</li>
+                <li>“Isso parece saudável, mas é performance disfarçada.”</li>
+                <li>“Parabéns: você transformou saúde em competição.”</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style="margin:0 0 8px; font-size:13px; letter-spacing:.5px; text-transform:uppercase; color:rgba(255,255,255,.82);">Frases-síntese (fecho)</h3>
+              <ul class="list">
+                <li>“Você pode adoecer tentando ser ‘mais saudável’.”</li>
+                <li>“Saúde é o que melhora sua vida — não o que te aprisiona.”</li>
+                <li>“Consistência vence perfeccionismo.”</li>
+                <li>“O corpo cobra a conta do excesso.”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Legenda sugerida (curta):</strong> “Se um hábito melhora uma métrica, mas piora seu sono/ansiedade/vida social, isso virou performance. Quer um checklist pra achar o seu ponto? Comenta ‘PERFORMANCE’.”
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner">
+          <h2>CTA <span class="tag">1 primário + 1 secundário</span></h2>
+          <ul class="list">
+            <li><strong>Comentário (primário):</strong> “Comenta <span class="kbd">PERFORMANCE</span> que eu te mando um checklist de sinais de excesso.”</li>
+            <li><strong>Salvar (secundário):</strong> “Salva pra revisar quando bater a neura do ‘perfeito’.”</li>
+            <li><strong>Compartilhar (opcional):</strong> “Manda pra quem transformou dieta em prova.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="inner">
+          <h2>Checklist <span class="tag">criação + gravação + edição</span></h2>
+          <div class="cols">
+            <div>
+              <h3 style="margin:0 0 8px; font-size:13px; letter-spacing:.5px; text-transform:uppercase; color:rgba(255,255,255,.82);">Pré-roteiro</h3>
+              <ul class="list">
+                <li>Escolher 1 hábito: jejum, “dieta limpa”, proteína, déficit, low carb, suplemento.</li>
+                <li>Definir o <strong>custo oculto</strong>: sono, intestino, energia, humor, social, compulsão.</li>
+                <li>Definir X/Y numa frase (gancho).</li>
+                <li>Separar 1 referência/consenso (sem cravar regra fixa).</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style="margin:0 0 8px; font-size:13px; letter-spacing:.5px; text-transform:uppercase; color:rgba(255,255,255,.82);">Gravação + edição</h3>
+              <ul class="list">
+                <li>Gravar em 8 blocos (A–H) para facilitar cortes.</li>
+                <li>Texto na tela: 6–10 palavras por bloco.</li>
+                <li>Destacar 1 palavra por frase (caixa/realce).</li>
+                <li>Inserir zoom leve na pergunta e no fecho.</li>
+                <li>Testar 2 versões de hook (A/B) antes de postar.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="inner">
+          <h2>Variações <span class="tag">para a mesma ideia render +3 Reels</span></h2>
+          <div class="cols">
+            <div class="callout">
+              <strong>Variação 1 — “Dieta limpa”</strong><br>
+              X/Y: “comer limpo vs ter paz”.<br>
+              Critério: ansiedade antes/depois de comer + isolamento social.
+            </div>
+            <div class="callout">
+              <strong>Variação 2 — Proteína</strong><br>
+              X/Y: “bater proteína vs piorar intestino”.<br>
+              Critério: constipação/estufamento + ingestão de água/fibra insuficiente.
+            </div>
+            <div class="callout">
+              <strong>Variação 3 — Jejum</strong><br>
+              X/Y: “jejum vs compulsão à noite”.<br>
+              Critério: episódios de descontrole + irritabilidade + queda de performance no trabalho.
+            </div>
+            <div class="callout">
+              <strong>Variação 4 — Déficit calórico</strong><br>
+              X/Y: “emagrecer vs perder sono”.<br>
+              Critério: acordar cedo/fadiga + fome desregulada + queda de NEAT.
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="small muted">Observação: se você quiser transformar isso em série, mantenha o mesmo roteiro e troque apenas X/Y + exemplos + critério prático do corpo.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado para a área de transferência.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const roteiro = document.getElementById('roteiro');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=> toast.classList.remove('show'), 1600);
+      }
+
+      btn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(roteiro.textContent.trim());
+          showToast('Roteiro copiado para a área de transferência.');
+        } catch(e){
+          // fallback
+          const range = document.createRange();
+          range.selectNodeContents(roteiro);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          try{ document.execCommand('copy'); showToast('Roteiro copiado (fallback).'); }
+          catch(err){ showToast('Não foi possível copiar automaticamente.'); }
+          sel.removeAllRanges();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
