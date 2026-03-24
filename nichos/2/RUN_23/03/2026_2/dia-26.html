@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roteiro Reproduzível — Arquitetura (Dia 26)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.09);
+      --line: rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --muted2:#7F8AA7;
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r: 18px;
+      --g1: linear-gradient(90deg, #39FF88 0%, #21D4FD 48%, #FFB020 100%);
+      --g2: linear-gradient(135deg, rgba(57,255,136,.22) 0%, rgba(33,212,253,.18) 45%, rgba(255,176,32,.16) 100%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(33,212,253,.18), transparent 55%),
+        radial-gradient(800px 480px at 80% 10%, rgba(255,176,32,.12), transparent 60%),
+        radial-gradient(900px 600px at 60% 90%, rgba(57,255,136,.10), transparent 65%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 44px}
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--r) + 6px);
+      padding:18px 18px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g2);
+      opacity:.8;
+      filter: blur(18px);
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1}
+
+    .toprow{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .chip{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      letter-spacing:.2px;
+    }
+    .chip strong{color: var(--text); font-weight:650}
+    .title{
+      margin:12px 0 8px;
+      font-size:26px;
+      line-height:1.15;
+      letter-spacing:-.2px;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size:14px;
+      line-height:1.45;
+    }
+    .linkrow{margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .link{
+      font-size:13px;
+      color: var(--muted);
+      text-decoration:none;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      padding:8px 10px;
+      border-radius:12px;
+    }
+    .link:hover{border-color: rgba(255,255,255,.22)}
+
+    .grid{display:grid; grid-template-columns: 1.25fr .75fr; gap:14px; margin-top:14px}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(255,255,255,.06);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background: rgba(0,0,0,.16);
+    }
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:.2px}
+    .badge{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:5px 9px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .card .bd{padding:14px 16px}
+
+    .note{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding:12px 12px;
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .note b{color: var(--text)}
+
+    ul{margin:10px 0 0 18px; padding:0}
+    li{margin:6px 0; color: var(--muted); line-height:1.5}
+    .tight li{margin:5px 0}
+
+    .grad{
+      background: var(--g1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    button{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: 14px;
+      padding:10px 12px;
+      font-weight:650;
+      cursor:pointer;
+    }
+    button:hover{border-color: rgba(255,255,255,.26)}
+    .primary{
+      border:none;
+      background: linear-gradient(135deg, rgba(57,255,136,.20), rgba(33,212,253,.18), rgba(255,176,32,.16));
+      box-shadow: 0 18px 48px rgba(0,0,0,.35);
+    }
+    .toast{
+      font-family: var(--mono);
+      font-size:12px;
+      color: var(--muted);
+    }
+
+    .codebox{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      border-radius: 16px;
+      padding:12px;
+      overflow:auto;
+      max-height: 540px;
+    }
+    pre{margin:0; white-space:pre-wrap; word-wrap:break-word; color:#DDE6FF; font-size:13px; line-height:1.5}
+
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 700px){ .cols{grid-template-columns:1fr} }
+
+    .kpi{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .kpi .chip{background: rgba(255,255,255,.05)}
+
+    .footer{
+      margin-top:14px;
+      color: var(--muted2);
+      font-size:12px;
+      line-height:1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="chips">
+          <div class="chip"><strong>Nicho</strong>: Arquitetura</div>
+          <div class="chip"><strong>Dia</strong>: 26</div>
+          <div class="chip"><strong>Formato</strong>: carrossel</div>
+          <div class="chip"><strong>Pilar</strong>: Desejo</div>
+        </div>
+        <div class="chips">
+          <div class="chip">Modelo: <span class="grad"><strong>Comparativo A vs B</strong></span></div>
+        </div>
+      </div>
+      <h1 class="title">Time fachada <span class="grad">limpa</span> ou <span class="grad">ornamentada</span>?</h1>
+      <p class="sub">Carrossel curto para gerar comentários rápidos (1 ou 2) com prova visual forte. Mantém o estilo “high-end” e funciona para qualquer tema com duas opções claras.</p>
+      <div class="linkrow">
+        <a class="link" href="https://www.instagram.com/p/DVTohn_DRQV/" target="_blank" rel="noopener noreferrer">Post original (referência)</a>
+        <a class="link" href="#roteiro">Ir para o roteiro</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge">Objetivo: alcance + comentários</span>
+        </div>
+        <div class="bd">
+          <div class="note">
+            <b>Ideia central:</b> apresente duas soluções com estética/decisão oposta (<b>A</b> vs <b>B</b>) e force uma escolha simples. <br/>
+            <b>Mecânica:</b> imagem “vende” antes do texto → pergunta curta → comentário de baixo esforço.
+          </div>
+          <div class="kpi">
+            <div class="chip">Interação: <strong>Comentário</strong></div>
+            <div class="chip">Fricção: <strong>baixa</strong> (“1 ou 2”)</div>
+            <div class="chip">Tempo de produção: <strong>rápido</strong></div>
+            <div class="chip">Escalável: <strong>2 a 8 slides</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Instrução curta</h2>
+          <span class="badge">Execução em 30–60 min</span>
+        </div>
+        <div class="bd">
+          <ul class="tight">
+            <li>Escolha um tema com duas opções claras (A e B).</li>
+            <li>Separe 2 fotos bem representativas (A e B).</li>
+            <li>Aplicar tarja fixa no topo + texto com 6–10 palavras.</li>
+            <li>Legenda pedindo: <b>“1 ou 2?”</b> + contexto opcional.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Estrutura</h2>
+        <span class="badge">Narrativa: escolha forçada + pertencimento</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <div class="note"><b>Versão curta (2 slides):</b> perfeita para alcance e comentários.</div>
+            <ul>
+              <li><b>Slide 1:</b> Apresenta A + “Você é do time…?”</li>
+              <li><b>Slide 2:</b> Mostra B + “Ou do time…?” + pergunta “1 ou 2?”</li>
+            </ul>
+          </div>
+          <div>
+            <div class="note"><b>Versão escalada (3–8 slides):</b> mantém a comparação e adiciona valor sem perder leveza.</div>
+            <ul>
+              <li><b>Slide 3:</b> “Depende do quê?” (2–3 critérios objetivos)</li>
+              <li><b>Slide 4:</b> Erros comuns (1 por slide)</li>
+              <li><b>Slide 5:</b> Recomendação prática (quando escolher A/B)</li>
+              <li><b>Slide 6:</b> CTA (salvar/compartilhar/direct)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="roteiro">
+      <div class="hd">
+        <h2>Roteiro (copiável)</h2>
+        <div class="btnrow">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <span class="toast" id="toast"></span>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="codebox">
+          <pre id="scriptText">TEMA (substituível): [DECISÃO A] vs [DECISÃO B]
+
+OBJETIVO: gerar comentários com escolha rápida (1 ou 2)
+
+SLIDE 1 (A)
+- Imagem: foto forte representando [DECISÃO/ESTILO A]
+- Tarja (texto curto, 6–10 palavras):
+  "Você é do time [A]…"
+  (alternativas: "Você prefere [A]?" | "Time [A] ou…?")
+- Selo: número 1 (canto superior esquerdo)
+- Regra: 1 frase só (sem explicar demais)
+
+SLIDE 2 (B)
+- Imagem: foto forte representando [DECISÃO/ESTILO B]
+- Tarja:
+  "…ou do time [B]?"
+  ou "Ou você vai de [B]?"
+- Selo: número 2
+- (Opcional) micro-CTA no próprio slide: "Comente 1 ou 2"
+
+LEGENDA (modelo curto)
+"Qual você prefere: 1 ([A]) ou 2 ([B])?
+Comenta aqui: 1 ou 2." 
+
+LEGENDA (modelo com contexto)
+"Qual combina mais com você: 1 ([A]) ou 2 ([B])?
+Se quiser, comenta também: orçamento / manutenção / tamanho do terreno / estilo.
+Salve para referência e manda pra alguém que está construindo."</pre>
+        </div>
+        <div class="footer">Dica: se o público tiver vergonha de opinar, ofereça respostas fáceis: “1”, “2” ou “depende”.</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Slides sugeridos (1..N)</h2>
+        <span class="badge">Carrossel recomendado: 2–6 slides</span>
+      </div>
+      <div class="bd">
+        <ul>
+          <li><b>Slide 1:</b> A (gancho + pertencimento)</li>
+          <li><b>Slide 2:</b> B (contraponto + pergunta “1 ou 2?”)</li>
+          <li><b>Slide 3 (opcional):</b> “Depende do quê?” → 3 critérios (ex.: custo, manutenção, privacidade)</li>
+          <li><b>Slide 4 (opcional):</b> Erro comum ao escolher (1 erro claro)</li>
+          <li><b>Slide 5 (opcional):</b> Recomendação rápida (quando A funciona / quando B funciona)</li>
+          <li><b>Slide 6 (opcional):</b> CTA final (salvar + direct)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Elementos visuais</h2>
+        <span class="badge">Identidade: foto protagonista + tarja fixa</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <div class="note"><b>Layout replicável (Canva/Figma):</b></div>
+            <ul>
+              <li>Formato: 1080×1080 (ou 1080×1350 se quiser mais impacto).</li>
+              <li>Imagem ocupa 90–100% do slide (sem poluição).</li>
+              <li>Tarja sólida no topo (12–18% da altura), sempre no mesmo lugar.</li>
+              <li>Número do slide em círculo no canto superior esquerdo.</li>
+              <li>Assinatura/monograma discreto no canto inferior direito.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="note"><b>Tipografia e legibilidade:</b></div>
+            <ul>
+              <li>Máximo 1 frase por slide.</li>
+              <li>6–10 palavras (ideal) e sem caixa alta total.</li>
+              <li>Alto contraste: texto escuro na tarja clara.</li>
+              <li>Use aspas em termos técnicos: “limpa”, “ornamentada”.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Copy e ganchos</h2>
+        <span class="badge">Fórmulas de alta resposta</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <div class="note"><b>Headlines (substituíveis):</b></div>
+            <ul>
+              <li>“Você é do time <b>[A]</b>… ou <b>[B]</b>?”</li>
+              <li>“Qual combina mais com você: <b>[A]</b> vs <b>[B]</b>?”</li>
+              <li>“Se fosse hoje: você escolheria <b>[A]</b> ou <b>[B]</b>?”</li>
+              <li>“Polêmica leve: <b>[A]</b> é mais bonito que <b>[B]</b>?”</li>
+            </ul>
+          </div>
+          <div>
+            <div class="note"><b>Gatilhos que mantêm o mesmo impacto (trocas seguras):</b></div>
+            <ul>
+              <li><b>Pertencimento:</b> “time”, “você é do tipo…?”</li>
+              <li><b>Decisão rápida:</b> “1 ou 2”, “A ou B”</li>
+              <li><b>Curiosidade:</b> “e por quê?” (na legenda, não no slide)</li>
+              <li><b>Contexto:</b> peça 1 info extra (orçamento, manutenção, rotina)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>CTA</h2>
+        <span class="badge">1 principal + 1 secundária</span>
+      </div>
+      <div class="bd">
+        <ul>
+          <li><b>CTA principal (comentário):</b> “Qual você prefere: 1 ou 2?”</li>
+          <li><b>CTA secundário (salvar):</b> “Salve para referência.”</li>
+          <li><b>CTA secundário (compartilhar):</b> “Manda pra alguém que está construindo/reformando.”</li>
+          <li><b>CTA secundário (direct):</b> “Quer uma sugestão pro seu caso? Me chama no direct com uma foto.”</li>
+        </ul>
+        <div class="note" style="margin-top:10px"><b>Regra de ouro:</b> não peça 3 ações no mesmo post. Escolha 1 foco (comentário) e no máximo 1 apoio (salvar ou direct).</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Checklist de criação</h2>
+        <span class="badge">Antes de postar</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <div class="note"><b>Conteúdo e estratégia:</b></div>
+            <ul>
+              <li>A e B ficam claros <b>só pela imagem</b>?</li>
+              <li>O slide 1 gera curiosidade real para ver o 2?</li>
+              <li>O CTA é de <b>baixo esforço</b> (1 palavra ou número)?</li>
+              <li>Legenda tem 1 pergunta direta + 1 pedido opcional de contexto?</li>
+            </ul>
+          </div>
+          <div>
+            <div class="note"><b>Design e execução:</b></div>
+            <ul>
+              <li>Tarja no topo com padding e alinhamento consistente.</li>
+              <li>1 frase por slide (sem parágrafos).</li>
+              <li>Número do slide visível (sensação de sequência curta).</li>
+              <li>Margens de segurança ok (texto não encosta nas bordas).</li>
+              <li>Exportação nítida e sem compressão excessiva.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Variações (para adaptar a outros temas)</h2>
+        <span class="badge">Mesma estrutura, novo assunto</span>
+      </div>
+      <div class="bd">
+        <div class="note"><b>Como adaptar sem perder performance:</b> mantenha (1) duas opções visualmente diferentes, (2) texto curtíssimo, (3) pergunta “1 ou 2?” e (4) pedido opcional de contexto na legenda.</div>
+        <div class="cols" style="margin-top:12px">
+          <div>
+            <div class="note"><b>Biblioteca A vs B (Arquitetura):</b></div>
+            <ul>
+              <li>Volumetria <b>reta</b> vs <b>orgânica</b></li>
+              <li>Paleta <b>neutra</b> vs <b>contrastante</b></li>
+              <li>Iluminação <b>indireta</b> vs <b>cênica/marcada</b></li>
+              <li>Paisagismo <b>minimalista</b> vs <b>tropical/exuberante</b></li>
+              <li>Portão <b>vazado</b> vs <b>fechado</b> (privacidade)</li>
+              <li>Revestimento <b>único</b> vs <b>mix de materiais</b></li>
+              <li>Cobertura <b>aparente</b> vs <b>embutida</b></li>
+              <li>Sala <b>integrada</b> vs <b>setorizada</b></li>
+            </ul>
+          </div>
+          <div>
+            <div class="note"><b>Substituições universais (qualquer nicho):</b></div>
+            <ul>
+              <li>[Ferramenta A] vs [Ferramenta B] (preferência)</li>
+              <li>[Estratégia rápida] vs [estratégia completa] (trade-off)</li>
+              <li>[Premium] vs [custo-benefício] (perfil de compra)</li>
+              <li>[Clássico] vs [moderno] (estilo)</li>
+              <li>[Com X] vs [sem X] (simplicidade vs recurso extra)</li>
+            </ul>
+            <div class="note" style="margin-top:10px"><b>Modelo de legenda universal:</b><br/>“Você vai de 1 ([A]) ou 2 ([B])? Comenta 1 ou 2 — e me diz seu contexto em 1 frase.”</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Identidade sugerida: fundo neutro + tarja consistente + imagens muito fortes. O “high-tech clean” vem da repetição do layout e do contraste.
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('scriptText');
+
+      async function copy(){
+        const value = text.innerText;
+        try{
+          await navigator.clipboard.writeText(value);
+          toast.textContent = 'Copiado para a área de transferência.';
+        }catch(e){
+          // Fallback
+          const range = document.createRange();
+          range.selectNodeContents(text);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          document.execCommand('copy');
+          sel.removeAllRanges();
+          toast.textContent = 'Copiado (modo compatibilidade).';
+        }
+        setTimeout(()=> toast.textContent = '', 2400);
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
