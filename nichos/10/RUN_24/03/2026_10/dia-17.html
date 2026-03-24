@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 17 — Roteiro Reels (Nutrição)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --good:#31D158;
+      --warn:#FFB020;
+      --info:#39A7FF;
+      --gradA: linear-gradient(90deg, #32D74B 0%, #39A7FF 45%, #FF9F0A 100%);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 16px;
+      --radius2: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(900px 420px at 12% -10%, rgba(57,167,255,.20), transparent 55%),
+        radial-gradient(800px 520px at 92% 10%, rgba(50,215,75,.16), transparent 60%),
+        radial-gradient(900px 520px at 55% 110%, rgba(255,159,10,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+      min-height:100vh;
+    }
+
+    .wrap{ max-width: 1120px; margin: 0 auto; padding: 28px 18px 64px; }
+
+    header{
+      position: relative;
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--gradA);
+      opacity:.18;
+      filter: blur(18px);
+      transform: translateY(-10px);
+      pointer-events:none;
+    }
+
+    .head-inner{ position:relative; padding: 22px 20px; display:flex; gap:16px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; }
+    .kicker{
+      display:inline-flex; gap:10px; align-items:center; padding: 8px 10px;
+      border-radius: 999px; border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.20);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .dot{ width:8px; height:8px; border-radius:50%; background: var(--gradA); background-size: 200% 200%; }
+
+    h1{ margin: 10px 0 6px; font-size: clamp(20px, 2.4vw, 30px); letter-spacing: .2px; }
+    .sub{ margin: 0; color: var(--muted); font-size: 14px; line-height: 1.35; }
+
+    .head-actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    a.btn, button.btn{
+      appearance:none; border: 1px solid var(--stroke2);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor:pointer;
+      text-decoration:none;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      display:inline-flex; gap:10px; align-items:center;
+    }
+    a.btn:hover, button.btn:hover{ background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
+    a.btn:active, button.btn:active{ transform: translateY(1px); }
+
+    .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 14px;
+    }
+    @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card{
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .card .top{
+      padding: 14px 14px 0;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      font-size: 12.5px; color: var(--muted);
+      padding: 6px 10px;
+      border-radius: 999px; border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+    }
+    .pill{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: rgba(234,240,255,.78);
+    }
+
+    .card h2{ margin: 10px 0 0; padding: 0 14px; font-size: 16px; letter-spacing:.2px; }
+    .card .body{ padding: 12px 14px 14px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+    .hr{ height:1px; background: rgba(255,255,255,.08); margin: 12px 0; }
+
+    ul.clean{ margin: 0; padding-left: 18px; }
+    ul.clean li{ margin: 6px 0; }
+
+    .accent{
+      background: var(--gradA);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 650;
+    }
+
+    .callout{
+      border-radius: 14px;
+      border: 1px solid rgba(57,167,255,.22);
+      background: linear-gradient(180deg, rgba(57,167,255,.10), rgba(255,255,255,.04));
+      padding: 12px 12px;
+      color: rgba(234,240,255,.82);
+    }
+
+    .script{
+      white-space: pre-wrap;
+      font-family: var(--mono);
+      font-size: 12.8px;
+      line-height: 1.6;
+      background: rgba(0,0,0,.22);
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 12px;
+      color: rgba(234,240,255,.80);
+    }
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 760px){ .two{ grid-template-columns: 1fr; } }
+
+    .checklist{ display:grid; gap:10px; }
+    .item{
+      display:flex; gap:10px; align-items:flex-start;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+    }
+    .box{ width:18px; height:18px; border-radius: 6px; border:1px solid rgba(255,255,255,.20); background: rgba(0,0,0,.18); margin-top:2px; flex: 0 0 auto; }
+    .item strong{ color: rgba(234,240,255,.92); font-weight: 650; }
+    .muted2{ color: var(--muted2); }
+
+    footer{ margin-top: 14px; color: var(--muted2); font-size: 12.5px; }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(234,240,255,.86);
+      padding: 10px 12px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      display:none;
+      box-shadow: 0 14px 40px rgba(0,0,0,.45);
+      max-width: calc(100vw - 24px);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-inner">
+        <div>
+          <div class="kicker"><span class="dot"></span><span><strong>Nicho:</strong> Nutrição</span><span style="opacity:.45">•</span><span><strong>Dia:</strong> 17</span></div>
+          <h1>Pare de cair em “regras” de nutrição: sempre depende</h1>
+          <p class="sub">Modelo de Reels replicável para desmontar uma regra viral com perguntas de contexto + “plot twist” (interesse por trás) + CTA orientado a comentários/compartilhamentos.</p>
+          <p class="sub" style="margin-top:8px"><span class="accent">Post original:</span> <a href="https://www.instagram.com/p/DVTbXl-jYRn/" target="_blank" rel="noreferrer" style="color: rgba(234,240,255,.88)">https://www.instagram.com/p/DVTbXl-jYRn/</a></p>
+        </div>
+        <div class="head-actions">
+          <a class="btn" href="https://www.instagram.com/p/DVTbXl-jYRn/" target="_blank" rel="noreferrer">Abrir post</a>
+          <button class="btn" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="top">
+          <span class="tag">Resumo</span>
+          <span class="pill">Pilar: Mito vs Verdade • Formato: Reels</span>
+        </div>
+        <h2>O “motor” do engajamento (o que repetir)</h2>
+        <div class="body">
+          <ul class="clean">
+            <li><strong>Começo polarizador</strong> (regra comum) + <strong>quebra imediata</strong> (“depende”).</li>
+            <li><strong>Confronto inteligente</strong>: você não ataca o alimento/hábito, ataca a <strong>lógica do conselho genérico</strong>.</li>
+            <li><strong>Ritmo</strong> com 4–6 perguntas rápidas (“Você sabe…?”) para prender atenção.</li>
+            <li><strong>Consequência emocional</strong>: culpa/ansiedade + descrédito do plano individualizado/profissional.</li>
+            <li><strong>Plot twist</strong>: “por que isso viraliza?” (simplicidade/marketing/cupom/afiliado).</li>
+            <li><strong>Vilão claro</strong>: “regras rígidas da internet”.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Objetivo do vídeo:</strong> ensinar a pessoa a <span class="accent">pensar</span> (avaliar contexto), não entregar uma “regra nova”. Isso aumenta compartilhamento e salva.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="top">
+          <span class="tag">Estrutura</span>
+          <span class="pill">25–40s • cortes 0,8–1,5s</span>
+        </div>
+        <h2>Template de sequência (reproduzível)</h2>
+        <div class="body">
+          <ol style="margin:0; padding-left: 18px;">
+            <li><strong>Regra viral</strong> (1 frase, bem “internet”).</li>
+            <li><strong>Quebra</strong> (2–4 palavras) — “Depende.” / “Como você sabe?”</li>
+            <li><strong>Metralhadora de perguntas</strong> (4–6) — objetivo, rotina, dados, restrições.</li>
+            <li><strong>Dano prático</strong> (1–2 frases) — ansiedade/culpa + confusão.</li>
+            <li><strong>Princípio</strong> (1 frase) — “Nutrição é contexto + individualização.”</li>
+            <li><strong>Plot twist</strong> (1 frase) — “regra simples dá clique (e às vezes vende)”.</li>
+            <li><strong>CTA</strong> — peça uma regra para desconstruir e incentive salvar/compartilhar.</li>
+          </ol>
+          <div class="hr"></div>
+          <p class="muted2" style="margin:0">Dica: se você trocar o tema (treino, finanças, skincare), mantenha a mesma ordem e o mesmo “vilão” (generalização).</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="top">
+          <span class="tag">Roteiro</span>
+          <span class="pill">Texto falado + texto na tela</span>
+        </div>
+        <h2>Roteiro pronto (com campos para substituir)</h2>
+        <div class="body">
+          <div class="two">
+            <div>
+              <p style="margin:0 0 8px"><strong>Preencha assim antes de gravar</strong></p>
+              <ul class="clean">
+                <li><strong>Regra viral:</strong> “Se você <span class="accent">[COMPORTAMENTO X]</span>, então <span class="accent">[CONCLUSÃO RÍGIDA]</span>.”</li>
+                <li><strong>Variáveis (4–6):</strong> <span class="accent">[OBJETIVO]</span>, <span class="accent">[ROTINA]</span>, <span class="accent">[DADOS]</span>, <span class="accent">[TREINO]</span>, <span class="accent">[EXAMES/CLÍNICA]</span>, <span class="accent">[PREFERÊNCIAS]</span>.</li>
+                <li><strong>Dano real:</strong> <span class="accent">[CULPA/ANSIEDADE/CONFUSÃO/SABOTAGEM]</span>.</li>
+                <li><strong>Interesse por trás:</strong> <span class="accent">[CLIQUES/CURSO/AFILIADO/CUPOM/EXTREMISMO]</span>.</li>
+              </ul>
+              <div class="hr"></div>
+              <p style="margin:0"><strong>Exemplos de “X” (nutrição)</strong></p>
+              <ul class="clean">
+                <li>“2 ovos é pouca proteína”</li>
+                <li>“Carbo à noite engorda”</li>
+                <li>“Jejum é obrigatório”</li>
+                <li>“Detox de 3 dias resolve”</li>
+                <li>“1200 kcal serve pra todo mundo”</li>
+              </ul>
+            </div>
+            <div>
+              <p style="margin:0 0 8px"><strong>Texto falado (modelo copiável)</strong></p>
+              <div class="script" id="scriptText">HOOK (0–3s)
+“⚠️ Se você [COMPORTAMENTO X], então [CONCLUSÃO RÍGIDA].”
+(Pausa curta) “Depende.”
+
+VIRADA (3–5s)
+“Como você sabe?”
+
+PERGUNTAS (5–18s) — cortes rápidos
+“Você sabe qual é o meu objetivo?”
+“Você sabe meu peso/altura/composição corporal?”
+“Você sabe quantas refeições eu faço e como é meu apetite?”
+“Você sabe como é meu treino e minha rotina?”
+“Você sabe meus exames, sono e histórico?”
+
+DANO (18–24s)
+“Esse tipo de regra genérica só coloca culpa e ansiedade — e ainda faz a pessoa achar que o plano individualizado ‘tá errado’.”
+
+PRINCÍPIO (24–30s)
+“Nutrição não é mandamento. É contexto + individualização.”
+
+PLOT TWIST (30–36s)
+“E sabe por que isso viraliza? Porque regra simples dá clique… e às vezes tem interesse por trás.”
+
+CTA (36–40s)
+“Comenta uma regra da internet que te dá nóia que eu desconstruo no próximo. E salva isso pra lembrar: antes da regra, vem o contexto.”</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p style="margin:0"><strong>Textos na tela (1 linha por vez, sincronizado)</strong></p>
+          <ul class="clean">
+            <li>“⚠️ ‘[REGRA VIRAL]’”</li>
+            <li>“Isso é genérico.”</li>
+            <li>“Como você sabe?”</li>
+            <li>“Objetivo?” • “Rotina?” • “Treino?” • “Exames?”</li>
+            <li>“Culpa e ansiedade.”</li>
+            <li>“Contexto + individualização.”</li>
+            <li>“Por que viraliza? Porque vende.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="top">
+          <span class="tag">Elementos visuais</span>
+          <span class="pill">High-retention</span>
+        </div>
+        <h2>Captação e edição (padrão repetível)</h2>
+        <div class="body">
+          <ul class="clean">
+            <li><strong>Plano:</strong> talking head, olho na câmera, fundo limpo/escuro.</li>
+            <li><strong>Cortes:</strong> a cada 0,8–1,5s durante as perguntas.</li>
+            <li><strong>Punch-in/zoom leve</strong> em 2–3 frases: “Como você sabe?”, “Culpa e ansiedade”, “Porque vende”.</li>
+            <li><strong>Legenda grande</strong> e resumida (1 ideia por tela).</li>
+            <li><strong>SFX leve</strong> no plot twist (hit/woosh curto).</li>
+            <li><strong>Paleta:</strong> branco/azul no texto, destaques verde/azul/laranja para palavras-chave.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="top">
+          <span class="tag">Copy e ganchos</span>
+          <span class="pill">3 opções</span>
+        </div>
+        <h2>Alternativas de abertura (mesmo impacto)</h2>
+        <div class="body">
+          <ul class="clean">
+            <li><strong>Polêmica + quebra:</strong> “Se você faz <span class="accent">X</span>, tá errado… (pausa) …depende.”</li>
+            <li><strong>Frase comum + alerta:</strong> “’Todo mundo tem que <span class="accent">X</span>’. Não. Isso pode estar te atrapalhando.”</li>
+            <li><strong>Vilão nomeado:</strong> “O problema não é <span class="accent">X</span>. É regra genérica fingindo ser individual.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p style="margin:0"><strong>Frases curtas para costurar o vídeo</strong></p>
+          <ul class="clean">
+            <li>“Contexto muda tudo.”</li>
+            <li>“Pergunta básica antes de opinar:”</li>
+            <li>“O que funciona pra um, atrapalha outro.”</li>
+            <li>“Regra simples vira post. Vida real não.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="top">
+          <span class="tag">CTA</span>
+          <span class="pill">Escolha 1–2</span>
+        </div>
+        <h2>Chamadas para ação (sem perder o tom crítico)</h2>
+        <div class="body">
+          <ul class="clean">
+            <li><strong>Comentários:</strong> “Qual regra da internet mais te dá nóia? Comenta.”</li>
+            <li><strong>Próximo vídeo:</strong> “Comenta ‘PRÓXIMO’ + a regra que você quer que eu destrinche.”</li>
+            <li><strong>Compartilhar:</strong> “Manda pra alguém que vive preso em regra rígida.”</li>
+            <li><strong>Salvar:</strong> “Salva pra lembrar: antes da regra, vem contexto.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="muted2" style="margin:0">Dica: se o tema for mais sensível (compulsão, transtornos), troque “vilão” por “desinformação” e use tom mais acolhedor.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="top">
+          <span class="tag">Checklist</span>
+          <span class="pill">Da ideia à postagem</span>
+        </div>
+        <h2>Checklist de criação (reproduzível em qualquer tema)</h2>
+        <div class="body">
+          <div class="two">
+            <div>
+              <p style="margin:0 0 10px"><strong>1) Pré (planejamento em 5 minutos)</strong></p>
+              <div class="checklist">
+                <div class="item"><span class="box"></span><div><strong>Escolha uma regra viral</strong><div class="muted2">Tem que ser simples, comum e “mandona”. Ex: “sempre”, “nunca”, “todo mundo”.</div></div></div>
+                <div class="item"><span class="box"></span><div><strong>Liste 4–6 variáveis de contexto</strong><div class="muted2">Objetivo, rotina, dados, restrições, preferências, histórico.</div></div></div>
+                <div class="item"><span class="box"></span><div><strong>Defina o dano real</strong><div class="muted2">Culpa, ansiedade, confusão, sabotagem, descrédito do acompanhamento.</div></div></div>
+                <div class="item"><span class="box"></span><div><strong>Escolha um “por trás” plausível</strong><div class="muted2">Clique, simplificação extrema, afiliação, cupom, venda de curso, alarmismo.</div></div></div>
+              </div>
+            </div>
+            <div>
+              <p style="margin:0 0 10px"><strong>2) Gravação e edição</strong></p>
+              <div class="checklist">
+                <div class="item"><span class="box"></span><div><strong>Hook em 1 frase</strong><div class="muted2">Sem justificar — só joga a regra e quebra.</div></div></div>
+                <div class="item"><span class="box"></span><div><strong>Perguntas em ritmo acelerado</strong><div class="muted2">Comece 4–6 frases com “Você sabe…?”</div></div></div>
+                <div class="item"><span class="box"></span><div><strong>Pausa antes do plot twist</strong><div class="muted2">1–2s para criar expectativa.</div></div></div>
+                <div class="item"><span class="box"></span><div><strong>Texto na tela com palavras-chave</strong><div class="muted2">OBJETIVO • ROTINA • TREINO • EXAMES (um por vez).</div></div></div>
+                <div class="item"><span class="box"></span><div><strong>CTA direto</strong><div class="muted2">Peça comentário + sugira salvar/mandar.</div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p style="margin:0"><strong>Checklist de qualidade (antes de postar)</strong></p>
+          <ul class="clean">
+            <li>O hook tem “mandamento” + “depende/como você sabe?” em até 3–5s?</li>
+            <li>As perguntas estão curtas (máx. 8–10 palavras) e com cortes rápidos?</li>
+            <li>O vídeo evita humilhar alguém específico (ataque à ideia, não à pessoa)?</li>
+            <li>Legenda e texto na tela estão legíveis no mobile (tamanho grande)?</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="top">
+          <span class="tag">Variações</span>
+          <span class="pill">Adapte para outros temas</span>
+        </div>
+        <h2>Substituições que mantêm o mesmo efeito (template universal)</h2>
+        <div class="body">
+          <div class="two">
+            <div>
+              <p style="margin:0 0 8px"><strong>1) Troque a “regra viral” (o gatilho)</strong></p>
+              <ul class="clean">
+                <li><strong>Treino:</strong> “Se não sua, não treinou.”</li>
+                <li><strong>Skincare:</strong> “Se ardeu, tá funcionando.”</li>
+                <li><strong>Finanças:</strong> “Quem é pobre não pode ter lazer.”</li>
+                <li><strong>Produtividade:</strong> “Acordar 5h é obrigatório.”</li>
+                <li><strong>Saúde mental:</strong> “Ansiedade é falta de Deus/força.” (use tom acolhedor)</li>
+              </ul>
+            </div>
+            <div>
+              <p style="margin:0 0 8px"><strong>2) Troque as perguntas (as variáveis)</strong></p>
+              <ul class="clean">
+                <li><strong>Nutrição:</strong> objetivo, composição corporal, treino, exames, rotina, preferências.</li>
+                <li><strong>Treino:</strong> nível, histórico de lesão, volume semanal, sono, técnica, equipamento.</li>
+                <li><strong>Finanças:</strong> renda, dívidas, dependentes, região, custos fixos, metas.</li>
+                <li><strong>Skincare:</strong> tipo de pele, barreira, uso de ácidos, clima, medicações, rotina.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p style="margin:0 0 8px"><strong>3) Troque o “plot twist” (sem difamar)</strong></p>
+          <ul class="clean">
+            <li>“Porque simplificar dá mais clique do que explicar contexto.”</li>
+            <li>“Porque ‘regra pronta’ vende mais do que acompanhamento.”</li>
+            <li>“Porque conteúdo extremo gera briga e comentário.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p style="margin:0"><strong>4) Versão mais acolhedora (mesmo roteiro, outro tom)</strong></p>
+          <div class="script">“Eu entendo por que você ouviu essa regra — ela parece fácil.
+Mas sem contexto, ela pode te confundir.
+Vamos às perguntas que importam: [perguntas].
+No fim, o que funciona é: contexto + individualização.
+Se você quiser, comenta a regra que mais te deixa inseguro(a) e eu explico com calma.”</div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <div class="card" style="padding: 12px 14px; background: rgba(255,255,255,.04)">
+        <div style="display:flex; gap:10px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;">
+          <div>
+            <div style="font-weight:650; color: rgba(234,240,255,.9)">Notas rápidas</div>
+            <div class="muted2">Evite prescrição individual no Reels. Foque em educação, contexto e orientação para acompanhamento profissional quando necessário.</div>
+          </div>
+          <div class="pill">Versão: Dia 17</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>{ toast.style.display='none'; }, 1600);
+      }
+
+      btn.addEventListener('click', async ()=>{
+        const text = script.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
+          catch(err){ showToast('Não foi possível copiar automaticamente.'); }
+          document.body.removeChild(ta);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
