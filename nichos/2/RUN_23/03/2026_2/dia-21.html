@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 21 — Arquitetura — Carrossel Projeto + Conceito + Detalhes</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --g1: linear-gradient(90deg, #22c55e 0%, #3b82f6 48%, #f97316 100%);
+      --g2: radial-gradient(1200px 600px at 10% 10%, rgba(59,130,246,.16), transparent 60%),
+            radial-gradient(900px 500px at 90% 30%, rgba(34,197,94,.14), transparent 55%),
+            radial-gradient(900px 550px at 40% 90%, rgba(249,115,22,.12), transparent 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1) 55%, #070A12);
+      min-height:100dvh;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 80px;
+    }
+    .top{
+      display:flex;
+      gap:16px;
+      align-items:stretch;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .hero{
+      flex: 1 1 560px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.72), rgba(14,22,48,.38));
+      border-radius:var(--r20);
+      box-shadow:var(--shadow);
+      padding:18px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.13;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .meta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      position:relative;
+      z-index:1;
+    }
+    .pill{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .pill strong{color:var(--text); font-weight:650}
+    h1{
+      margin:10px 0 8px;
+      font-size:22px;
+      line-height:1.15;
+      letter-spacing:-.02em;
+      position:relative;
+      z-index:1;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      position:relative;
+      z-index:1;
+      max-width:72ch;
+    }
+    .actions{
+      flex: 0 0 280px;
+      border:1px solid var(--stroke);
+      background: rgba(14,22,48,.42);
+      border-radius:var(--r20);
+      box-shadow:var(--shadow);
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:120px;
+    }
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius:12px;
+      padding:11px 12px;
+      font-weight:650;
+      letter-spacing:.01em;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      transition:.18s ease;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.085)}
+    .btn.primary{
+      border-color: transparent;
+      background: var(--g1);
+      color:#071017;
+    }
+    .btn small{font-weight:600; opacity:.85}
+    .link{
+      border:1px dashed var(--stroke2);
+      background: rgba(255,255,255,.035);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:13px;
+      color:var(--muted);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media(min-width: 900px){
+      .grid{grid-template-columns: 1fr 1fr}
+      .span2{grid-column: 1 / -1}
+    }
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(14,22,48,.42);
+      border-radius:var(--r16);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent 35%);
+      pointer-events:none;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+      position:relative;
+      z-index:1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .kpi{
+      font-family: var(--mono);
+      font-size:12px;
+      color: rgba(234,240,255,.74);
+      border:1px solid var(--stroke2);
+      padding:6px 8px;
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+    }
+    .card .body{position:relative; z-index:1}
+    .body p{margin:0 0 10px; color:var(--muted); line-height:1.55; font-size:14px}
+    ul{margin:0; padding-left:18px; color:var(--muted); line-height:1.6; font-size:14px}
+    li{margin:6px 0}
+    .hl{
+      display:inline;
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:750;
+    }
+    .codebox{
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.30);
+      border-radius:14px;
+      padding:12px;
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color: rgba(234,240,255,.80);
+      white-space:pre-wrap;
+    }
+    .twoCols{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+    @media(min-width: 900px){
+      .twoCols{grid-template-columns:1fr 1fr}
+    }
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(59,130,246,.28);
+      background: rgba(59,130,246,.08);
+      color: rgba(234,240,255,.80);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .checklist{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    @media(min-width: 900px){
+      .checklist{grid-template-columns:1fr 1fr}
+    }
+    .item{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:12px;
+    }
+    .item .t{font-weight:750; margin-bottom:6px}
+    .item .d{color:var(--muted); font-size:13px; line-height:1.5}
+    .footer{
+      margin-top:18px;
+      color:var(--muted2);
+      font-size:12px;
+      line-height:1.45;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <header class="hero">
+        <div class="meta">
+          <div class="pill"><strong>Nicho</strong>: Arquitetura</div>
+          <div class="pill"><strong>Dia</strong>: 21</div>
+          <div class="pill"><strong>Formato</strong>: Carrossel</div>
+          <div class="pill"><strong>Pilar</strong>: Mito vs Verdade</div>
+        </div>
+        <h1>Carrossel “Projeto + conceito + detalhes” (modelo reproduzível)</h1>
+        <p class="sub">Estrutura que prende pela <span class="hl">quebra de crença</span>, entrega <span class="hl">antes/depois</span>, ensina com <span class="hl">decisões de projeto</span> (materiais, soluções, truques) e fecha com <span class="hl">CTA</span> de orçamento — adaptável para qualquer tema.</p>
+        <div style="margin-top:12px" class="link">Post original: <a href="https://www.instagram.com/p/DWL9KlhkS8X/" target="_blank" rel="noopener">https://www.instagram.com/p/DWL9KlhkS8X/</a></div>
+      </header>
+
+      <aside class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro <small id="copyState">CTRL/CMD+C</small></button>
+        <a class="btn" href="https://www.instagram.com/p/DWL9KlhkS8X/" target="_blank" rel="noopener">Abrir post original <small>↗</small></a>
+        <div class="link" title="Dica">Dica: use 1080×1350, 12–15 slides, 70% fotos full-screen.</div>
+      </aside>
+    </div>
+
+    <main class="grid">
+      <section class="card span2">
+        <h2>Resumo <span class="kpi">Objetivo: retenção + valor + conversão</span></h2>
+        <div class="body twoCols">
+          <div>
+            <p><span class="hl">O que este carrossel faz</span>: abre um loop com uma frase contraintuitiva, prova com resultado (depois), explica o “porquê” (conceito), dá “como fazer” (materiais + truques), mostra processo (credibilidade) e finaliza com CTA direto.</p>
+            <p><span class="hl">Quando usar</span>: para portfólio, apresentação de projeto, conteúdo educativo com estética premium, e para gerar salvamentos (etiquetas/decisões) + directs (orçamento).</p>
+          </div>
+          <div>
+            <div class="codebox" id="roteiroText">TEMPLATE RÁPIDO (preencha)
+
+Tema do post: [ex.: iluminação indireta / marcenaria / layout apê pequeno]
+Quebra de crença: “Não precisa de [X comum] pra ter [benefício Y]”
+Ambiente/recorte: [quarto / sala / cozinha / banho / varanda / comercial]
+Objetivo do cliente (1): [acolhimento / amplitude / armazenamento / integração]
+Decisões de projeto (3):
+1) [material/cor/solução]
+2) [material/cor/solução]
+3) [material/cor/solução]
+Truques replicáveis (2):
+- [truque 1]
+- [truque 2]
+CTA: [link no perfil / direct “PROJETO” / comentário com palavra-chave]</div>
+            <div class="note">Mantenha a regra: <strong>1 ideia principal por slide</strong>. Texto longo só em card editorial.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura <span class="kpi">Esqueleto persuasivo</span></h2>
+        <div class="body">
+          <ul>
+            <li><strong>1) Quebra de crença</strong> (abre loop, contraria “senso comum”).</li>
+            <li><strong>2) Autoridade pelo olhar</strong> (potencial do antes).</li>
+            <li><strong>3) Recompensa visual</strong> (depois com ângulo forte).</li>
+            <li><strong>4) Conceito</strong> (por que funciona: sensação/objetivo).</li>
+            <li><strong>5) Especificação</strong> (materiais/cores/fornecedores/medidas).</li>
+            <li><strong>6) Truques</strong> (micro-revelações aplicáveis).</li>
+            <li><strong>7) Processo</strong> (bastidores/obra = credibilidade).</li>
+            <li><strong>8) Sob medida</strong> (briefing/desejo atendido).</li>
+            <li><strong>9) Portfólio</strong> (outros ângulos/cômodos).</li>
+            <li><strong>10) CTA</strong> (próximo passo claro).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro <span class="kpi">Texto pronto + instrução de imagem</span></h2>
+        <div class="body">
+          <div class="codebox">ROTEIRO (voz e texto de slide) — edite entre colchetes
+
+[SLIDE 1 — HOOK | Foto final impactante]
+Texto grande: “Não precisa de [REFERÊNCIA/OBVIEDADE] pra ter [BENEFÍCIO]”
+Linha pequena (opcional): “Olha como ficou este [AMBIENTE]”
+
+[SLIDE 2 — ANTES + POTENCIAL | Foto do antes/entrega da construtora]
+Texto: “Aqui parecia [problema/limitação], mas tinha muito potencial.”
+Sub (opcional): “O ponto é saber para onde direcionar as escolhas.”
+
+[SLIDE 3 — DEPOIS (RECOMPENSA) | Ângulo amplo do resultado]
+Texto mínimo: “[NOME DO PROJETO/SÉRIE] • [AMBIENTE]”
+
+[SLIDE 4 — CARD CONCEITO | Fundo claro/editorial + foto]
+Título: “O [ELEMENTO-CHAVE] no [CÔMODO]”
+Corpo (3–5 linhas):
+“Escolhemos [elemento] porque ele cria [sensação].
+Isso funciona especialmente quando o objetivo é [objetivo do cliente].
+Repare como ele conversa com [outro elemento] e equilibra [luz/proporção/volumes].”
+
+[SLIDES 5–6 — DETALHES ETIQUETADOS | Close + pílulas]
+Slide 5: “Materiais/cores:” [tinta], [madeira/MDF], [tecido], [revestimento]
+Slide 6: “Soluções:” [iluminação], [metais], [marcenaria], [cortina/painel]
+
+[SLIDES 7–8 — TRUQUES | Setas + escrita “à mão”]
+Truque 1: “um truque que a gente ama: [truque]”
+Truque 2: “[truque] (parece pequeno, mas muda o conjunto)”
+
+[SLIDE 9 — PROCESSO | Mosaico obra/projeto]
+Texto: “A transformação acontecendo (não é só render/foto bonita).”
+
+[SLIDE 10 — BRIEFING | Foto que prova o desejo atendido]
+Texto: “Pedido do cliente: [desejo]. A solução: [como você resolveu].”
+
+[SLIDE 11–13 — PORTFÓLIO/ÂNGULOS | Grid de fotos]
+Texto: “Mais ângulos / outros ambientes do mesmo projeto”
+
+[ÚLTIMO SLIDE — CTA | Fundo com marca + foto discreta]
+Texto: “Quer um projeto com a sua cara?”
+CTA: “Link no perfil para orçamento” OU “Direct com a palavra PROJETO”</div>
+          <div class="note"><strong>Atalho de consistência:</strong> repita o mesmo lugar do “capítulo/série” (canto superior esquerdo) e da assinatura (rodapé) em todos os slides.</div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2>Slides sugeridos (1..15) <span class="kpi">Carrossel longo com retenção</span></h2>
+        <div class="body">
+          <ul>
+            <li><strong>1</strong> Hook + foto final forte</li>
+            <li><strong>2</strong> Antes + “potencial”</li>
+            <li><strong>3</strong> Depois (ângulo 1)</li>
+            <li><strong>4</strong> Conceito editorial (o “porquê”)</li>
+            <li><strong>5</strong> Close 1 com etiquetas (materiais/cores)</li>
+            <li><strong>6</strong> Close 2 com etiquetas (marcenaria/iluminação)</li>
+            <li><strong>7</strong> Truque 1 (seta + manuscrito)</li>
+            <li><strong>8</strong> Truque 2 (seta + manuscrito)</li>
+            <li><strong>9</strong> Truque 3 (opcional) ou detalhe 3</li>
+            <li><strong>10</strong> Bastidores (mosaico 2×2)</li>
+            <li><strong>11</strong> Briefing: desejo do cliente + prova</li>
+            <li><strong>12</strong> Antes vs Depois (opcional: split)</li>
+            <li><strong>13</strong> Outros ângulos (grid)</li>
+            <li><strong>14</strong> Outros ambientes do mesmo projeto (se houver)</li>
+            <li><strong>15</strong> CTA + branding</li>
+          </ul>
+          <div class="note">Se você só tiver 12 slides, corte na ordem: (14) outros ambientes → (9) truque 3 → (12) split → mantenha (1), (2), (4), (10) e (15).</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais <span class="kpi">Identidade + legibilidade</span></h2>
+        <div class="body">
+          <ul>
+            <li><strong>70% foto full-screen</strong> (resultado manda).</li>
+            <li><strong>Cards editoriais</strong> (fundo claro/textura) só para o texto do conceito.</li>
+            <li><strong>Etiquetas em pílula</strong> para materiais/cores (geram salvamentos).</li>
+            <li><strong>Setas desenhadas</strong> + escrita manuscrita para “truques”.</li>
+            <li><strong>Capítulo/série</strong>: “RESIDÊNCIA [X]”, “STUDIO [Y]”, “APÊ [Z]”.</li>
+            <li><strong>Branding discreto</strong> consistente: @ no rodapé.</li>
+          </ul>
+          <div class="note"><strong>Dica prática:</strong> em fotos claras, use texto em off-white com sombra suave; em fotos escuras, use caixa translúcida atrás do texto.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos <span class="kpi">Modelos substituíveis</span></h2>
+        <div class="body">
+          <p><span class="hl">Hooks (Slide 1)</span> — escolha 1:</p>
+          <ul>
+            <li>“Não precisa de <strong>[X]</strong> pra ter <strong>[Y]</strong>.”</li>
+            <li>“O segredo do <strong>[benefício]</strong> no <strong>[cômodo]</strong>.”</li>
+            <li>“Antes era <strong>[problema]</strong>. Agora é <strong>[resultado]</strong>.”</li>
+            <li>“3 decisões que mudaram este <strong>[ambiente]</strong> sem <strong>[sacrifício]</strong>.”</li>
+          </ul>
+          <p style="margin-top:10px"><span class="hl">Frases de apoio</span> (para slides 2, 4, 7):</p>
+          <ul>
+            <li>“O potencial existe pra quem sabe ver além.”</li>
+            <li>“O objetivo era [objetivo]. A solução foi [decisão].”</li>
+            <li>“Parece detalhe, mas muda a leitura do espaço.”</li>
+            <li>“Aqui a gente trocou ‘mais coisa’ por ‘melhores escolhas’.”</li>
+          </ul>
+          <div class="note"><strong>Como adaptar para outro tema (mesmo impacto):</strong> mantenha a estrutura “crença comum → prova visual → explicação → detalhe replicável”. Só troque os termos [X] e [Y].</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA <span class="kpi">Conversão + engajamento</span></h2>
+        <div class="body">
+          <p>Combine <span class="hl">1 CTA de conversão</span> + <span class="hl">1 CTA de ação leve</span> (salvar/comentar) na legenda.</p>
+          <div class="twoCols">
+            <div>
+              <p><strong>Conversão (último slide e legenda):</strong></p>
+              <ul>
+                <li>“Quer um projeto com a sua cara? <strong>Link no perfil</strong> para orçamento.”</li>
+                <li>“Me chama no direct com <strong>PROJETO</strong> que eu te explico o próximo passo.”</li>
+                <li>“Quer um estudo pro seu espaço? Direct com <strong>[AMBIENTE]</strong>.”</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Ação leve (para salvar/comentar):</strong></p>
+              <ul>
+                <li>“Salve pra consultar quando for escolher <strong>[cor/material/iluminação]</strong>.”</li>
+                <li>“Comente <strong>[PALAVRA-CHAVE]</strong> que eu te mando o checklist.”</li>
+                <li>“Qual detalhe você copiaria: <strong>1</strong>, <strong>2</strong> ou <strong>3</strong>?”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2>Checklist <span class="kpi">Criação (Canva/Figma) + publicação</span></h2>
+        <div class="body">
+          <div class="checklist">
+            <div class="item">
+              <div class="t">1) Pré (conteúdo)</div>
+              <div class="d">Defina tema, quebra de crença, ambiente, 1 objetivo do cliente, 3 decisões de projeto, 2 truques, e 1 prova (bastidores/antes).</div>
+            </div>
+            <div class="item">
+              <div class="t">2) Seleção de imagens</div>
+              <div class="d">Separe: 2 fotos “hero” do depois, 1 foto do antes, 2–3 closes, 1 mosaico de obra, 2–4 ângulos extras/portfólio.</div>
+            </div>
+            <div class="item">
+              <div class="t">3) Estrutura (slides)</div>
+              <div class="d">Monte primeiro os slides 1–4 e o último (CTA). Depois preencha detalhes/truques/bastidores. Garanta 1 mensagem por slide.</div>
+            </div>
+            <div class="item">
+              <div class="t">4) Design (padrões)</div>
+              <div class="d">Padronize: posição do título, “capítulo/série”, etiquetas, setas, assinatura. Use margens amplas e contraste alto no texto.</div>
+            </div>
+            <div class="item">
+              <div class="t">5) Legenda (curta e útil)</div>
+              <div class="d">Estrutura: 1 linha de hook + 3 bullets (decisões/truques) + 1 prova (briefing) + CTA conversão + CTA salvar/comentar.</div>
+            </div>
+            <div class="item">
+              <div class="t">6) Publicação</div>
+              <div class="d">Capa (slide 1) precisa ser legível em miniatura. Use alt text. Fixe nos destaques ou pin no perfil se for “carro-chefe”.</div>
+            </div>
+          </div>
+          <div class="note"><strong>Checklist de qualidade (antes de postar):</strong> (a) hook cabe em 1 leitura; (b) existe “recompensa” até o slide 3; (c) etiquetas são legíveis; (d) CTA é específico.</div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2>Variações <span class="kpi">Adaptações com o mesmo efeito</span></h2>
+        <div class="body twoCols">
+          <div>
+            <p><span class="hl">Variação A — “3 decisões” (mais objetiva)</span></p>
+            <ul>
+              <li>Slide 1: “3 decisões que deixaram este [ambiente] mais [benefício]”</li>
+              <li>Slides 2–4: depois + conceito</li>
+              <li>Slides 5–7: decisão 1/2/3 com close + etiqueta</li>
+              <li>Slides 8–9: bastidores + briefing</li>
+              <li>Último: CTA</li>
+            </ul>
+            <p style="margin-top:10px"><span class="hl">Variação B — “Antes era / Agora é” (dramática)</span></p>
+            <ul>
+              <li>Slide 1: split antes/depois + “Antes era [x], agora é [y]”</li>
+              <li>Slide 2: “o que manteve (e o que mudou)”</li>
+              <li>Resto: detalhes + truques + processo</li>
+            </ul>
+          </div>
+          <div>
+            <p><span class="hl">Substituições rápidas (troque sem perder impacto)</span></p>
+            <ul>
+              <li><strong>[REFERÊNCIA/OBVIEDADE]</strong>: “mármore”, “tons claros”, “obra grande”, “pé-direito alto”, “muito espaço”, “móveis caros”.</li>
+              <li><strong>[BENEFÍCIO]</strong>: “amplitude”, “aconchego”, “elegância”, “mais luz”, “organização”, “silêncio visual”, “funcionalidade”.</li>
+              <li><strong>[ELEMENTO-CHAVE]</strong>: “madeira”, “iluminação indireta”, “rodapé”, “marcenaria”, “painel ripado”, “cortina do teto”.</li>
+              <li><strong>[TRUQUE]</strong>: “cortina no trilho suíço”, “rodapé na cor da parede”, “iluminação em camadas”, “portas piso-teto”, “marcenaria até o teto”.</li>
+            </ul>
+            <div class="note"><strong>Adaptação para outro nicho (mesma lógica):</strong> Produto/serviço → use “antes/depois”, “especificações”, “truques”, “processo” e “briefing do cliente” como prova.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2>Rodapé <span class="kpi">Uso</span></h2>
+        <div class="body">
+          <p class="footer">Este roteiro foi estruturado para ser reutilizável: troque os campos entre colchetes, mantenha a sequência e preserve a proporção “foto (prova) > conceito (porquê) > detalhes (como) > processo (credibilidade) > CTA (ação)”.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const state = document.getElementById('copyState');
+      const textEl = document.getElementById('roteiroText');
+
+      function copyText(){
+        const txt = textEl.innerText.trim();
+        if (navigator.clipboard && window.isSecureContext){
+          return navigator.clipboard.writeText(txt);
+        }
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        ta.style.top = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        return ok ? Promise.resolve() : Promise.reject();
+      }
+
+      btn.addEventListener('click', async function(){
+        try{
+          await copyText();
+          state.textContent = 'Copiado';
+          setTimeout(()=> state.textContent = 'CTRL/CMD+C', 1200);
+        }catch(e){
+          state.textContent = 'Falhou';
+          setTimeout(()=> state.textContent = 'CTRL/CMD+C', 1200);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
