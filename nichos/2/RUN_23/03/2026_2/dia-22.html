@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 22 • Arquitetura • Roteiro Reels</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.56);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r: 18px;
+      --g1: linear-gradient(90deg,#20E3B2 0%, #2D7FF9 52%, #FFB300 100%);
+      --g2: linear-gradient(135deg, rgba(32,227,178,.22), rgba(45,127,249,.18), rgba(255,179,0,.16));
+      --g3: radial-gradient(900px 500px at 15% -10%, rgba(32,227,178,.20), transparent 60%),
+            radial-gradient(800px 500px at 90% 0%, rgba(45,127,249,.18), transparent 55%),
+            radial-gradient(800px 600px at 60% 110%, rgba(255,179,0,.14), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g3), linear-gradient(180deg,var(--bg0),var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:26px 16px 60px}
+
+    header{
+      position:relative;
+      padding:20px;
+      border:1px solid var(--stroke);
+      border-radius: calc(var(--r) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g2);
+      filter: blur(14px);
+      opacity:.85;
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1}
+
+    .topline{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .chip{
+      padding:7px 10px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      border-radius:999px;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .chip strong{color:var(--text); font-weight:650}
+
+    .title{
+      margin:14px 0 6px;
+      font-size:22px;
+      line-height:1.18;
+      letter-spacing:.2px;
+    }
+    .subtitle{margin:0; color:var(--muted); font-size:14px; line-height:1.45}
+
+    .actions{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.30);
+      color:var(--text);
+      font-size:14px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(0,0,0,.38); border-color: rgba(255,255,255,.18)}
+    .btn.primary{
+      background: rgba(0,0,0,.20);
+      border-color: rgba(255,255,255,.18);
+      position:relative;
+      overflow:hidden;
+    }
+    .btn.primary:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g1);
+      opacity:.22;
+      z-index:0;
+    }
+    .btn.primary span{position:relative; z-index:1}
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns: 1fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--r);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      padding:16px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+      color:rgba(234,240,255,.86);
+      display:flex; align-items:center; gap:10px;
+    }
+    .card h2 .bar{
+      height:10px; width:46px; border-radius:999px;
+      background: var(--g1);
+      opacity:.9;
+    }
+    .card p{margin:0; color:var(--muted); line-height:1.55; font-size:14px}
+
+    .list{margin:0; padding-left:18px; color:var(--muted); line-height:1.6; font-size:14px}
+    .list li{margin:6px 0}
+    .list li b{color:var(--text); font-weight:650}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 520px){
+      .kpi{grid-template-columns:1fr}
+    }
+    .kpi .box{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .kpi .label{font-size:12px; color:var(--muted2)}
+    .kpi .value{margin-top:6px; font-family:var(--mono); font-size:13px; color:var(--text)}
+
+    .script{
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(234,240,255,.88);
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 14px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:900px){.twoCol{grid-template-columns:1fr}}
+
+    .miniTag{
+      display:inline-block;
+      font-size:12px;
+      color:rgba(234,240,255,.80);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      padding:6px 9px;
+      border-radius:999px;
+      margin:4px 6px 0 0;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.55);
+      color: rgba(234,240,255,.92);
+      font-size: 13px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.55);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease;
+      backdrop-filter: blur(8px);
+    }
+    .toast.show{opacity:1}
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin: 12px 0;
+    }
+
+    .footnote{color:var(--muted2); font-size:12px; margin-top:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <span class="chip"><strong>Nicho:</strong> Arquitetura</span>
+          <span class="chip"><strong>Dia:</strong> 22</span>
+          <span class="chip"><strong>Formato:</strong> Reels</span>
+          <span class="chip"><strong>Pilar:</strong> Bastidores</span>
+        </div>
+        <a class="chip" href="https://www.instagram.com/p/DV9bEk2j5xG/" target="_blank" rel="noreferrer">Ver post original ↗</a>
+      </div>
+
+      <h1 class="title">De “bagunça” a solução: bastidor de um móvel inteligente</h1>
+      <p class="subtitle">Roteiro reproduzível para bastidores de obra/marcenaria com transformação + detalhes funcionais + especificações “salváveis”.</p>
+
+      <div class="actions">
+        <button class="btn primary" id="copyBtn" type="button"><span>Copiar roteiro</span></button>
+        <button class="btn" id="toggleScript" type="button">Mostrar/ocultar roteiro</button>
+        <a class="btn" href="#checklist">Ir para checklist</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="bar"></span>Resumo</h2>
+        <p>
+          Conteúdo de alta retenção por combinar <b>transformação (antes/depois mental)</b>, <b>bastidor real (obra não finalizada)</b> e <b>dor cotidiana</b>.
+          Estrutura: <b>“isso vai virar…”</b> → problema do cliente → solução → 3 detalhes técnicos em linguagem simples → especificações → CTA para salvar/comentar e pedir parte 2.
+        </p>
+        <div class="kpi">
+          <div class="box"><div class="label">Duração</div><div class="value">20–35s</div></div>
+          <div class="box"><div class="label">Cortes/ritmo</div><div class="value">a cada 1,5–3s</div></div>
+          <div class="box"><div class="label">Prova técnica</div><div class="value">2–3 detalhes funcionais</div></div>
+        </div>
+        <p class="footnote">Dica: bastidor “não tá pronto” reduz perfeccionismo e aumenta curiosidade.</p>
+      </section>
+
+      <aside class="card">
+        <h2><span class="bar"></span>Estrutura (sequência fixa)</h2>
+        <ol class="list">
+          <li><b>Hook de transformação</b> (0–2s): “Isso aqui hoje parece X, mas vai virar Y.”</li>
+          <li><b>Contexto do problema</b> (2–6s): “Aqui tinha/acontecia…”</li>
+          <li><b>Solução em 1 frase</b> (6–10s): “Então desenhamos…”</li>
+          <li><b>Detalhes funcionais</b> (10–24s): 2–3 itens (ventilação/ajuste/material/manutenção).</li>
+          <li><b>Especificações</b> (24–30s): cor/material/acabamento (salvável).</li>
+          <li><b>CTA</b> (30–35s): salvar + comentário + parte 2.</li>
+        </ol>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1">
+        <h2><span class="bar"></span>Roteiro (template + versão pronta)</h2>
+        <div class="twoCol">
+          <div>
+            <p style="margin-bottom:10px; color:rgba(234,240,255,.85)"><b>Template preenchível (copiar e substituir)</b></p>
+            <div class="script" id="scriptText">[0–2s | Hook | take geral do “caos/obra”]
+“Isso aqui hoje parece [PROBLEMA/CAOS], mas no futuro vai ser [SOLUÇÃO/OBJETO + LOCAL].”
+
+[2–6s | Dor do cliente | 1 take do contexto]
+“O cliente [hábito/gambiarra] porque [dor cotidiana].”
+
+[6–10s | Solução em 1 frase | enquadramento médio]
+“Então a gente desenhou [solução] pra [benefício direto].”
+
+[10–24s | 3 detalhes funcionais | closes com mão apontando]
+“Detalhe 1: [funcionalidade] (porque [motivo simples]).”
+“Detalhe 2: [material/ferragem] (pra [durabilidade/limpeza/umidade]).”
+“Detalhe 3: [ajuste/modularidade] — ‘esse [peça] aqui’ deixa [uso flexível].”
+
+[24–30s | Especificações salváveis | take de acabamento]
+“Especificação: [cor do MDF] + [pedra/metal/vidro] + [tipo de porta].”
+
+[30–35s | CTA | take geral final]
+“Quer ver quando finalizar? Comenta ‘[PALAVRA-CHAVE]’ e salva pra referência.”</div>
+          </div>
+          <div>
+            <p style="margin-bottom:10px; color:rgba(234,240,255,.85)"><b>Versão pronta (exemplo: sapateira na lavanderia)</b></p>
+            <div class="script" id="scriptReady">[0–2s]
+“Esse móvel aqui hoje parece bagunça, mas no futuro vai ser uma SAPATEIRA na lavanderia.”
+
+[2–6s]
+“Antes, os sapatos ficavam espalhados e sem ventilação — virava um caos no dia a dia.”
+
+[6–10s]
+“Então a gente criou uma sapateira fechada, mas que respira, e com espaço que se adapta.”
+
+[10–24s]
+“Detalhe 1: portas venezianadas — entra ar e evita cheiro.”
+“Detalhe 2: tampo de pedra — aqui é área molhada, então aguenta melhor e é fácil de limpar.”
+“Detalhe 3: prateleiras ajustáveis — com esse ‘pininho’ você regula conforme o tipo de calçado.”
+
+[24–30s]
+“E pra quem gosta de referência: MDF Areia (Guararapes) + tampo em pedra + venezianas.”
+
+[30–35s]
+“Quer ver o antes e depois quando finalizar? Comenta ‘SAPATEIRA’ e salva esse vídeo.”</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="footnote">Regra de ouro: <b>1 ideia por frase</b> + <b>mostrar enquanto fala</b> (apontar/abrir/regular).</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Elementos visuais</h2>
+        <ul class="list">
+          <li><b>Abertura com bastidor real</b>: obra/marcenaria “no meio” (gera autenticidade + curiosidade).</li>
+          <li><b>Micro-revelações</b>: geral → detalhe 1 → detalhe 2 → detalhe 3 → geral final.</li>
+          <li><b>Closes funcionais</b>: mão mostrando “pininho”, ajuste, abertura de portas, textura do tampo.</li>
+          <li><b>Texto na tela</b>: palavras-chave (não frases longas), sincronizadas com o que aparece.</li>
+          <li><b>Áudio</b>: som ambiente leve (obra) + voz clara. Música discreta e limpa.</li>
+        </ul>
+        <div style="margin-top:10px">
+          <span class="miniTag">take geral 0,7–1,5s</span>
+          <span class="miniTag">corte/zoom a cada 2s</span>
+          <span class="miniTag">close com ação (abrir/regular)</span>
+          <span class="miniTag">final “herói” do móvel</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Copy e ganchos</h2>
+        <p style="margin-bottom:10px">Use 1 gancho principal + 1 gancho secundário (dor ou curiosidade).</p>
+        <div class="twoCol">
+          <div>
+            <p style="margin:0 0 8px; color:rgba(234,240,255,.85)"><b>Hooks (substituíveis)</b></p>
+            <ul class="list">
+              <li>“Isso aqui hoje parece <b>[X]</b>, mas vai virar <b>[Y]</b>.”</li>
+              <li>“Você tá vendo <b>bagunça</b>. Eu tô vendo <b>solução pronta</b>.”</li>
+              <li>“A gente resolveu um problema chato com um detalhe simples: <b>olha isso</b>.”</li>
+              <li>“O cliente fazia <b>[gambiarra]</b> aqui… então eu desenhei <b>isso</b>.”</li>
+            </ul>
+          </div>
+          <div>
+            <p style="margin:0 0 8px; color:rgba(234,240,255,.85)"><b>Textos na tela (curtos)</b></p>
+            <ul class="list">
+              <li>“Vai virar: <b>[SOLUÇÃO]</b> (em <b>[LOCAL]</b>)”</li>
+              <li>“Detalhe invisível: <b>[FUNÇÃO]</b>”</li>
+              <li>“Material certo: <b>[MATERIAL]</b>”</li>
+              <li>“Ajustável: <b>[MECANISMO]</b>”</li>
+              <li>“Especificação: <b>[COR/ACABAMENTO]</b>”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="footnote">Especificidade vende: citar 1–3 itens (cor do MDF, tipo de porta, pedra/ferragem) aumenta confiança e faz o público salvar.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>CTA</h2>
+        <ul class="list">
+          <li><b>Para comentários (palavra-chave):</b> “Comenta ‘<b>[PALAVRA]</b>’ que eu mando <b>[medida/dica/lista]</b>.”</li>
+          <li><b>Para salvar:</b> “Salva pra quando você for planejar <b>[ambiente]</b>.”</li>
+          <li><b>Para parte 2:</b> “Quer ver finalizado? Eu posto o antes/depois quando instalar.”</li>
+          <li><b>Para pesquisa:</b> “Você faria <b>[solução]</b> em <b>[local A]</b> ou <b>[local B]</b>?”</li>
+        </ul>
+        <p class="footnote">Escolha 1 CTA principal (comentário OU salvar) + 1 secundário (parte 2). Evite pedir 3 coisas.</p>
+      </section>
+
+      <section class="card" id="checklist" style="grid-column: 1 / -1">
+        <h2><span class="bar"></span>Checklist de criação (reproduzível)</h2>
+        <div class="twoCol">
+          <div>
+            <ul class="list">
+              <li>[ ] Definir <b>dor cotidiana</b> (o caos que qualquer pessoa entende).</li>
+              <li>[ ] Escrever o <b>hook</b> em 1 frase (“isso vai virar…”).</li>
+              <li>[ ] Gravar <b>take inicial</b> com a obra/móvel <b>inacabado</b>.</li>
+              <li>[ ] Explicar a <b>dor do cliente</b> (1 frase).</li>
+              <li>[ ] Dizer a <b>solução em 1 frase</b> (sem arquitetês).</li>
+            </ul>
+          </div>
+          <div>
+            <ul class="list">
+              <li>[ ] Separar <b>3 detalhes funcionais</b> e gravar close de cada um.</li>
+              <li>[ ] Incluir <b>1 especificação concreta</b> (cor/material/acabamento).</li>
+              <li>[ ] Inserir <b>texto na tela</b> só com palavras-chave.</li>
+              <li>[ ] Editar com <b>cortes a cada 1,5–3s</b> + zoom nos detalhes.</li>
+              <li>[ ] Finalizar com <b>CTA</b> (salvar/comentar) + <b>promessa de parte 2</b>.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="footnote">Checklist “de qualidade”: áudio entendível, iluminação suficiente nos closes, e o detalhe funcional aparece no exato momento em que é citado.</p>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1">
+        <h2><span class="bar"></span>Variações (adaptações com o mesmo impacto)</h2>
+        <div class="twoCol">
+          <div>
+            <p style="margin:0 0 8px; color:rgba(234,240,255,.85)"><b>Troque o “objeto” mantendo a lógica</b></p>
+            <ul class="list">
+              <li><b>Armário de limpeza</b>: vassouras + químicos → ventilação + bandeja removível + altura ajustável.</li>
+              <li><b>Despensa</b>: embalagens visíveis → gavetões + cestos + prateleira regulável.</li>
+              <li><b>Lavanderia</b>: umidade/uso intenso → materiais laváveis + ferragens adequadas + pedra.</li>
+              <li><b>Home office</b>: cabos/rotina → passa-cabos + tomadas embutidas + profundidade correta.</li>
+            </ul>
+          </div>
+          <div>
+            <p style="margin:0 0 8px; color:rgba(234,240,255,.85)"><b>Substituições (plug-and-play)</b></p>
+            <ul class="list">
+              <li><b>Dor</b> → “bagunça de sapatos” pode virar “cabos”, “produtos espalhados”, “papéis”, “umidade”, “falta de espaço”.</li>
+              <li><b>Detalhe mecânico</b> → “pininho” pode virar “trilho”, “amortecedor”, “dobradiça”, “cesto aramado”, “corrediça”.</li>
+              <li><b>Especificação</b> → cor do MDF pode virar “acabamento”, “tipo de pedra”, “metais”, “porcelanato”, “pintura”.</li>
+              <li><b>Local</b> → lavanderia pode virar hall, closet, cozinha, banheiro, varanda gourmet.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="footnote"><b>Regra de adaptação:</b> sempre mantenha a tríade: (1) transformação visual, (2) dor universal, (3) 2–3 detalhes funcionais demonstráveis em close.</p>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const copyBtn = document.getElementById('copyBtn');
+      const toggleBtn = document.getElementById('toggleScript');
+      const toast = document.getElementById('toast');
+      const scriptText = document.getElementById('scriptText');
+      const scriptReady = document.getElementById('scriptReady');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      copyBtn.addEventListener('click', async function(){
+        const content = [
+          'TEMPLATE (preenchível)\n' + scriptText.textContent.trim(),
+          '\n\nVERSÃO PRONTA (exemplo)\n' + scriptReady.textContent.trim()
+        ].join('\n');
+        try{
+          await navigator.clipboard.writeText(content);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = content;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado (modo compatível).');
+        }
+      });
+
+      toggleBtn.addEventListener('click', function(){
+        const cards = [scriptText, scriptReady];
+        const isHidden = scriptText.closest('.twoCol').style.display === 'none';
+        scriptText.closest('.twoCol').style.display = isHidden ? '' : 'none';
+        showToast(isHidden ? 'Roteiro exibido.' : 'Roteiro ocultado.');
+      });
+    })();
+  </script>
+</body>
+</html>
