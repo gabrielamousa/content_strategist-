@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 11 — Arquitetura — Missão impossível: provar que condomínio não é tudo igual</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow:0 18px 60px rgba(0,0,0,.55);
+      --r:18px;
+      --r2:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --g1: linear-gradient(90deg, #18F3A4 0%, #2EA7FF 40%, #FFB84D 100%);
+      --g2: radial-gradient(900px 400px at 12% 10%, rgba(46,167,255,.25), transparent 60%),
+            radial-gradient(900px 400px at 85% 12%, rgba(24,243,164,.18), transparent 55%),
+            radial-gradient(900px 420px at 50% 95%, rgba(255,184,77,.14), transparent 55%);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    a{color:inherit; text-decoration:none}
+    a:hover{opacity:.9}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px}
+
+    header{
+      position:relative;
+      padding:22px 20px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius:calc(var(--r) + 6px);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .topbar{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:10px 12px;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+
+    .pillrow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      font-size:12.5px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+
+    .pill strong{color:var(--text); font-weight:650}
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    h1{
+      margin:0;
+      font-size:22px;
+      line-height:1.12;
+      letter-spacing:-.3px;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:14px;
+      max-width:78ch;
+    }
+
+    .gradeline{
+      height:2px;
+      width:100%;
+      background:var(--g1);
+      border-radius:999px;
+      opacity:.95;
+      margin-top:14px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      cursor:pointer;
+      transition:transform .08s ease, background .15s ease, border-color .15s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn:hover{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.18)}
+    .btn:active{transform:translateY(1px)}
+
+    .btn.primary{
+      border-color:transparent;
+      background:linear-gradient(90deg, rgba(24,243,164,.18), rgba(46,167,255,.18), rgba(255,184,77,.18));
+    }
+
+    main{margin-top:18px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.05fr .95fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      border-radius:var(--r);
+      box-shadow: 0 10px 35px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding:14px 16px 10px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .card h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.25px;
+      text-transform:uppercase;
+      color:rgba(234,240,255,.86);
+    }
+
+    .tag{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.65);
+      padding:6px 10px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:999px;
+      background:rgba(0,0,0,.15);
+      white-space:nowrap;
+    }
+
+    .card .bd{padding:14px 16px 16px}
+
+    .muted{color:var(--muted)}
+    .muted2{color:var(--muted2)}
+
+    .list{margin:10px 0 0; padding:0 0 0 18px}
+    .list li{margin:6px 0; color:var(--muted)}
+
+    .kpi{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    @media (min-width: 640px){
+      .kpi{grid-template-columns:repeat(3, 1fr)}
+    }
+
+    .kpi .box{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.12);
+      border-radius:var(--r2);
+      padding:10px 10px;
+    }
+
+    .kpi .box .t{font-size:12px; color:var(--muted2)}
+    .kpi .box .v{font-size:14px; color:var(--text); margin-top:2px; font-weight:650}
+
+    .script{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.22);
+      border-radius:var(--r);
+      padding:14px 14px;
+      font-family:var(--mono);
+      font-size:12.8px;
+      line-height:1.55;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .callout{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius:var(--r);
+      border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(90deg, rgba(24,243,164,.10), rgba(46,167,255,.08), rgba(255,184,77,.08));
+      color:rgba(234,240,255,.88);
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:10px;
+    }
+
+    .tiny{font-size:12.5px; color:var(--muted2)}
+
+    .hr{
+      height:1px;
+      background:rgba(255,255,255,.10);
+      margin:12px 0;
+      border-radius:999px;
+    }
+
+    .cols{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+
+    @media (min-width: 760px){
+      .cols{grid-template-columns:1fr 1fr}
+    }
+
+    .checkgrid{display:grid; grid-template-columns:1fr; gap:10px}
+    @media (min-width: 760px){
+      .checkgrid{grid-template-columns:1fr 1fr}
+    }
+
+    .check{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.14);
+      border-radius:var(--r2);
+      padding:12px;
+    }
+
+    .check h3{margin:0 0 6px; font-size:13.5px; color:rgba(234,240,255,.88)}
+    .check ul{margin:0; padding:0 0 0 18px}
+    .check li{margin:6px 0; color:var(--muted)}
+
+    .foot{
+      margin-top:16px;
+      color:var(--muted2);
+      font-size:12.5px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .link{
+      border-bottom:1px solid rgba(255,255,255,.22);
+      padding-bottom:2px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div class="pillrow">
+          <div class="pill"><strong>Nicho</strong> Arquitetura</div>
+          <div class="pill"><strong>Dia</strong> 11</div>
+          <div class="pill"><strong>Pilar</strong> Mito vs Verdade</div>
+          <div class="pill"><strong>Formato</strong> Reels</div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DUX68zmjg0b/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+
+      <div class="title">
+        <h1>Missão impossível: provar que condomínio não é tudo igual</h1>
+        <div class="subtitle">Reels de 35–50s com quebra de crença + tour progressivo: restrição → solução → benefício. A cada take, uma prova visual clara (detalhe arquitetônico + sensação/performance).</div>
+      </div>
+      <div class="gradeline"></div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <div class="tag">Motor: conflito + prova visual + tour</div>
+        </div>
+        <div class="bd">
+          <div class="muted">Ideia central: atacar um estereótipo (“condomínio é tudo igual”) e sustentar a tese apontando 5–6 decisões de projeto com benefício direto (luz, privacidade, ventilação, conforto térmico, experiência de chegada).</div>
+
+          <div class="kpi">
+            <div class="box"><div class="t">Duração alvo</div><div class="v">35–50s</div></div>
+            <div class="box"><div class="t">Takes</div><div class="v">18–28 cortes</div></div>
+            <div class="box"><div class="t">Provas</div><div class="v">5–6 elementos</div></div>
+          </div>
+
+          <div class="callout"><strong>Dica de ouro:</strong> a “prova” precisa estar visível no mesmo segundo em que você cita (brise/cobogó/rampa/encontro de materiais/abertura/forro/pé-direito). Texto na tela deve funcionar como capítulos.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <div class="tag">0–3s • 3–8s • 8–40s • 40–50s</div>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><strong>Hook (0–3s):</strong> conflito + promessa de prova (“missão impossível”).</li>
+            <li><strong>Restrição (3–8s):</strong> terreno/regra/orientação/orçamento para criar tensão.</li>
+            <li><strong>Provas (8–40s):</strong> 5–6 decisões em sequência, cada uma: <em>solução → benefício</em>.</li>
+            <li><strong>Fechamento (40–50s):</strong> volta à tese + micro-CTA (salvar/comentar).</li>
+            <li><strong>Créditos (últimos 2–3s):</strong> projeto/ano/local/escritório.</li>
+          </ol>
+
+          <div class="hr"></div>
+          <div class="cols">
+            <div>
+              <div class="muted"><strong>Ritmo:</strong> 1 ideia por take, frases de 6–12 palavras, cortes a cada 1–2s.</div>
+              <div class="row tiny">Gatilhos de retenção: “repara…”, “olha isso…”, “tá vendo…”, “cuidado com quem diz…”</div>
+            </div>
+            <div>
+              <div class="muted"><strong>Regra visual:</strong> ordem de percurso (chegada → fachada → social → íntimo).</div>
+              <div class="row tiny">Sempre que citar um termo técnico: acrescente benefício simples.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Roteiro (reproduzível)</h2>
+          <div class="tag">Pronto para gravar</div>
+        </div>
+        <div class="bd">
+          <div id="script" class="script">[CENA 1 — 0–2s | imagem mais forte: fachada / luz / piscina]
+FALA: “Missão impossível: te provar que casa de condomínio não é tudo igual.”
+TEXTO NA TELA: “MITO: condomínio é tudo igual”
+
+[CENA 2 — 2–6s | mostrar o lote/implantação/entorno]
+FALA: “Aqui tinha [restrição 1: declive / esquina / recuos / regra do condomínio].”
+TEXTO: “Restrição: [X]”
+
+[CENA 3 — 6–8s | transição para o percurso]
+FALA: “E foi isso que guiou as decisões do projeto.”
+TEXTO: “Vamos no tour (rápido)”
+
+[CENA 4 — Prova 1 | 8–13s | estrutura/material]
+FALA: “Estrutura em [madeira/metal/concreto]: dá leveza e velocidade de obra.”
+TEXTO: “Prova #1: estrutura = leveza”
+
+[CENA 5 — Prova 2 | 13–18s | chegada]
+FALA: “A chegada é por [rampa/pátio/eixo]. Repara como isso cria ritual.”
+TEXTO: “Prova #2: chegada = experiência”
+
+[CENA 6 — Prova 3 | 18–24s | fachada/pele]
+FALA: “Na fachada, [brise/cobogó/muxarabi] filtra a luz e dá privacidade.”
+TEXTO: “Prova #3: privacidade + luz suave”
+
+[CENA 7 — Prova 4 | 24–30s | social]
+FALA: “Área social com [pé-direito/forro contínuo/aberturas]: mais amplitude e integração.”
+TEXTO: “Prova #4: amplitude”
+
+[CENA 8 — Prova 5 | 30–36s | vidro/jardim/piscina]
+FALA: “O vidro conecta com o jardim e melhora iluminação e ventilação.”
+TEXTO: “Prova #5: conexão + conforto”
+
+[CENA 9 — Prova 6 (opcional) | 36–41s | íntimo/controle solar]
+FALA: “Nos quartos, controle solar pra conforto térmico de verdade.”
+TEXTO: “Extra: conforto térmico”
+
+[CENA 10 — 41–48s | retorno à tese + provocação leve]
+FALA: “Tá vendo? Não é que não existe. É que tem que saber projetar (e escolher referência).”
+TEXTO: “Verdade: dá pra ser diferente”
+
+[CENA 11 — 48–55s | créditos + CTA]
+FALA: “Salva pra referência e comenta ‘CONDOMÍNIO’ que eu trago 3 exemplos.”
+TEXTO: “SALVA + comenta ‘CONDOMÍNIO’\nCréditos: [Projeto] • [Cidade] • [Ano] • [Autor]”</div>
+
+          <div class="row">
+            <button class="btn" type="button" id="copyBtn2">Copiar roteiro</button>
+            <div class="tiny">Personalize os colchetes. Se tiver só 1 ambientação, reduza para 4 provas e acelere cortes.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <div class="tag">O que filmar</div>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Abertura:</strong> a imagem mais “uau” (fachada, luz entrando, piscina, pé-direito).</li>
+            <li><strong>Provas macro:</strong> implantação, chegada, fachada, área social, íntimo.</li>
+            <li><strong>Provas micro (detalhe):</strong> brise/cobogó, encontro de materiais, sombra no piso, caixilho, forro contínuo.</li>
+            <li><strong>Movimento:</strong> 1 take caminhando por capítulo + 1 close por capítulo (alternância).</li>
+            <li><strong>Textos na tela:</strong> capítulos com 4–6 palavras, sincronizados com a fala.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="muted"><strong>Edição:</strong> cortes no beat, push-in leve ao citar detalhes, whoosh suave em mudança de capítulo, tela final com créditos + CTA.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <div class="tag">Frases prontas</div>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="muted"><strong>Hooks (escolha 1):</strong></div>
+              <ul class="list">
+                <li>“Missão impossível: te provar que <strong>[crença comum]</strong>.”</li>
+                <li>“Se você acha que <strong>[tipo de obra]</strong> é tudo igual, olha isso.”</li>
+                <li>“Cuidado com quem diz que não dá pra fazer arquitetura boa em <strong>[contexto]</strong>.”</li>
+                <li>“Essa casa é a prova de que <strong>[opinião popular]</strong> não é verdade.”</li>
+              </ul>
+            </div>
+            <div>
+              <div class="muted"><strong>Conectores (retenção):</strong></div>
+              <ul class="list">
+                <li>“Repara nisso…”</li>
+                <li>“Olha a luz aqui…”</li>
+                <li>“O pulo do gato é…”</li>
+                <li>“Restrição virou solução: …”</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <div class="muted"><strong>Modelo de legenda (curta e salvável):</strong></div>
+          <div class="script" style="margin-top:10px">“Nem toda casa de condomínio é igual — e o segredo quase sempre está nas decisões ‘invisíveis’: chegada, controle solar, privacidade e ventilação.
+
+Qual desses pontos você mais sente falta em projetos de condomínio: privacidade, luz ou ventilação?
+
+(Comenta ‘CONDOMÍNIO’ que eu mando mais referências.)”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <div class="tag">1–2 ações</div>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Salvar:</strong> “Salva esse vídeo pra referência (fachada + controle solar).”</li>
+            <li><strong>Comentário-chave:</strong> “Comenta ‘CONDOMÍNIO’ que eu trago 3 exemplos.”</li>
+            <li><strong>Direct:</strong> “Quer que eu analise seu terreno/planta? Me chama no direct.”</li>
+            <li><strong>Seguir:</strong> “Segue pra mais tours com decisões de projeto explicadas.”</li>
+          </ul>
+          <div class="callout"><strong>Regra:</strong> CTA deve combinar com a intenção do vídeo. Se for referência, priorize <em>Salvar</em>. Se for captação, priorize <em>Direct</em>.</div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Checklist</h2>
+          <div class="tag">Operacional</div>
+        </div>
+        <div class="bd">
+          <div class="checkgrid">
+            <div class="check">
+              <h3>Pré-produção (15 min)</h3>
+              <ul>
+                <li>Definir 1 mito/estereótipo do público.</li>
+                <li>Escolher 1 restrição forte (norma, lote, insolação, ruído, orçamento).</li>
+                <li>Listar 5 provas visuais que aparecem bem em vídeo.</li>
+                <li>Para cada prova, escrever 1 linha: <strong>solução → benefício</strong>.</li>
+              </ul>
+            </div>
+            <div class="check">
+              <h3>Gravação (30–45 min)</h3>
+              <ul>
+                <li>Abrir com a imagem mais impactante (0–2s).</li>
+                <li>Filmagem em ordem de percurso (chegada → íntimo).</li>
+                <li>Captar 1 plano aberto + 1 detalhe por prova.</li>
+                <li>Inserir 2 chamadas: “repara…”, “tá vendo…”.</li>
+              </ul>
+            </div>
+            <div class="check">
+              <h3>Edição (45–70 min)</h3>
+              <ul>
+                <li>Cortar a cada 1–2s (1 ideia por take).</li>
+                <li>Textos na tela como capítulos (4–6 palavras).</li>
+                <li>Zoom/push-in leve ao citar detalhes.</li>
+                <li>Tela final: créditos + CTA (salvar/comentar).</li>
+              </ul>
+            </div>
+            <div class="check">
+              <h3>Publicação</h3>
+              <ul>
+                <li>Legenda reforça a tese + 1 pergunta.</li>
+                <li>Fixar comentário pedindo tema/exemplos.</li>
+                <li>Hashtags específicas (ex.: #arquitetura #brise #confortotermico #fachada).</li>
+                <li>Responder comentários nas primeiras 2h.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Variações</h2>
+          <div class="tag">Mesma estrutura, novos temas</div>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <div class="muted"><strong>Variação A — Apartamento pequeno</strong></div>
+              <ul class="list">
+                <li>Hook: “Missão impossível: te provar que apê pequeno pode ser confortável.”</li>
+                <li>Restrições: metragem + poucas janelas.</li>
+                <li>Provas: marcenaria inteligente, portas de correr, iluminação em camadas, espelhos, ventilação cruzada.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="muted"><strong>Variação B — Reforma</strong></div>
+              <ul class="list">
+                <li>Hook: “Cuidado com quem diz que reforma sempre fica cara e improvisada.”</li>
+                <li>Restrições: prazos + instalações existentes.</li>
+                <li>Provas: paginação, reaproveitamento, setorização, conforto acústico, iluminação natural.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="muted"><strong>Variação C — Fachada “fria”</strong></div>
+          <ul class="list">
+            <li>Hook: “Fachada moderna não precisa ser fria. Olha isso.”</li>
+            <li>Provas: materialidade quente (madeira/pedra), brises com sombra, jardim/verde, luz indireta, profundidade de vãos.</li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="foot" style="grid-column: 1 / -1;">
+        <div>Identidade visual sugerida: fundo escuro + cards suaves + destaques em degradê (verde/azul/laranja).</div>
+        <div>Post original: <a class="link" href="https://www.instagram.com/p/DUX68zmjg0b/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DUX68zmjg0b/</a></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const getText = () => {
+        const el = document.getElementById('script');
+        return el ? el.innerText : '';
+      };
+
+      async function copy(){
+        const text = getText();
+        try{
+          await navigator.clipboard.writeText(text);
+          const btns = [document.getElementById('copyBtn'), document.getElementById('copyBtn2')].filter(Boolean);
+          btns.forEach(b => {
+            const old = b.textContent;
+            b.textContent = 'Roteiro copiado';
+            setTimeout(()=> b.textContent = old, 1200);
+          });
+        }catch(e){
+          alert('Não foi possível copiar automaticamente. Selecione o texto e copie.');
+        }
+      }
+
+      const b1 = document.getElementById('copyBtn');
+      const b2 = document.getElementById('copyBtn2');
+      if(b1) b1.addEventListener('click', copy);
+      if(b2) b2.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
