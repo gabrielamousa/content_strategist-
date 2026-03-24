@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dia 28 — Arquitetura — Carrossel de comparação</title>
+  <style>
+    :root{
+      --bg0:#070A10;
+      --bg1:#0B1220;
+      --card:#0D1628CC;
+      --card2:#0B1324E6;
+      --text:#EAF0FF;
+      --muted:#AAB6D6;
+      --muted2:#7F8CB3;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.14);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --grad: linear-gradient(90deg,
+        #22c55e 0%,
+        #22c55e 10%,
+        #3b82f6 45%,
+        #f59e0b 100%
+      );
+      --grad2: radial-gradient(1200px 600px at 15% 10%, rgba(59,130,246,.22), transparent 60%),
+               radial-gradient(900px 500px at 75% 18%, rgba(34,197,94,.18), transparent 55%),
+               radial-gradient(900px 550px at 58% 92%, rgba(245,158,11,.16), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background: var(--grad2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a{ color: inherit; text-decoration: none; }
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+    header{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 18px;
+      position: relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(90deg, rgba(34,197,94,.10), rgba(59,130,246,.10), rgba(245,158,11,.10));
+      opacity:.55;
+      pointer-events:none;
+      mask-image: radial-gradient(480px 180px at 20% 10%, #000 35%, transparent 65%);
+    }
+    .toprow{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      position: relative;
+      z-index:1;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      border: 1px solid var(--line2);
+      background: rgba(0,0,0,.18);
+      padding: 10px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing:.2px;
+      backdrop-filter: blur(10px);
+    }
+    .dot{
+      width:10px;height:10px;border-radius:99px;
+      background: var(--grad);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+    }
+    h1{
+      margin: 10px 0 6px;
+      font-size: clamp(20px, 2.4vw, 30px);
+      line-height:1.15;
+      letter-spacing:-.3px;
+      position: relative;
+      z-index:1;
+    }
+    .sub{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height:1.45;
+      position: relative;
+      z-index:1;
+    }
+    .linkrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+      position: relative;
+      z-index:1;
+    }
+    .pill{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      font-size: 13px;
+    }
+    .pill span{ color: var(--muted2); font-family: var(--mono); font-size: 12px; }
+    .btn{
+      cursor:pointer;
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      letter-spacing: .2px;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.22); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (min-width: 860px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .span2{ grid-column: 1 / -1; }
+    }
+    .card{
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(0,0,0,.12);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .mark{
+      height: 10px;
+      width: 96px;
+      border-radius: 999px;
+      background: var(--grad);
+      filter: saturate(1.05);
+      opacity:.95;
+    }
+    .card .bd{ padding: 14px 16px 16px; }
+    .card p{ margin: 0 0 10px; color: var(--muted); line-height:1.55; font-size: 14px; }
+    .card ul{ margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .card li{ margin: 6px 0; }
+    .kpi{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .chip{
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.14);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .chip b{ color: var(--text); font-weight: 800; }
+    .codebox{
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      border-radius: var(--radius2);
+      padding: 12px;
+      overflow:auto;
+    }
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: #D9E6FF;
+    }
+    .split{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 860px){
+      .split{ grid-template-columns: 1fr 1fr; }
+    }
+    .callout{
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(34,197,94,.10), rgba(59,130,246,.08) 55%, rgba(245,158,11,.06));
+      padding: 12px 12px;
+      border-radius: var(--radius2);
+      color: var(--text);
+    }
+    .callout p{ margin:0; color: rgba(234,240,255,.9); }
+    .small{ font-size: 12px; color: var(--muted2); }
+    .footer{
+      margin-top: 14px;
+      color: var(--muted2);
+      font-size: 12px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div class="badge"><span class="dot"></span><strong>Nicho:</strong> Arquitetura <span style="opacity:.6;">|</span> <strong>Dia:</strong> 28</div>
+          <h1>Carrossel de comparação: 6 opções + mapa de decisão</h1>
+          <p class="sub">Modelo reproduzível para posts de inspiração/comparação visual: pergunta + opções padronizadas + fechamento com síntese prática e CTA.</p>
+        </div>
+        <div class="linkrow">
+          <a class="pill" href="https://www.instagram.com/p/DVzFs1dFs5g/" target="_blank" rel="noopener noreferrer">Post original <span>instagram.com</span></a>
+          <button class="btn" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card span2">
+        <div class="hd"><h2>Resumo</h2><div class="mark"></div></div>
+        <div class="bd">
+          <p><b>O que é:</b> carrossel 1:1 com imagens full-bleed e um layout repetido. Cada slide apresenta <b>uma variação</b> (material/solução/estilo) para o público <b>comparar mentalmente</b>.</p>
+          <div class="kpi">
+            <div class="chip"><b>Objetivo:</b> salvar + comentar</div>
+            <div class="chip"><b>Pilar:</b> Checklist</div>
+            <div class="chip"><b>Formato:</b> Carrossel (8 slides)</div>
+            <div class="chip"><b>Promessa:</b> clareza rápida na escolha</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Estrutura</h2><div class="mark"></div></div>
+        <div class="bd">
+          <ul>
+            <li><b>Slide 1 (capa/hook):</b> pergunta curta de preferência + melhor imagem “chamativa”.</li>
+            <li><b>Slides 2–7 (opções):</b> mesma pergunta no topo + tag com nome da opção (2–5 palavras).</li>
+            <li><b>Slide 8 (mapa de decisão):</b> contraste do tipo “Mais X vs Mais Y” + <b>quando usar</b> + CTA.</li>
+          </ul>
+          <div class="callout" style="margin-top:12px;">
+            <p><b>Regra de ouro:</b> as opções precisam ser <b>comparáveis</b> (mesma categoria e intenção) para o cérebro “votar” ao passar.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Elementos visuais</h2><div class="mark"></div></div>
+        <div class="bd">
+          <ul>
+            <li><b>Formato:</b> 1:1, imagens full-bleed.</li>
+            <li><b>Faixa superior fixa:</b> retângulo branco com o hook (alto contraste).</li>
+            <li><b>Tag inferior esquerda:</b> nome da opção (retângulo menor).</li>
+            <li><b>Logo discreto:</b> canto inferior direito.</li>
+            <li><b>Consistência:</b> mesma posição/tamanho em todos os slides.</li>
+          </ul>
+          <p class="small" style="margin-top:10px;">Dica de produção: deixe “respiro” na foto (área menos poluída) onde entram as caixas de texto.</p>
+        </div>
+      </article>
+
+      <article class="card span2">
+        <div class="hd"><h2>Roteiro</h2><div class="mark"></div></div>
+        <div class="bd">
+          <div class="split">
+            <div>
+              <p><b>Preencha antes (mini-brief):</b></p>
+              <ul>
+                <li><b>Tema:</b> ________ (ex.: fachadas, iluminação, revestimentos, layout)</li>
+                <li><b>Elemento variável:</b> ________ (ex.: material, cor, composição, sistema)</li>
+                <li><b>Público:</b> cliente final / estudante / mercado</li>
+                <li><b>Objetivo:</b> salvar / comentar / direct</li>
+                <li><b>Nº de opções:</b> 5 a 8</li>
+              </ul>
+            </div>
+            <div>
+              <p><b>Texto-base (reproduzível):</b></p>
+              <div class="codebox">
+                <pre id="roteiroText">CARROSSEL (8 SLIDES) — TEMPLATE
+
+SLIDE 1 — CAPA (HOOK)
+Topo (faixa): “Qual [ELEMENTO] você prefere para [CONTEXTO]?”
+Sub-opcional (pequeno): “Compare [N] opções em 20s.”
+Imagem: a opção mais “uau”/popular.
+
+SLIDES 2–7 — OPÇÕES (REPETIÇÃO)
+Topo (igual ao slide 1).
+Tag (inferior esquerda): “[NOME CURTO DA OPÇÃO]”
+Linha opcional (pequena): “Ideal para: [uso]” OU “Sensação: [adjetivo]”
+Imagem: 1 variação por slide (comparável).
+
+SLIDE 8 — MAPA DE DECISÃO + CTA
+Topo (igual).
+Caixa maior (2–4 linhas):
+- “Mais [EIXO A] → use quando: [situação]”
+- “Mais [EIXO B] → use quando: [situação]”
+CTA (1 linha): “Comente a sua (1–6) + Salve para decidir depois.”
+CTA alternativo (DM): “Quer ajuda no seu caso? Me chama no direct com ‘[PALAVRA]’.”</pre>
+              </div>
+            </div>
+          </div>
+          <p class="small" style="margin-top:10px;">Sugestão de eixos do “mapa de decisão”: claro vs escuro, quente vs frio, natural vs industrial, minimalista vs clássico, econômico vs premium, manutenção baixa vs alto impacto.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><div class="mark"></div></div>
+        <div class="bd">
+          <p><b>Hooks (escolha 1 e repita em todos os slides):</b></p>
+          <ul>
+            <li>“Qual destas opções você usaria em um(a) [AMBIENTE]?”</li>
+            <li>“Você é time [A] ou time [B]?”</li>
+            <li>“Qual solução faz mais sentido para [OBJETIVO]?”</li>
+            <li>“Se você pudesse escolher hoje: [OPÇÃO 1] ou [OPÇÃO 2]?”</li>
+          </ul>
+          <p style="margin-top:10px;"><b>Tags (nomes curtos que funcionam):</b></p>
+          <ul>
+            <li>Material + atributo: “Madeira clara”, “Pedra escura”, “Cimento contínuo”</li>
+            <li>Estratégia: “Luz indireta”, “Trilho + spots”, “Pendente focal”</li>
+            <li>Composição: “Volumetria limpa”, “Brise vertical”, “Cobogó filtrante”</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>CTA</h2><div class="mark"></div></div>
+        <div class="bd">
+          <p><b>Escolha 1 CTA principal</b> (não dilua):</p>
+          <ul>
+            <li><b>Comentário:</b> “Qual é a sua: 1, 2, 3…? Comenta o número.”</li>
+            <li><b>Salvar:</b> “Salve para consultar quando decidir [tema].”</li>
+            <li><b>Compartilhar:</b> “Envie para alguém que está construindo/reformando.”</li>
+            <li><b>Direct:</b> “Quer que eu indique a melhor para o seu caso? Direct com ‘[PALAVRA]’.”</li>
+          </ul>
+          <p class="small" style="margin-top:10px;">Onde colocar: no slide 8 (final), em uma faixa discreta no rodapé para não competir com a síntese.</p>
+        </div>
+      </article>
+
+      <article class="card span2">
+        <div class="hd"><h2>Slides sugeridos (1..8)</h2><div class="mark"></div></div>
+        <div class="bd">
+          <ul>
+            <li><b>1 — Capa:</b> Pergunta (hook) + imagem mais forte + “Compare 6 opções”.</li>
+            <li><b>2 — Opção 1:</b> Nome curto + imagem comparável.</li>
+            <li><b>3 — Opção 2:</b> Nome curto + imagem comparável.</li>
+            <li><b>4 — Opção 3:</b> Nome curto + imagem comparável.</li>
+            <li><b>5 — Opção 4:</b> Nome curto + imagem comparável.</li>
+            <li><b>6 — Opção 5:</b> Nome curto + imagem comparável.</li>
+            <li><b>7 — Opção 6:</b> Nome curto + imagem comparável.</li>
+            <li><b>8 — Mapa de decisão:</b> “Mais X vs Mais Y” + quando usar + CTA.</li>
+          </ul>
+          <div class="callout" style="margin-top:12px;">
+            <p><b>Se quiser 10 slides:</b> mantenha 1 capa + 8 opções + 1 mapa de decisão. Não aumente texto; aumente variedade visual.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Checklist de criação</h2><div class="mark"></div></div>
+        <div class="bd">
+          <ul>
+            <li>[ ] Defini 1 <b>pergunta</b> (hook) que cabe em 1 linha.</li>
+            <li>[ ] Separei <b>5–8 opções</b> realmente comparáveis (mesma categoria).</li>
+            <li>[ ] Nomeei cada opção com <b>2–5 palavras</b> (sem termos confusos).</li>
+            <li>[ ] Garanti <b>qualidade das imagens</b> e consistência de enquadramento.</li>
+            <li>[ ] Mantive <b>layout idêntico</b> (posição e tamanhos fixos).</li>
+            <li>[ ] Slide final tem <b>síntese acionável</b> (quando usar X vs Y).</li>
+            <li>[ ] Incluí <b>1 CTA</b> (comentário OU salvar OU DM).</li>
+            <li>[ ] Testei legibilidade no celular (100% e 75%).</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd"><h2>Variações (mesmo impacto)</h2><div class="mark"></div></div>
+        <div class="bd">
+          <p><b>Trocas fáceis para adaptar a qualquer tema:</b></p>
+          <ul>
+            <li><b>Troque “preferência” por “cenário”:</b> “Qual funciona melhor para apartamento pequeno?”</li>
+            <li><b>Troque “opção” por “erro vs acerto”:</b> 6 slides de “Evite isso / Faça isso”.</li>
+            <li><b>Troque “galeria” por “progressão”:</b> do básico ao premium (nível 1–6).</li>
+            <li><b>Troque “mapa de decisão” por “regras rápidas”:</b> 3 regras para escolher.</li>
+          </ul>
+          <p style="margin-top:10px;"><b>Exemplos de aplicações em Arquitetura:</b></p>
+          <ul>
+            <li>Fachadas: brises (vertical/horizontal/metálico/madeira) + slide final: insolação/privacidade/manutenção.</li>
+            <li>Iluminação: indireta/trilho/pendente/arandela + slide final: função (geral/tarefa/cena) + altura do pé-direito.</li>
+            <li>Revestimentos externos: pedra/porcelanato/cimento/tijolinho + slide final: antiderrapante/manutenção/custo.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card span2">
+        <div class="hd"><h2>Legenda (template)</h2><div class="mark"></div></div>
+        <div class="bd">
+          <div class="codebox">
+            <pre id="legendaText">Selecionei [N] opções de [TEMA] para você comparar.
+
+Qual é a sua favorita: 1, 2, 3…?
+
+Se você está definindo [CONTEXTO/AMBIENTE], salve este post para consultar depois.
+Quer uma versão com [VARIAÇÃO/OUTRO RECORTE]? Comente: “QUERO”.</pre>
+          </div>
+          <p class="small" style="margin-top:10px;">Dica: se o objetivo for Direct, substitua a última linha por: “Me chama no direct com ‘[PALAVRA]’ que eu te mando 3 recomendações pro seu caso.”</p>
+        </div>
+      </article>
+    </section>
+
+    <div class="footer">UX high-tech • Fundo escuro • Cards com borda suave • Destaques em degradê (verde/azul/laranja)</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const roteiro = document.getElementById('roteiroText');
+      const legenda = document.getElementById('legendaText');
+
+      function getText(){
+        return [
+          'ROTEIRO (DIA 28 — ARQUITETURA)\n',
+          roteiro ? roteiro.innerText.trim() : '',
+          '\n\nLEGENDA (TEMPLATE)\n',
+          legenda ? legenda.innerText.trim() : ''
+        ].join('');
+      }
+
+      async function copy(){
+        const text = getText();
+        try{
+          await navigator.clipboard.writeText(text);
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>btn.textContent='Copiar roteiro', 1400);
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>btn.textContent='Copiar roteiro', 1400);
+        }
+      }
+
+      if(btn) btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
