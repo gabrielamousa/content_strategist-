@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 8 — Carrossel (Advocacia)</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0B1020;
+      --card:#0E1630;
+      --card2:#0B1328;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.72);
+      --muted2:rgba(255,255,255,.58);
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --g1: linear-gradient(90deg,#22c55e 0%,#38bdf8 55%,#fb923c 100%);
+      --g2: radial-gradient(1000px 400px at 10% 0%, rgba(34,197,94,.17), transparent 55%),
+            radial-gradient(900px 500px at 85% 10%, rgba(56,189,248,.16), transparent 52%),
+            radial-gradient(900px 500px at 55% 100%, rgba(251,146,60,.12), transparent 58%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: var(--g2), var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 56px}
+    .topbar{
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--stroke);
+      border-radius: var(--r20);
+      padding:18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .topbar:before{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(120deg, rgba(34,197,94,.12), rgba(56,189,248,.08), rgba(251,146,60,.10));
+      opacity:.55;
+      pointer-events:none;
+    }
+    .topbar > *{position:relative}
+    .kicker{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+      margin-bottom:10px;
+    }
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:6px 10px;border-radius:999px;
+      background: rgba(0,0,0,.25);
+      border:1px solid var(--stroke);
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .pill b{color:var(--text)}
+    .title{
+      font-size:22px;
+      margin:0 0 10px;
+      letter-spacing:.2px;
+    }
+    .subtitle{margin:0;color:var(--muted);font-size:14px}
+    .metaRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .metaRow a{
+      text-decoration:none;
+      border-bottom:1px dashed rgba(255,255,255,.35);
+    }
+    .grid{display:grid;grid-template-columns: 1.1fr .9fr; gap:14px; margin-top:14px}
+    @media (max-width: 920px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius: var(--r16);
+      padding:16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+    }
+    .card h3{margin:12px 0 8px;font-size:14px}
+    .card p{margin:0 0 10px;color:var(--muted)}
+    .card ul{margin:0;padding-left:18px;color:var(--muted)}
+    .card li{margin:6px 0}
+    .hl{
+      display:inline-block;
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:750;
+    }
+    .divider{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px}
+    button{
+      appearance:none;border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.25);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:650;
+      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+    }
+    button:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.22); background: rgba(0,0,0,.35)}
+    .ghost{font-weight:600;color:var(--muted)}
+
+    .pre{
+      background: rgba(0,0,0,.35);
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:14px;
+      overflow:auto;
+      font-family: var(--mono);
+      font-size:12.5px;
+      color: rgba(255,255,255,.86);
+      white-space: pre-wrap;
+      line-height:1.5;
+    }
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .tag i{display:inline-block;width:10px;height:10px;border-radius:50%;background: var(--g1)}
+
+    .twoCol{display:grid;grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 720px){.twoCol{grid-template-columns:1fr}}
+
+    .footerNote{margin-top:14px;color:var(--muted2);font-size:12px}
+    .small{font-size:12px;color:var(--muted2)}
+
+    .code{
+      font-family: var(--mono);
+      font-weight:800;
+      letter-spacing:.12em;
+      padding:2px 8px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="kicker">
+        <span class="pill"><b>Nicho</b>: Advocacia</span>
+        <span class="pill"><b>Dia</b>: 8</span>
+        <span class="pill"><b>Formato</b>: Carrossel</span>
+        <span class="pill"><b>Pilar</b>: Passo a passo</span>
+      </div>
+      <h1 class="title">Carrossel <span class="hl">Story → Análise jurídica → Lead</span> (PDF no Direct)</h1>
+      <p class="subtitle">Estrutura híbrida para educar + construir autoridade + gerar conversas (sem promessa de resultado, linguagem compatível com OAB).</p>
+      <div class="metaRow">
+        <span class="pill">Post original: <a href="https://www.instagram.com/p/DWPp8sQD3fv/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DWPp8sQD3fv/</a></span>
+      </div>
+      <div class="btnRow">
+        <button id="copyBtn" type="button">Copiar roteiro</button>
+        <span class="ghost small" id="copyStatus"></span>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Resumo</h2>
+        <p><b>Objetivo:</b> prender atenção com uma micro-história (caso público ou hipotético), conduzir para uma análise jurídica em linguagem clara (lei + 1 entendimento + procedimento) e fechar com uma isca educativa (PDF/guia/checklist) enviada no direct via <span class="code">CÓDIGO</span> nos comentários.</p>
+        <div class="divider"></div>
+        <div class="twoCol">
+          <div>
+            <h3>Quando usar</h3>
+            <ul>
+              <li>Você quer <b>autoridade</b> sem “venda direta”.</li>
+              <li>Seu tema rende <b>consequência prática</b> (prazos, competência, pena, nulidade, direitos, documentos).</li>
+              <li>Há um caso em alta (com cuidado de exposição) ou um cenário realista.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Promessa editorial (o que a pessoa ganha)</h3>
+            <ul>
+              <li>Entende <b>o enquadramento</b> do tema.</li>
+              <li>Aprende <b>como funciona</b> na prática (procedimento/competência).</li>
+              <li>Recebe um <b>material informativo</b> para aprofundar.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <aside class="card">
+        <h2>Metadados de execução</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px">
+          <span class="tag"><i></i> Alta retenção por narrativa</span>
+          <span class="tag"><i></i> Autoridade por lei/juris</span>
+          <span class="tag"><i></i> Conversão por direct</span>
+        </div>
+        <h3>Tempo de produção (estimativa)</h3>
+        <ul>
+          <li>Pesquisa do caso/tema: 20–40 min</li>
+          <li>Roteiro + revisão: 25–45 min</li>
+          <li>Design (Canva/Figma): 45–90 min</li>
+          <li>Agendamento + respostas do direct: 15–30 min</li>
+        </ul>
+        <div class="divider"></div>
+        <p class="small"><b>Nota ética (OAB):</b> linguagem informativa; sem promessas; sem captação indevida; cuidado com exposição de pessoas; use fonte quando citar caso real.</p>
+      </aside>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Estrutura</h2>
+      <p><b>Macro-sequência:</b> <span class="hl">choque/contraste</span> → <span class="hl">linha do tempo</span> → <span class="hl">fato objetivo</span> → <span class="hl">ponte</span> → <span class="hl">regras</span> → <span class="hl">aplicação</span> → <span class="hl">consequências</span> → <span class="hl">CTA</span>.</p>
+      <div class="twoCol">
+        <div>
+          <h3>Regras de ouro do texto</h3>
+          <ul>
+            <li>1 ideia por slide; parágrafos curtos (2–4 linhas).</li>
+            <li>Máx. <b>1–3 destaques</b> (negrito) por slide.</li>
+            <li>Evite juridiquês; explique o termo em português claro.</li>
+            <li>Use 1 referência forte (lei/artigo) + 1 entendimento (súmula/precedente) — sem “encher”.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Ritmo visual</h3>
+          <ul>
+            <li>Alternância: 3–4 slides texto → 1 slide “prova”/imagem → volta para texto.</li>
+            <li>“Pausa” visual no meio (imagem/recorte) para resetar atenção.</li>
+            <li>CTA no penúltimo; slide final para salvar/seguir/compartilhar.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Slides sugeridos (1..12)</h2>
+      <ol style="margin:0;padding-left:18px;color:var(--muted)">
+        <li><b>Hook (contraste)</b>: 1–2 frases curtas (impacto + virada).</li>
+        <li><b>Setup humano</b>: personagem/contexto + situação cotidiana + data/local (se fizer sentido).</li>
+        <li><b>Quebra</b>: “Dias depois…” + evento crítico (destaque).</li>
+        <li><b>Fatos objetivos</b>: o que aconteceu (sem adjetivos) + 2 pontos que viram “prova”.</li>
+        <li><b>Imagem/prova</b>: recorte de notícia/print (com “Fonte: …”).</li>
+        <li><b>Ponte</b>: “O ponto jurídico aqui é…” (tese/pergunta).</li>
+        <li><b>Regra 1</b>: lei/artigo + requisito + consequência (em linguagem simples).</li>
+        <li><b>Regra 2</b>: entendimento (súmula/precedente) + tradução em 1 frase.</li>
+        <li><b>Procedimento/competência</b>: onde tramita/quem julga + por quê (regra prática).</li>
+        <li><b>Consequências</b>: efeitos concretos (pena/regime/prazos/indenização/impacto processual).</li>
+        <li><b>CTA</b>: “Guia/PDF/Checklist” + comentar <span class="code">CÓDIGO</span> + envio no direct.</li>
+        <li><b>Fechamento</b>: salve/compartilhe/siga + sugestão do próximo tema.</li>
+      </ol>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Roteiro (template preenchível)</h2>
+      <div class="pre" id="roteiro">
+SLIDE 1 — HOOK
+[ATOR/PERSONAGEM] [VERBO FORTE] [ROTINA].
+No [MARCO/CONTEXTO], virou [OP0STO/CONSEQUÊNCIA].
+
+SLIDE 2 — SETUP (HUMANIZAÇÃO)
+[Descrição genérica sem expor: “Um funcionário…”, “Uma mãe…”, “Um consumidor…”]
+No dia [DATA/CONTEXTO], [EVENTO COMUM].
+
+SLIDE 3 — QUEBRA
+[Dias/horas] depois, **[EVENTO CRÍTICO]**.
+
+SLIDE 4 — FATOS OBJETIVOS
+• Onde: [LOCAL]
+• O que ocorreu: [1–2 frases factuais]
+• Ponto-chave 1 (prova): **[FATO]**
+• Ponto-chave 2 (prova): **[FATO]**
+
+SLIDE 5 — IMAGEM/PROVA
+(Colar recorte de notícia/print/foto)
+Legenda: Fonte: [VEÍCULO/DECISÃO/ÓRGÃO]
+
+SLIDE 6 — PONTE PARA O JURÍDICO
+O ponto jurídico aqui é: **[TESE/PERGUNTA]**.
+Isso importa porque [1 frase de consequência prática].
+
+SLIDE 7 — REGRA 1 (LEI)
+Regra: [definição em português claro].
+Base: **Lei [nº/ano], art. [X]**.
+Para ocorrer, costuma exigir: **[requisito 1]**, **[requisito 2]**.
+
+SLIDE 8 — REGRA 2 (ENTENDIMENTO)
+Na prática, os tribunais têm entendido que: **[entendimento em 1 linha]**.
+Referência (curta): [Súmula/precedente/tema]
+Tradução: [1 frase simples].
+
+SLIDE 9 — COMPETÊNCIA / PROCEDIMENTO
+Onde tramita/quem julga: **[competência]**.
+Por quê: [regra prática — ex.: local do fato / domicílio / natureza da ação].
+
+SLIDE 10 — CONSEQUÊNCIAS PRÁTICAS
+Se [hipótese], pode ocorrer: **[efeito 1]**.
+Além disso: **[efeito 2]**.
+Atenção para: **[prazo/pena/regime/requisitos]**.
+
+SLIDE 11 — CTA (LEAD)
+Eu preparei um **[GUIA/PDF/CHECKLIST]** para você entender:
+• [benefício 1]
+• [benefício 2]
+• [benefício 3]
+Para receber gratuitamente, comente **[CÓDIGO]** que eu envio no direct.
+
+SLIDE 12 — FECHAMENTO
+Salve para consultar depois.
+Quer que eu analise um caso sobre [tema]? Comente “TEMA”.
+      </div>
+      <p class="footerNote">Dica: mantenha o roteiro “genérico” o suficiente para não caracterizar consulta/parecer individualizado; se houver caso real, preserve identidades e use fonte.</p>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Elementos visuais</h2>
+      <div class="twoCol">
+        <div>
+          <h3>Identidade (adapte ao seu perfil)</h3>
+          <ul>
+            <li>Formato: 1080×1350 (4:5).</li>
+            <li>Layout: texto alinhado à esquerda; margens generosas.</li>
+            <li>Tipografia: Inter/Helvetica/Arial.</li>
+            <li>Destaques: usar <b>negrito</b> e 1 cor de acento (no seu design).</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Slides “prova”</h3>
+          <ul>
+            <li>Recorte de matéria/diário oficial/decisão (quando permitido).</li>
+            <li>Legenda com fonte e data.</li>
+            <li>Evite imagens sensíveis; prefira prints neutros.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <h3>Checklist de design (produção rápida)</h3>
+      <ul>
+        <li>Máx. 45–70 palavras por slide (ideal: menos).</li>
+        <li>1 “âncora” por slide (número, artigo, conceito, pergunta).</li>
+        <li>Consistência: mesma posição de título/corpo em todos.</li>
+        <li>CTA com código em alto contraste e fácil de copiar.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Copy e ganchos</h2>
+      <div class="twoCol">
+        <div>
+          <h3>Fórmulas prontas (sem sensacionalismo)</h3>
+          <ul>
+            <li><b>Contraste:</b> “Ele/ela fazia [rotina]. Em [marco], isso virou [problema].”</li>
+            <li><b>Aprendizado:</b> “O que esse caso ensina sobre [tema jurídico].”</li>
+            <li><b>Erro comum:</b> “3 pontos que muita gente erra em [tema].”</li>
+            <li><b>Teste:</b> “Você teria direito a [X] nessa situação?”</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Transições (narrador → analista)</h3>
+          <ul>
+            <li>“Acontece que o detalhe jurídico está em…”</li>
+            <li>“O ponto aqui não é [X]. É [Y].”</li>
+            <li>“Na prática, isso muda porque…”</li>
+            <li>“Traduzindo: …”</li>
+          </ul>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <h3>Mini-copys para slides técnicos (modelos)</h3>
+      <ul>
+        <li><b>Lei:</b> “A regra geral é: [conceito]. Está em [lei/artigo].”</li>
+        <li><b>Juris:</b> “Os tribunais costumam aplicar assim: [entendimento].”</li>
+        <li><b>Procedimento:</b> “Isso vai para [competência] quando [condição].”</li>
+        <li><b>Consequência:</b> “Na prática, o risco/efeito é: [efeito].”</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>CTA</h2>
+      <p><b>Oferta recomendada (compatível com conteúdo jurídico):</b> checklist/guia educativo (documentos, prazos, passos do procedimento, perguntas para audiência, glossário).</p>
+      <div class="twoCol">
+        <div>
+          <h3>CTA padrão (copiar e colar)</h3>
+          <div class="pre">Eu preparei um PDF gratuito: “Guia rápido — Como funciona [TEMA]”.
+Quer receber? Comente <CÓDIGO> aqui embaixo que eu envio no direct.</div>
+        </div>
+        <div>
+          <h3>Boas práticas</h3>
+          <ul>
+            <li>Prometa <b>clareza</b>, não resultado.</li>
+            <li>Tenha resposta pronta no direct (mensagem + link/arquivo).</li>
+            <li>Depois do envio, pergunte: “Quer que eu te mande também um post sobre [subtema]?”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Checklist (criação + publicação)</h2>
+      <div class="twoCol">
+        <div>
+          <h3>Conteúdo</h3>
+          <ul>
+            <li>Definir tema e objetivo do post (educar/autoridade/leads).</li>
+            <li>Escolher caso (real com fonte OU hipotético verossímil).</li>
+            <li>Listar: 1 lei/artigo + 1 entendimento + 1 consequência prática.</li>
+            <li>Escrever hook com contraste + pergunta/tese.</li>
+            <li>Revisar para tirar promessas e termos absolutos (“garantia”, “causa ganha”).</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Design + Operação</h3>
+          <ul>
+            <li>Padronizar: título/corpo/destaques/margens (4:5).</li>
+            <li>Inserir 1 slide “prova” com fonte.</li>
+            <li>CTA com <span class="code">CÓDIGO</span> fácil de copiar.</li>
+            <li>Fixar comentário com instrução do código.</li>
+            <li>Responder directs com script + tag/CRM.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <h3>Checklist de retenção (antes de postar)</h3>
+      <ul>
+        <li>Slide 1 faz a pessoa pensar “como assim?” em 2 segundos?</li>
+        <li>Há linha do tempo clara (setup → virada → consequência)?</li>
+        <li>Há “pausas” visuais (imagem/recorte) no meio?</li>
+        <li>Os slides técnicos estão traduzidos (sem juridiquês)?</li>
+        <li>CTA oferece algo coerente com o conteúdo?</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Variações (para repetir sem cansar)</h2>
+      <div class="twoCol">
+        <div>
+          <h3>Variação A — “Pergunta primeiro”</h3>
+          <ul>
+            <li>Slide 1: “Isso é crime? / Isso gera indenização? / Isso anula o processo?”</li>
+            <li>Slide 2–4: caso em 3 cenas</li>
+            <li>Slide 5–10: resposta jurídica</li>
+            <li>Slide 11: CTA com guia</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Variação B — “3 pontos”</h3>
+          <ul>
+            <li>Slide 1: “3 pontos jurídicos que quase ninguém nota nesse caso”</li>
+            <li>Slide 2–7: ponto 1/2/3 com exemplos</li>
+            <li>Slide 8–10: consequência + procedimento</li>
+            <li>Slide 11–12: CTA + salvar</li>
+          </ul>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <h3>Variação C — “Checklist de documentos” (mais lead)</h3>
+      <ul>
+        <li>Inclua no slide 10 um preview do checklist (3 itens) e diga: “o PDF completo tem 15 itens”.</li>
+        <li>CTA: “Comente <span class="code">DOCS</span>”.</li>
+      </ul>
+    </section>
+
+    <p class="footerNote">Se você me disser a área (trabalhista, previdenciário, empresarial, criminal, família etc.) e o objetivo (leads/autoridade/B2B), dá para preencher este template com ganchos e CTAs específicos.</p>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const status = document.getElementById('copyStatus');
+      const roteiro = document.getElementById('roteiro');
+
+      function setStatus(msg){
+        status.textContent = msg;
+        setTimeout(()=>{ status.textContent = ''; }, 2400);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = roteiro.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          setStatus('Roteiro copiado para a área de transferência.');
+        }catch(e){
+          try{
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            setStatus('Roteiro copiado (modo compatibilidade).');
+          }catch(err){
+            setStatus('Não foi possível copiar automaticamente. Selecione e copie manualmente.');
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
