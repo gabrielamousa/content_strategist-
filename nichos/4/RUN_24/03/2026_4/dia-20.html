@@ -1,0 +1,370 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Dia 20 — Finanças — Roteiro reproduzível</title><style>
+:root{
+  --bg:#0b0f14;
+  --panel:#0f1621;
+  --panel2:#0c121b;
+  --text:#e8eef7;
+  --muted:#9fb0c7;
+  --stroke:rgba(255,255,255,.08);
+  --shadow: 0 12px 30px rgba(0,0,0,.35);
+  --r:18px;
+  --g1: linear-gradient(90deg,#20e3b2 0%,#06b6d4 45%,#fb923c 100%);
+  --g2: linear-gradient(135deg, rgba(32,227,178,.18), rgba(6,182,212,.14), rgba(251,146,60,.14));
+  --accent:#20e3b2;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  background: radial-gradient(1200px 600px at 20% 0%, rgba(6,182,212,.18), transparent 60%),
+              radial-gradient(900px 500px at 90% 10%, rgba(251,146,60,.14), transparent 50%),
+              radial-gradient(1000px 700px at 30% 100%, rgba(32,227,178,.16), transparent 55%),
+              var(--bg);
+  color:var(--text);
+}
+a{color:inherit}
+.container{max-width:1100px; margin:28px auto; padding:0 16px 48px}
+.header{
+  background: rgba(15,22,33,.72);
+  border:1px solid var(--stroke);
+  border-radius: calc(var(--r) + 6px);
+  padding:18px 18px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+}
+.topline{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+.badges{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+.badge{font-size:12px; letter-spacing:.2px; color:var(--muted); padding:6px 10px; border:1px solid var(--stroke); border-radius:999px; background: rgba(12,18,27,.6)}
+.title{margin:10px 0 8px; font-size:20px; line-height:1.25}
+.subtitle{margin:0; color:var(--muted); font-size:13px; line-height:1.6}
+.headerActions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.btn{
+  appearance:none; border:1px solid var(--stroke); background: rgba(12,18,27,.55);
+  color:var(--text); padding:10px 12px; border-radius:12px; cursor:pointer;
+  font-size:13px; box-shadow: 0 8px 18px rgba(0,0,0,.25);
+}
+.btn:hover{border-color: rgba(255,255,255,.16)}
+.btnPrimary{border-color: rgba(32,227,178,.28); background: linear-gradient(180deg, rgba(32,227,178,.18), rgba(12,18,27,.55));}
+.link{color:var(--muted); text-decoration:none; border-bottom:1px dashed rgba(159,176,199,.35)}
+.link:hover{color:var(--text); border-bottom-color: rgba(232,238,247,.55)}
+.grid{display:grid; gap:14px; grid-template-columns: 1fr; margin-top:14px}
+@media(min-width: 980px){.grid{grid-template-columns: 1.2fr .8fr}}
+.card{
+  border:1px solid var(--stroke);
+  border-radius: var(--r);
+  background: linear-gradient(180deg, rgba(15,22,33,.72), rgba(12,18,27,.62));
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.cardHeader{padding:14px 14px 0}
+.cardHeader h2{margin:0; font-size:14px; letter-spacing:.2px}
+.hr{height:1px; background: rgba(255,255,255,.08); margin:12px 0 0}
+.cardBody{padding:14px}
+.kicker{display:inline-flex; align-items:center; gap:10px; font-size:12px; color:var(--muted)}
+.pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 10px; border-radius:999px;
+  border:1px solid var(--stroke);
+  background: var(--g2);
+}
+.pillDot{width:8px; height:8px; border-radius:999px; background: var(--g1)}
+ul{margin:10px 0 0 18px; color:var(--text)}
+li{margin:8px 0; color: rgba(232,238,247,.92); line-height:1.55}
+small, .muted{color:var(--muted)}
+.codebox{
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(8,12,18,.55);
+  border-radius: 14px;
+  padding:12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+  font-size:12.5px;
+  line-height:1.55;
+  white-space:pre-wrap;
+}
+.twoCol{display:grid; gap:12px; grid-template-columns:1fr}
+@media(min-width: 680px){.twoCol{grid-template-columns:1fr 1fr}}
+.callout{
+  border-radius: 16px;
+  border:1px solid rgba(32,227,178,.20);
+  background: linear-gradient(180deg, rgba(32,227,178,.12), rgba(12,18,27,.50));
+  padding:12px;
+}
+.callout strong{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent}
+.checklist{display:grid; gap:10px;}
+.check{
+  display:flex; gap:10px; align-items:flex-start;
+  padding:10px; border:1px solid var(--stroke);
+  border-radius: 14px; background: rgba(12,18,27,.45)
+}
+.cb{width:18px; height:18px; border-radius:6px; border:1px solid rgba(255,255,255,.18); margin-top:2px; flex:0 0 auto; background: rgba(0,0,0,.22)}
+.check:hover{border-color: rgba(255,255,255,.14)}
+.footerNote{margin-top:14px; color:var(--muted); font-size:12px; line-height:1.6}
+.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:rgba(12,18,27,.85); border:1px solid rgba(255,255,255,.12); color:var(--text); padding:10px 12px; border-radius:12px; box-shadow: var(--shadow); opacity:0; pointer-events:none; transition: opacity .22s ease}
+.toast.show{opacity:1}
+</style></head><body><div class="container">
+  <header class="header">
+    <div class="topline">
+      <div class="badges">
+        <span class="badge">Nicho: <strong style="color:var(--text)">Finanças</strong></span>
+        <span class="badge">Dia: <strong style="color:var(--text)">20</strong></span>
+        <span class="badge">Formato: <strong style="color:var(--text)">Reels</strong></span>
+        <span class="badge">Pilar: <strong style="color:var(--text)">Passo a passo</strong></span>
+      </div>
+      <div class="headerActions">
+        <a class="btn" href="https://www.instagram.com/p/DVt3VLrD9X9/" target="_blank" rel="noreferrer">Abrir post original</a>
+        <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+      </div>
+    </div>
+    <h1 class="title">Desafio gamificado: do zero à sua meta começando com R$1</h1>
+    <p class="subtitle">Modelo reproduzível (45–60s) baseado em: promessa mensurável + mecanismo nomeado + gamificação + prova de processo + CTA por comentário (entrega no direct).</p>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <div class="cardHeader"><div class="kicker"><span class="pill"><span class="pillDot"></span>Resumo</span></div><div class="hr"></div></div>
+      <div class="cardBody">
+        <div class="callout">
+          <strong>Fórmula do post:</strong> Meta clara + “começa com pouco” + método com nome (número específico) + passo a passo visual + CTA de palavra-chave nos comentários (para enviar o material).
+        </div>
+        <div class="twoCol" style="margin-top:12px">
+          <div>
+            <h3 style="margin:0 0 6px; font-size:13px">Quando usar</h3>
+            <ul>
+              <li>Você tem um <strong>sistema</strong> (planilha, checklist, tabela, mapa) que precisa ser visto.</li>
+              <li>O público está travado por <strong>desorganização</strong> e/ou <strong>falta de dinheiro/tempo</strong>.</li>
+              <li>Você quer <strong>comentários</strong> para destravar o algoritmo e iniciar conversa no direct.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 6px; font-size:13px">Objetivo do Reel</h3>
+            <ul>
+              <li>Converter curiosidade em ação: “<strong>eu consigo fazer isso</strong>”.</li>
+              <li>Gerar prova mental com exemplo rápido.</li>
+              <li>Capturar intenção: comentário com palavra-chave.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="cardHeader"><div class="kicker"><span class="pill"><span class="pillDot"></span>Metadados do calendário</span></div><div class="hr"></div></div>
+      <div class="cardBody">
+        <div class="codebox" id="metaBox">Título: Desafio gamificado: do zero à sua meta começando com R$1
+Instrução curta: Grave um Reel de 45–60s com hook numérico + passo a passo visual (tabela) + CTA de comentário para enviar o material no direct. Use cortes rápidos e números grandes na tela.
+Pilar: Passo a passo
+Formato: reels
+Link: https://www.instagram.com/p/DVt3VLrD9X9/</div>
+        <p class="footerNote">Dica: mantenha <strong>1 promessa principal</strong> e <strong>1 CTA</strong>. O resto é suporte visual.</p>
+      </div>
+    </aside>
+
+    <section class="card">
+      <div class="cardHeader"><div class="kicker"><span class="pill"><span class="pillDot"></span>Estrutura (sequência + função)</span></div><div class="hr"></div></div>
+      <div class="cardBody">
+        <ol style="margin:0; padding-left:18px; line-height:1.6">
+          <li><strong>Hook (0–2s)</strong> — destino + facilidade + nome do mecanismo.</li>
+          <li><strong>Contexto/autoridade (2–5s)</strong> — “eu te guio” + para quem é.</li>
+          <li><strong>Provocação (5–7s)</strong> — pergunta de coragem/compromisso.</li>
+          <li><strong>Como funciona (7–25s)</strong> — 3–5 passos curtos + mostrar a tabela.</li>
+          <li><strong>Exemplo (15–25s)</strong> — 1 micro sequência (ex.: marcou 1, 2, 5) para tangibilizar.</li>
+          <li><strong>Resultado (25–30s)</strong> — “no final dá X”.</li>
+          <li><strong>Entrega (30–45s)</strong> — dizer o que a pessoa recebe (link/tabela/planner).</li>
+          <li><strong>CTA (45–60s)</strong> — comentário com palavra-chave + compartilhar + seguir.</li>
+        </ol>
+        <div class="callout" style="margin-top:12px">
+          <strong>Regra de ouro:</strong> a cada 5–8 segundos, uma virada (novo número na tela, zoom na tabela, etapa nova, benefício novo).
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><div class="kicker"><span class="pill"><span class="pillDot"></span>Roteiro (falado + texto na tela)</span></div><div class="hr"></div></div>
+      <div class="cardBody">
+        <div class="codebox" id="scriptBox">[CONFIG]
+META = R$100.000 (troque pela meta do seu público)
+VALOR BAIXO = R$1 (ou R$5 / R$10)
+NOME DO DESAFIO = “Desafio dos 632 depósitos” (troque o número, mas mantenha a lógica)
+PALAVRA-CHAVE = “DESAFIO” (ou “PLANILHA”, “MAPA”, “TABELA”)
+
+[0–2s | HOOK | TEXTO NA TELA: “Do zero a R$[META]” + “Começa com R$[VALOR BAIXO]”]
+“Quer sair do zero e chegar em R$[META] com um desafio que começa com só R$[VALOR BAIXO]?”
+
+[2–5s | CONTEXTO | TEXTO: “Desafio dos [N] depósitos”]
+“Eu vou te guiar nesse desafio com uma tabela: você só vai marcando os depósitos que fizer.”
+
+[5–7s | PROVOCAÇÃO | TEXTO: “Você teria coragem?”]
+“E já aviso: é o desafio mais ‘chato’ no começo… por isso funciona. Você faria?”
+
+[7–25s | COMO FUNCIONA | TEXTO: “Precisa da tabela” + “Parte 1/2” + “Parte 2/2”]
+“Funciona assim:
+1) Você pega a tabela do desafio.
+2) Cada número é um valor de depósito.
+3) Você faz em 2 partes pra ficar mais leve: sobe e depois desce.
+4) Toda vez que depositar, você marca o número correspondente.
+
+Exemplo prático: se hoje você depositou R$1, marca o ‘1’. Amanhã R$2, marca o ‘2’. Fez R$5? marca o ‘5’.”
+
+[25–30s | RESULTADO | TEXTO: “No final: R$[META]”]
+“No final, a soma dá R$[META] acumulados — sem depender de motivação, só de sistema.”
+
+[30–45s | ENTREGA | TEXTO: “Comente: [PALAVRA-CHAVE]”]
+“Quer a minha tabela pronta + um planner simples pra acompanhar? Comenta ‘[PALAVRA-CHAVE]’ que eu te mando no direct.”
+
+[45–60s | CTA FINAL | TEXTO: “Comente + Envie + Siga”]
+“Comenta ‘[PALAVRA-CHAVE]’, manda pra alguém que precisa começar, e me segue porque eu vou postar variações desse desafio com metas menores também.”
+
+[OBS DE GRAVAÇÃO]
+- Grave em pé, falando direto.
+- Mostre a tabela na mão ou no celular (zoom).
+- Cortes a cada 1–2 frases, mantendo a energia.</div>
+        <p class="footerNote">Substituição universal: mantenha sempre <strong>Meta mensurável</strong> + <strong>Começa com pouco</strong> + <strong>Mecanismo visual nomeado</strong> + <strong>Exemplo</strong> + <strong>CTA por palavra</strong>.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><div class="kicker"><span class="pill"><span class="pillDot"></span>Elementos visuais</span></div><div class="hr"></div></div>
+      <div class="cardBody">
+        <div class="twoCol">
+          <div>
+            <h3 style="margin:0 0 6px; font-size:13px">Obrigatórios (para performance)</h3>
+            <ul>
+              <li><strong>Números grandes</strong>: META, valor inicial, N do desafio.</li>
+              <li><strong>Zoom</strong> no mecanismo (tabela/planilha).</li>
+              <li><strong>Barra de progresso</strong>: “Parte 1/2” e “Parte 2/2”.</li>
+              <li><strong>Som de check</strong> quando marcar um número.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 6px; font-size:13px">B-roll sugerido</h3>
+            <ul>
+              <li>Mão marcando a tabela (caneta/marcador).</li>
+              <li>App do banco (sem mostrar dados sensíveis).</li>
+              <li>Print rápido da planilha / planner.</li>
+              <li>Timeline “dia 1 / dia 7 / dia 30” (apenas visual).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:12px"><strong>Identidade high-tech:</strong> fundo escuro, tipografia grande, elementos em degradê para destacar números e etapas.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><div class="kicker"><span class="pill"><span class="pillDot"></span>Copy e ganchos (opções substituíveis)</span></div><div class="hr"></div></div>
+      <div class="cardBody">
+        <div class="twoCol">
+          <div>
+            <h3 style="margin:0 0 6px; font-size:13px">Hooks (escolha 1)</h3>
+            <ul>
+              <li><strong>Destino + facilidade:</strong> “Como sair do zero a [META] começando com R$[X] (sem ‘força de vontade’).”</li>
+              <li><strong>Curiosidade numérica:</strong> “O desafio dos [N] depósitos: por que [N] chega em [META]?”</li>
+              <li><strong>Provocação:</strong> “Esse desafio é simples, mas quase ninguém aguenta. Você aguenta?”</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 6px; font-size:13px">Frases de retenção (a cada virada)</h3>
+            <ul>
+              <li>“Olha isso aqui (zoom)…”</li>
+              <li>“O pulo do gato é… (1 frase)”</li>
+              <li>“Exemplo rápido pra você entender agora:”</li>
+              <li>“No final, o resultado é esse número:”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:12px">
+          <strong>Substituições que mantêm o impacto:</strong><br/>
+          “R$1” pode virar “5 minutos”, “1 página”, “1 lista”, “1 tarefa”.<br/>
+          “Depósitos” pode virar “ações”, “tarefas”, “dias”, “check-ins”, “lições”.
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><div class="kicker"><span class="pill"><span class="pillDot"></span>CTA</span></div><div class="hr"></div></div>
+      <div class="cardBody">
+        <div class="twoCol">
+          <div>
+            <h3 style="margin:0 0 6px; font-size:13px">CTA principal (comentário → direct)</h3>
+            <div class="codebox">“Comenta ‘[PALAVRA]’ que eu te mando a tabela/planilha no direct.”</div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 6px; font-size:13px">CTAs secundários (sem poluir)</h3>
+            <ul>
+              <li>“Envia pra alguém que vai fazer com você.”</li>
+              <li>“Segue o perfil que eu vou postar a versão pra [META menor].”</li>
+              <li>“Salva pra começar no próximo [dia útil/segunda].”</li>
+            </ul>
+          </div>
+        </div>
+        <p class="footerNote">Boa prática: fixe um comentário repetindo o CTA e responda rápido para sustentar o pico.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><div class="kicker"><span class="pill"><span class="pillDot"></span>Checklist de criação (reproduzível)</span></div><div class="hr"></div></div>
+      <div class="cardBody">
+        <div class="checklist">
+          <div class="check"><div class="cb"></div><div><strong>Definir a promessa</strong><div class="muted">Meta mensurável + prazo opcional + “começa com pouco”.</div></div></div>
+          <div class="check"><div class="cb"></div><div><strong>Criar um mecanismo visual</strong><div class="muted">Tabela/planilha/checklist que a pessoa entende em 3 segundos.</div></div></div>
+          <div class="check"><div class="cb"></div><div><strong>Nomear o método</strong><div class="muted">Use um número ou termo único: “Desafio dos [N]…”, “Mapa [X]”, “Método [Nome]”.</div></div></div>
+          <div class="check"><div class="cb"></div><div><strong>Escrever 1 exemplo</strong><div class="muted">Uma mini simulação (3 números/3 ações) para remover dúvida.</div></div></div>
+          <div class="check"><div class="cb"></div><div><strong>Definir palavra-chave</strong><div class="muted">Uma palavra curta que pareça “recurso”: PLANILHA / MAPA / TABELA.</div></div></div>
+          <div class="check"><div class="cb"></div><div><strong>Editar para retenção</strong><div class="muted">Cortes a cada 1–2 frases; números gigantes; zooms; “Parte 1/2”.</div></div></div>
+          <div class="check"><div class="cb"></div><div><strong>Publicar e operar</strong><div class="muted">Fixar comentário, responder rápido, repostar nos stories com enquete.</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHeader"><div class="kicker"><span class="pill"><span class="pillDot"></span>Variações (para usar em outros temas)</span></div><div class="hr"></div></div>
+      <div class="cardBody">
+        <div class="twoCol">
+          <div>
+            <h3 style="margin:0 0 6px; font-size:13px">Finanças (trocas rápidas)</h3>
+            <ul>
+              <li><strong>Reserva de emergência:</strong> “Do zero a R$10k em 12 meses começando com R$5.”</li>
+              <li><strong>Quitar dívidas:</strong> “Desafio dos [N] pagamentos: cada número é uma parcela extra.”</li>
+              <li><strong>Investimentos:</strong> “Desafio dos aportes: subindo/descendo para caber no orçamento.”</li>
+              <li><strong>Orçamento:</strong> “Desafio de 30 dias: 1 categoria por dia para cortar e realocar.”</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 6px; font-size:13px">Outros nichos (mesmo impacto)</h3>
+            <ul>
+              <li><strong>Saúde:</strong> “Desafio dos [N] treinos”: cada número = minutos; tabela de check-in.</li>
+              <li><strong>Estudos:</strong> “Desafio dos [N] pomodoros”: cada número = sessão; meta = aprovação.</li>
+              <li><strong>Inglês:</strong> “Desafio de 60 dias”: cada dia = 1 micro tarefa + marcador visual.</li>
+              <li><strong>Produtividade:</strong> “Mapa das 100 tarefas”: cada check = 1 ação simples por dia.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:12px"><strong>Template universal:</strong> “Como ir de [PONTO A] até [PONTO B] com o ‘Desafio dos [N] [AÇÕES]’ começando com [MICRO PASSO].”</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado!</div>
+</div>
+<script>
+(function(){
+  const btn = document.getElementById('copyBtn');
+  const box = document.getElementById('scriptBox');
+  const toast = document.getElementById('toast');
+  function showToast(){
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'), 1400);
+  }
+  btn.addEventListener('click', async () => {
+    const text = box.innerText.trim();
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast();
+    }catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast();
+    }
+  });
+})();
+</script></body></html>
