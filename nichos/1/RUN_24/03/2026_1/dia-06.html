@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 6 — Carrossel jurídico minimalista</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:#0E162B;
+    --card2:#0C1326;
+    --border:rgba(255,255,255,.10);
+    --border2:rgba(255,255,255,.14);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.70);
+    --muted2:rgba(234,240,255,.55);
+    --shadow: 0 10px 30px rgba(0,0,0,.45);
+    --r12:14px;
+    --r16:18px;
+    --grad: linear-gradient(90deg, #22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --grad2: radial-gradient(1000px 600px at 15% 10%, rgba(34,197,94,.18), transparent 55%),
+             radial-gradient(900px 560px at 85% 20%, rgba(56,189,248,.18), transparent 55%),
+             radial-gradient(900px 600px at 55% 95%, rgba(251,146,60,.14), transparent 55%);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background: var(--grad2), linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{color:inherit}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+  .top{
+    border:1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius: var(--r16);
+    box-shadow: var(--shadow);
+    padding:18px;
+    position:relative;
+    overflow:hidden;
+  }
+  .top:before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: conic-gradient(from 180deg, rgba(34,197,94,.0), rgba(34,197,94,.20), rgba(56,189,248,.20), rgba(251,146,60,.20), rgba(34,197,94,.0));
+    filter: blur(18px);
+    opacity:.75;
+    z-index:0;
+  }
+  .top > *{position:relative; z-index:1}
+  .badgeRow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .badge{
+    font-family:var(--mono);
+    font-size:12px;
+    padding:8px 10px;
+    border:1px solid var(--border);
+    border-radius:999px;
+    color:var(--muted);
+    background:rgba(0,0,0,.18);
+  }
+  .badge strong{color:var(--text)}
+  .hTitle{margin:12px 0 8px;font-size:20px;font-weight:750;letter-spacing:.2px;line-height:1.25}
+  .sub{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+  .link{
+    display:inline-flex;gap:10px;align-items:center;
+    margin-top:12px;
+    color:var(--muted);
+    text-decoration:none;
+    border:1px solid var(--border);
+    padding:10px 12px;
+    border-radius:12px;
+    background: rgba(0,0,0,.18);
+  }
+  .link:hover{border-color:var(--border2);color:var(--text)}
+  .grid{display:grid;grid-template-columns: 1.1fr .9fr; gap:14px; margin-top:14px}
+  @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+  .card{
+    border:1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+    border-radius: var(--r16);
+    box-shadow: var(--shadow);
+    padding:16px;
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size:14px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .card h3{margin:10px 0 8px;font-size:16px}
+  .kpi{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .pill{
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:8px 10px;
+    background: rgba(0,0,0,.18);
+    color:var(--muted);
+    font-size:13px;
+  }
+  .pill b{color:var(--text)}
+  .hr{
+    height:1px; background: rgba(255,255,255,.08);
+    margin:14px 0;
+  }
+  .hl{background: var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800}
+  ul{margin:10px 0 0 18px; color:var(--muted); line-height:1.65}
+  li{margin:6px 0}
+  .callout{
+    border:1px solid rgba(56,189,248,.22);
+    background: linear-gradient(180deg, rgba(56,189,248,.10), rgba(0,0,0,.10));
+    border-radius: 14px;
+    padding:12px;
+    color:var(--muted);
+  }
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width: 980px){.two{grid-template-columns:1fr}}
+  pre{
+    margin:0;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid var(--border);
+    background: rgba(0,0,0,.28);
+    overflow:auto;
+    color: rgba(234,240,255,.88);
+    line-height:1.55;
+    font-family: var(--mono);
+    font-size: 12.8px;
+  }
+  .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+  .btn{
+    cursor:pointer;
+    border:1px solid var(--border);
+    background: rgba(0,0,0,.24);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    font-weight:650;
+  }
+  .btn:hover{border-color:var(--border2)}
+  .btnPrimary{
+    background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    position:relative;
+  }
+  .btnPrimary:before{
+    content:"";
+    position:absolute; inset:-1px;
+    border-radius:12px;
+    background: var(--grad);
+    z-index:-1;
+    opacity:.35;
+    filter: blur(10px);
+  }
+  .fine{color:var(--muted2);font-size:12.5px;line-height:1.55}
+  .tag{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:12px;
+    padding:2px 8px;
+    border:1px solid var(--border);
+    border-radius:999px;
+    color:var(--muted);
+    background: rgba(0,0,0,.20);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="badgeRow">
+        <div class="badges">
+          <span class="badge"><strong>Nicho</strong>: Advocacia</span>
+          <span class="badge"><strong>Dia</strong>: 6</span>
+          <span class="badge"><strong>Formato</strong>: carrossel</span>
+          <span class="badge"><strong>Pilar</strong>: Passo a passo</span>
+        </div>
+        <div class="actions">
+          <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <h1 class="hTitle">Carrossel jurídico minimalista: gancho → tese técnica em 11 slides</h1>
+      <p class="sub">Modelo reproduzível para transformar um caso/situação recorrente em narrativa curta + explicação técnica + tese + fecho memorável, com estética editorial minimalista.</p>
+      <a class="link" href="https://www.instagram.com/p/DWJN7WPkUup/" target="_blank" rel="noreferrer">Ver post original (referência) → https://www.instagram.com/p/DWJN7WPkUup/</a>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Resumo</h2>
+        <div class="callout">
+          <b class="hl">Ideia central:</b> conduzir o leitor por um <b>open loop</b> (afirma e nega) e, em seguida, entregar uma <b>tese jurídica</b> com 2 camadas: (1) explicação simples e (2) detalhe técnico/autoridade — encerrando com uma frase citável.
+        </div>
+        <div class="kpi">
+          <span class="pill"><b>Meta</b>: leitura contínua</span>
+          <span class="pill"><b>Tom</b>: técnico + didático</span>
+          <span class="pill"><b>Ritmo</b>: frases curtas + explicações</span>
+          <span class="pill"><b>Entrega</b>: princípio geral + prevenção</span>
+        </div>
+        <div class="hr"></div>
+        <h3>Quando usar</h3>
+        <ul>
+          <li>Quando você quer <b>autoridade</b> sem parecer “aula longa”.</li>
+          <li>Quando existe um <b>mito</b> comum (“isso resolve”) e uma <b>virada técnica</b> (“depende/é o contrário”).</li>
+          <li>Para qualquer área (penal, trabalhista, família, consumidor, empresarial), trocando <i>perícia</i> por <i>documento, prazo, requisito, prova, entendimento do tribunal</i>.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Metadados do roteiro</h2>
+        <ul>
+          <li><span class="tag">Duração</span> 10–12 slides (ideal: 11)</li>
+          <li><span class="tag">Promessa</span> “você vai entender o mecanismo” (sem prometer êxito)</li>
+          <li><span class="tag">Retenção</span> open loop + viradas + “Ou seja” + mito</li>
+          <li><span class="tag">CTA</span> salvar/compartilhar/comentar/DM palavra-chave</li>
+        </ul>
+        <div class="hr"></div>
+        <h3>Parâmetros (padronize)</h3>
+        <ul>
+          <li><b>1 ideia</b> por slide.</li>
+          <li><b>1 frase martelo</b> a cada 1–2 slides (em negrito).</li>
+          <li><b>Sem nomes</b> de partes/empresas reais (privacidade).</li>
+          <li><b>Sem promessa</b> de resultado; caráter informativo.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Estrutura</h2>
+      <div class="two">
+        <div>
+          <h3>Macro-sequência (reproduzível)</h3>
+          <ul>
+            <li><b>Gancho narrativo</b> (afirma/nega; 2 frases)</li>
+            <li><b>Contexto</b> (quem/situação; por que importa juridicamente)</li>
+            <li><b>“Parece lógico, mas…”</b> (introduz contradição)</li>
+            <li><b>Explicação técnica 1</b> (mecanismo real)</li>
+            <li><b>Explicação técnica 2</b> (efeitos colaterais / pontos de prova)</li>
+            <li><b>Autoridade</b> (tribunais/prática/rotina documental)</li>
+            <li><b>Detalhe avançado</b> (prazo, ônus, requisito, cadeia de custódia etc.)</li>
+            <li><b>“Ou seja…”</b> (tese em linguagem simples)</li>
+            <li><b>Mito/objeção</b> (correção direta)</li>
+            <li><b>Princípio geral</b> (transferível)</li>
+            <li><b>Fecho memorável</b> (frase de placa)</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Mapa de escrita (copy)</h3>
+          <ul>
+            <li><b>Frases curtas</b> para impacto.</li>
+            <li>Conectores de virada: “Acontece que…”, “Só que…”, “O detalhe é…”.</li>
+            <li>Síntese obrigatória: “Ou seja: …”.</li>
+            <li>Termo técnico <b>+ explicação</b> (na mesma tela ou na próxima).</li>
+            <li>Finalize com regra: “Se você quer X, faça Y (com orientação)”.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Slides sugeridos (1..11)</h2>
+      <pre id="roteiro">SLIDE 1 — CAPA (open loop em 2 frases)
+“Ele(a) fez [AÇÃO] para evitar [RISCO].”
+“Evitou? [VIRADA CURTA: ‘Nem sempre/Depende/Na prática, não.’]”
+
+SLIDE 2 — CONTEXTO (2–3 linhas)
+“[SITUAÇÃO RECORRENTE] acontece quando [CENÁRIO].”
+“O detalhe: isso impacta [DIREITO/PROVA/PRAZO/RESPONSABILIDADE].”
+
+SLIDE 3 — A LÓGICA APARENTE
+“A lógica parecia sólida:”
+“[CRENÇA COMUM que a maioria repete].”
+
+SLIDE 4 — VIRADA (tese técnica)
+“Acontece que, do ponto de vista [JURÍDICO/TÉCNICO],”
+“isso pode fazer o contrário: **[TESE EM 1 LINHA]**.”
+
+SLIDE 5 — EXPLICAÇÃO TÉCNICA 1 (mecanismo)
+“Quando você [FAZ X], você cria/ativa [REGISTROS/efeitos] em [ONDE].”
+“**O que importa não é a intenção, é o vestígio.**”
+
+SLIDE 6 — EXPLICAÇÃO TÉCNICA 2 (efeitos colaterais)
+“Você não eliminou o risco.”
+“Você **redistribuiu** o problema para [N] pontos: [A], [B], [C].”
+
+SLIDE 7 — AUTORIDADE / PROVA (sem sensacionalismo)
+“Na prática, [TRIBUNAIS/ÓRGÃOS/ROTINAS DE COMPLIANCE] analisam isso por:”
+“• [DOCUMENTO]  • [PROCEDIMENTO]  • [ENTENDIMENTO]”
+
+SLIDE 8 — DETALHE AVANÇADO (credibilidade)
+“O que quase ninguém considera:”
+“[PRAZO / ÔNUS DA PROVA / REQUISITO FORMAL / CADEIA DE CUSTÓDIA / PRESUNÇÃO].”
+
+SLIDE 9 — OU SEJA (tradução)
+“Ou seja:”
+“**[TESE em linguagem simples e direta]**.”
+
+SLIDE 10 — MITO VS REALIDADE (objeção)
+“Confusão frequente: ‘[MITO]’.”
+“Na verdade: **[CORREÇÃO objetiva + condição: ‘depende de…’]**.”
+
+SLIDE 11 — LIÇÃO + FECHO (citável)
+“A lição:”
+“[PRINCÍPIO geral aplicável].”
+“**[FRASE FINAL tipo placa/metáfora].**”
+
+LEGENDA (opcional, 4 blocos)
+1) Reforço do gancho (1–2 linhas)
+2) Tese em bullets (3–5 bullets curtos)
+3) Observação ética: conteúdo informativo; procure orientação profissional
+4) CTA: salvar/compartilhar/comentar palavra-chave</pre>
+      <p class="fine" style="margin-top:10px">Dica: escreva primeiro apenas as frases em <b>negrito</b> (o “trilho”). Depois complete os parágrafos. Isso garante leitura até para quem passa rápido.</p>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <div class="card">
+        <h2>Elementos visuais</h2>
+        <ul>
+          <li><b>Estética:</b> minimalista editorial (texto puro).</li>
+          <li><b>Fundo:</b> branco total (ou off-white), texto preto/cinza escuro.</li>
+          <li><b>Marca d’água:</b> @seuuser diagonal com 5–8% de opacidade.</li>
+          <li><b>Alinhamento:</b> à esquerda; muito respiro (margens grandes).</li>
+          <li><b>Tipografia:</b> Inter/Helvetica/Arial; H1 72–96; corpo 42–52; entrelinhas 1.25–1.4.</li>
+          <li><b>Ênfase:</b> no máximo 1–2 trechos em bold por slide.</li>
+        </ul>
+        <div class="hr"></div>
+        <h3>Configuração pronta (feed)</h3>
+        <ul>
+          <li>Tamanho: 1080×1350 (4:5)</li>
+          <li>Margens: 90–120 px laterais; 140–180 px topo/baixo</li>
+          <li>Revisão: contraste, ortografia, consistência entre slides</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Copy e ganchos</h2>
+        <h3>Modelos de capa (sem promessa)</h3>
+        <ul>
+          <li>“Ele(a) ‘comprovou’ com print. <b>Comprovou?</b> Depende.”</li>
+          <li>“Ela assinou ‘só um papel’. <b>Assinou mais do que imaginava.</b>”</li>
+          <li>“A empresa aplicou ‘justa causa’. <b>Era?</b> Nem sempre.”</li>
+          <li>“Você acha que [X] é ‘seguro’? <b>Eis o detalhe que muda tudo.</b>”</li>
+        </ul>
+        <div class="hr"></div>
+        <h3>Frases de virada (para retenção)</h3>
+        <ul>
+          <li>“Parece lógico. <b>Mas a lógica jurídica é outra.</b>”</li>
+          <li>“A intenção era boa. <b>O efeito, não.</b>”</li>
+          <li>“O problema não é o que você fez. <b>É o que ficou registrável.</b>”</li>
+          <li>“O que decide não é ‘achismo’. <b>É requisito, prova e contexto.</b>”</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <div class="card">
+        <h2>CTA</h2>
+        <ul>
+          <li><b>Salvar:</b> “Salve para consultar quando precisar de [situação].”</li>
+          <li><b>Compartilhar:</b> “Envie para alguém que está lidando com [tema].”</li>
+          <li><b>Comentário guiado:</b> “Quer um passo a passo de [documento/procedimento]? Comente <b>QUERO</b>.”</li>
+          <li><b>DM palavra-chave:</b> “Se quiser um checklist, me mande <b>CHECKLIST</b> no direct.”</li>
+          <li><b>Institucional:</b> “Conteúdo informativo. Para o seu caso, procure um(a) advogado(a)/Defensoria.”</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="fine">Observação: mantenha o CTA preferencialmente na legenda ou no último slide. Evite linguagem de captação indevida e promessas de resultado.</p>
+      </div>
+
+      <div class="card">
+        <h2>Checklist</h2>
+        <h3>Checklist de criação (antes de diagramar)</h3>
+        <ul>
+          <li>[ ] Defini a <b>situação</b> (1 frase) e a <b>tese</b> (1 frase).</li>
+          <li>[ ] Escolhi 1 <b>mito</b> e 1 <b>correção</b> com “depende de…”.</li>
+          <li>[ ] Tenho 1 item de <b>autoridade</b> (lei, requisito, rotina, entendimento, sem citar caso sensível).</li>
+          <li>[ ] Incluí 1 <b>detalhe avançado</b> (prazo/ônus/requisito/cadeia de custódia).</li>
+        </ul>
+        <h3>Checklist de retenção (texto pronto)</h3>
+        <ul>
+          <li>[ ] Capa com virada em até 2 linhas por frase.</li>
+          <li>[ ] “Acontece que…” + “Ou seja…” presentes.</li>
+          <li>[ ] Pelo menos 3 pontos de suspense: pergunta, virada, mito.</li>
+          <li>[ ] Negrito só no essencial (1–2 trechos/slide).</li>
+        </ul>
+        <h3>Checklist de compliance/ética</h3>
+        <ul>
+          <li>[ ] Conteúdo informativo; sem promessa de êxito.</li>
+          <li>[ ] Sem exposição de cliente/parte; sem detalhes identificáveis.</li>
+          <li>[ ] Se houver exemplo, é hipotético ou anonimizado.</li>
+          <li>[ ] CTA respeitoso e não agressivo.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Variações</h2>
+      <div class="two">
+        <div>
+          <h3>Variação A (mais “Dor”)</h3>
+          <ul>
+            <li>Capa: “Ele fez [X] pra se proteger. <b>Ajudou? Piorou.</b>”</li>
+            <li>Inclua um slide 6 com “o custo invisível”: tempo, risco, inversão do ônus, nulidade, perda de prazo.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Variação B (mais “Autoridade”)</h3>
+          <ul>
+            <li>Slide 7 vira “Como isso é analisado”: 3 critérios objetivos (ex.: requisito formal + prova + contexto).</li>
+            <li>Slide 8 traz 1 termo técnico e tradução simples na linha seguinte.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <h3>Variação C (Mito vs Verdade explícito)</h3>
+      <ul>
+        <li>Troque o slide 10 por uma mini-tabela em texto: “Mito: … / Verdade: … / Depende de: …”.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Checklist final de postagem</h2>
+      <ul>
+        <li>[ ] Revisei ortografia e consistência de termos.</li>
+        <li>[ ] Garanti legibilidade no celular (testar a 25% de zoom).</li>
+        <li>[ ] Coloquei CTA na legenda (salvar/compartilhar) + nota informativa.</li>
+        <li>[ ] Mantive o tema educativo e impessoal (sem atendimento no feed).</li>
+      </ul>
+      <p class="fine">Se você definir <b>área</b> (ex.: trabalhista/família/consumidor/empresarial/penal) e <b>tema</b> (ex.: print como prova, justa causa, guarda, negativação, contrato), este roteiro vira texto pronto slide a slide.</p>
+    </section>
+
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const pre = document.getElementById('roteiro');
+    function copyText(text){
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        return navigator.clipboard.writeText(text);
+      }
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      return Promise.resolve();
+    }
+    btn.addEventListener('click', async () => {
+      const text = pre.innerText;
+      try{
+        await copyText(text);
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+      }catch(e){
+        btn.textContent = 'Falha ao copiar';
+        setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
