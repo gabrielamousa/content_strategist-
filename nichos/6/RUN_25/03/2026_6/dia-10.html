@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 10 — Carrossel Antes x Depois (Educador Físico)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --card:#0E1633;
+      --card2:#0B1229;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.58);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r:18px;
+      --g: linear-gradient(90deg, #20E3B2 0%, #2CCCFF 45%, #FFB347 100%);
+      --g2: linear-gradient(135deg, rgba(32,227,178,.20), rgba(44,204,255,.16), rgba(255,179,71,.14));
+      --good:#20E3B2;
+      --warn:#FFB347;
+      --info:#2CCCFF;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 900px at 10% 10%, rgba(44,204,255,.12), transparent 60%),
+        radial-gradient(1000px 800px at 90% 20%, rgba(32,227,178,.10), transparent 55%),
+        radial-gradient(900px 700px at 60% 100%, rgba(255,179,71,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: calc(var(--r) + 6px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .topbar{
+      padding:18px 20px;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .kicker{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      color:var(--muted);
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+    .pill{
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      background: rgba(14,22,51,.55);
+      border-radius:999px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      white-space:nowrap;
+    }
+    .dot{
+      width:7px;height:7px;border-radius:999px;
+      background: var(--g);
+    }
+    h1{
+      margin:10px 0 0;
+      font-size:24px;
+      line-height:1.15;
+      letter-spacing:-.3px;
+    }
+    .sub{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      max-width:72ch;
+    }
+    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .btn{
+      border:1px solid var(--stroke2);
+      background: rgba(234,240,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:650;
+      font-size:13px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(234,240,255,.09); border-color: rgba(255,255,255,.22)}
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(32,227,178,.18), rgba(44,204,255,.16), rgba(255,179,71,.14));
+      position:relative;
+    }
+    .btn.primary:before{
+      content:"";
+      position:absolute; inset:-1px;
+      border-radius:12px;
+      padding:1px;
+      background: var(--g);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events:none;
+    }
+    .link{
+      color:var(--muted);
+      text-decoration:none;
+      border-bottom:1px dashed rgba(234,240,255,.35);
+    }
+    .grid{display:grid;grid-template-columns: 1fr; gap:14px; margin-top:14px}
+    @media (min-width: 920px){
+      .grid{grid-template-columns: 1.1fr .9fr}
+    }
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,51,.75), rgba(11,18,41,.65));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    }
+    .card .hd h2{margin:0;font-size:14px;letter-spacing:.3px;text-transform:uppercase;color:var(--muted)}
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      color:rgba(234,240,255,.78);
+      background: rgba(7,10,18,.35);
+    }
+    .card .bd{padding:14px 16px}
+    .list{margin:0;padding-left:18px;color:var(--muted)}
+    .list li{margin:8px 0}
+    .hr{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+    .callout{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(7,10,18,.30);
+      border-radius: 14px;
+      padding:12px 12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .callout:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: var(--g2);
+      opacity:.9;
+      pointer-events:none;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    }
+    .callout strong{color:var(--text)}
+    .cols{display:grid;grid-template-columns: 1fr;gap:12px}
+    @media (min-width: 920px){
+      .cols{grid-template-columns: 1fr 1fr}
+    }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: rgba(234,240,255,.82);
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(7,10,18,.45);
+      border: 1px solid rgba(255,255,255,.10);
+      overflow:auto;
+      white-space:pre-wrap;
+    }
+    .hint{color:var(--muted2);font-size:12.5px;margin-top:8px}
+    .tagrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .tag{font-size:12px;color:rgba(234,240,255,.72);border:1px solid rgba(255,255,255,.10);padding:6px 10px;border-radius:999px;background: rgba(14,22,51,.35)}
+    .ok{color: rgba(32,227,178,.95)}
+    .warn{color: rgba(255,179,71,.95)}
+    .info{color: rgba(44,204,255,.95)}
+    footer{margin-top:18px;color:var(--muted2);font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div>
+          <div class="kicker">
+            <span class="pill"><span class="dot"></span> Nicho: <strong>Educador Físico</strong></span>
+            <span class="pill">Dia: <strong>10</strong></span>
+            <span class="pill">Formato: <strong>Carrossel</strong></span>
+            <span class="pill">Pilar: <strong>Prova</strong></span>
+          </div>
+          <h1>Antes x Depois (12 semanas): prova em 4 ângulos</h1>
+          <p class="sub">Carrossel de alta retenção com comparativo lado a lado (frente/perfil/costas) + microtextos para contexto e autoridade, finalizando com 3 pilares do método e CTA único.</p>
+          <p class="sub">Post original: <a class="link" href="https://www.instagram.com/p/CjTqGWsJcSh/" target="_blank" rel="noreferrer">https://www.instagram.com/p/CjTqGWsJcSh/</a></p>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="copySlidesBtn">Copiar slides</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd"><h2>Resumo</h2><span class="badge">Objetivo: prova + confiança + conversão</span></div>
+        <div class="bd">
+          <div class="callout">
+            <strong>Ideia central:</strong> mostrar transformação com padrão visual (mesmo cenário/pose/luz), entregar <strong>contexto mínimo</strong> (tempo + frequência + foco) e concluir com <strong>como foi feito</strong> (3 pilares) + CTA.
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><span class="info">Retenção</span>: o usuário desliza para “confirmar” mudanças em ângulos diferentes.</li>
+            <li><span class="ok">Autoridade</span>: microtextos inserem metodologia sem poluir a imagem.</li>
+            <li><span class="warn">Ética</span>: evitar promessas absolutas; manter fiel ao caso e ao contexto.</li>
+          </ul>
+          <div class="tagrow">
+            <span class="tag">antes vs depois</span>
+            <span class="tag">prova visual</span>
+            <span class="tag">microtextos</span>
+            <span class="tag">padronização</span>
+            <span class="tag">CTA único</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Metadados do calendário</h2><span class="badge">Pronto para agendar</span></div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Título:</strong> Antes x Depois (12 semanas): prova em 4 ângulos</li>
+            <li><strong>Instrução curta:</strong> Monte um carrossel de transformação com fotos padronizadas (frente/perfil/costas) e feche com 3 pilares do método + CTA único em comentário/DM.</li>
+            <li><strong>Pilar:</strong> Prova</li>
+            <li><strong>Formato:</strong> carrossel</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Padrão de publicação:</strong> 1 transformação por semana (ou quinzenal) + 1 post educativo derivado (“o que fez diferença”). Mantém prova sem virar só vitrine.
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Estrutura</h2><span class="badge">Modelo reproduzível (5–7 slides)</span></div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <ul class="list">
+              <li><strong>Slide 1 (capa):</strong> “Antes x Depois” + tempo + foco (opcional) + “Arraste →”.</li>
+              <li><strong>Slides 2–5 (provas):</strong> comparativo lado a lado com ângulos diferentes (frente, perfil, costas, detalhe).</li>
+              <li><strong>Slide final:</strong> “O que fez diferença” (3 pilares) + CTA único.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout">
+              <strong>Regra de ouro:</strong> a foto é o conteúdo; o texto só guia o olhar. Use <strong>microtextos</strong> (2–6 palavras) por slide.
+            </div>
+            <p class="hint">Sugestão de consistência: poste sempre com a mesma diagramação, mudando apenas tempo, foco e ângulos. Isso cria “série” e aumenta reconhecimento.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Slides sugeridos (1..7)</h2><span class="badge">Pronto para Canva/Figma</span></div>
+      <div class="bd">
+        <div class="mono" id="slidesText">SLIDE 1 — CAPA
+H1: ANTES x DEPOIS
+H2 (opcional): 12 semanas • 3x/sem • foco: [emagrecimento/hipertrofia/performance/postura]
+Rodapé: Arraste →
+
+SLIDE 2 — FRENTE (PROVA 1)
+Microtexto: Frente
+Selos: Semana 0 | Semana 12
+
+SLIDE 3 — PERFIL (PROVA 2)
+Microtexto: Perfil
+Nota (pequena): postura/abdômen/linha do quadril (conforme o caso)
+
+SLIDE 4 — COSTAS (PROVA 3)
+Microtexto: Costas
+Nota (pequena): simetria/escápulas/cintura (conforme o caso)
+
+SLIDE 5 — DETALHE (PROVA 4)
+Escolha 1: (a) outro perfil, (b) close de postura, (c) teste/movimento,
+(d) métrica (tempo/carga/passos/dor)
+Microtexto: Detalhe que mudou
+
+SLIDE 6 — O QUE FEZ DIFERENÇA (MÉTODO)
+Título: O que fez diferença:
+• Treino: [3x/sem + progressão]
+• Hábitos: [passos + proteína + sono]
+• Ajustes: [check-in semanal + correções]
+
+SLIDE 7 — CTA (CONVERSÃO)
+Texto: Quer que eu avalie seu caso?
+CTA: Comente “PLANO” que eu mando as perguntas de avaliação</div>
+        <p class="hint">Se você precisar manter em 5 slides: una os slides 6 e 7 em um único fechamento (método + CTA).</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Roteiro (legenda pronta)</h2><span class="badge">Storytelling + contexto + ética</span></div>
+      <div class="bd">
+        <div class="mono" id="roteiroText">Legenda (copiar e adaptar)
+
+[1] Contexto (1–2 linhas)
+“Evolução real em 12 semanas. Objetivo: [emagrecimento/hipertrofia/performance/postura].”
+
+[2] Ponto A (situação inicial)
+“Quando começamos, o(a) aluno(a) chegou com [dor/limitação/trava/rotina corrida] e o objetivo era [objetivo].”
+
+[3] A trava (o que estava impedindo o progresso)
+“O principal bloqueio não era ‘falta de força de vontade’: era [falta de progressão / pouca consistência / excesso de volume / técnica / sono / alimentação desorganizada / medo de carga].”
+
+[4] Método em 3 pilares (bem específico, sem prometer milagre)
+• Treino: [frequência] + [método] + progressão (carga/reps/tempo)
+• Hábitos: [passos/dieta/proteína/sono/água] (o mínimo viável)
+• Acompanhamento: check-in [semanal/quinzenal] + ajustes
+
+[5] Execução (como foi na prática)
+“Na prática: [X] treinos/sem + ajustes a cada [período]. Sem atalhos — só processo.”
+
+[6] Resultado (sem exageros)
+“O que mudou: [medidas/força/disposição/postura/dor/performance].”
+
+[7] CTA único
+“Quer um plano com base no seu objetivo e rotina? Comente ‘PLANO’ que eu te envio as perguntas de avaliação.”</div>
+        <p class="hint">Dica: substitua “aluno(a)” por “cliente” conforme seu posicionamento (online/presencial). Se o público for iniciante, simplifique o pilar “Treino”.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Elementos visuais</h2><span class="badge">Padrão high-tech sem poluir</span></div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <ul class="list">
+              <li><strong>Set fixo:</strong> mesmo local, mesma luz, mesma distância, mesma altura da câmera (tripé).</li>
+              <li><strong>Sem filtro:</strong> cor realista para credibilidade.</li>
+              <li><strong>Divisória central:</strong> linha fina separando Antes/Depois.</li>
+              <li><strong>Selos discretos:</strong> “Semana 0” e “Semana X”.</li>
+              <li><strong>Microtextos:</strong> “Frente”, “Perfil”, “Costas” (2–6 palavras).</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout">
+              <strong>Tipografia sugerida:</strong> H1 forte (Montserrat / Anton / Bebas) + texto de apoio (Inter / Open Sans). Use alto contraste e poucas palavras.
+            </div>
+            <div class="hr"></div>
+            <ul class="list">
+              <li><strong>Paleta:</strong> neutro + 1 cor de destaque (verde/azul/laranja).</li>
+              <li><strong>Consistência:</strong> mesma diagramação em todas as provas (vira “assinatura”).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Copy e ganchos</h2><span class="badge">Escolha 1 por post</span></div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <ul class="list">
+              <li><strong>Temporal:</strong> “12 semanas. Mesma luz. Mesma pose. Resultado real.”</li>
+              <li><strong>Curiosidade:</strong> “No último slide: o ajuste que destravou o progresso.”</li>
+              <li><strong>Objeção:</strong> “Não foi ‘treinar mais’. Foi treinar melhor + ajustar o básico.”</li>
+              <li><strong>Prova:</strong> “Frente/Perfil/Costas para você ver sem ângulo ‘favorável’.”</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout">
+              <strong>Guia de microtexto por slide:</strong>
+              <div class="hr"></div>
+              Capa: “Antes x Depois (X semanas)”
+              <br/>Provas: “Frente / Perfil / Costas / Detalhe”
+              <br/>Fechamento: “O que fez diferença”
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>CTA</h2><span class="badge">Único, claro, rastreável</span></div>
+      <div class="bd">
+        <ul class="list">
+          <li><strong>Principal (comentário):</strong> “Comente <strong>PLANO</strong> que eu te mando as perguntas de avaliação.”</li>
+          <li><strong>Alternativa (DM):</strong> “Me mande <strong>TRANSFORMAÇÃO</strong> no direct que eu te digo por onde começar.”</li>
+          <li><strong>Qualificação:</strong> “Seu objetivo hoje é: (1) emagrecer (2) ganhar massa (3) performance (4) postura?”</li>
+        </ul>
+        <p class="hint">Escolha só 1 CTA por post. Se estiver captando leads, priorize comentário (aumenta alcance) e responda com direcionamento para DM.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Checklist de criação</h2><span class="badge">Controle de qualidade</span></div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <ul class="list">
+              <li>[ ] Autorização do aluno/cliente (termo + permissão de uso de imagem).</li>
+              <li>[ ] Mesma luz/local/distância/altura de câmera.</li>
+              <li>[ ] Mesmas poses e ângulos (frente/perfil/costas).</li>
+              <li>[ ] Sem filtros / sem edição que altere forma.</li>
+              <li>[ ] Contexto mínimo: tempo + frequência + foco.</li>
+              <li>[ ] Slide final com “método em 3 pilares”.</li>
+              <li>[ ] CTA único e rastreável (“PLANO” / “TRANSFORMAÇÃO”).</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout">
+              <strong>Checklist técnico (foto):</strong>
+              <div class="hr"></div>
+              • câmera na altura do umbigo/peito
+              <br/>• marcação no chão para pés + tripé
+              <br/>• mesma distância (ex.: 2,5m)
+              <br/>• mesma lente/zoom (evita distorção)
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Variações</h2><span class="badge">Use sem foto de corpo, se necessário</span></div>
+      <div class="bd">
+        <ul class="list">
+          <li><strong>Variação “sem fotos”:</strong> antes/depois de métricas (tempo de 5km, carga no agachamento, mobilidade, dor 0–10, teste funcional).</li>
+          <li><strong>Variação “erro → ajuste → resultado”:</strong> slide 6 vira “O erro que corrigimos” + “O ajuste” + “O impacto”.</li>
+          <li><strong>Variação “mini-case”:</strong> inclua 1 slide com rotina (ex.: “mãe, 2 filhos, 35min/dia”).</li>
+          <li><strong>Variação por objetivo:</strong> 
+            <span class="tag">Emagrecimento: passos + déficit + progressão</span>
+            <span class="tag">Hipertrofia: volume + técnica + proteína</span>
+            <span class="tag">Performance: treinos-chave + recuperação + métricas</span>
+            <span class="tag">Postura/dor: mobilidade + força + educação</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <div>Uso recomendado: manter consistência visual e publicar como série (“Transformação da Semana”).</div>
+    </footer>
+  </div>
+
+  <script>
+    function copyTextFromEl(id){
+      const el = document.getElementById(id);
+      const text = el ? el.textContent : '';
+      if(!text) return;
+      navigator.clipboard.writeText(text);
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', function(){
+      copyTextFromEl('roteiroText');
+      const btn = this;
+      const old = btn.textContent;
+      btn.textContent = 'Roteiro copiado';
+      setTimeout(()=>btn.textContent = old, 1100);
+    });
+
+    document.getElementById('copySlidesBtn').addEventListener('click', function(){
+      copyTextFromEl('slidesText');
+      const btn = this;
+      const old = btn.textContent;
+      btn.textContent = 'Slides copiados';
+      setTimeout(()=>btn.textContent = old, 1100);
+    });
+  </script>
+</body>
+</html>
