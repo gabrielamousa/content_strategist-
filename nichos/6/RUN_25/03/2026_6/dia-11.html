@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 11 — O tripé do resultado</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1222;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --line:rgba(234,240,255,.12);
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg, #22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --g2: radial-gradient(600px 220px at 25% 0%, rgba(56,189,248,.20), transparent 60%),
+            radial-gradient(520px 220px at 75% 10%, rgba(34,197,94,.18), transparent 60%),
+            radial-gradient(520px 220px at 55% 90%, rgba(251,146,60,.14), transparent 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 52px}
+
+    .topbar{
+      display:flex; gap:14px; align-items:stretch; justify-content:space-between; flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .hero{
+      flex: 1 1 520px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero:before{
+      content:"";
+      position:absolute;
+      left:-30%; top:-60%;
+      width:90%; height:210px;
+      background: var(--g1);
+      filter: blur(48px);
+      opacity:.20;
+      transform: rotate(-8deg);
+      pointer-events:none;
+    }
+    .meta{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      margin:0 0 10px;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--line);
+      font-size:12px;
+      color: var(--muted);
+    }
+    .pill b{color:var(--text); font-weight:650}
+    .title{
+      margin:6px 0 8px;
+      font-size:20px;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .subtitle{margin:0; color:var(--muted); font-size:14px; line-height:1.4}
+
+    .actions{
+      flex: 0 1 320px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-width:260px;
+    }
+    .card{
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:14px;
+    }
+    .btn{
+      display:flex; align-items:center; justify-content:center;
+      gap:10px;
+      padding:12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.06));
+      color: var(--text);
+      cursor:pointer;
+      font-weight:650;
+      letter-spacing:.2px;
+    }
+    .btn:hover{border-color: rgba(255,255,255,.22)}
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(34,197,94,.18), rgba(56,189,248,.10));
+      border-color: rgba(56,189,248,.30);
+    }
+    .btn small{font-weight:600; color:var(--muted)}
+
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+      .actions{flex: 1 1 auto}
+    }
+
+    .section{
+      background: rgba(255,255,255,.05);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .section h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:.9px;
+      text-transform:uppercase;
+      color: rgba(234,240,255,.86);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .section h2 .accent{
+      height:10px; width:110px;
+      border-radius:999px;
+      background: var(--g1);
+      opacity:.85;
+    }
+    .section p{margin:0 0 10px; color: var(--muted); line-height:1.55; font-size:14px}
+    .section ul{margin:0; padding-left:18px; color:var(--muted); line-height:1.55; font-size:14px}
+    .section li{margin:6px 0}
+
+    .kpi{
+      display:grid; grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    .kpi .box{
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      padding:10px;
+    }
+    .kpi .box .label{font-size:11px; color:rgba(234,240,255,.62); text-transform:uppercase; letter-spacing:.9px}
+    .kpi .box .val{margin-top:6px; font-size:13px; color:rgba(234,240,255,.90); font-weight:650}
+
+    .script{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: rgba(234,240,255,.88);
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      padding:12px;
+      border-radius: 14px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .twoCols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 720px){.twoCols{grid-template-columns:1fr}}
+
+    .tagrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .tag{
+      font-size:12px;
+      color:rgba(234,240,255,.76);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      padding:6px 9px;
+      border-radius:999px;
+    }
+
+    .footer{
+      margin-top:16px;
+      color: rgba(234,240,255,.55);
+      font-size:12px;
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;
+    }
+    .link{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: rgba(234,240,255,.78);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="hero">
+        <div class="meta">
+          <div class="pill"><b>Nicho</b> Educador Físico</div>
+          <div class="pill"><b>Dia</b> 11</div>
+          <div class="pill"><b>Formato</b> Reels</div>
+          <a class="pill" href="https://www.instagram.com/p/DWL664mjtjj/" target="_blank" rel="noreferrer"><b>Original</b> abrir link</a>
+        </div>
+        <h1 class="title">O tripé do resultado: treino, dieta e descanso</h1>
+        <p class="subtitle">Roteiro enxuto e reproduzível usando framework de 3 pilares (essencialismo). Ideal para retenção, compartilhamento e comentários pedindo a “parte 2”.</p>
+        <div class="kpi">
+          <div class="box"><div class="label">Objetivo do post</div><div class="val">Dar direção + cortar ruído</div></div>
+          <div class="box"><div class="label">Duração alvo</div><div class="val">15–20s</div></div>
+          <div class="box"><div class="label">Pilar</div><div class="val">Passo a passo</div></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="card">
+          <button class="btn primary" id="copyBtn">Copiar roteiro <small>(texto completo)</small></button>
+          <button class="btn" id="copyCaptionBtn">Copiar legenda <small>(copy pronta)</small></button>
+          <div class="tagrow">
+            <span class="tag">3 pilares</span>
+            <span class="tag">anti-segredo</span>
+            <span class="tag">salvável</span>
+            <span class="tag">comentável</span>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:8px;">
+            <div style="font-weight:700; letter-spacing:.2px;">CTA principal</div>
+            <div style="height:10px; width:92px; border-radius:999px; background: var(--g1); opacity:.85;"></div>
+          </div>
+          <div style="color: var(--muted); font-size:14px; line-height:1.55;">
+            “Comenta <b>TRIPÉ</b> que eu te mando um exemplo de semana (treino + alimentação + sono) pro seu objetivo.”
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="section">
+        <h2>Resumo <span class="accent"></span></h2>
+        <p><b>Ideia central:</b> resultado vem do básico bem feito. Você resume em 3 pilares (tripé), entrega 1 micro-regra por pilar e fecha com um CTA que abre conversa (comentários) e puxa DM.</p>
+        <ul>
+          <li><b>Por que funciona:</b> simples, completo, compartilhável; cria loop (“como aplicar?”).</li>
+          <li><b>Quando usar:</b> emagrecimento, hipertrofia, performance, dor/lesão, corrida, postura.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Estrutura <span class="accent"></span></h2>
+        <ul>
+          <li><b>0–2s:</b> Hook (dor/confusão).</li>
+          <li><b>2–6s:</b> Tripé em 3 palavras (pausas).</li>
+          <li><b>6–16s:</b> 1 frase prática por pilar.</li>
+          <li><b>16–20s:</b> Reforço + CTA.</li>
+        </ul>
+        <div class="tagrow" style="margin-top:12px;">
+          <span class="tag">Ritmo rápido</span>
+          <span class="tag">Pausas intencionais</span>
+          <span class="tag">1 take ou 3 cortes</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Roteiro <span class="accent"></span></h2>
+        <div class="script" id="scriptText">ROTEIRO (15–20s) — “TRIPÉ DO RESULTADO”
+
+[0–2s | Hook | câmera frontal]
+“Quer resultado de verdade e tá se perdendo em mil estratégias?”
+
+[2–6s | Entrega do tripé | pausas]
+“É isso aqui: TREINO… ALIMENTAÇÃO… SONO.”
+
+[6–16s | Microexplicação (1 linha por pilar)]
+“Treino: progressão — hoje um pouco melhor que semana passada.”
+“Alimentação: consistência — bater o básico todo dia, não perfeito 2 dias.”
+“Sono: recuperação — sem dormir bem, seu corpo não acompanha.”
+
+[16–20s | Reforço + CTA]
+“Sem um deles, o tripé cai. Comenta ‘TRIPÉ’ que eu te mando um exemplo de semana pro seu objetivo.”
+
+NOTA DE PERFORMANCE
+- Fale cada palavra do tripé com uma pausa curta.
+- Na última palavra (“SONO”), pausa ligeiramente maior pra fixar.</div>
+      </div>
+
+      <div class="section">
+        <h2>Elementos visuais <span class="accent"></span></h2>
+        <div class="twoCols">
+          <div>
+            <p><b>Opção A (minimalista):</b> 1 take, fundo limpo/escuro, zoom leve 2–5% em cada palavra.</p>
+            <ul>
+              <li>Texto grande central: “TREINO / ALIMENTAÇÃO / SONO”.</li>
+              <li>Som “tic” ou beat marcando cada item.</li>
+              <li>Legenda curta e limpa (sem parágrafo longo).</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Opção B (dinâmica):</b> 3 cortes (1 por palavra) + B-roll rápido.</p>
+            <ul>
+              <li>B-roll: agachamento/step-up; prato simples; você apagando a luz/relógio.</li>
+              <li>Highlight em degradê (verde→azul→laranja) em cada pilar.</li>
+              <li>Transição seca (cut) — sem efeito pesado.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Copy e ganchos <span class="accent"></span></h2>
+        <p><b>Ganchos (use 1):</b></p>
+        <ul>
+          <li>“Se eu pudesse resumir seu resultado em 3 coisas, seria isso…”</li>
+          <li>“Você não precisa de 10 estratégias. Precisa dessas 3.”</li>
+          <li>“Tá difícil evoluir? Provavelmente falta 1 peça desse tripé.”</li>
+          <li>“O básico bem feito ganha do avançado mal feito.”</li>
+        </ul>
+        <p style="margin-top:10px;"><b>Legenda curta (pronta):</b></p>
+        <div class="script" id="captionText">O tripé do resultado é simples:
+
+1) Treino (progressão)
+2) Alimentação (consistência)
+3) Sono (recuperação)
+
+Sem um deles, o tripé cai.
+
+Comenta “TRIPÉ” que eu te mando um exemplo de semana pro seu objetivo. Salva pra rever quando bater a dúvida.</div>
+      </div>
+
+      <div class="section">
+        <h2>CTA <span class="accent"></span></h2>
+        <ul>
+          <li><b>Principal (comentário/DM):</b> “Comenta ‘TRIPÉ’ que eu te mando um exemplo de semana.”</li>
+          <li><b>Alternativa (salvar):</b> “Salva isso pra lembrar quando você começar a complicar.”</li>
+          <li><b>Alternativa (parte 2):</b> “Quer a parte 2 com ajustes? Comenta ‘2’.”</li>
+          <li><b>Alternativa (compartilhar):</b> “Marca alguém que tá procurando ‘segredo’.”</li>
+        </ul>
+        <p style="margin-top:10px; color: rgba(234,240,255,.62)"><b>Regra:</b> escolha <u>apenas 1</u> CTA por Reel para não diluir ação.</p>
+      </div>
+
+      <div class="section">
+        <h2>Checklist <span class="accent"></span></h2>
+        <ul>
+          <li>Defina <b>1 objetivo</b> (ex.: emagrecer, hipertrofia, correr melhor, dor lombar).</li>
+          <li>Escolha <b>3 pilares</b> que explicam 80% do resultado.</li>
+          <li>Escreva a frase-mantra: “X, Y e Z.”</li>
+          <li>Adicione <b>1 micro-regra</b> por pilar (1 frase, sem aula longa).</li>
+          <li>Grave (1 take ou 3 cortes) com <b>pausas</b> entre as palavras do tripé.</li>
+          <li>Texto grande na tela (um pilar por vez) + highlight em degradê.</li>
+          <li>Finalize com <b>1 frase de reforço</b> (“sem um deles, cai”).</li>
+          <li>Escolha <b>1 CTA</b> (comentário OU salvar OU parte 2).</li>
+          <li>Faça capa/título: “O tripé do [resultado]”.</li>
+          <li>Opcional: postar <b>parte 2</b> explicando cada pilar em 1 dica prática.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Variações <span class="accent"></span></h2>
+        <p><b>Troque o tripé conforme o tema (use como biblioteca):</b></p>
+        <ul>
+          <li><b>Emagrecimento:</b> treino + alimentação + sono.</li>
+          <li><b>Hipertrofia:</b> treino + proteína/calorias + recuperação.</li>
+          <li><b>Performance/corrida:</b> treino + técnica + consistência.</li>
+          <li><b>Dor/lesão:</b> carga + mobilidade + controle motor.</li>
+          <li><b>Postura:</b> força + movimento + hábitos diários.</li>
+        </ul>
+        <p style="margin-top:10px;"><b>Variação de fechamento:</b></p>
+        <ul>
+          <li>“O resto é ajuste fino.”</li>
+          <li>“Sem isso, não tem atalho.”</li>
+          <li>“Faz o básico por 30 dias e depois a gente complica.”</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>Identidade: fundo escuro, cards suaves, acentos em degradê (verde/azul/laranja), visual limpo high-tech.</div>
+      <a class="link" href="https://www.instagram.com/p/DWL664mjtjj/" target="_blank" rel="noreferrer">Ver post original</a>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const scriptEl = document.getElementById('scriptText');
+      const captionEl = document.getElementById('captionText');
+      const copyBtn = document.getElementById('copyBtn');
+      const copyCaptionBtn = document.getElementById('copyCaptionBtn');
+
+      async function copyText(txt){
+        try{
+          await navigator.clipboard.writeText(txt);
+          return true;
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.appendChild(ta);
+          ta.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          return ok;
+        }
+      }
+
+      copyBtn.addEventListener('click', async () => {
+        const ok = await copyText(scriptEl.innerText.trim());
+        copyBtn.innerHTML = ok ? 'Roteiro copiado <small>(pronto para colar)</small>' : 'Falha ao copiar <small>(tente novamente)</small>';
+        setTimeout(()=> copyBtn.innerHTML = 'Copiar roteiro <small>(texto completo)</small>', 1800);
+      });
+
+      copyCaptionBtn.addEventListener('click', async () => {
+        const ok = await copyText(captionEl.innerText.trim());
+        copyCaptionBtn.innerHTML = ok ? 'Legenda copiada <small>(pronta)</small>' : 'Falha ao copiar <small>(tente novamente)</small>';
+        setTimeout(()=> copyCaptionBtn.innerHTML = 'Copiar legenda <small>(copy pronta)</small>', 1800);
+      });
+    })();
+  </script>
+</body>
+</html>
