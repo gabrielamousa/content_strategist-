@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dia 10 • Finanças • Desafio dos Depósitos</title>
+<style>
+  :root{
+    --bg:#070A12;
+    --panel:#0C1020;
+    --panel2:#0A0F1D;
+    --text:#EAF0FF;
+    --muted:#A8B3D6;
+    --border:rgba(255,255,255,.10);
+    --shadow: 0 12px 40px rgba(0,0,0,.55);
+    --g1: linear-gradient(90deg,#20E3B2 0%, #2F80ED 45%, #FFB347 100%);
+    --g2: linear-gradient(135deg, rgba(32,227,178,.20), rgba(47,128,237,.18), rgba(255,179,71,.18));
+    --good:#20E3B2;
+    --warn:#FFB347;
+    --link:#9AD1FF;
+    --chip:#10183A;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:
+      radial-gradient(1000px 600px at 15% 10%, rgba(47,128,237,.18), transparent 60%),
+      radial-gradient(900px 520px at 85% 20%, rgba(32,227,178,.14), transparent 62%),
+      radial-gradient(900px 520px at 50% 100%, rgba(255,179,71,.12), transparent 58%),
+      var(--bg);
+  }
+  a{color:var(--link); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px}
+  header{
+    border:1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    box-shadow: var(--shadow);
+    border-radius:18px;
+    padding:18px 18px;
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g2);
+    filter: blur(18px);
+    opacity:.65;
+    z-index:0;
+  }
+  header > *{position:relative; z-index:1}
+  .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .chip{
+    background: rgba(16,24,58,.75);
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+    letter-spacing:.2px;
+  }
+  .chip strong{color:var(--text); font-weight:650}
+  h1{margin:10px 0 6px; font-size:22px; line-height:1.2}
+  .subtitle{margin:0; color:var(--muted); font-size:14px; line-height:1.45}
+  .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+  .btn{
+    border:1px solid var(--border);
+    background: rgba(255,255,255,.06);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:13px;
+    transition: transform .08s ease, background .2s ease;
+  }
+  .btn:hover{background: rgba(255,255,255,.09)}
+  .btn:active{transform: scale(.98)}
+  .btn.primary{
+    background: linear-gradient(90deg, rgba(32,227,178,.22), rgba(47,128,237,.18), rgba(255,179,71,.18));
+    border-color: rgba(255,255,255,.16);
+  }
+  .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; margin-top:14px}
+  @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+  section.card{
+    border:1px solid var(--border);
+    border-radius:18px;
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    box-shadow: var(--shadow);
+    padding:16px 16px;
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size:14px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color: rgba(234,240,255,.88);
+  }
+  .card p, .card li{color:var(--muted); font-size:14px; line-height:1.55}
+  .card ul{margin:10px 0 0 18px}
+  .divider{height:1px; background: rgba(255,255,255,.08); margin:12px 0}
+  .hl{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:700}
+  .kpi{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .kpi .pill{
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background: rgba(10,15,29,.75);
+    font-size:12px;
+    color:var(--muted);
+  }
+  .kpi .pill b{color:var(--text)}
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.55;
+    color:#DCE6FF;
+  }
+  .script{
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:16px;
+    background: rgba(7,10,18,.55);
+    padding:14px;
+  }
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .hint{font-size:12px; color:rgba(168,179,214,.85)}
+  .tag{
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background: rgba(255,255,255,.04);
+    color:var(--muted);
+  }
+  .checklist{columns:2; column-gap:18px}
+  @media (max-width: 700px){.checklist{columns:1}}
+  .checklist li{break-inside:avoid; margin-bottom:8px}
+  .mini{font-size:12px; color:rgba(168,179,214,.9)}
+  .callout{
+    border:1px solid rgba(255,255,255,.12);
+    background: linear-gradient(180deg, rgba(32,227,178,.10), rgba(47,128,237,.06));
+    border-radius:16px;
+    padding:12px 12px;
+  }
+  .footer{margin-top:14px; color:rgba(168,179,214,.85); font-size:12px}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media (max-width: 900px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <span class="chip"><strong>Nicho</strong>: Finanças</span>
+          <span class="chip"><strong>Dia</strong>: 10</span>
+          <span class="chip"><strong>Formato</strong>: Reels</span>
+          <span class="chip"><strong>Pilar</strong>: Passo a passo</span>
+        </div>
+        <div class="chips">
+          <a class="chip" href="https://www.instagram.com/p/DWMxQLtDPga/" target="_blank" rel="noopener">Post original →</a>
+        </div>
+      </div>
+      <h1><span class="hl">Desafio dos Depósitos</span>: junte R$ 50 mil sem complicar</h1>
+      <p class="subtitle">Roteiro reproduzível (meta + prazo + gamificação + tabela visual + CTA por comentário para enviar planilha no Direct).</p>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <button class="btn" id="copyHookBtn">Copiar hooks</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <p>Um Reels em formato <b>desafio</b> que transforma “quero juntar dinheiro” em uma <b>mecânica rastreável</b>: uma tabela com depósitos numerados. O vídeo vende a ideia de progresso (marcou → fez) e finaliza com um CTA fácil (<b>comentar</b>) para enviar a planilha.</p>
+        <div class="kpi">
+          <span class="pill"><b>Gatilhos</b>: meta grande + “vamos juntos”</span>
+          <span class="pill"><b>Mecanismo</b>: depósitos + tabela</span>
+          <span class="pill"><b>Retenção</b>: regras simples + exemplos</span>
+          <span class="pill"><b>Conversão</b>: recompensa no Direct</span>
+        </div>
+        <div class="divider"></div>
+        <div class="callout">
+          <p class="mini"><b>Objetivo do conteúdo:</b> maximizar <b>salvamentos</b> (tabela), <b>comentários</b> (palavra-chave) e iniciar conversa no Direct (entrega do material + próximos passos).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura (sequência)</h2>
+        <ul>
+          <li><b>0–2s:</b> Hook com meta + prazo + convite (“bora comigo?”).</li>
+          <li><b>2–5s:</b> Promessa (o que vai acontecer se seguir).</li>
+          <li><b>5–10s:</b> Nome do método + o que você precisa (tabela/planilha).</li>
+          <li><b>10–20s:</b> Regras em 3 passos + microexemplos numéricos.</li>
+          <li><b>20–26s:</b> Resultado final (total) + para quais objetivos serve.</li>
+          <li><b>26–32s:</b> CTA: comentar palavra-chave para receber planilha + bônus.</li>
+          <li><b>32–35s:</b> CTA secundário: salvar + enviar + seguir.</li>
+        </ul>
+      </section>
+
+      <section class="card" style="grid-column:1/-1">
+        <div class="row">
+          <h2 style="margin:0">Roteiro (reproduzível)</h2>
+          <span class="tag">Duração sugerida: 25–40s</span>
+        </div>
+        <p class="hint">Troque os campos entre colchetes e mantenha o mecanismo visual (tabela). Entregue o arquivo via Direct para aumentar conversão.</p>
+        <div class="script" id="script">
+<pre>[CENA 1 — CAM, texto grande na tela]
+“Bora guardar R$ [META] comigo até [DATA]?”
+
+[CENA 2 — CAM, corte rápido]
+“Eu vou te passar um desafio simples: você só segue a tabela e pronto.”
+
+[CENA 3 — B-ROLL da tabela/planilha, zoom nos números]
+“É o ‘Desafio dos [X] Depósitos’.
+Você vai ter uma lista de valores e cada vez que você deposita um número, você marca.”
+
+[CENA 4 — explicar regras em 3 passos, com exemplos]
+“Regra 1: escolhe um ritmo: diário, 3x por semana ou semanal.
+Regra 2: depositou R$ [ex: 18]? Marca o 18.
+Regra 3: ficou apertado? Você pode pular e compensar depois — sem abandonar.”
+
+[CENA 5 — mostrar o total + aplicações]
+“No fim, completando todos os [X] depósitos, dá R$ [TOTAL].
+Serve pra reserva, viagem, entrada do apê, ou quitar dívida.”
+
+[CENA 6 — CTA (tela limpa, texto fixo)]
+“Comenta ‘DESAFIO’ que eu te mando a planilha no Direct.
+E salva esse vídeo pra começar no seu tempo.”
+</pre>
+        </div>
+        <div class="divider"></div>
+        <div class="two">
+          <div>
+            <h2 style="margin:0 0 10px">Copy e ganchos</h2>
+            <ul>
+              <li>“Meta grande do jeito fácil: <b>tabela + marcação</b>.”</li>
+              <li>“Você não precisa de motivação. Precisa de <b>um método</b>.”</li>
+              <li>“Desafio com regra simples = <b>progresso visível</b>.”</li>
+              <li>“Começa em [mês/ano] pra tirar a pressão e manter constância.”</li>
+              <li>“Se você gosta de riscar checklist, você vai amar isso.”</li>
+            </ul>
+            <div class="divider"></div>
+            <div class="script" id="hooks">
+<pre>HOOKS PRONTOS (escolha 1)
+1) “Bora juntar R$ [META] comigo até [DATA]?”
+2) “Quer juntar R$ [META] sem depender de motivação?”
+3) “Se você tivesse uma tabela que te diz exatamente quanto guardar…”
+4) “O jeito mais fácil de transformar meta em ação: marca e pronto.”
+5) “Desafio rápido: [X] depósitos → R$ [TOTAL].”</pre>
+            </div>
+          </div>
+          <div>
+            <h2 style="margin:0 0 10px">CTA</h2>
+            <ul>
+              <li><b>Principal (comentário → Direct):</b> “Comenta <b>DESAFIO</b> que eu te mando a planilha.”</li>
+              <li><b>Secundário (distribuição):</b> “Salva pra fazer depois” + “Envia pra alguém que precisa.”</li>
+              <li><b>Direcionamento (opcional):</b> “Quer versão para <b>reserva</b> / <b>dívida</b> / <b>entrada</b>? comenta ‘META’.”</li>
+            </ul>
+            <div class="divider"></div>
+            <h2 style="margin:0 0 10px">Elementos visuais</h2>
+            <ul>
+              <li>Texto grande no 1º segundo: <b>R$ [META] • até [DATA]</b>.</li>
+              <li>B-roll: mão marcando a tabela (caneta/highlighter).</li>
+              <li>Zoom nos termos: <b>[X] depósitos</b>, <b>R$ [TOTAL]</b>.</li>
+              <li>Legenda dinâmica: destacar <b>META</b>, <b>TABELA</b>, <b>REGRA</b>, <b>RESULTADO</b>.</li>
+              <li>Tela final 1–2s com CTA fixo: “Comente DESAFIO”.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Checklist de criação</h2>
+        <ul class="checklist">
+          <li>[ ] Definir <b>meta</b> (R$) e <b>prazo</b> (data realista).</li>
+          <li>[ ] Escolher o <b>mecanismo</b>: “Desafio dos [X] depósitos”.</li>
+          <li>[ ] Preparar a <b>tabela/planilha</b> (visual e imprimível).</li>
+          <li>[ ] Ter 3 <b>microexemplos</b> (ex.: 7, 18, 42).</li>
+          <li>[ ] Roteiro com frases curtas (uma ideia por corte).</li>
+          <li>[ ] Incluir <b>resultado final</b> (total) de forma visível.</li>
+          <li>[ ] Definir palavra-chave do CTA (ex.: DESAFIO).</li>
+          <li>[ ] Bônus para empilhar valor (PDF/Notion/aula/checklist).</li>
+          <li>[ ] Edição com cortes a cada 1–2 frases + zoom nos números.</li>
+          <li>[ ] Publicar e responder comentários com gatilho pro Direct.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Variações (3 ideias prontas)</h2>
+        <ul>
+          <li><b>Reserva de emergência:</b> “Bora fazer 1 mês de reserva em 90 dias com o Desafio dos [X] Depósitos?”</li>
+          <li><b>Quitar dívida:</b> “Desafio ‘Zera Cartão’: [X] pagamentos pequenos + regra anti-juros.”</li>
+          <li><b>Entrada do apê:</b> “Desafio da Entrada: meta R$ [META] até [DATA] com depósitos escalonados.”</li>
+        </ul>
+        <div class="divider"></div>
+        <p class="mini"><b>Dica de reprodução:</b> mantenha a mesma estrutura e mude apenas (1) meta/prazo, (2) nome do método e (3) o arquivo entregue no Direct.</p>
+      </section>
+    </div>
+
+    <div class="footer">
+      <div class="divider"></div>
+      <div class="row">
+        <span>Identidade visual: dark • high-tech • destaques em degradê (verde/azul/laranja)</span>
+        <span>Link: <a href="https://www.instagram.com/p/DWMxQLtDPga/" target="_blank" rel="noopener">instagram.com/p/DWMxQLtDPga</a></span>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function copyTextFrom(el){
+    const text = el.innerText.trim();
+    navigator.clipboard.writeText(text);
+  }
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    copyTextFrom(document.getElementById('script'));
+    this.textContent = 'Roteiro copiado';
+    setTimeout(()=> this.textContent = 'Copiar roteiro', 1200);
+  });
+  document.getElementById('copyHookBtn').addEventListener('click', function(){
+    copyTextFrom(document.getElementById('hooks'));
+    this.textContent = 'Hooks copiados';
+    setTimeout(()=> this.textContent = 'Copiar hooks', 1200);
+  });
+</script>
+</body>
+</html>
