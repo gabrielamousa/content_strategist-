@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 3 — Finanças — Orçamento por dia</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.085);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.56);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 14px;
+      --g1: linear-gradient(135deg, #29F19C 0%, #2FB7FF 48%, #FFB657 100%);
+      --g2: linear-gradient(135deg, rgba(41,241,156,.22), rgba(47,183,255,.18), rgba(255,182,87,.18));
+      --green:#29F19C;
+      --blue:#2FB7FF;
+      --orange:#FFB657;
+      --danger:#FF5C7A;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1000px 600px at 20% 10%, rgba(47,183,255,.14), transparent 55%),
+        radial-gradient(900px 500px at 75% 20%, rgba(41,241,156,.12), transparent 55%),
+        radial-gradient(900px 600px at 60% 85%, rgba(255,182,87,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{ max-width:1100px; margin:0 auto; padding:28px 18px 52px; }
+
+    header{
+      position:relative;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--radius) + 4px);
+      padding:22px 18px;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(14px);
+      opacity:.75;
+      pointer-events:none;
+    }
+    header > *{ position:relative; z-index:1; }
+
+    .toprow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .chips{ display:flex; gap:10px; flex-wrap:wrap; }
+    .chip{
+      font-size:12px;
+      letter-spacing:.2px;
+      color:var(--muted);
+      padding:8px 10px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      border-radius: 999px;
+      backdrop-filter: blur(10px);
+    }
+    .chip b{ color:var(--text); font-weight:600; }
+
+    h1{
+      margin:14px 0 8px;
+      font-size: clamp(20px, 2.6vw, 30px);
+      line-height:1.18;
+      letter-spacing:-.3px;
+    }
+    .sub{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      color:var(--muted);
+      font-size:14px;
+    }
+    a{ color: var(--blue); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{ grid-template-columns:1fr; }
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+    .card .hd .ttl{ font-weight:650; letter-spacing:.2px; }
+    .card .bd{ padding:14px 16px 16px; }
+
+    .badge{
+      font-size:12px;
+      color: rgba(0,0,0,.86);
+      padding:6px 10px;
+      border-radius: 999px;
+      background: var(--g1);
+      font-weight:700;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+
+    .list{ margin:0; padding-left:18px; color:var(--muted); }
+    .list li{ margin:8px 0; }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:10px;
+    }
+    .kpi .box{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: var(--radius2);
+      padding:12px;
+    }
+    .kpi .box .l{ font-size:12px; color:var(--muted2); }
+    .kpi .box .v{ margin-top:6px; font-size:14px; color:var(--text); font-weight:650; }
+
+    .script{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      border-radius: var(--radius);
+      padding:14px;
+      font-family: var(--mono);
+      color: rgba(234,240,255,.9);
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
+    .btn{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:650;
+      letter-spacing:.2px;
+      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ border-color: rgba(255,255,255,.26); background: rgba(255,255,255,.06); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      border-color: rgba(47,183,255,.35);
+      background: linear-gradient(180deg, rgba(47,183,255,.18), rgba(0,0,0,.18));
+    }
+
+    .hooks{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .hook{
+      padding:12px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+    }
+    .hook .t{ font-weight:700; }
+    .hook .d{ margin-top:6px; color:var(--muted); font-size:13px; line-height:1.45; }
+
+    .callout{
+      padding:12px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(135deg, rgba(41,241,156,.10), rgba(47,183,255,.08), rgba(255,182,87,.08));
+      color: var(--muted);
+    }
+    .callout b{ color: var(--text); }
+
+    .twocol{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width: 920px){ .twocol{ grid-template-columns:1fr; } }
+
+    .checklist{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .check{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      border-radius: var(--radius2);
+      padding:10px 12px;
+      color: var(--muted);
+    }
+    .boxdot{
+      width:18px; height:18px;
+      border-radius: 6px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.06);
+      flex: 0 0 auto;
+      margin-top:1px;
+    }
+
+    .footer{
+      margin-top:16px;
+      color: rgba(234,240,255,.52);
+      font-size:12px;
+      text-align:center;
+    }
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin:10px 0 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="chips">
+          <div class="chip"><b>Nicho</b>: Finanças</div>
+          <div class="chip"><b>Dia</b>: 3</div>
+          <div class="chip"><b>Formato</b>: Reels</div>
+          <div class="chip"><b>Pilar</b>: Passo a passo</div>
+        </div>
+        <div class="chips">
+          <div class="chip"><b>Original</b>: <a href="https://www.instagram.com/p/DUEksFJAKfj/" target="_blank" rel="noreferrer">ver post</a></div>
+        </div>
+      </div>
+      <h1>Orçamento por dia: gaste “caro” sem perder o controle</h1>
+      <div class="sub">
+        <div>Objetivo: transformar orçamento mensal em <b>decisão diária</b> com regra simples de compensação.</div>
+        <div class="btnrow">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="selectBtn">Selecionar texto</button>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div style="margin-top:12px" class="callout"><b>Ideia central:</b> você não “proíbe” o gasto grande; você <b>converte em dias de cota</b> e compensa nos próximos dias. Isso reduz culpa e aumenta controle.</div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd"><div class="ttl">Resumo</div><div class="badge">Rápido e reproduzível</div></div>
+        <div class="bd">
+          <div class="twocol">
+            <div>
+              <ul class="list">
+                <li><b>Promessa:</b> gastar com liberdade sem perder o mês.</li>
+                <li><b>Mecânica:</b> cota diária (gasto variável) + conta ao vivo (Y÷X) + compensação.</li>
+                <li><b>Autoridade:</b> separa <b>fixos</b> de <b>variáveis</b> em 1 frase.</li>
+                <li><b>Memória:</b> metáfora do <b>velocímetro</b> (painel do mês).</li>
+              </ul>
+            </div>
+            <div class="kpi">
+              <div class="box"><div class="l">Duração sugerida</div><div class="v">35–55s</div></div>
+              <div class="box"><div class="l">Cortes</div><div class="v">a cada 1–2 frases</div></div>
+              <div class="box"><div class="l">Itens na tela</div><div class="v">R$X, R$Y, Y÷X, N dias</div></div>
+              <div class="box"><div class="l">CTA principal</div><div class="v">Comentar + Salvar</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd"><div class="ttl">Estrutura (sequência)</div><div class="badge">0–55s</div></div>
+        <div class="bd">
+          <ol class="list">
+            <li><b>Hook</b> (curioso + específico)</li>
+            <li><b>Objeção</b> (gasto grande)</li>
+            <li><b>Permissão</b> (não proíbe)</li>
+            <li><b>Conta ao vivo</b> (Y÷X)</li>
+            <li><b>Regra</b> (compensar N dias)</li>
+            <li><b>Fixos vs variáveis</b> (credibilidade)</li>
+            <li><b>Exemplos</b> (vida real)</li>
+            <li><b>Metáfora</b> (velocímetro)</li>
+            <li><b>Provocação + CTA</b></li>
+          </ol>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd"><div class="ttl">Roteiro (pronto para gravar)</div><div class="badge">Copiável</div></div>
+        <div class="bd">
+          <div class="script" id="scriptText">[CENA: você em pé, celular na mão. Na tela, um bloco/planilha simples com “Cota diária: R$ X”.]
+
+0–2s (HOOK)
+“Isso aqui é o quanto eu posso gastar por dia: R$ X.”
+
+2–6s (OBJEÇÃO)
+“Tá, mas e se hoje eu for num restaurante e der R$ Y?”
+
+6–10s (PERMISSÃO + REFRAME)
+“Eu posso gastar. O sistema não proíbe — ele só mostra o impacto na hora.”
+
+10–20s (CONTA AO VIVO)
+“Olha: R$ Y dividido por R$ X… dá aproximadamente [Y÷X] dias de cota.”
+(na tela aparece: “R$Y ÷ R$X = ~Z dias”)
+
+20–30s (REGRA DE COMPENSAÇÃO)
+“Então a regra é simples: nos próximos Z dias eu gasto abaixo da cota pra compensar.”
+
+30–38s (FIXO vs VARIÁVEL)
+“E atenção: isso aqui é só pros gastos variáveis do dia a dia. Conta fixa eu controlo separado.”
+
+38–48s (EXEMPLOS)
+“Tipo: mercado, Uber, delivery, happy hour, uma compra de roupa… tudo entra nessa cota.”
+
+48–52s (METÁFORA)
+“É um velocímetro do seu mês: você sabe na hora se tá acelerando demais.”
+
+52–55s (PROVOCAÇÃO + CTA)
+“Qual é o seu sistema? Porque só anotar depois não é gestão. Comenta ‘COTA’ que eu te mando um modelo.”</div>
+          <div style="margin-top:12px" class="callout"><b>Personalize em 30s:</b> defina X (cota) + escolha um gasto-âncora Y que seu público faz (ex.: iFood, mercado, Uber, cartão) + fale o número Z com calma.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><div class="ttl">Elementos visuais</div><div class="badge">High-tech clean</div></div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Texto grande</b> nos números: “R$X/dia”, “R$Y hoje”, “Y÷X=Z dias”, “Regra: Z dias abaixo”.</li>
+            <li><b>Zoom leve</b> no momento da conta (10–20s).</li>
+            <li><b>Overlay</b> (opcional): calculadora + velocímetro/painel.</li>
+            <li><b>Legendas dinâmicas</b>: destaque palavras “impacto”, “regra”, “fixo ≠ variável”.</li>
+            <li><b>Cortes</b> rápidos para manter cadência (1 ideia por frase).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><div class="ttl">Copy e ganchos (modelos)</div><div class="badge">Escolha 1</div></div>
+        <div class="bd">
+          <div class="hooks">
+            <div class="hook"><div class="t">Hook 1 (direto)</div><div class="d">“Isso aqui é o quanto eu posso gastar por dia. E é por isso que meu mês não desanda.”</div></div>
+            <div class="hook"><div class="t">Hook 2 (quebra do mensal)</div><div class="d">“Orçamento mensal falha por um motivo: você decide no ‘agora’.”</div></div>
+            <div class="hook"><div class="t">Hook 3 (gasto grande sem culpa)</div><div class="d">“Um gasto de R$1.000 não quebra seu orçamento. O que quebra é não ter regra depois.”</div></div>
+            <div class="hook"><div class="t">Fecho polêmico</div><div class="d">“Só escrever e ver depois não é gestão. Gestão é ter regra antes.”</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><div class="ttl">CTA</div><div class="badge">Comentário + Salvar</div></div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Comentário (1):</b> “Qual seria sua cota diária hoje? R$__”</li>
+            <li><b>Comentário (2):</b> “Você separa fixo de variável? SIM/NÃO”</li>
+            <li><b>Salvar:</b> “Salva pra montar sua regra de compensação.”</li>
+            <li><b>Compartilhar:</b> “Manda pra quem só descobre no dia da fatura.”</li>
+          </ul>
+          <div style="margin-top:10px" class="callout"><b>Dica de conversão:</b> use palavra-chave (“COTA”, “PLANILHA”, “MODELO”) e responda comentários com instrução curta + convite pro direct.</div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd"><div class="ttl">Checklist de criação (15–30 min)</div><div class="badge">Sem travar</div></div>
+        <div class="bd">
+          <div class="twocol">
+            <div>
+              <div style="font-weight:700; margin-bottom:10px;">Pré-roteiro</div>
+              <div class="checklist">
+                <div class="check"><div class="boxdot"></div><div>Defina a <b>cota X</b> (por dia) apenas para <b>gasto variável</b>.</div></div>
+                <div class="check"><div class="boxdot"></div><div>Escolha um <b>gasto-âncora Y</b> que gera objeção (ex.: restaurante, iFood, mercado, roupa, viagem).</div></div>
+                <div class="check"><div class="boxdot"></div><div>Calcule antes o número para não errar: <b>Z = Y ÷ X</b> (arredonde).</div></div>
+                <div class="check"><div class="boxdot"></div><div>Defina a regra: <b>compensar por Z dias</b> (ou “3–4 dias”, se preferir).</div></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-weight:700; margin-bottom:10px;">Gravação + edição</div>
+              <div class="checklist">
+                <div class="check"><div class="boxdot"></div><div>Grave em pé, câmera na altura dos olhos, luz frontal. 1 tomada por bloco.</div></div>
+                <div class="check"><div class="boxdot"></div><div>Adicione texto na tela com <b>R$X</b>, <b>R$Y</b>, <b>Y÷X</b>, <b>Z dias</b>.</div></div>
+                <div class="check"><div class="boxdot"></div><div>Cortes a cada 1–2 frases; zoom leve na conta; destaque “Regra: …”.</div></div>
+                <div class="check"><div class="boxdot"></div><div>Feche com provocação + CTA de comentário (palavra-chave).</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd"><div class="ttl">Variações (mesma estrutura, outros âncoras)</div><div class="badge">3 ideias</div></div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Variação “Cartão estourando”:</b> troque o âncora para “parcela / fatura” e converta em “dias de cota” + regra de compensação na semana.</li>
+            <li><b>Variação “Casal”:</b> “cota diária do casal” + exemplo de “um jantar caro” + regra: “nos próximos dias, escolhas mais leves”.</li>
+            <li><b>Variação “Empreendedor”:</b> cota diária de <b>gastos pessoais</b> (separado do caixa da empresa) + âncora “evento/viagem” + compensação.</li>
+          </ul>
+          <div style="margin-top:10px" class="callout"><b>Trocas rápidas:</b> “cota diária” → cota semanal / por saída / por categoria; “velocímetro” → painel do carro / barra de energia / combustível do mês.</div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">
+      Use este roteiro como template: mantenha a sequência Hook → Objeção → Conta → Regra → Metáfora → Provocação.
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const sel = document.getElementById('selectBtn');
+      const el = document.getElementById('scriptText');
+
+      function selectText(){
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const s = window.getSelection();
+        s.removeAllRanges();
+        s.addRange(range);
+      }
+
+      async function copy(){
+        const text = el.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          btn.textContent = 'Copiado!';
+          setTimeout(()=> btn.textContent = 'Copiar roteiro', 1200);
+        }catch(e){
+          selectText();
+          btn.textContent = 'Selecione e copie';
+          setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+        }
+      }
+
+      btn.addEventListener('click', copy);
+      sel.addEventListener('click', selectText);
+    })();
+  </script>
+</body>
+</html>
