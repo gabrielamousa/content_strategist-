@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 28 — Educador Físico — Carrossel reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1220;
+      --card:#0E1729cc;
+      --stroke:#1F2A44;
+      --text:#EAF0FF;
+      --muted:#AAB6D6;
+      --muted2:#7E8AB0;
+      --good:#36F097;
+      --warn:#FFB020;
+      --hot:#FF5C7A;
+      --blue:#4CC3FF;
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --grad: linear-gradient(90deg, rgba(54,240,151,.95), rgba(76,195,255,.95), rgba(255,176,32,.95));
+      --grad2: linear-gradient(135deg, rgba(54,240,151,.25), rgba(76,195,255,.18), rgba(255,176,32,.18));
+      --grid: radial-gradient(800px 500px at 20% 0%, rgba(76,195,255,.15), transparent 55%),
+              radial-gradient(700px 450px at 90% 10%, rgba(54,240,151,.14), transparent 55%),
+              radial-gradient(600px 400px at 30% 100%, rgba(255,176,32,.12), transparent 55%);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg0);
+      background-image: var(--grid);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:22px 18px 60px}
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,23,41,.92), rgba(14,23,41,.65));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .topbar{
+      display:flex; gap:14px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
+      padding:16px 18px;
+      border-bottom:1px solid rgba(31,42,68,.7);
+      background: rgba(255,255,255,.02);
+    }
+    .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .chip{
+      font-size:12px; letter-spacing:.3px;
+      padding:8px 10px;
+      border:1px solid rgba(31,42,68,.9);
+      border-radius: 999px;
+      background: rgba(7,10,15,.35);
+      color: var(--muted);
+    }
+    .chip strong{color:var(--text); font-weight:650}
+    .link{
+      display:flex; align-items:center; gap:10px;
+      font-size:12.5px;
+      color: var(--muted);
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(31,42,68,.9);
+      background: rgba(7,10,15,.35);
+    }
+    .link span{font-family:var(--mono); color: rgba(234,240,255,.85)}
+    .hero{
+      padding:18px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    .title{
+      padding:16px;
+      border:1px solid rgba(31,42,68,.85);
+      border-radius: var(--radius2);
+      background: var(--grad2);
+    }
+    .title h1{
+      margin:0 0 6px;
+      font-size:20px;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .title p{margin:0; color:var(--muted); font-size:13.5px; line-height:1.4}
+    .actions{
+      padding:16px;
+      border:1px solid rgba(31,42,68,.85);
+      border-radius: var(--radius2);
+      background: rgba(7,10,15,.35);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      justify-content:center;
+    }
+    .btn{
+      cursor:pointer;
+      border:none;
+      padding:12px 14px;
+      border-radius: 12px;
+      color:#071018;
+      font-weight:750;
+      background: var(--grad);
+      box-shadow: 0 12px 28px rgba(0,0,0,.35);
+    }
+    .btn2{
+      cursor:pointer;
+      border:1px solid rgba(31,42,68,.9);
+      padding:11px 14px;
+      border-radius: 12px;
+      color: var(--text);
+      font-weight:650;
+      background: rgba(14,23,41,.55);
+    }
+    .hint{font-size:12px; color:var(--muted2); line-height:1.4}
+
+    main{margin-top:16px; display:grid; grid-template-columns: 1fr; gap:14px}
+    .grid{display:grid; grid-template-columns: 1fr; gap:14px}
+    @media (min-width: 920px){
+      main{grid-template-columns: 1.2fr .8fr; align-items:start}
+    }
+
+    .card{
+      border:1px solid rgba(31,42,68,.85);
+      background: linear-gradient(180deg, rgba(14,23,41,.88), rgba(8,10,15,.15));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0;
+      padding:14px 16px;
+      font-size:14px;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+      border-bottom:1px solid rgba(31,42,68,.7);
+      background: rgba(255,255,255,.02);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .badge{
+      font-size:11px;
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(31,42,68,.9);
+      color: var(--muted);
+      background: rgba(7,10,15,.35);
+      text-transform:none;
+      letter-spacing:.2px;
+    }
+    .content{padding:14px 16px 16px}
+    .content p{margin:0 0 10px; color:var(--muted); line-height:1.55; font-size:13.8px}
+    .content ul{margin:10px 0 0; padding-left:18px; color:var(--muted); line-height:1.6; font-size:13.8px}
+    .content li{margin:6px 0}
+
+    .kpi{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (min-width: 520px){
+      .kpi{grid-template-columns:1fr 1fr}
+    }
+    .k{
+      border:1px solid rgba(31,42,68,.85);
+      background: rgba(7,10,15,.28);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .k .t{font-size:12px; color:var(--muted2); margin-bottom:4px}
+    .k .v{font-size:13.5px; color:var(--text); font-weight:650}
+
+    .code{
+      font-family: var(--mono);
+      font-size:12px;
+      line-height:1.55;
+      color: rgba(234,240,255,.9);
+      background: rgba(7,10,15,.45);
+      border:1px solid rgba(31,42,68,.9);
+      border-radius: 14px;
+      padding:12px;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+    }
+    .twoCol{display:grid; grid-template-columns:1fr; gap:10px}
+    @media (min-width:920px){ .twoCol{grid-template-columns:1fr 1fr} }
+
+    .hr{height:1px; background: rgba(31,42,68,.7); margin:12px 0}
+    .small{font-size:12.5px; color:var(--muted2)}
+    .emph{background: var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(31,42,68,.85);
+      background: rgba(7,10,15,.35);
+      color: var(--muted);
+      margin:4px 6px 0 0;
+      font-size:12px;
+    }
+    .dot{width:8px; height:8px; border-radius:99px; background: var(--grad)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div class="chips">
+          <div class="chip"><strong>Nicho</strong>: Educador Físico</div>
+          <div class="chip"><strong>Dia</strong>: 28</div>
+          <div class="chip"><strong>Formato</strong>: Carrossel</div>
+          <div class="chip"><strong>Pilar</strong>: Checklist</div>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DVWZoPrkc25/" target="_blank" rel="noreferrer">
+          <span>Post original</span>
+          <span>→</span>
+        </a>
+      </div>
+      <div class="hero">
+        <div class="title">
+          <h1>7 exercícios para <span class="emph">[OBJETIVO]</span> (com cues rápidos)</h1>
+          <p>Template reproduzível baseado em carrossel de “lista de exercícios”: foto em tela cheia + nome grande do movimento + mini anatomia. Adaptável para qualquer tema (força, cardio, mobilidade, postura, dor, performance).</p>
+          <div style="margin-top:10px">
+            <span class="tag"><span class="dot"></span>Alta taxa de salvamento</span>
+            <span class="tag"><span class="dot"></span>Baixo atrito (padrão repetitivo)</span>
+            <span class="tag"><span class="dot"></span>Ensina sem textão</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="copyBtn">Copiar roteiro</button>
+          <button class="btn2" id="copyLegendBtn">Copiar legenda sugerida</button>
+          <div class="hint" id="copyStatus">Dica: troque apenas [OBJETIVO], [PÚBLICO], [EQUIPAMENTO] e a lista de movimentos.</div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="grid">
+        <article class="card">
+          <h2>Resumo <span class="badge">o que postar</span></h2>
+          <div class="content">
+            <p><strong>Ideia:</strong> carrossel “curadoria” com 7 movimentos para um objetivo específico, mantendo um padrão visual constante para o usuário deslizar rápido e salvar.</p>
+            <div class="kpi">
+              <div class="k"><div class="t">Promessa (capa)</div><div class="v">“7 exercícios para [OBJETIVO]”</div></div>
+              <div class="k"><div class="t">Entrega</div><div class="v">Lista + cues + montagem do treino</div></div>
+              <div class="k"><div class="t">Métrica que tende a subir</div><div class="v">Salvamentos e compartilhamentos</div></div>
+              <div class="k"><div class="t">Tempo de produção</div><div class="v">1 treino + 7 fotos + 1 slide final</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Estrutura <span class="badge">sequência replicável</span></h2>
+          <div class="content">
+            <ul>
+              <li><strong>Slide 1 (Capa):</strong> promessa + mini subtítulo “salve para o próximo treino”.</li>
+              <li><strong>Slide 2 (Contexto rápido):</strong> 1–2 frases: por que isso importa + para quem.</li>
+              <li><strong>Slides 3–9 (Lista):</strong> 5–7 exercícios, cada um com nome grande + 1 cue + (opcional) variação.</li>
+              <li><strong>Último slide (Como montar):</strong> 2 opções de treino (A/B) + séries/reps/descanso + CTA.</li>
+            </ul>
+            <div class="hr"></div>
+            <p class="small"><strong>Regra de ouro:</strong> mantenha <em>posição do texto</em> e <em>overlay</em> idênticos em todos os slides. O cérebro ama repetição.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Roteiro <span class="badge">texto pronto para preencher</span></h2>
+          <div class="content">
+            <div class="code" id="roteiroText">CARROSSEL — TEMPLATE (7–9 SLIDES)
+
+SLIDE 1 — CAPA
+Título: 7 exercícios para [OBJETIVO]
+Sub: (escolha 1)
+- Salve para usar no próximo treino
+- Escolha 4–6 e monte seu treino
+- Para [PÚBLICO] (com ajustes)
+Rodapé pequeno: [EQUIPAMENTO/LOCAL] • [NÍVEL]
+
+SLIDE 2 — CONTEXTO (1 tela)
+Texto (2 linhas no máx.):
+- Se você quer [RESULTADO], precisa treinar [FUNÇÃO/REGIÃO].
+- Aqui vão 7 movimentos que eu uso com alunos para [BENEFÍCIO].
+Opcional (selo): “sem dor / mais força / mais estabilidade”
+
+SLIDES 3–(N-1) — A LISTA (repita o padrão)
+Para cada exercício:
+TÍTULO (caixa alta): [NOME DO MOVIMENTO]
+Cue curto (1 linha): [CUE TÉCNICO PRINCIPAL]
+Badge opcional (1 palavra): [FOCO] (ex.: estabilidade, força, hipertrofia, mobilidade)
+Variação opcional (bem curta): “+ fácil: [REGRESSÃO] | + difícil: [PROGRESSÃO]”
+Sticker opcional em 3 slides: “Erro comum: [ERRO]”
+
+ÚLTIMO SLIDE — COMO USAR (montagem)
+Escolha 1 modelo:
+A) Treino A (4 exercícios)
+- 3–4 séries • 8–12 reps • 60–90s
+B) Treino B (5 exercícios)
+- 3 séries • 10–15 reps • 45–75s
+Notas:
+- Faça 2–3x/semana
+- Progrida 1 variável: carga OU reps OU tempo sob tensão
+CTA (escolha 1):
+- Salve e me diga nos comentários: qual foi o nº 1–7 que você mais sente?
+- Comente “TREINO” que eu mando uma sugestão A/B com esses exercícios
+- Quer versão para [CASA/INICIANTE/DOR]? Comente “QUERO”</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Slides sugeridos (1..9) <span class="badge">modelo pronto</span></h2>
+          <div class="content">
+            <ul>
+              <li><strong>1.</strong> Capa: “7 exercícios para [OBJETIVO]” + “salve para o próximo treino”.</li>
+              <li><strong>2.</strong> Contexto: “Você precisa de [FUNÇÃO] para [BENEFÍCIO]”.</li>
+              <li><strong>3.</strong> Aquecimento/ativação: [MOVIMENTO 1].</li>
+              <li><strong>4.</strong> Principal 1: [MOVIMENTO 2].</li>
+              <li><strong>5.</strong> Principal 2: [MOVIMENTO 3].</li>
+              <li><strong>6.</strong> Unilateral: [MOVIMENTO 4].</li>
+              <li><strong>7.</strong> Acessório/isolamento: [MOVIMENTO 5].</li>
+              <li><strong>8.</strong> Finalizador/controle: [MOVIMENTO 6] (opcional).</li>
+              <li><strong>9.</strong> Como montar + CTA + “marque um amigo”.</li>
+            </ul>
+            <p class="small" style="margin-top:10px">Se quiser manter 7 páginas como o original, remova o slide 2 (contexto) <em>ou</em> o slide 8 (finalizador). Para aumentar salvamentos, mantenha sempre o “Como montar”.</p>
+          </div>
+        </article>
+      </section>
+
+      <aside class="grid">
+        <article class="card">
+          <h2>Elementos visuais <span class="badge">padrão high-tech</span></h2>
+          <div class="content">
+            <ul>
+              <li><strong>Imagem:</strong> foto em tela cheia (ângulo consistente; equipamento visível).</li>
+              <li><strong>Rodapé escuro:</strong> faixa/gradiente para o texto “grudar” (20–30% da altura).</li>
+              <li><strong>Título do exercício:</strong> branco, caixa alta, bem grande (1–2 linhas).</li>
+              <li><strong>Mini anatomia:</strong> canto inferior esquerdo (18–25% da largura), músculo em destaque.</li>
+              <li><strong>Progresso:</strong> “X/7” ou “X/9” no topo direito para incentivar conclusão.</li>
+              <li><strong>Stickers pontuais:</strong> “Erro comum” em 3 slides, sempre no mesmo local.</li>
+            </ul>
+            <div class="hr"></div>
+            <p class="small"><strong>Tipografia sugerida:</strong> Título (Anton/Bebas/Montserrat ExtraBold). Detalhes (Inter/Montserrat Regular). Mantenha tracking levemente aberto no título.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Copy e ganchos <span class="badge">substituições rápidas</span></h2>
+          <div class="content">
+            <p><strong>Ganchos de capa (troque os colchetes):</strong></p>
+            <ul>
+              <li>“7 exercícios para <strong>[OBJETIVO]</strong> (sem enrolação)”</li>
+              <li>“Se você quer <strong>[RESULTADO]</strong>, comece por estes 7”</li>
+              <li>“Checklist de <strong>[TEMA]</strong>: os 7 que mais funcionam com meus alunos”</li>
+              <li>“Treino de <strong>[TEMA]</strong> em 7 movimentos (com variações)”</li>
+            </ul>
+            <div class="hr"></div>
+            <p><strong>Microcopy por slide (1 linha):</strong></p>
+            <ul>
+              <li>“Ponto-chave: <strong>[CUE]</strong>”</li>
+              <li>“Sinta em: <strong>[MÚSCULO/REGIÃO]</strong> (não na lombar)”</li>
+              <li>“Mais difícil: <strong>[PROGRESSÃO]</strong>”</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>CTA <span class="badge">escolha 1 principal</span></h2>
+          <div class="content">
+            <ul>
+              <li><strong>Salvar (principal):</strong> “Salve este carrossel para o seu próximo treino.”</li>
+              <li><strong>Comentário (engajamento):</strong> “Comente ‘TREINO’ que eu mando uma montagem A/B.”</li>
+              <li><strong>Enquete (simples):</strong> “Qual você mais sente? 1–7.”</li>
+              <li><strong>Demanda de sequência:</strong> “Quer versão para [INICIANTE/CASA/DOR]? Comente ‘QUERO’.”</li>
+              <li><strong>Compartilhamento:</strong> “Marque alguém que treina [OBJETIVO].”</li>
+            </ul>
+            <p class="small" style="margin-top:10px"><strong>Boa prática:</strong> 1 CTA principal + 1 CTA secundário. Ex.: “Salve” + “comente 1–7”.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Checklist <span class="badge">produção sem travar</span></h2>
+          <div class="content">
+            <div class="twoCol">
+              <div>
+                <p><strong>Pré (planejamento):</strong></p>
+                <ul>
+                  <li>Definir <strong>[OBJETIVO]</strong> e <strong>[PÚBLICO]</strong>.</li>
+                  <li>Selecionar 5–7 exercícios cobrindo: ativação, principais, unilateral, acessório, (opcional) finalizador.</li>
+                  <li>Definir 1 cue por exercício (no máximo 7 palavras).</li>
+                  <li>Escolher padrão de montagem do treino (A/B ou 1 treino único).</li>
+                </ul>
+              </div>
+              <div>
+                <p><strong>Execução (captação + design):</strong></p>
+                <ul>
+                  <li>Gravar/fotografar no mesmo local/iluminação (consistência).</li>
+                  <li>Aplicar faixa escura no rodapé em todos os slides.</li>
+                  <li>Fixar: anatomia (inferior esquerdo), “X/7” (topo direito), @ (topo discreto).</li>
+                  <li>Revisar leitura no celular (título legível em 1s).</li>
+                </ul>
+              </div>
+            </div>
+            <div class="hr"></div>
+            <p class="small"><strong>Checklist final antes de postar:</strong> capa promete? nomes grandes? padrão igual? último slide ensina montar? CTA único e claro?</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Variações <span class="badge">mesmo impacto, outro tema</span></h2>
+          <div class="content">
+            <p><strong>Trocas que preservam o “efeito salvável”:</strong></p>
+            <ul>
+              <li><strong>Por equipamento:</strong> “7 exercícios na [máquina/halteres/elástico] para [objetivo]”.</li>
+              <li><strong>Por dor/limitação (com cuidado):</strong> “7 opções para treinar [região] sem irritar [dor]” + ressalva para avaliação individual.</li>
+              <li><strong>Por padrão de movimento:</strong> “7 movimentos de empurrar/puxar/agachar/carregar”.</li>
+              <li><strong>Por nível:</strong> “7 exercícios para [iniciante]” (com regressões) / “avançado” (com progressões).</li>
+              <li><strong>Versão educativa:</strong> manter os 7 slides, mas cada um = “Erro comum + correção” do exercício.</li>
+            </ul>
+            <div class="hr"></div>
+            <p><strong>Substituições prontas (plug & play):</strong></p>
+            <ul>
+              <li>[OBJETIVO] → hipertrofia, força, estabilidade, mobilidade, resistência, postura, corrida, salto, lombar feliz.</li>
+              <li>[PÚBLICO] → iniciante, intermediário, 40+, atleta, pós-parto (se for sua área), dor no joelho (com cautela).</li>
+              <li>[CUE] → “coluna neutra”, “controle na volta”, “joelho acompanha o pé”, “quadril estável”, “não compensa na lombar”.</li>
+            </ul>
+          </div>
+        </article>
+      </aside>
+    </main>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Legenda sugerida <span class="badge">copiar/colar</span></h2>
+      <div class="content">
+        <div class="code" id="legendText">LEGENDA (MODELO)
+
+Quer [RESULTADO] sem perder tempo?
+Aqui estão 7 exercícios para [OBJETIVO] que eu uso muito com alunos.
+
+✅ Como usar:
+• Escolha 4–6 exercícios
+• 3–4 séries | 8–12 reps | 60–90s
+• 2–3x/semana
+
+Dica: foque em técnica + progressão (carga OU reps) toda semana.
+
+Comenta “TREINO” que eu te mando uma sugestão A/B com esses movimentos.
+E salva pra usar no próximo treino.</div>
+        <p class="small" style="margin-top:10px">Ajuste de responsabilidade: se abordar dor/rehab, inclua uma linha: “Se a dor piorar ou for aguda, procure avaliação profissional.”</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function copyFrom(elId, statusId, okText){
+      const el = document.getElementById(elId);
+      const status = document.getElementById(statusId);
+      const text = el ? el.innerText : "";
+      if(!navigator.clipboard){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        status.textContent = okText;
+        return;
+      }
+      navigator.clipboard.writeText(text).then(()=>{
+        status.textContent = okText;
+      }).catch(()=>{
+        status.textContent = "Não foi possível copiar automaticamente. Selecione e copie manualmente.";
+      });
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', function(){
+      copyFrom('roteiroText', 'copyStatus', 'Roteiro copiado. Agora é só substituir os campos entre colchetes.');
+    });
+    document.getElementById('copyLegendBtn').addEventListener('click', function(){
+      copyFrom('legendText', 'copyStatus', 'Legenda copiada. Ajuste [RESULTADO]/[OBJETIVO] e publique.');
+    });
+  </script>
+</body>
+</html>
