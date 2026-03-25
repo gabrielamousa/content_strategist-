@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ficha reproduzível — Carrossel (Finanças)</title>
+<style>
+  :root{
+    --bg0:#070A0F;
+    --bg1:#0B1020;
+    --card:#0C1224;
+    --card2:#0A1328;
+    --text:#EAF0FF;
+    --muted:#A8B3D6;
+    --muted2:#7F8AAE;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.14);
+    --shadow: 0 12px 34px rgba(0,0,0,.55);
+    --r:18px;
+    --g: linear-gradient(90deg, #10B981 0%, #3B82F6 52%, #F59E0B 100%);
+    --g2: linear-gradient(180deg, rgba(16,185,129,.22), rgba(59,130,246,.18) 55%, rgba(245,158,11,.14));
+    --good:#34D399;
+    --warn:#FBBF24;
+    --info:#60A5FA;
+    --danger:#FB7185;
+    --code:#0B1630;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    background:
+      radial-gradient(1000px 600px at 20% -10%, rgba(59,130,246,.22), transparent 55%),
+      radial-gradient(900px 520px at 85% 0%, rgba(16,185,129,.20), transparent 52%),
+      radial-gradient(900px 520px at 65% 110%, rgba(245,158,11,.16), transparent 58%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    color:var(--text);
+  }
+  a{color:inherit}
+  .container{max-width:1100px;margin:0 auto;padding:24px 18px 56px}
+  header{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    box-shadow: var(--shadow);
+    border-radius: calc(var(--r) + 6px);
+    overflow:hidden;
+  }
+  .topbar{
+    padding:14px 16px;
+    display:flex;
+    gap:14px;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 10px;
+    border:1px solid var(--stroke);
+    border-radius:999px;
+    color:var(--muted);
+    background: rgba(255,255,255,.03);
+    font-size:12px;
+    white-space:nowrap;
+  }
+  .pill b{color:var(--text); font-weight:650}
+  .titleWrap{padding:18px 16px 20px}
+  .hTitle{
+    font-size:22px;
+    line-height:1.15;
+    margin:0 0 10px;
+    letter-spacing:-.02em;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    line-height:1.5;
+  }
+  .grad{
+    height:3px;
+    background: var(--g);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap:14px;
+    margin-top:14px;
+  }
+  @media (max-width: 980px){
+    .grid{grid-template-columns:1fr;}
+  }
+
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    border:1px solid var(--stroke);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 14px 10px;
+    border-bottom:1px solid var(--stroke);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:10px;
+  }
+  .card .hd h2{
+    margin:0;
+    font-size:14px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .card .bd{padding:14px}
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.03);
+    color:var(--muted);
+    font-size:12px;
+  }
+  .dot{width:8px;height:8px;border-radius:99px;background: var(--g)}
+
+  .klist{margin:0; padding-left:18px; color:var(--muted); line-height:1.6}
+  .klist li{margin:6px 0}
+
+  .callout{
+    border:1px solid var(--stroke2);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(16,185,129,.10), rgba(59,130,246,.08), rgba(245,158,11,.06));
+    padding:12px 12px;
+  }
+  .callout strong{color:var(--text)}
+
+  .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media (max-width:700px){.twoCol{grid-template-columns:1fr}}
+
+  .btnRow{display:flex; gap:10px; flex-wrap:wrap}
+  button{
+    appearance:none; border:1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius: 12px;
+    cursor:pointer;
+    font-weight:650;
+  }
+  button:hover{border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.06)}
+  .btnPrimary{
+    background: linear-gradient(90deg, rgba(16,185,129,.22), rgba(59,130,246,.20), rgba(245,158,11,.18));
+    border-color: rgba(255,255,255,.18);
+  }
+  .small{font-size:12px; color:var(--muted2)}
+
+  .mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+  .scriptBox{
+    background: linear-gradient(180deg, rgba(11,22,48,.78), rgba(11,22,48,.55));
+    border:1px solid rgba(96,165,250,.18);
+    border-radius: 14px;
+    padding:12px;
+    overflow:auto;
+    max-height: 520px;
+  }
+  pre{margin:0; white-space:pre-wrap; word-wrap:break-word; color:#DCE6FF; line-height:1.55; font-size:13px}
+
+  .slideGrid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:12px;
+  }
+  @media (max-width:900px){.slideGrid{grid-template-columns:1fr}}
+
+  .slide{
+    border:1px solid var(--stroke);
+    border-radius: 16px;
+    background:
+      radial-gradient(900px 300px at 30% 20%, rgba(59,130,246,.14), transparent 55%),
+      radial-gradient(800px 260px at 90% 30%, rgba(16,185,129,.12), transparent 60%),
+      rgba(255,255,255,.03);
+    padding:12px;
+  }
+  .slide .n{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    margin-bottom:8px;
+  }
+  .slide .n b{font-size:13px}
+  .tag{
+    font-size:11px; color:var(--muted);
+    border:1px solid var(--stroke);
+    padding:4px 8px; border-radius:999px;
+    background: rgba(255,255,255,.03);
+  }
+  .slide .txt{color:var(--muted); line-height:1.55; font-size:13px}
+  .result{
+    margin-top:10px;
+    padding:10px 10px;
+    border-radius: 14px;
+    border:1px dashed rgba(255,255,255,.22);
+    background: rgba(0,0,0,.18);
+  }
+  .result span{display:block; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color: rgba(234,240,255,.85)}
+  .result b{color:var(--text)}
+
+  .hr{height:1px;background:var(--stroke);margin:10px 0}
+  .muted{color:var(--muted)}
+  .link{
+    color: #CFE2FF;
+    text-decoration:none;
+    border-bottom:1px solid rgba(207,226,255,.25);
+  }
+  .link:hover{border-bottom-color: rgba(207,226,255,.45)}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="grad"></div>
+      <div class="topbar">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <div class="pill"><b>Nicho</b> Finanças</div>
+          <div class="pill"><b>Dia</b> 28</div>
+          <div class="pill"><b>Formato</b> Carrossel</div>
+          <div class="pill"><b>Pilar</b> Passo a passo</div>
+        </div>
+        <div class="pill" style="max-width: 360px; overflow:hidden; text-overflow:ellipsis;">
+          <b>Original</b>
+          <a class="link" href="https://www.instagram.com/p/DM7jYV2v7qZ/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DM7jYV2v7qZ/</a>
+        </div>
+      </div>
+      <div class="titleWrap">
+        <h1 class="hTitle">Como funciona um método em 5 semanas (com prova + CTA)?</h1>
+        <p class="sub">Roteiro reproduzível no estilo “programa por semanas” que vende destino na capa, entrega processo em etapas e converte com prova + palavra‑chave.</p>
+        <div class="hr"></div>
+        <div class="btnRow">
+          <button class="btnPrimary" id="copyBtn">Copiar roteiro</button>
+          <button id="copySlidesBtn">Copiar slides sugeridos</button>
+          <span class="small" id="copyStatus"></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge"><span class="dot"></span>Estrutura que aumenta retenção + conversão</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="callout">
+              <strong>Ideia central</strong><br/>
+              <span class="muted">Transforme um tema complexo em <b>5 etapas curtas</b> (ex.: semanas), cada uma com <b>3 ações</b> e um <b>RESULTADO</b> visível. Feche com <b>prova</b> e <b>CTA único</b>.</span>
+            </div>
+            <div class="callout">
+              <strong>Por que funciona</strong><br/>
+              <ul class="klist">
+                <li><b>Open loop</b> na capa (“Como funciona…?”)</li>
+                <li><b>Gamificação</b> (Semana 1… Semana 5…)</li>
+                <li><b>Refrão</b> “RESULTADO” cria padrão de leitura</li>
+                <li><b>Prova antes do CTA</b> reduz objeção</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Regra de ouro de adaptação</strong><br/>
+            <span class="muted">Mantenha o esqueleto <b>Ver → Diagnosticar → Corrigir → Planejar → Crescer</b> e troque apenas as ações para o seu tema (dívidas, investimentos, renda extra, orçamento, etc.).</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Metadados & Direção</h2>
+          <span class="badge">Calendário</span>
+        </div>
+        <div class="bd">
+          <ul class="klist">
+            <li><b>Objetivo:</b> explicar o método + gerar comentários (palavra‑chave)</li>
+            <li><b>Público:</b> quem quer orientação guiada, com clareza de etapas</li>
+            <li><b>Tom:</b> direto, “material de treinamento”, sem floreio</li>
+            <li><b>Ritmo:</b> 1 ideia por slide (tese + 3 bullets)</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>CTA recomendado</strong><br/>
+            <span class="muted"><b>Comente “MAPA”</b> (ou outra palavra curta) para receber: planilha, checklist, aula, PDF, link, diagnóstico.</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Estrutura</h2>
+        <span class="badge">8 slides (modelo)</span>
+      </div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <ul class="klist">
+              <li><b>Slide 1:</b> Capa (hook + promessa + tempo)</li>
+              <li><b>Slides 2–6:</b> Etapas (Semana 1…5) — 3 bullets + RESULTADO</li>
+              <li><b>Slide 7:</b> Prova (prints/relatos/números)</li>
+              <li><b>Slide 8:</b> Oferta/convite + CTA por palavra‑chave</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Sequência de argumentos (plug & play)</strong><br/>
+            <ol class="klist" style="padding-left:18px;">
+              <li>Consciência/rastreio (ver a realidade)</li>
+              <li>Diagnóstico (entender a causa)</li>
+              <li>Ação corretiva (reduzir dano/risco)</li>
+              <li>Planejamento (criar sistema)</li>
+              <li>Expansão (otimizar/crescer)</li>
+              <li>Prova</li>
+              <li>Convite/CTA único</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Slides sugeridos (1..8)</h2>
+        <span class="badge">Texto pronto + campos para substituir</span>
+      </div>
+      <div class="bd">
+        <div class="slideGrid" id="slidesGrid">
+          <div class="slide">
+            <div class="n"><b>Slide 1 — CAPA</b><span class="tag">Hook + promessa</span></div>
+            <div class="txt"><b>Como funciona [NOME DO MÉTODO/PROGRAMA]?</b><br/>Sub: Um [desafio/treinamento/mentoria] pra quem <b>[DOR]</b> e quer <b>[TRANSFORMAÇÃO]</b>.<br/>Selos: “[PROMESSA EMOCIONAL]” • <b>[X] semanas</b> • “[BENEFÍCIO PRINCIPAL]”.</div>
+          </div>
+          <div class="slide">
+            <div class="n"><b>Slide 2 — SEMANA 1: [NOME CURTO]</b><span class="tag">Ver</span></div>
+            <div class="txt"><b>H2:</b> [Tese forte em 5–8 palavras]<br/>✔ [Ação 1] <br/>✔ [Ação 2] <br/>✔ [Ação 3]</div>
+            <div class="result"><span>RESULTADO</span><b>[Mudança rápida e perceptível]</b></div>
+          </div>
+          <div class="slide">
+            <div class="n"><b>Slide 3 — SEMANA 2: [NOME CURTO]</b><span class="tag">Diagnosticar</span></div>
+            <div class="txt"><b>H2:</b> [Tese curta]<br/>✔ [Ação 1] <br/>✔ [Ação 2] <br/>✔ [Ação 3]</div>
+            <div class="result"><span>RESULTADO</span><b>[Clareza sobre causa/decisão]</b></div>
+          </div>
+          <div class="slide">
+            <div class="n"><b>Slide 4 — SEMANA 3: [NOME CURTO]</b><span class="tag">Corrigir</span></div>
+            <div class="txt"><b>H2:</b> [Tese curta]<br/>✔ [Ação 1] <br/>✔ [Ação 2] <br/>✔ [Ação 3]</div>
+            <div class="result"><span>RESULTADO</span><b>[Alívio/queda de custo/menos risco]</b></div>
+          </div>
+          <div class="slide">
+            <div class="n"><b>Slide 5 — SEMANA 4: [NOME CURTO]</b><span class="tag">Planejar</span></div>
+            <div class="txt"><b>H2:</b> [Tese curta]<br/>✔ [Ação 1] <br/>✔ [Ação 2] <br/>✔ [Ação 3]</div>
+            <div class="result"><span>RESULTADO</span><b>[Previsibilidade/sistema/rotina]</b></div>
+          </div>
+          <div class="slide">
+            <div class="n"><b>Slide 6 — SEMANA 5: [NOME CURTO]</b><span class="tag">Crescer</span></div>
+            <div class="txt"><b>H2:</b> [Tese curta]<br/>✔ [Ação 1] <br/>✔ [Ação 2] <br/>✔ [Ação 3]</div>
+            <div class="result"><span>RESULTADO</span><b>[Otimização/crescimento/escala]</b></div>
+          </div>
+          <div class="slide">
+            <div class="n"><b>Slide 7 — PROVA</b><span class="tag">Reduz risco</span></div>
+            <div class="txt"><b>Veja quem fez e os resultados:</b><br/>1) “[Frase curta]” (+ número, se tiver)<br/>2) “[Frase curta]” (+ antes/depois)<br/>3) “[Frase curta]” (+ benefício)</div>
+            <div class="result"><span>PRO TIP</span><b>Use 1 métrica forte: “+R$X”, “-Y%”, “Z dias”</b></div>
+          </div>
+          <div class="slide">
+            <div class="n"><b>Slide 8 — OFERTA + CTA</b><span class="tag">Converter</span></div>
+            <div class="txt"><b>[Frase memorável curta]</b><br/>Linha de valor: [o que a pessoa recebe] + [pra quem é].<br/><b>CTA (único):</b> Comente <b>“[PALAVRA]”</b> que eu te envio [entrega].<br/>Complemento: “só se você for fazer direito”.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Roteiro (texto copiável e preenchível)</h2>
+        <span class="badge">Use como template</span>
+      </div>
+      <div class="bd">
+        <div class="scriptBox" role="region" aria-label="Roteiro copiável">
+<pre class="mono" id="scriptText">CARROSSEL (8 SLIDES) — TEMPLATE REPRODUZÍVEL
+
+[CONFIG]
+- Tema: [TEMA]
+- Persona: [QUEM]
+- Dor principal: [DOR]
+- Transformação desejada: [TRANSFORMAÇÃO]
+- Tempo/estrutura: [X semanas/etapas]
+- Palavra-chave do CTA: [PALAVRA]
+- Entrega: [PDF/planilha/checklist/aula/diagnóstico]
+
+SLIDE 1 — CAPA
+Título: Como funciona [NOME DO MÉTODO/PROGRAMA]?
+Sub: Um [desafio/treinamento/mentoria] pra quem [DOR] e quer [TRANSFORMAÇÃO].
+Selos (2–3):
+- [PROMESSA EMOCIONAL]
+- [X] semanas
+- [BENEFÍCIO PRINCIPAL]
+
+SLIDE 2 — SEMANA/ETAPA 1: VER (Consciência)
+H2: [Tese forte em 5–8 palavras]
+✔ [Ação 1 simples e objetiva]
+✔ [Ação 2 simples e objetiva]
+✔ [Ação 3 simples e objetiva]
+RESULTADO: [Mudança rápida e mensurável/observável]
+
+SLIDE 3 — SEMANA/ETAPA 2: DIAGNOSTICAR
+H2: [Tese curta]
+✔ [Ação 1]
+✔ [Ação 2]
+✔ [Ação 3]
+RESULTADO: [Clareza do problema + decisão do foco]
+
+SLIDE 4 — SEMANA/ETAPA 3: CORRIGIR
+H2: [Tese curta]
+✔ [Ação 1]
+✔ [Ação 2]
+✔ [Ação 3]
+RESULTADO: [Alívio / redução de custo / redução de risco]
+
+SLIDE 5 — SEMANA/ETAPA 4: PLANEJAR
+H2: [Tese curta]
+✔ [Ação 1]
+✔ [Ação 2]
+✔ [Ação 3]
+RESULTADO: [Sistema simples + previsibilidade]
+
+SLIDE 6 — SEMANA/ETAPA 5: CRESCER
+H2: [Tese curta]
+✔ [Ação 1]
+✔ [Ação 2]
+✔ [Ação 3]
+RESULTADO: [Otimização / crescimento / escala]
+
+SLIDE 7 — PROVA (antes do CTA)
+Título: Veja quem fez e os resultados
+Provas (3):
+1) [Print/relato curto] + [número]
+2) [Print/relato curto] + [número]
+3) [Print/relato curto] + [número]
+Nota: se não tiver prova real, use “prova de processo”:
+- checklist preenchido, tela da planilha, cronograma, bastidores, mini-resultado em 24–72h.
+
+SLIDE 8 — OFERTA + CTA
+Headline curta: [É um treino. É uma virada.] (ou equivalente)
+Linha de valor: [o que a pessoa recebe] + [para quem] + [em quanto tempo].
+CTA único: COMENTE “[PALAVRA]” que eu te envio [ENTREGA].
+Filtro/posicionamento: [só se você for aplicar / só se quiser fazer direito].</pre>
+        </div>
+        <div class="hr"></div>
+        <div class="twoCol">
+          <div class="callout">
+            <strong>Opções de substituição (mesmo impacto)</strong><br/>
+            <ul class="klist">
+              <li><b>“Semanas”</b> → “Etapas”, “Dias”, “Fases”, “Aulas”, “Sprints”</li>
+              <li><b>“Como funciona”</b> → “O que acontece em…”, “O passo a passo de…”, “O que você faz no…”</li>
+              <li><b>“RESULTADO”</b> → “Você sai com…”, “No final você terá…”, “Ganho direto:”</li>
+              <li><b>Prova social</b> → “prova de processo” (checklists, planilha, antes/depois parcial)</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Erros que derrubam esse formato</strong><br/>
+            <ul class="klist">
+              <li>Mais de 3–4 bullets por slide (vira texto demais)</li>
+              <li>Etapas sem resultado (falta recompensa)</li>
+              <li>CTA com 2–3 opções (dispersa)</li>
+              <li>Prova depois do CTA (perde conversão)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Elementos visuais</h2>
+        <span class="badge">Identidade dark high-tech (adaptação)</span>
+      </div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <ul class="klist">
+              <li><b>Fundo:</b> escuro com leve textura/gradiente</li>
+              <li><b>Cards/áreas:</b> borda suave + sombra (editorial-tech)</li>
+              <li><b>Destaques:</b> linhas/selos em degradê verde→azul→laranja</li>
+              <li><b>Padrão fixo:</b> header fino com “SEU NOME — FINANÇAS”</li>
+              <li><b>Refrão:</b> box “RESULTADO” com borda tracejada</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout">
+              <strong>Kit de componentes (reutilizável)</strong><br/>
+              <ul class="klist">
+                <li>Capa: título + subtítulo + 2–3 selos</li>
+                <li>Etapa: “Semana X” + tese + lista com checks</li>
+                <li>Box: “RESULTADO:” no rodapé do slide</li>
+                <li>Prova: 3 cards (relato curto + número)</li>
+                <li>CTA: faixa grande com palavra‑chave</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Copy e ganchos</h2>
+        <span class="badge">Modelos prontos</span>
+      </div>
+      <div class="bd">
+        <div class="twoCol">
+          <div class="callout">
+            <strong>Ganchos de capa (escolha 1)</strong><br/>
+            <ul class="klist">
+              <li>“Como funciona o [MÉTODO] pra [TRANSFORMAÇÃO]?”</li>
+              <li>“O que acontece em 5 semanas quando você [AÇÃO]”</li>
+              <li>“O passo a passo que eu usaria se começasse do zero”</li>
+              <li>“Se você só fizer isso por 5 semanas…”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Teses curtas (H2) para etapas</strong><br/>
+            <ul class="klist">
+              <li>“Você não controla o que não mede.”</li>
+              <li>“O problema não é gastar, é não saber onde.”</li>
+              <li>“Cortar sem estratégia dá rebote.”</li>
+              <li>“Sistema simples vence motivação.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <strong>Frases finais (slide 8) — memoráveis e curtas</strong><br/>
+          <span class="muted">Escolha 1: “É um treino. É uma virada.” • “Sem milagre. Com método.” • “Simples. Repetível. Funciona.” • “Você no comando, de novo.”</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>CTA</h2>
+        <span class="badge">1 comando só</span>
+      </div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <div class="callout">
+              <strong>Modelo principal</strong><br/>
+              <span class="muted"><b>Comente “PALAVRA”</b> que eu te envio <b>[ENTREGA]</b>.</span>
+              <div class="hr"></div>
+              <span class="muted"><b>Filtro opcional:</b> “mas só se você for aplicar por 7 dias”.</span>
+            </div>
+          </div>
+          <div>
+            <div class="callout">
+              <strong>Palavras‑chave sugeridas (troque conforme a entrega)</strong><br/>
+              <ul class="klist">
+                <li>PLANILHA (modelo)</li>
+                <li>MAPA (passo a passo)</li>
+                <li>DIAGNÓSTICO (lista/triagem)</li>
+                <li>ROTEIRO (checklist/guia)</li>
+                <li>AULA (link)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Checklist</h2>
+        <span class="badge">Criação e publicação</span>
+      </div>
+      <div class="bd">
+        <div class="twoCol">
+          <div class="callout">
+            <strong>Checklist de roteiro</strong><br/>
+            <ul class="klist">
+              <li>Capa com pergunta + promessa + tempo (“X semanas”)</li>
+              <li>5 etapas com no máximo 3 bullets cada</li>
+              <li>Todo slide de etapa termina com “RESULTADO:”</li>
+              <li>Prova antes do CTA (social ou de processo)</li>
+              <li>1 CTA único por comentário (palavra curta)</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Checklist de design/UX</strong><br/>
+            <ul class="klist">
+              <li>1 ideia por slide (respiro e hierarquia)</li>
+              <li>Alternar cor/gradiente sutil a cada 1–2 slides</li>
+              <li>Header fixo (marca) + box tracejado (RESULTADO)</li>
+              <li>Fonte grande o suficiente para tela pequena</li>
+              <li>Consistência de alinhamento e margens</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <strong>Checklist de performance</strong><br/>
+          <ul class="klist">
+            <li>Legenda: 3 linhas iniciais reforçam promessa + “comente PALAVRA”</li>
+            <li>Fixar comentário com instrução (palavra‑chave + o que recebe)</li>
+            <li>Responder comentários com agilidade (primeira hora)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Variações</h2>
+        <span class="badge">Adaptações para outros temas</span>
+      </div>
+      <div class="bd">
+        <div class="twoCol">
+          <div class="callout">
+            <strong>Variação A — Dívidas (mesma estrutura)</strong><br/>
+            <ul class="klist">
+              <li>Semana 1: raio‑X de gastos</li>
+              <li>Semana 2: mapa das dívidas (juros/prioridade)</li>
+              <li>Semana 3: negociação + corte cirúrgico</li>
+              <li>Semana 4: orçamento + regra de pagamento</li>
+              <li>Semana 5: reserva mínima + prevenção de recaída</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Variação B — Investimentos do zero</strong><br/>
+            <ul class="klist">
+              <li>Semana 1: orçamento e espaço de aporte</li>
+              <li>Semana 2: reserva de emergência</li>
+              <li>Semana 3: perfil de risco + objetivos</li>
+              <li>Semana 4: carteira simples (2–3 ativos)</li>
+              <li>Semana 5: rotina mensal + rebalanceamento</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="twoCol">
+          <div class="callout">
+            <strong>Variação C — Renda extra</strong><br/>
+            <ul class="klist">
+              <li>Semana 1: inventário de habilidades + tempo</li>
+              <li>Semana 2: oferta simples + promessa</li>
+              <li>Semana 3: canal de aquisição (1 só)</li>
+              <li>Semana 4: script de venda + entrega</li>
+              <li>Semana 5: precificação + escala leve</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Variação D — Outro nicho (fora de finanças)</strong><br/>
+            <span class="muted">Troque “semana” por “fase” e adapte o esqueleto:</span>
+            <ul class="klist">
+              <li>Ver (baseline/diagnóstico)</li>
+              <li>Entender (causas/erros)</li>
+              <li>Corrigir (mudança 1)</li>
+              <li>Padronizar (sistema/rotina)</li>
+              <li>Otimizar (crescer/escala)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  function copyTextFromEl(elId, statusId){
+    const el = document.getElementById(elId);
+    const status = document.getElementById(statusId);
+    const text = el ? el.innerText : "";
+    if(!text){
+      if(status) status.textContent = "Nada para copiar.";
+      return;
+    }
+    navigator.clipboard.writeText(text).then(()=>{
+      if(status) status.textContent = "Copiado.";
+      setTimeout(()=>{ if(status) status.textContent = ""; }, 1800);
+    }).catch(()=>{
+      if(status) status.textContent = "Não foi possível copiar.";
+      setTimeout(()=>{ if(status) status.textContent = ""; }, 1800);
+    });
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', ()=>{
+    copyTextFromEl('scriptText', 'copyStatus');
+  });
+
+  document.getElementById('copySlidesBtn').addEventListener('click', ()=>{
+    const slides = Array.from(document.querySelectorAll('#slidesGrid .slide'))
+      .map((s)=>s.innerText.trim())
+      .join('\n\n---\n\n');
+    navigator.clipboard.writeText(slides).then(()=>{
+      document.getElementById('copyStatus').textContent = "Slides copiados.";
+      setTimeout(()=>{ document.getElementById('copyStatus').textContent = ""; }, 1800);
+    }).catch(()=>{
+      document.getElementById('copyStatus').textContent = "Não foi possível copiar.";
+      setTimeout(()=>{ document.getElementById('copyStatus').textContent = ""; }, 1800);
+    });
+  });
+</script>
+</body>
+</html>
