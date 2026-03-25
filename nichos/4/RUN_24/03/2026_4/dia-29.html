@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 29 — Finanças — Roteiro reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B132A;
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --line:rgba(234,240,255,.12);
+      --shadow: 0 12px 44px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg, #2EE59D 0%, #2A7BFF 55%, #FFB13B 100%);
+      --g2: linear-gradient(135deg, rgba(46,229,157,.22), rgba(42,123,255,.18), rgba(255,177,59,.16));
+      --ok:#2EE59D;
+      --warn:#FFB13B;
+      --info:#2A7BFF;
+      --danger:#FF4D6D;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1100px 700px at 12% -10%, rgba(42,123,255,.24), transparent 60%),
+        radial-gradient(900px 650px at 92% 0%, rgba(46,229,157,.18), transparent 60%),
+        radial-gradient(900px 650px at 70% 110%, rgba(255,177,59,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 56px}
+
+    header{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(14,22,48,.86), rgba(11,19,42,.72));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .headTop{
+      padding:18px 18px 14px;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .dot{width:8px; height:8px; border-radius:999px; background:var(--info); box-shadow:0 0 0 4px rgba(42,123,255,.12)}
+    .dot.ok{background:var(--ok); box-shadow:0 0 0 4px rgba(46,229,157,.12)}
+    .dot.warn{background:var(--warn); box-shadow:0 0 0 4px rgba(255,177,59,.12)}
+
+    h1{margin:0; font-size:20px; line-height:1.2; letter-spacing:-.2px}
+    .sub{margin-top:8px; color:var(--muted); font-size:13px; line-height:1.45}
+
+    .headActions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:none; cursor:pointer;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+      font-size:13px;
+      color:var(--text);
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      display:inline-flex; align-items:center; gap:10px;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.08); border-color:rgba(234,240,255,.18)}
+    .btn.primary{
+      background:var(--g2);
+      border-color:rgba(46,229,157,.22);
+      position:relative;
+    }
+    .btn.primary:before{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:12px;
+      padding:1px;
+      background:var(--g1);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      opacity:.65;
+      pointer-events:none;
+    }
+
+    .headBottom{
+      padding:0 18px 18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      border-top:1px solid var(--line);
+      background:rgba(0,0,0,.14);
+    }
+    .link{
+      font-size:13px;
+      color:var(--muted);
+      text-decoration:none;
+      border-bottom:1px dashed rgba(234,240,255,.25);
+      padding-bottom:2px;
+    }
+    .link:hover{color:var(--text); border-bottom-color:rgba(234,240,255,.45)}
+    .status{font-family:var(--mono); font-size:12px; color:rgba(234,240,255,.78)}
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    section.card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(14,22,48,.78), rgba(11,19,42,.70));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .cardHead{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .cardHead h2{margin:0; font-size:14px; letter-spacing:.2px}
+    .chip{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      padding:6px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .cardBody{padding:16px}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+    }
+    @media (max-width: 520px){
+      .kpi{grid-template-columns:1fr}
+    }
+    .k{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      border-radius:var(--radius2);
+      padding:12px;
+    }
+    .k .t{color:var(--muted); font-size:12px; margin-bottom:6px}
+    .k .v{font-size:13px; line-height:1.35}
+
+    .list{margin:0; padding-left:18px; color:rgba(234,240,255,.92)}
+    .list li{margin:8px 0; color:rgba(234,240,255,.92)}
+    .muted{color:var(--muted)}
+
+    .callout{
+      border:1px solid rgba(46,229,157,.22);
+      background:linear-gradient(135deg, rgba(46,229,157,.10), rgba(42,123,255,.08), rgba(255,177,59,.06));
+      border-radius:var(--radius2);
+      padding:12px;
+      color:rgba(234,240,255,.92);
+    }
+    .callout b{color:var(--text)}
+
+    .code{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.22);
+      border-radius:var(--radius2);
+      padding:12px;
+      font-family:var(--mono);
+      font-size:12px;
+      white-space:pre-wrap;
+      line-height:1.55;
+      color:rgba(234,240,255,.88);
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media(max-width:720px){.twoCol{grid-template-columns:1fr}}
+
+    .divider{height:1px; background:var(--line); margin:14px 0}
+
+    textarea#roteiroText{
+      width:100%;
+      min-height:380px;
+      resize:vertical;
+      border-radius:var(--radius2);
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.20);
+      color:rgba(234,240,255,.92);
+      padding:12px;
+      line-height:1.55;
+      font-family:var(--mono);
+      font-size:12px;
+      outline:none;
+    }
+    textarea#roteiroText:focus{border-color:rgba(42,123,255,.35); box-shadow:0 0 0 4px rgba(42,123,255,.10)}
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background:rgba(10,16,34,.88);
+      border:1px solid rgba(234,240,255,.16);
+      padding:10px 12px;
+      border-radius:999px;
+      color:rgba(234,240,255,.92);
+      font-size:13px;
+      box-shadow:var(--shadow);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-2px)}
+
+    .footer{margin-top:14px; color:var(--muted); font-size:12px; text-align:center}
+    .grad{background:var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headTop">
+        <div>
+          <div class="badgeRow">
+            <span class="badge"><span class="dot ok"></span><span>Nicho: <b style="color:var(--text)">Finanças</b></span></span>
+            <span class="badge"><span class="dot warn"></span><span>Dia: <b style="color:var(--text)">29</b></span></span>
+            <span class="badge"><span class="dot"></span><span>Formato: <b style="color:var(--text)">Carrossel</b></span></span>
+            <span class="badge"><span class="dot"></span><span>Pilar: <b style="color:var(--text)">Dor</b></span></span>
+          </div>
+          <h1 style="margin-top:12px">A conta invisível: <span class="grad">quanto vale 1 hora da sua vida?</span></h1>
+          <div class="sub">Roteiro reproduzível em forma de micro-história (diálogo + conflito + pausa + twist). Feito para maximizar retenção e compartilhamento sem depender de tecnicês.</div>
+        </div>
+        <div class="headActions">
+          <a class="btn" href="https://www.instagram.com/p/DWKBc4skW6S/" target="_blank" rel="noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+      <div class="headBottom">
+        <a class="link" href="https://www.instagram.com/p/DWKBc4skW6S/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DWKBc4skW6S/</a>
+        <div class="status">Template v1.2 • 8–10 slides • 6–18 palavras/slide</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardHead">
+          <h2>Resumo</h2>
+          <span class="chip">Objetivo: prender + reencadrar + gerar salvamentos</span>
+        </div>
+        <div class="cardBody">
+          <div class="kpi">
+            <div class="k"><div class="t">Mecânica</div><div class="v">Mini-história (quadrinhos) com <b>pergunta-motor</b> e <b>twist</b> final.</div></div>
+            <div class="k"><div class="t">Emoção dominante</div><div class="v">Culpa / pressa / falta de presença → vira <b>clareza</b>.</div></div>
+            <div class="k"><div class="t">Promessa implícita</div><div class="v">Você vai enxergar o <b>custo oculto</b> por trás de um número.</div></div>
+          </div>
+          <div class="divider"></div>
+          <div class="callout"><b>Essência reproduzível:</b> comece com uma situação comum, coloque uma métrica objetiva (R$/hora, juros, tempo, risco), crie julgamento precipitado, depois revele a intenção real e feche com uma moral “printável”.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Estrutura</h2>
+          <span class="chip">Blocos narrativos</span>
+        </div>
+        <div class="cardBody">
+          <ol class="list">
+            <li><b>Hook situacional</b> (rotina + emoção)</li>
+            <li><b>Pergunta incomum</b> (abre loop de curiosidade)</li>
+            <li><b>Tensão</b> (resistência + resposta fria)</li>
+            <li><b>Pedido “errado”</b> (parece capricho/absurdo)</li>
+            <li><b>Conflito</b> (negativa + ruptura)</li>
+            <li><b>Pausa</b> (passagem de tempo / narrador)</li>
+            <li><b>Conserto</b> (entrega / abertura para conversa)</li>
+            <li><b>Revelação em camadas</b> (por quê? / então…)</li>
+            <li><b>Twist</b> (a métrica volta com outro sentido)</li>
+            <li><b>Moral</b> (frase final compartilhável + CTA na legenda)</li>
+          </ol>
+          <div class="divider"></div>
+          <div class="muted" style="font-size:13px; line-height:1.55">
+            <b>Regra de ouro:</b> o slide 2 cria a pergunta-motor; os slides 3–9 <i>existem</i> para tornar a resposta do slide 10 inevitável.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Roteiro (modelo copiável)</h2>
+          <span class="chip">Preencha {chaves} e publique</span>
+        </div>
+        <div class="cardBody">
+          <textarea id="roteiroText">CARROSSEL — MICRO-HISTÓRIA (10 SLIDES)
+
+[PERSONAGENS]
+Pessoa A = {trabalhador(a)/pai/mãe/empreendedor(a)/eu do futuro}
+Pessoa B = {filho(a)/cliente/consciência/eu do passado}
+Tema = {valor da hora | juros | orçamento | investimento | precificação}
+Métrica = {R$X por hora | % ao mês | R$ por dia | anos | parcelas}
+Pedido = {R$Y | 30 min | parar de fazer X | começar Y}
+Custo oculto = {tempo/paz/energia/liberdade/oportunidade}
+
+SLIDE 1 — Hook humano
+(Ambiente: rotina; expressão cansada)
+Pessoa B: “{Pessoa A}… já está tarde.”
+Pessoa A: “Eu só preciso terminar isso.”
+
+SLIDE 2 — Pergunta-motor
+Pessoa B: “Posso te fazer uma pergunta?”
+Pessoa B: “Quanto você ganha por {unidade}? (por hora / por dia / por mês)”
+
+SLIDE 3 — Resistência + número
+Pessoa A: “Por que você quer saber isso?”
+Pessoa A: “{Métrica}.”
+
+SLIDE 4 — Pedido que parece ‘errado’
+Pessoa B: “Então… você me dá {Pedido}?”
+Pessoa A: “Pra quê?”
+
+SLIDE 5 — Conflito / julgamento
+Pessoa B: “É importante.”
+Pessoa A: “Se for pra besteira, nem me peça. Chega.”
+
+SLIDE 6 — Pausa narrativa (transição)
+(Narrador, fora do balão)
+“Depois de {tempo}… {Pessoa A} respirou e voltou.”
+
+SLIDE 7 — Abertura / tentativa de reparar
+Pessoa A: “Desculpa. Acho que fui duro(a).”
+Pessoa A: “Aqui… {Pedido}.”
+
+SLIDE 8 — Revelação em camadas
+Pessoa A: “Mas… por que você quer isso?”
+Pessoa B: “Porque antes eu não conseguia. Agora eu consigo.”
+
+SLIDE 9 — Twist (reencadramento da métrica)
+Pessoa B: “Se você vale {Métrica}…”
+Pessoa B: “posso ‘comprar’ {tempo específico: 1h / 30min / uma noite sem celular} de você?”
+
+SLIDE 10 — Moral (printável)
+Opção A (emocional): “O problema nunca foi {dinheiro}. Era {custo oculto}.”
+Opção B (finanças): “Preço é número. Custo é consequência.”
+Opção C (direta): “Se você vende barato sua {hora/atenção}, quem paga a diferença é sua vida.”
+
+LEGENDA (curta)
+1) 1 linha de contexto do tema.
+2) 1 pergunta para comentário.
+3) 1 CTA de salvar/compartilhar.
+4) (opcional) isca: “Comenta {palavra-chave} que eu te mando {recurso}.”</textarea>
+          <div class="divider"></div>
+          <div class="twoCol">
+            <div class="callout">
+              <b>Como adaptar sem perder impacto</b><br>
+              Troque só 3 peças: <b>métrica</b> (número frio), <b>pedido</b> (ação concreta) e <b>custo oculto</b> (o que realmente dói). O resto é ritmo.
+            </div>
+            <div class="callout" style="border-color: rgba(42,123,255,.22)">
+              <b>Limites de texto</b><br>
+              Mira em <b>6–18 palavras</b> por slide; 2 balões no máximo; 1 ideia por tela.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Elementos visuais</h2>
+          <span class="chip">High-tech + humano</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><b>Continuidade</b>: enquadramento repetido (mesmo cenário) para sensação “cinematográfica”.</li>
+            <li><b>Dois personagens fixos</b> (ou dois ícones): Ex.: Pessoa vs Consciência; Cliente vs Consultor.</li>
+            <li><b>Balões/cards</b> com contraste alto; fundo com pouca distração.</li>
+            <li><b>1 elemento constante</b>: moldura, barra superior, ou ícone (relógio, cartão, gráfico).</li>
+            <li><b>Ritmo</b>: slide 6 é “respiro” (menos texto, mais silêncio visual).</li>
+          </ul>
+          <div class="divider"></div>
+          <div class="callout"><b>Dica prática:</b> se não for usar ilustração, transforme cada slide em “tela de chat” (bolhas) com um fundo fixo e leve granulado. Mantém o mesmo efeito de diálogo.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Copy e ganchos</h2>
+          <span class="chip">Biblioteca de substituições</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <div class="muted" style="font-size:12px; margin-bottom:8px">Perguntas-motor (Slide 2)</div>
+              <div class="code">• “Quanto custa um ‘só hoje’?”
+• “Quanto você paga por mês pra adiar isso?”
+• “Quanto sua ansiedade custa?”
+• “Quanto vale sua hora, de verdade?”
+• “Quanto custa não decidir?”</div>
+            </div>
+            <div>
+              <div class="muted" style="font-size:12px; margin-bottom:8px">Métricas frias (Slide 3)</div>
+              <div class="code">• “R$ {X}/hora.”
+• “{X}% ao mês.”
+• “R$ {X} por dia sem perceber.”
+• “{X} parcelas.”
+• “{X} anos até chegar lá.”</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="twoCol">
+            <div>
+              <div class="muted" style="font-size:12px; margin-bottom:8px">Conflito (Slides 4–5)</div>
+              <div class="code">• “Pra quê?”
+• “Isso é necessidade ou vontade?”
+• “Você nem vai usar…”
+• “Agora não.”
+• “Você não entende.”</div>
+            </div>
+            <div>
+              <div class="muted" style="font-size:12px; margin-bottom:8px">Morais printáveis (Slide 10)</div>
+              <div class="code">• “Preço é número. Custo é consequência.”
+• “O barato de hoje vira a conta de amanhã.”
+• “Dinheiro compra tempo. Mas você está comprando o quê?”
+• “A conta mais cara é a que você não enxerga.”
+• “O problema não é {dinheiro}. É {custo oculto}.”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>CTA</h2>
+          <span class="chip">Legenda (não poluir slides)</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><b>Comentários (pergunta direta):</b> “Hoje, quanto vale 1 hora sua?” / “Qual foi a ‘conta invisível’ mais cara pra você?”</li>
+            <li><b>Salvar (utilidade):</b> “Salva pra reler antes de decidir no impulso.”</li>
+            <li><b>Compartilhar (alvo claro):</b> “Manda pra alguém que vive dizendo que não tem tempo.”</li>
+            <li><b>Conversão leve (lead magnet):</b> “Comenta <b>HORA</b> que eu te mando o cálculo de R$/hora (ou planilha).”</li>
+          </ul>
+          <div class="divider"></div>
+          <div class="callout" style="border-color: rgba(255,177,59,.22)"><b>Regra:</b> escolha <b>1 CTA primário</b> (salvar ou comentar). O secundário pode ser “compartilhar”.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Checklist de criação</h2>
+          <span class="chip">Antes de publicar</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><b>Roteiro</b>: 8–10 slides, 1 pergunta-motor, 1 conflito, 1 pausa, 1 twist.</li>
+            <li><b>Texto</b>: 6–18 palavras/slide; 2 balões no máximo; sem jargões.</li>
+            <li><b>Repetição visual</b>: cenário/paleta constante + 1 elemento fixo.</li>
+            <li><b>Slide 6</b>: respiro (menos texto) para aumentar ritmo.</li>
+            <li><b>Slide 10</b>: moral em 1 frase “printável” (sem explicar demais).</li>
+            <li><b>Legenda</b>: 1 contexto + 1 pergunta + 1 CTA principal + (opcional) isca.</li>
+            <li><b>Revisão</b>: dá pra entender sem áudio? a pergunta do slide 2 fica “aberta” até o final?</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Variações</h2>
+          <span class="chip">Mesma estrutura, novos temas</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div class="callout">
+              <b>Variação 1 — Dívidas (rotativo)</b><br>
+              Métrica: “{X}% ao mês.”<br>
+              Pedido: “Só 10 minutos pra olhar a fatura comigo.”<br>
+              Custo oculto: “paz / sono”.
+            </div>
+            <div class="callout" style="border-color: rgba(42,123,255,.22)">
+              <b>Variação 2 — Orçamento (vazamentos)</b><br>
+              Métrica: “R$ {X}/dia sem perceber.”<br>
+              Pedido: “Parar 1 semana de ‘só hoje’.”<br>
+              Custo oculto: “tranquilidade no fim do mês”.
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="twoCol">
+            <div class="callout" style="border-color: rgba(46,229,157,.22)">
+              <b>Variação 3 — Investimentos (consistência)</b><br>
+              Métrica: “{X} anos.”<br>
+              Pedido: “Começar pequeno hoy: R$ {Y}.”<br>
+              Custo oculto: “o futuro que você está adiando”.
+            </div>
+            <div class="callout" style="border-color: rgba(255,77,109,.20)">
+              <b>Variação 4 — Precificação</b><br>
+              Métrica: “R$ {X}/hora.”<br>
+              Pedido: “Cobrar o mínimo viável.”<br>
+              Custo oculto: “exaustão / ressentimento / qualidade”.
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="muted" style="font-size:13px; line-height:1.55">
+            <b>Substituições equivalentes (impacto parecido):</b><br>
+            “pai/filho” → “eu do presente/eu do futuro”, “cliente/consultor”, “cérebro emocional/cérebro racional”.<br>
+            “emprestar dinheiro” → “me dar 30 min”, “me ajudar com 1 decisão”, “parar de adiar por 7 dias”.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <h2>Slides sugeridos (1..10)</h2>
+          <span class="chip">Storyboard rápido</span>
+        </div>
+        <div class="cardBody">
+          <ol class="list">
+            <li><b>Rotina + tensão</b>: frase curta que mostra pressa.</li>
+            <li><b>Pergunta-motor</b>: “Quanto você ganha por…?”</li>
+            <li><b>Número</b>: a métrica fria aparece.</li>
+            <li><b>Pedido</b>: “Então você pode me dar…”</li>
+            <li><b>Ruptura</b>: negativa/julgamento.</li>
+            <li><b>Pausa</b>: “Depois de um tempo…”</li>
+            <li><b>Reaproximação</b>: desculpa + entrega.</li>
+            <li><b>Por quê?</b>: começa a revelar intenção.</li>
+            <li><b>Twist</b>: “posso comprar 1 hora…”</li>
+            <li><b>Moral</b>: frase final compartilhável.</li>
+          </ol>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">Use este template como base e troque apenas <span class="grad">métrica</span>, <span class="grad">pedido</span> e <span class="grad">custo oculto</span> para criar novas versões com o mesmo efeito.</div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ta = document.getElementById('roteiroText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      btn.addEventListener('click', async () => {
+        try{
+          ta.select();
+          ta.setSelectionRange(0, 999999);
+          await navigator.clipboard.writeText(ta.value);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          try{
+            document.execCommand('copy');
+            showToast('Roteiro copiado.');
+          }catch(err){
+            showToast('Não foi possível copiar.');
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
