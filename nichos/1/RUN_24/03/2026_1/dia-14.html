@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 14 • Advocacia • Controle de ponto no banheiro</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0B1020;
+      --card:#0E1630;
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --shadow: 0 12px 40px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --g1: linear-gradient(90deg, #27E7A7 0%, #3B82F6 45%, #F59E0B 100%);
+      --g2: radial-gradient(1200px 600px at 10% 0%, rgba(39,231,167,.14), rgba(7,10,18,0) 55%),
+            radial-gradient(900px 500px at 90% 10%, rgba(59,130,246,.12), rgba(7,10,18,0) 60%),
+            radial-gradient(900px 600px at 50% 100%, rgba(245,158,11,.10), rgba(7,10,18,0) 65%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g2), var(--bg);
+      line-height:1.35;
+    }
+
+    .wrap{
+      max-width:1120px;
+      margin:0 auto;
+      padding:28px 18px 42px;
+    }
+
+    header{
+      position:relative;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(14,22,48,.72), rgba(11,16,32,.55));
+      border-radius: var(--radius2);
+      padding:22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.18;
+      filter: blur(18px);
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1;}
+
+    .topline{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:10px;
+      justify-content:space-between;
+      margin-bottom:12px;
+    }
+
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .badge{
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .badge strong{color:var(--text)}
+
+    h1{
+      margin:0 0 8px;
+      font-size:20px;
+      letter-spacing:.2px;
+    }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      max-width:75ch;
+    }
+
+    .linkRow{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    a{
+      color:#B9D7FF;
+      text-decoration:none;
+      border-bottom:1px dashed rgba(185,215,255,.35);
+    }
+    a:hover{border-bottom-color: rgba(185,215,255,.7)}
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.20)}
+    .btn:active{transform: translateY(1px)}
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(14,22,48,.78), rgba(11,16,32,.62));
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+
+    .card h2{
+      margin:0;
+      padding:14px 16px;
+      font-size:14px;
+      letter-spacing:.25px;
+      text-transform:uppercase;
+      color: rgba(234,240,255,.92);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background: rgba(255,255,255,.03);
+      border-bottom:1px solid var(--stroke);
+    }
+
+    .card .body{padding:14px 16px 16px;}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 560px){
+      .kpi{grid-template-columns: 1fr}
+    }
+    .tile{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding:10px 12px;
+      min-height:76px;
+    }
+    .tile .t{font-size:12px; color: var(--muted); margin:0 0 6px;}
+    .tile .v{margin:0; font-size:13px; color: var(--text);}
+    .pill{
+      display:inline-block;
+      padding:5px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--stroke);
+      font-family:var(--mono);
+      font-size:12px;
+      color: rgba(234,240,255,.93);
+    }
+
+    ul{margin:10px 0 0 18px; padding:0; color: var(--muted)}
+    li{margin:6px 0}
+    .muted{color: var(--muted)}
+
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, rgba(39,231,167,.0), rgba(39,231,167,.35), rgba(59,130,246,.35), rgba(245,158,11,.35), rgba(245,158,11,.0));
+      margin:12px 0;
+      border:0;
+    }
+
+    .script{
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.45;
+      color: rgba(234,240,255,.92);
+      background: rgba(0,0,0,.25);
+      border:1px solid var(--stroke);
+      border-radius: 14px;
+      padding:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .callout{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding:12px;
+    }
+
+    .gradText{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+
+    .twoCols{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 720px){
+      .twoCols{grid-template-columns:1fr}
+    }
+
+    .small{font-size:12px}
+
+    .toast{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      max-width: 360px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(11,16,32,.9);
+      box-shadow: var(--shadow);
+      color: var(--text);
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{opacity: 1; transform: translateY(0);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badgeRow">
+          <span class="badge"><strong>Nicho:</strong> Advocacia</span>
+          <span class="badge"><strong>Dia:</strong> 14</span>
+          <span class="badge"><strong>Formato:</strong> Reels</span>
+          <span class="badge"><strong>Pilar:</strong> Passo a passo</span>
+        </div>
+        <button class="btn" id="copyBtn" type="button" title="Copiar o roteiro completo">
+          <span class="pill">CTRL/CMD + C</span>
+          Copiar roteiro
+        </button>
+      </div>
+      <h1><span class="gradText">Controle de ponto no banheiro</span>: dá processo? (roteiro pronto)</h1>
+      <p class="sub">Objetivo: transformar um “absurdo visual” do trabalho em explicação jurídica simples (pode/não pode), consequências e caminho de ação — sem juridiquês e sem prometer resultado.</p>
+      <div class="linkRow">
+        <div class="muted small">Post original: <a href="https://www.instagram.com/p/DWBd0sQjtou/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DWBd0sQjtou/</a></div>
+        <div class="muted small">Duração sugerida: 45–60s • Cortes: a cada 1–2 frases</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo <span class="pill">O que o post entrega</span></h2>
+        <div class="body">
+          <div class="kpi">
+            <div class="tile">
+              <p class="t">Gatilho principal</p>
+              <p class="v">Indignação + curiosidade (“pode isso?”) com detalhe visual</p>
+            </div>
+            <div class="tile">
+              <p class="t">Entrega</p>
+              <p class="v">Regra clara + consequência + o que fazer agora</p>
+            </div>
+            <div class="tile">
+              <p class="t">CTA</p>
+              <p class="v">Salvar/compartilhar + palavra-chave p/ checklist</p>
+            </div>
+          </div>
+
+          <hr class="hr" />
+
+          <div class="twoCols">
+            <div class="callout">
+              <div class="muted small">Promessa (1 frase)</div>
+              <div>“Você vai entender <strong>por que é abusivo</strong>, <strong>o que pode gerar</strong> e <strong>como agir</strong> sem se expor.”</div>
+            </div>
+            <div class="callout">
+              <div class="muted small">Tom</div>
+              <div>Indignação controlada • didático • objetivo • “pode vs. não pode”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Estrutura <span class="pill">Sequência reproduzível</span></h2>
+        <div class="body">
+          <ul>
+            <li><strong>0–2s:</strong> Hook com absurdo específico (visual).</li>
+            <li><strong>2–8s:</strong> Mini-caso em 2–3 frases (com detalhe concreto).</li>
+            <li><strong>8–22s:</strong> Regra clara (“não pode”) + por quê (1 linha).</li>
+            <li><strong>22–32s:</strong> Consequência provável (ex.: dano moral/indenização).</li>
+            <li><strong>32–42s:</strong> “Pode vs. não pode” (lista curta de 3 itens).</li>
+            <li><strong>42–55s:</strong> O que fazer (provas + canais).</li>
+            <li><strong>55–60s:</strong> CTA (salvar/compartilhar + palavra-chave).</li>
+          </ul>
+          <hr class="hr" />
+          <div class="muted small">Checklist mental (antes de gravar):</div>
+          <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+            <span class="pill">1 absurdo visual</span>
+            <span class="pill">3 “não pode”</span>
+            <span class="pill">1 “pode”</span>
+            <span class="pill">1 consequência</span>
+            <span class="pill">3 ações</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Roteiro <span class="pill">Modelo pronto (copiável)</span></h2>
+        <div class="body">
+          <div class="script" id="scriptText">ROTEIRO (45–60s) — “CONTROLE DE PONTO NO BANHEIRO”
+
+[0–2s | HOOK — 1 frase]
+“Controle de ponto na porta do banheiro… isso dá processo?”
+
+[2–8s | MINI-CASO — 2 a 3 frases]
+“Tem empresa que colocou a regra assim: entrou no banheiro, bate ponto. Saiu, bate ponto de novo.
+Na prática, estão cronometrando necessidade básica como se fosse ‘falta de produtividade’.”
+
+[8–22s | REGRA CLARA — sem juridiquês]
+“Isso pode ser abusivo porque invade a dignidade e a privacidade do trabalhador.
+Empresa não pode usar controle humilhante ou constrangedor pra ‘gerir’ ida ao banheiro.”
+
+[22–32s | CONSEQUÊNCIA]
+“Dependendo do caso e das provas, isso pode gerar indenização por dano moral e outras medidas trabalhistas.”
+
+[32–42s | PODE vs. NÃO PODE — lista de 3]
+“O que a empresa PODE fazer: organizar cobertura do posto e alinhar pausas razoáveis.
+O que NÃO PODE: (1) proibir banheiro, (2) cronometrar/monitorar de forma vexatória, (3) exigir autorização humilhante.”
+
+[42–55s | O QUE FAZER AGORA — passo a passo]
+“1) Guarde provas: mensagens, comunicados, testemunhas, fotos do aviso (se for seguro), registros de advertência.
+2) Procure o sindicato e/ou faça denúncia aos órgãos competentes.
+3) Converse com um advogado trabalhista pra analisar seu caso com calma.”
+
+[55–60s | CTA]
+“Comenta ‘BANHEIRO’ que eu te mando um checklist do que juntar de prova. Salva e envia pra quem trabalha com você.”
+
+NOTA DE SEGURANÇA (pra você, criador): não prometa resultado. Use ‘pode’/‘depende do caso’. Se houver risco ao trabalhador, recomende agir com cautela ao coletar provas.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais <span class="pill">Edição simples</span></h2>
+        <div class="body">
+          <ul>
+            <li><strong>Cortes:</strong> a cada 1–2 frases (ritmo alto).</li>
+            <li><strong>Zoom leve:</strong> nas palavras “NÃO PODE”, “DANO MORAL”, “O QUE FAZER”.</li>
+            <li><strong>Texto grande:</strong> 3–6 palavras por tela, alto contraste.</li>
+            <li><strong>Recurso de “print”:</strong> simular um comunicado interno por 1–2s (sem identificar empresa/pessoas).</li>
+            <li><strong>B-roll opcional:</strong> porta/placa/relógio de ponto/corredor (genérico).</li>
+          </ul>
+          <hr class="hr" />
+          <div class="callout">
+            <div class="muted small">Texto na tela (por blocos)</div>
+            <ul>
+              <li><strong>Hook:</strong> “PONTO NO BANHEIRO?!”</li>
+              <li><strong>Caso:</strong> “Entrou = bate • Saiu = bate”</li>
+              <li><strong>Regra:</strong> “NÃO PODE ser vexatório”</li>
+              <li><strong>Consequência:</strong> “Pode gerar DANO MORAL”</li>
+              <li><strong>Pode vs. não pode:</strong> “Pode organizar • Não pode humilhar”</li>
+              <li><strong>Ação:</strong> “Provas • Sindicato/MPT • Advogado”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos <span class="pill">Modelos</span></h2>
+        <div class="body">
+          <div class="twoCols">
+            <div class="callout">
+              <div class="muted small">Hooks (escolha 1)</div>
+              <ul>
+                <li>“Isso aqui é gestão… ou humilhação?”</li>
+                <li>“Seu chefe controla até o banheiro? Atenção.”</li>
+                <li>“Pode cronometrar banheiro? Resposta direta.”</li>
+                <li>“Parece piada, mas acontece: ponto no banheiro.”</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <div class="muted small">Legenda pronta (curta)</div>
+              <div class="muted">Título:</div>
+              <div><strong>Controle de ponto no banheiro pode ser abuso.</strong></div>
+              <div class="muted" style="margin-top:8px;">Em geral, a empresa:</div>
+              <ul>
+                <li><strong>Não pode</strong> adotar controle vexatório/humilhante.</li>
+                <li><strong>Pode</strong> organizar pausas e cobertura do posto de forma razoável.</li>
+              </ul>
+              <div class="muted" style="margin-top:8px;">O que fazer:</div>
+              <ul>
+                <li>Junte provas (mensagens, comunicados, advertências, testemunhas).</li>
+                <li>Busque orientação (sindicato/denúncia/advogado).</li>
+              </ul>
+              <div style="margin-top:10px;"><strong>Comente “BANHEIRO”</strong> que eu mando um checklist de provas.</div>
+            </div>
+          </div>
+
+          <hr class="hr" />
+          <div class="callout">
+            <div class="muted small">Frases de retenção (use no meio do vídeo)</div>
+            <ul>
+              <li>“Agora vem a parte mais importante: o que fazer sem se expor.”</li>
+              <li>“Anota esses 3 pontos porque isso muda o caso.”</li>
+              <li>“Se você já passou por isso, presta atenção nesse detalhe…”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA <span class="pill">Sem prometer resultado</span></h2>
+        <div class="body">
+          <ul>
+            <li><strong>Comentários (palavra-chave):</strong> “Comenta ‘BANHEIRO’ que eu te mando um checklist do que juntar de prova.”</li>
+            <li><strong>Salvar:</strong> “Salva esse vídeo pra consultar quando precisar.”</li>
+            <li><strong>Compartilhar:</strong> “Envia pra um colega de trabalho que pode estar passando por isso.”</li>
+            <li><strong>Direct (triagem):</strong> “Se quiser, me chama no direct com a palavra ‘CASO’ e um resumo (sem dados sensíveis).”</li>
+          </ul>
+          <div class="muted small" style="margin-top:10px;">Dica: fixe um comentário com “Checklist + como denunciar + cuidados ao coletar provas”.</div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Checklist <span class="pill">Criação e publicação</span></h2>
+        <div class="body">
+          <div class="twoCols">
+            <div class="callout">
+              <div class="muted small">Antes de gravar</div>
+              <ul>
+                <li>Definir <strong>1 conduta absurda e visual</strong> (objeto/ato “filmável”).</li>
+                <li>Escrever <strong>hook de 1 frase</strong> com “pode isso?”.</li>
+                <li>Listar <strong>3 itens do que NÃO pode</strong> (curtos).</li>
+                <li>Listar <strong>1 alternativa do que PODE</strong> (razoável).</li>
+                <li>Escolher <strong>1 consequência</strong> (ex.: dano moral/indenização), com “pode”.</li>
+                <li>Montar <strong>passo a passo (3 ações)</strong>: provas + canais + orientação.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <div class="muted small">Gravação e edição</div>
+              <ul>
+                <li>Começar direto no caso (sem apresentação institucional no início).</li>
+                <li>Gravar em takes curtos (1–2 frases por take).</li>
+                <li>Inserir textos: “NÃO PODE”, “PODE”, “O QUE FAZER” em destaque.</li>
+                <li>Aplicar zoom leve nos picos de impacto.</li>
+                <li>Adicionar 1 tela com lista “3 NÃO PODE” (retém muito).</li>
+              </ul>
+            </div>
+          </div>
+
+          <hr class="hr" />
+
+          <div class="twoCols">
+            <div class="callout">
+              <div class="muted small">Publicação</div>
+              <ul>
+                <li>Legenda em tópicos + passo a passo.</li>
+                <li>Fixar comentário com a palavra-chave + “checklist”.</li>
+                <li>Hashtags moderadas (tema + cidade/região se fizer sentido).</li>
+                <li>Responder 10–20 comentários com variações do passo a passo (sem consultoria completa).</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <div class="muted small">Conformidade (Advocacia)</div>
+              <ul>
+                <li>Evitar promessa de ganho (“você vai ganhar”). Use “pode”, “em geral”, “depende”.</li>
+                <li>Evitar expor empresa/pessoas em prints (anonimize).</li>
+                <li>Orientar cautela ao coletar provas (segurança e privacidade).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Variações <span class="pill">3 temas com o mesmo template</span></h2>
+        <div class="body">
+          <div class="twoCols">
+            <div class="callout">
+              <div class="muted small">Variação 1 — Revista íntima / exposição</div>
+              <ul>
+                <li><strong>Hook:</strong> “Mandaram eu tirar a roupa na revista… pode isso?”</li>
+                <li><strong>Não pode (3):</strong> constrangimento, invasão de intimidade, exposição pública.</li>
+                <li><strong>Pode:</strong> medidas razoáveis e não vexatórias (quando cabíveis).</li>
+                <li><strong>Ação:</strong> provas + testemunhas + orientação jurídica.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <div class="muted small">Variação 2 — Metas abusivas / humilhação</div>
+              <ul>
+                <li><strong>Hook:</strong> “Ranking de ‘piores’ com nome no mural… pode?”</li>
+                <li><strong>Não pode (3):</strong> humilhar, expor, ameaçar de forma reiterada.</li>
+                <li><strong>Pode:</strong> cobrança de metas sem assédio.</li>
+                <li><strong>Consequência:</strong> pode gerar dano moral/assédio moral.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:12px;">
+            <div class="muted small">Variação 3 — Banco de horas “infinito”</div>
+            <ul>
+              <li><strong>Hook:</strong> “Você faz hora extra e nunca recebe porque ‘vai pro banco’… atenção.”</li>
+              <li><strong>Estrutura:</strong> caso real → regra do banco de horas → o que é irregular → como registrar provas.</li>
+              <li><strong>CTA:</strong> “Comenta ‘BANCO’ que eu mando checklist.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado para a área de transferência.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=> toast.classList.remove('show'), 1800);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = script.innerText;
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado para a área de transferência.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          try{
+            document.execCommand('copy');
+            showToast('Roteiro copiado (modo compatibilidade).');
+          }catch(err){
+            showToast('Não foi possível copiar automaticamente. Selecione e copie manualmente.');
+          }
+          document.body.removeChild(ta);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
