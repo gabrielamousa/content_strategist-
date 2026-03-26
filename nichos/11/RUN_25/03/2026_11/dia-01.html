@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 1 — Produtividade</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:#AAB6D6;
+      --muted2:#7F8BB0;
+      --shadow: 0 14px 36px rgba(0,0,0,.45);
+      --r: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --g1: linear-gradient(90deg, #35FF8A 0%, #39B6FF 50%, #FFB84A 100%);
+      --g2: linear-gradient(135deg, rgba(53,255,138,.25), rgba(57,182,255,.18), rgba(255,184,74,.18));
+      --good:#35FF8A;
+      --blue:#39B6FF;
+      --orange:#FFB84A;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 700px at 20% 10%, rgba(57,182,255,.20) 0%, rgba(7,10,18,0) 60%),
+        radial-gradient(900px 700px at 80% 30%, rgba(53,255,138,.14) 0%, rgba(7,10,18,0) 62%),
+        radial-gradient(900px 700px at 70% 90%, rgba(255,184,74,.12) 0%, rgba(7,10,18,0) 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg0) 65%);
+      min-height:100vh;
+    }
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px;}
+
+    header{
+      border:1px solid var(--stroke);
+      background:var(--g2);
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--r) + 6px);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(600px 160px at 20% 10%, rgba(53,255,138,.25), transparent 60%),
+                  radial-gradient(600px 160px at 65% 30%, rgba(57,182,255,.20), transparent 60%),
+                  radial-gradient(600px 160px at 88% 60%, rgba(255,184,74,.18), transparent 60%);
+      filter: blur(14px);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .hdr{position:relative; display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;}
+    .kpis{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .pill{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.22);
+      color:var(--muted);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .pill b{color:var(--text); font-weight:700;}
+
+    h1{margin:8px 0 6px; font-size:20px; line-height:1.15; letter-spacing:-.2px;}
+    .sub{margin:0; color:var(--muted); font-size:13px; line-height:1.5; max-width:70ch;}
+
+    .actions{display:flex; gap:10px; align-items:center;}
+    a.link{
+      color:var(--text);
+      text-decoration:none;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      transition: transform .12s ease, background .12s ease;
+      white-space:nowrap;
+    }
+    a.link:hover{transform: translateY(-1px); background:rgba(255,255,255,.09)}
+
+    button.btn{
+      border:none;
+      cursor:pointer;
+      background: var(--g1);
+      color:#08101D;
+      font-weight:800;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      letter-spacing:.2px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.3);
+      transition: transform .12s ease;
+      white-space:nowrap;
+    }
+    button.btn:hover{transform: translateY(-1px)}
+
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; margin-top:14px;}
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--r);
+      padding:16px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      color:var(--text);
+      letter-spacing:.3px;
+      text-transform:uppercase;
+    }
+    .card p, .card li{color:var(--muted); font-size:13px; line-height:1.55;}
+    .card .hint{color:var(--muted2); font-size:12px; margin-top:8px;}
+
+    .hl{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800;}
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size:12px;
+    }
+    .dot{width:8px; height:8px; border-radius:99px; background:var(--g1)}
+
+    pre{
+      margin:12px 0 0;
+      padding:14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.28);
+      color: #DCE6FF;
+      font-family: var(--mono);
+      font-size:12px;
+      line-height:1.55;
+      overflow:auto;
+      white-space:pre-wrap;
+    }
+
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media (max-width: 720px){ .cols{grid-template-columns:1fr;} }
+
+    ul{margin:8px 0 0; padding-left:18px;}
+    li{margin:6px 0;}
+
+    .callout{
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(135deg, rgba(53,255,138,.08), rgba(57,182,255,.06), rgba(255,184,74,.06));
+      border-radius:16px;
+      padding:12px;
+      margin-top:12px;
+    }
+    .callout b{color:var(--text)}
+
+    .footerNote{margin-top:14px; color:var(--muted2); font-size:12px; line-height:1.55;}
+
+    .copyToast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.72);
+      border: 1px solid rgba(255,255,255,.16);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      display:none;
+      z-index: 999;
+      box-shadow: 0 18px 48px rgba(0,0,0,.55);
+      backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hdr">
+        <div>
+          <div class="kpis">
+            <span class="pill"><b>Nicho:</b> Produtividade</span>
+            <span class="pill"><b>Dia:</b> 1</span>
+            <span class="pill"><b>Formato:</b> Carrossel</span>
+            <span class="pill"><b>Pilar:</b> Passo a passo</span>
+          </div>
+          <h1><span class="hl">4 prompts</span> para planejar metas e executar sem travar</h1>
+          <p class="sub">Carrossel de 6 slides (capa + 4 passos numerados + fechamento) com texto copiável e CTA leve. Ideal para posts de produtividade, metas e planejamento.</p>
+        </div>
+        <div class="actions">
+          <a class="link" href="https://www.instagram.com/p/DSs1BCcEUOR/" target="_blank" rel="noreferrer">Ver post original</a>
+          <button class="btn" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Resumo</h2>
+        <p><span class="hl">Promessa</span> + <span class="hl">progresso</span> + <span class="hl">template copiável</span>. Você entrega um sistema em 4 etapas (diagnóstico → clareza → estrutura → execução) com prompts prontos. A pessoa só precisa copiar/colar e responder.</p>
+        <div class="callout">
+          <p style="margin:0"><b>Ideia central:</b> metas não são desejo distante — são <b>decisões no presente</b> traduzidas em ações semanais.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Metadados de criação</h2>
+        <div class="cols">
+          <div>
+            <span class="badge"><span class="dot"></span>Objetivo</span>
+            <ul>
+              <li>Gerar salvamentos (template)</li>
+              <li>Gerar comentários (“METAS”)</li>
+              <li>Reforçar autoridade com método</li>
+            </ul>
+          </div>
+          <div>
+            <span class="badge"><span class="dot"></span>Público</span>
+            <ul>
+              <li>Quem sente que “planeja e não executa”</li>
+              <li>Quem quer clareza e priorização</li>
+              <li>Quem precisa de roteiro prático</li>
+            </ul>
+          </div>
+        </div>
+        <p class="hint">Tempo de produção: 40–60 min (seguindo o checklist).</p>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <div class="card">
+        <h2>Estrutura (sequência reproduzível)</h2>
+        <ol style="margin:8px 0 0; padding-left:18px; color:var(--muted); font-size:13px; line-height:1.6">
+          <li><b>Capa:</b> hook + promessa + “template copiável”</li>
+          <li><b>Passo 1 (Diagnóstico):</b> prompt-mestre que pergunta antes de sugerir</li>
+          <li><b>Passo 2 (Clareza):</b> padrões + conflitos + 3 focos</li>
+          <li><b>Passo 3 (Estrutura):</b> metas por áreas + critérios de sucesso</li>
+          <li><b>Passo 4 (Execução):</b> hábitos semanais + começar/parar/manter + erros comuns</li>
+          <li><b>Fechamento:</b> frase síntese + CTA (salvar/comentar) + assinatura</li>
+        </ol>
+        <div class="callout">
+          <p style="margin:0"><b>Regra de ouro:</b> 1 ideia por slide + texto em blocos curtos (escaneável) + numeração visível (progresso psicológico).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Checklist de direção (para não fugir do tema)</h2>
+        <ul>
+          <li>Promessa específica + recorte de tempo (sem exagero)</li>
+          <li>4 passos numerados (sempre “#1… #4”)</li>
+          <li>Conteúdo <b>copiável</b> (prompts em caixa)</li>
+          <li>3 destaques por slide (máximo) para escaneabilidade</li>
+          <li>1 frase âncora anti-frustração: “consistência &gt; perfeição”</li>
+          <li>CTA único e leve no final</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Slides sugeridos (1..6)</h2>
+      <div class="cols">
+        <div>
+          <p style="margin:0"><b>Slide 1 — Capa</b></p>
+          <ul>
+            <li>Headline: “4 prompts para planejar metas e executar sem travar”</li>
+            <li>Sub: “Copie e cole (diagnóstico → execução)”</li>
+            <li>Micro: “salve pra usar depois” (pequeno)</li>
+          </ul>
+          <p style="margin:12px 0 0"><b>Slide 2 — Prompt #1 (Diagnóstico)</b></p>
+          <ul>
+            <li>Título: “PROMPT #1 — Diagnóstico”</li>
+            <li>Texto em primeira pessoa (facilita copiar)</li>
+          </ul>
+          <p style="margin:12px 0 0"><b>Slide 3 — Prompt #2 (Clareza)</b></p>
+          <ul>
+            <li>Título: “PROMPT #2 — Clareza”</li>
+            <li>Bullets: padrões, conflitos, 3 focos</li>
+          </ul>
+        </div>
+        <div>
+          <p style="margin:0"><b>Slide 4 — Prompt #3 (Estrutura)</b></p>
+          <ul>
+            <li>Título: “PROMPT #3 — Estrutura”</li>
+            <li>Metas por áreas + critério de sucesso</li>
+          </ul>
+          <p style="margin:12px 0 0"><b>Slide 5 — Prompt #4 (Execução)</b></p>
+          <ul>
+            <li>Título: “PROMPT #4 — Execução”</li>
+            <li>Hábitos semanais + começar/parar/manter + erros</li>
+          </ul>
+          <p style="margin:12px 0 0"><b>Slide 6 — Fechamento</b></p>
+          <ul>
+            <li>Frase síntese: “Metas são decisões no presente.”</li>
+            <li>CTA: “Salve para copiar” + “Comente METAS…”</li>
+            <li>Assinatura/arroba</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <div class="card">
+        <h2>Roteiro (texto pronto copiável)</h2>
+        <div class="callout" style="margin-top:0">
+          <p style="margin:0; color:var(--muted)">Sugestão: manter a palavra <b>“PROMPT #”</b> fixa para virar série. Troque apenas o recorte (ex.: semana, trimestre, 30 dias).</p>
+        </div>
+        <pre id="scriptText">SLIDE 1 — CAPA
+4 prompts para planejar metas e executar sem travar
+Sub: Copie e cole (diagnóstico → execução)
+Micro: Salve pra usar depois
+
+SLIDE 2 — PROMPT #1 (DIAGNÓSTICO)
+"Quero melhorar minha produtividade e executar minhas metas.
+Antes de sugerir soluções, faça as perguntas necessárias para entender:
+• minha rotina atual
+• minhas prioridades
+• minhas restrições (tempo/energia)
+• meus recursos
+Me conduza passo a passo e espere minhas respostas."
+
+SLIDE 3 — PROMPT #2 (CLAREZA)
+"Com base nas minhas respostas, identifique:
+• padrões do meu comportamento/rotina
+• conflitos entre onde estou e onde quero chegar
+• os 3 focos que mais destravam meu progresso nos próximos 30 dias
+Seja claro, prático e direto."
+
+SLIDE 4 — PROMPT #3 (ESTRUTURA)
+"Agora crie um plano para melhorar minha produtividade, organizado por áreas:
+(Trabalho / Estudos / Casa / Saúde / Finanças — ajuste se precisar)
+Para cada área traga:
+• 1 objetivo principal
+• 2–4 objetivos de suporte
+• critério de sucesso (como vou medir)
+O plano deve ser ambicioso, mas compatível com minha realidade."
+
+SLIDE 5 — PROMPT #4 (EXECUÇÃO)
+"Transforme o plano em execução.
+Para cada objetivo, traga:
+• ações/hábitos semanais (o mínimo viável)
+• o que devo começar / parar / manter
+• erros comuns e como evitar
+Priorize consistência, não perfeição."
+
+SLIDE 6 — FECHAMENTO
+Metas não são desejo distante.
+Metas = decisões no presente.
+CTA: Salve para copiar depois.
+CTA 2 (opcional): Comente “METAS” que eu te mando a versão em texto."</pre>
+        <p class="footerNote">Dica: se quiser elevar autoridade, inclua no slide 6 “Se quer que eu adapte para trabalho/estudos, comenta a área”.</p>
+      </div>
+
+      <div class="card">
+        <h2>Elementos visuais (identidade replicável)</h2>
+        <ul>
+          <li><b>Fundo:</b> foto “vida real” (mesa, planner, notebook) com leve blur/ruído</li>
+          <li><b>Caixa central:</b> retângulo claro com cantos arredondados (cara de template)</li>
+          <li><b>Título do passo:</b> no topo (ex.: “PROMPT #2 — CLAREZA”)</li>
+          <li><b>Destaques:</b> 2–3 palavras marcadas por slide (use verde/azul/laranja)</li>
+          <li><b>Doodles/ícones:</b> pequenos (não competem com texto), repetidos em todos os slides</li>
+          <li><b>Grid:</b> Topo 10–15% título • Centro 55–70% caixa • Laterais com micro elementos</li>
+        </ul>
+        <div class="callout">
+          <p style="margin:0"><b>Tipografia:</b> 1 fonte sans para conteúdo + 1 estilo “handwritten” (ou itálico) só para “PROMPT #X”.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <div class="card">
+        <h2>Copy e ganchos (para capa e descrição)</h2>
+        <div class="cols">
+          <div>
+            <p style="margin:0"><b>Hooks (capa)</b></p>
+            <ul>
+              <li>“Você planeja muito e executa pouco? Use isso.”</li>
+              <li>“Pare de recomeçar do zero: copie esses 4 prompts.”</li>
+              <li>“Se tudo parece prioridade, começa por aqui.”</li>
+            </ul>
+          </div>
+          <div>
+            <p style="margin:0"><b>Ganchos (legenda)</b></p>
+            <ul>
+              <li>“A maioria erra antes da meta: pula o diagnóstico.”</li>
+              <li>“Clareza reduz atrito. Atrito mata consistência.”</li>
+              <li>“Plano bom vira semana boa quando vira hábito.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout">
+          <p style="margin:0"><b>Frases âncora:</b> “consistência &gt; perfeição” • “menos, melhor” • “decisão no presente”.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>CTA (1 principal + 1 opcional)</h2>
+        <ul>
+          <li><b>Principal (salvar):</b> “Salve pra copiar os prompts quando for planejar.”</li>
+          <li><b>Opcional (comentário):</b> “Comente <b>METAS</b> que eu te mando a versão em texto.”</li>
+          <li><b>Opcional (personalização):</b> “Qual área você quer atacar primeiro: trabalho, estudos ou casa?”</li>
+        </ul>
+        <p class="hint">Escolha só 1 CTA principal para não diluir a ação.</p>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <div class="card">
+        <h2>Checklist de criação (40–60 min)</h2>
+        <ul>
+          <li>Definir recorte: semana / 30 dias / trimestre</li>
+          <li>Escrever capa com promessa + “copie e cole”</li>
+          <li>Adaptar os 4 prompts para o recorte (sem aumentar texto)</li>
+          <li>Marcar 2–3 palavras por slide para destaque (verde/azul/laranja)</li>
+          <li>Escolher 1 foto-base ou 6 fotos consistentes (rotina)</li>
+          <li>Revisar legibilidade no celular (tamanho e espaçamento)</li>
+          <li>Inserir CTA no slide 6 + na legenda</li>
+          <li>Publicar com texto alternativo e 3–8 hashtags relevantes</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Variações (para reaproveitar o template)</h2>
+        <ul>
+          <li><b>Versão “Semana”:</b> “planejar a semana em 15 min” + execução em blocos (deep work)</li>
+          <li><b>Versão “Procrastinação”:</b> passo 2 foca em gatilhos/evitação; passo 4 inclui regra dos 5 min</li>
+          <li><b>Versão “Foco”:</b> passo 3 cria “lista de não-fazer”; passo 4 define ambiente e limites</li>
+          <li><b>Versão “Estudos”:</b> áreas = matérias; critério = questões/tempo; execução = revisão espaçada</li>
+          <li><b>Versão “Trabalho”:</b> áreas = projetos; critério = entregáveis; execução = WIP limit</li>
+        </ul>
+        <div class="callout">
+          <p style="margin:0"><b>Regra de série:</b> mantenha “PROMPT #1..#4” para reconhecimento e crie novos temas no mesmo formato.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="copyToast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const pre = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(){
+        toast.style.display = 'block';
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>{ toast.style.display = 'none'; }, 1600);
+      }
+
+      async function copyText(){
+        const text = pre.innerText;
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast();
+        }catch(e){
+          const r = document.createRange();
+          r.selectNode(pre);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(r);
+          document.execCommand('copy');
+          sel.removeAllRanges();
+          showToast();
+        }
+      }
+
+      btn.addEventListener('click', copyText);
+    })();
+  </script>
+</body>
+</html>
