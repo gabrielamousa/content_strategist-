@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 5 — Produtividade | Roteiro reproduzível</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1624;
+      --panel-2:#0c1220;
+      --text:#e7eefc;
+      --muted:#9fb0d0;
+      --border:rgba(255,255,255,.10);
+      --shadow:0 18px 46px rgba(0,0,0,.45);
+      --radius:18px;
+      --g1:linear-gradient(90deg,#35f08a 0%,#39b7ff 52%,#ff9a3d 100%);
+      --g2:linear-gradient(135deg,rgba(53,240,138,.22),rgba(57,183,255,.18),rgba(255,154,61,.16));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 10% 10%, rgba(57,183,255,.16), transparent 55%),
+        radial-gradient(900px 700px at 90% 20%, rgba(53,240,138,.14), transparent 50%),
+        radial-gradient(1000px 800px at 60% 90%, rgba(255,154,61,.12), transparent 55%),
+        var(--bg);
+      line-height:1.35;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+    .topbar{
+      display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;
+      padding:18px 18px;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      position:sticky; top:14px; backdrop-filter: blur(10px);
+      z-index:10;
+    }
+    .top-left{min-width:260px}
+    .kicker{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+    .title{
+      font-size:18px;
+      margin:6px 0 0;
+      font-weight:760;
+    }
+    .meta{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; color:var(--muted); font-size:13px}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+    }
+    .dot{width:8px; height:8px; border-radius:99px; background:var(--g1)}
+
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:650;
+      cursor:pointer;
+      transition: transform .06s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.16)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{
+      border:0;
+      background:var(--g1);
+      color:#081016;
+    }
+
+    .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px; margin-top:16px}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr} .topbar{position:relative; top:auto} }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    }
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:#cfe0ff}
+    .badge{
+      font-size:12px; color:var(--muted);
+      padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);
+    }
+    .card .bd{padding:14px 16px}
+
+    .summary{
+      background:var(--g2);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:12px 12px;
+      margin-bottom:12px;
+    }
+    .summary p{margin:0; color:#dbe8ff}
+
+    .list{margin:0; padding-left:18px; color:var(--text)}
+    .list li{margin:8px 0; color:#dbe8ff}
+    .muted{color:var(--muted)}
+
+    .script{
+      font-family:var(--mono);
+      font-size:12.5px;
+      background:rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:12px;
+      white-space:pre-wrap;
+      line-height:1.45;
+    }
+
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 700px){ .twoCol{grid-template-columns:1fr} }
+
+    .hr{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+    .small{font-size:13px}
+
+    .callout{
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+      padding:12px;
+    }
+    .callout strong{
+      background:var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .footer-note{margin-top:14px; color:var(--muted); font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="top-left">
+        <div class="kicker">Nicho: Produtividade • Dia 5</div>
+        <h1 class="title">A microaventura de 2h que destrava sua semana (sem telas)</h1>
+        <div class="meta">
+          <span class="chip"><span class="dot"></span>Formato: Reels</span>
+          <span class="chip"><span class="dot"></span>Pilar: Passo a passo</span>
+          <a class="chip" href="https://www.instagram.com/p/DV3fOOOEe8f/" target="_blank" rel="noopener">Post original ↗</a>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <button class="btn" id="copyCaptionBtn">Copiar legenda</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge">Objetivo: retenção + comentário/salvamento</span>
+        </div>
+        <div class="bd">
+          <div class="summary">
+            <p><strong>Ideia central:</strong> mostre uma “microaventura” no meio da semana (2h, offline, simples) e conecte o efeito dela a produtividade sustentável: <strong>energia, foco e leveza</strong> — não “trabalhar mais”.</p>
+          </div>
+
+          <div class="twoCol">
+            <div class="callout">
+              <div class="small"><strong>Promessa (em 1 frase)</strong></div>
+              <div class="small muted">“Em 2 horas fora das telas, eu saio do piloto automático e volto mais focado pra semana.”</div>
+            </div>
+            <div class="callout">
+              <div class="small"><strong>Quem vai se identificar</strong></div>
+              <div class="small muted">Quem está em rotina automática / cansado / com sensação de ‘só trabalho’ e quer recuperar energia sem grandes mudanças.</div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <ul class="list">
+            <li><strong>Tom:</strong> diário real, honesto, sem “guru”.</li>
+            <li><strong>Duração:</strong> 25–45s (até 60s se o B-roll estiver forte).</li>
+            <li><strong>Métrica-alvo:</strong> retenção (história com progressão) + comentários (“IDEIAS”).</li>
+          </ul>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Estrutura (reproduzível)</h2>
+          <span class="badge">6 blocos</span>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><strong>Contexto (dor real):</strong> semana no piloto automático.</li>
+            <li><strong>Decisão:</strong> “testando 1 coisa diferente em 2h”.</li>
+            <li><strong>Acessibilidade:</strong> iniciante / baixa barreira.</li>
+            <li><strong>Experiência:</strong> 3–5 highlights em ordem (chegada → ação → social → detalhe sensorial → miniresultado).</li>
+            <li><strong>Virada:</strong> “voltei com energia/foco porque…” (offline + novidade + social).</li>
+            <li><strong>Fechamento:</strong> recompensa + repetição + CTA (comentar/salvar).</li>
+          </ol>
+
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="small"><strong>Regra de ouro</strong></div>
+            <div class="small muted">A cada 2–3 takes, coloque um “mini plot”: surpresa, prova específica ou benefício imediato.</div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Roteiro</h2>
+          <span class="badge">Pronto para gravar</span>
+        </div>
+        <div class="bd">
+          <div class="callout" style="margin-bottom:12px;">
+            <div class="small"><strong>Hook (escolha 1)</strong></div>
+            <div class="small muted">1) “Tô testando 1 coisa diferente na semana pra minha vida não ser só trabalho.”
+              <br/>2) “Se sua semana tá no piloto automático, faz isso comigo.”
+              <br/>3) “Eu queria um hobby de 2h que me tirasse das telas e devolvesse foco.”</div>
+          </div>
+
+          <div class="script" id="scriptText">BLOCO 1 — CONTEXTO (0–3s)
+“Minha semana tava virando só trabalho + tela.”
+(na tela: “piloto automático 😵‍💫”)
+
+BLOCO 2 — DECISÃO (3–7s)
+“Então eu tô testando uma microaventura de 2 horas no meio da semana.”
+(na tela: “microaventura: 2h”)
+
+BLOCO 3 — ACESSIBILIDADE / CONFISSÃO (7–10s)
+“Detalhe: eu sou iniciante TOTAL nisso… e mesmo assim deu certo.”
+(na tela: “iniciante total”)
+
+BLOCO 4 — EXPERIÊNCIA (10–28s) — 4 highlights (cortes rápidos)
+1) “Cheguei e já tinha tudo pronto pra começar” (placa/local)
+2) “A parte mais legal: é mão na massa + zero pressão” (ação/close)
+3) “Tem um ‘modo equipe’ que te obriga a sair da cabeça e ir pro presente” (grupo/risada)
+4) “E o melhor: sem celular, o tempo passa MUITO rápido” (detalhe sensorial: café/chá/comida/ambiente)
+(na tela: “fora das telas ✅” “modo equipe ✅”)
+
+BLOCO 5 — VIRADA / INSIGHT (28–38s)
+“Eu voltei pra casa mais leve e, no dia seguinte, eu tava mais focado.
+Porque meu cérebro finalmente teve uma pausa de verdade: novidade + presença + social.”
+(na tela: “energia → foco”)
+
+BLOCO 6 — FECHAMENTO + CTA (38–45s)
+“Eu vou fazer isso 1x por semana. Quer uma lista de microaventuras de 2h na sua cidade?”
+“Comenta ‘IDEIAS’ + sua cidade que eu te mando opções.”
+(na tela: “comenta: IDEIAS + cidade”)
+
+B-ROLL MÍNIMO (sequência)
+• chegada/placa • detalhe do ambiente • ação (mãos) • interação social • close do ‘resultado’ • reação final (sorriso/alívio)
+
+OBS DE EDIÇÃO
+• texto em capítulos • cortes 1–2s • um beat no insight (BLOCO 5) • finalize com o resultado + CTA</div>
+
+          <div class="footer-note">Dica: substitua “atividade” por qualquer coisa offline e simples (aula experimental, clube de corrida, cerâmica, dança, trilha curta, voluntariado, coworking temático). O ponto é a transformação de energia/foco.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="badge">High-tech + diário real</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>On-screen text (capítulos):</strong> “piloto automático” → “microaventura: 2h” → “iniciante” → “fora das telas” → “energia → foco” → “IDEIAS + cidade”.</li>
+            <li><strong>Planos:</strong> 70% B-roll (1–2s), 30% talking (1–2 frases por bloco).</li>
+            <li><strong>Detalhes específicos (credibilidade):</strong> dia/horário, preço/tempo, como funciona (em grupos/rodadas), “todo mês/semana”.</li>
+            <li><strong>Áudio:</strong> música leve + momentos de som ambiente (risada, passos, utensílios).</li>
+            <li><strong>Clímax:</strong> corte no “insight” com mudança de música ou drop sutil.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">Textos prontos</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div>
+              <div class="callout">
+                <div class="small"><strong>Ganchos (outras opções)</strong></div>
+                <ul class="list">
+                  <li>“Produtividade não é fazer mais. É ter energia.”</li>
+                  <li>“O antídoto do burnout que cabe numa terça-feira.”</li>
+                  <li>“Isso aumentou meu foco sem eu mudar minha rotina.”</li>
+                  <li>“2 horas que fizeram minha semana parecer ‘minha’ de novo.”</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <div class="callout">
+                <div class="small"><strong>Legenda pronta (copiar/colar)</strong></div>
+                <div class="script" id="captionText">Minha semana tava virando só trabalho + tela.
+
+Então eu comecei a testar 1 microaventura de 2h no meio da semana.
+Não é sobre “produzir mais” — é sobre voltar com energia e foco.
+
+O que fez diferença pra mim:
+• novidade (quebra o piloto automático)
+• presença (fora das telas)
+• social (modo equipe)
+
+Quer uma lista de microaventuras de 2h na sua cidade?
+Comenta “IDEIAS” + sua cidade 👇 (eu respondo com opções)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="small"><strong>Frases de prova (encaixes)</strong></div>
+            <div class="small muted">“Eu não imaginava que ia ser tão divertido.” • “Nem vi o tempo passar.” • “Eu cheguei cansado e saí leve.” • “No dia seguinte meu foco tava outro.”</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="badge">Escolha 1</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Comentário (alto volume):</strong> “Comenta ‘IDEIAS’ + sua cidade que eu te mando opções.”</li>
+            <li><strong>Salvamento (long tail):</strong> “Salva pra usar na próxima semana no piloto automático.”</li>
+            <li><strong>Pesquisa (conteúdo futuro):</strong> “Qual dia da semana você mais entra no automático? (seg/ter/qua…)”</li>
+            <li><strong>DM (qualificação):</strong> “Se você quer 10 opções + faixa de preço, me chama com ‘MICROAVENTURA’.”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <span class="badge">Do briefing ao post</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="callout">
+              <div class="small"><strong>Pré-gravação (5 min)</strong></div>
+              <ul class="list">
+                <li>Defina a <strong>dor</strong> (piloto automático / cansaço / tela).</li>
+                <li>Escolha 1 microaventura de <strong>2h</strong> (offline, simples, fácil de filmar).</li>
+                <li>Liste 1 frase de <strong>acessibilidade</strong> (iniciante / dá pra qualquer um).</li>
+                <li>Separe 6 cenas obrigatórias (ver abaixo).</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <div class="small"><strong>Cenas obrigatórias (B-roll)</strong></div>
+              <ul class="list">
+                <li>Chegada (placa/rua/entrada)</li>
+                <li>Detalhe do ambiente (luz, objetos)</li>
+                <li>Ação (mãos / movimento)</li>
+                <li>Sinal de social (risada, equipe, alguém explicando)</li>
+                <li>Resultado (antes/depois, mini conquista)</li>
+                <li>Sua reação (alívio/leveza) + take pro CTA</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="twoCol">
+            <div class="callout">
+              <div class="small"><strong>Edição (15–25 min)</strong></div>
+              <ul class="list">
+                <li>Cortes a cada 1–2s no B-roll.</li>
+                <li>Textos curtos em “capítulos”.</li>
+                <li>Inclua 1 frase de surpresa + 1 frase de prova específica.</li>
+                <li>Abra com a dor (primeiros 2s).</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <div class="small"><strong>Publicação</strong></div>
+              <ul class="list">
+                <li>Legenda: dor → benefício → 3 bullets → CTA.</li>
+                <li>Fixe um comentário pedindo “IDEIAS + cidade”.</li>
+                <li>Responda comentários com 2–3 opções (gera loop).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="badge">Para repetir sem cansar</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="callout">
+              <div class="small"><strong>Variação A — “anti-burnout”</strong></div>
+              <div class="small muted">Hook: “Quando eu sinto que vou queimar, eu faço isso 1x na semana.”
+              <br/>Virada: “isso me devolve energia antes de virar exaustão.”</div>
+            </div>
+            <div class="callout">
+              <div class="small"><strong>Variação B — “foco no dia seguinte”</strong></div>
+              <div class="small muted">Hook: “Isso aumentou meu foco no dia seguinte sem eu mudar a agenda.”
+              <br/>Prova: “eu acordei com menos ‘barulho mental’.”</div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="twoCol">
+            <div class="callout">
+              <div class="small"><strong>Variação C — “barato e perto”</strong></div>
+              <div class="small muted">Hook: “Sem viajar e sem gastar muito: 2h que mudam a semana.”
+              <br/>Inclua: preço/tempo/local (especificidade).</div>
+            </div>
+            <div class="callout">
+              <div class="small"><strong>Variação D — “sozinho, mas social”</strong></div>
+              <div class="small muted">Hook: “Eu fui sozinho e mesmo assim foi social.”
+              <br/>Ponto de retenção: “o lugar já te coloca em dinâmica.”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function copyFromEl(elId, btnId){
+      const el = document.getElementById(elId);
+      const btn = document.getElementById(btnId);
+      const text = el ? el.innerText : '';
+      if(!navigator.clipboard){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        return;
+      }
+      navigator.clipboard.writeText(text).then(()=>{
+        if(btn){
+          const original = btn.innerText;
+          btn.innerText = 'Copiado!';
+          setTimeout(()=>btn.innerText = original, 1200);
+        }
+      });
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', ()=>copyFromEl('scriptText','copyBtn'));
+    document.getElementById('copyCaptionBtn').addEventListener('click', ()=>copyFromEl('captionText','copyCaptionBtn'));
+  </script>
+</body>
+</html>
