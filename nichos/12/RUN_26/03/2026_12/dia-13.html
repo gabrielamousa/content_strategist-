@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 13 — Carrossel Reproduzível (Professores)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r: 18px;
+      --g1: linear-gradient(90deg, #22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.18), rgba(251,146,60,.16));
+      --good:#22C55E;
+      --info:#38BDF8;
+      --warn:#FB923C;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 10% 10%, rgba(56,189,248,.18), transparent 55%),
+        radial-gradient(900px 700px at 90% 20%, rgba(34,197,94,.14), transparent 60%),
+        radial-gradient(900px 700px at 60% 95%, rgba(251,146,60,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 55%, #070A12);
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px;}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: calc(var(--r) + 6px);
+      padding:20px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(14px);
+      opacity:.9;
+      pointer-events:none;
+    }
+    header > *{position:relative}
+
+    .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .chip{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color: var(--muted);
+      letter-spacing:.2px;
+    }
+    .chip b{color:var(--text); font-weight:600}
+
+    h1{
+      margin:14px 0 8px;
+      font-size: clamp(20px, 2.3vw, 30px);
+      line-height:1.15;
+      letter-spacing:-.3px;
+    }
+    .subtitle{color:var(--muted); margin:0; line-height:1.45; max-width:80ch}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      padding:10px 12px;
+      border-radius: 12px;
+      text-decoration:none;
+      color: var(--text);
+      font-weight:600;
+      font-size:14px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18)}
+    .btn.primary{
+      background: rgba(0,0,0,.18);
+      border-color: rgba(255,255,255,.16);
+      position:relative;
+      overflow:hidden;
+    }
+    .btn.primary:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: var(--g1);
+      opacity:.25;
+      pointer-events:none;
+    }
+    .btn.primary span{position:relative}
+    .btn small{font-weight:600; color:var(--muted)}
+
+    .grid{display:grid; gap:14px; margin-top:16px}
+    @media (min-width: 920px){
+      .grid{grid-template-columns: 1.1fr .9fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--r);
+      padding:16px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      letter-spacing:.2px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+      flex:0 0 auto;
+    }
+    .card p{margin:0 0 10px; color:var(--muted); line-height:1.55}
+    .card p:last-child{margin-bottom:0}
+
+    .list{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:10px}
+    .li{
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+      line-height:1.45;
+    }
+    .li b{color:var(--text)}
+
+    .mini{
+      display:grid; gap:10px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 920px){
+      .mini{grid-template-columns: 1fr}
+    }
+
+    .codewrap{position:relative}
+    textarea{
+      width:100%;
+      min-height: 320px;
+      padding:14px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      color: rgba(234,240,255,.92);
+      outline:none;
+      resize: vertical;
+      line-height:1.5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12.5px;
+    }
+    .hint{font-size:12px; color:var(--muted2); margin-top:10px}
+
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size:12px;
+      white-space: nowrap;
+    }
+    .k{color:var(--text); font-weight:700}
+
+    .twoCol{display:grid; gap:12px}
+    @media (min-width: 920px){
+      .twoCol{grid-template-columns: 1fr 1fr}
+    }
+
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      margin:12px 0;
+    }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding:12px;
+    }
+    .callout .title{font-weight:800; letter-spacing:.2px; margin:0 0 6px; font-size:13px}
+    .callout .title .grad{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent}
+    .callout p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
+
+    footer{margin-top:18px; color:var(--muted2); font-size:12px}
+    .link{
+      text-decoration:none;
+      border-bottom:1px dashed rgba(255,255,255,.28);
+      color:rgba(234,240,255,.92);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <div class="chip">Nicho: <b>Professores</b></div>
+          <div class="chip">Dia: <b>13</b></div>
+          <div class="chip">Formato: <b>Carrossel</b></div>
+          <div class="chip">Pilar: <b>Passo a passo</b></div>
+        </div>
+        <a class="btn" href="https://www.instagram.com/p/DUjSxSzEUKd/" target="_blank" rel="noreferrer noopener"><span>Ver post original</span> <small>↗</small></a>
+      </div>
+
+      <h1>Carrossel de atualização que professores salvam e compartilham</h1>
+      <p class="subtitle">Modelo reproduzível (9 slides) para transformar qualquer novidade/atualização educacional em conteúdo: o que mudou, por que importa, como afeta sua rotina e um resumo final com CTA social.</p>
+
+      <div class="actions">
+        <button class="btn primary" id="copyBtn" type="button"><span>Copiar roteiro</span> <small>⧉</small></button>
+        <a class="btn" href="#slides"><span>Ir para slides sugeridos</span> <small>↓</small></a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="dot"></span>Resumo</h2>
+        <p><b>O que é:</b> carrossel “news + explicação + implicações + resumo + compartilhamento”.</p>
+        <p><b>Quando usar:</b> mudanças em avaliação (ex.: ENEM), BNCC, calendário, diretrizes, ferramentas da rede, plataforma, portarias, metodologias, regras de registro/nota, etc.</p>
+        <div class="twoCol">
+          <div class="callout">
+            <div class="title"><span class="grad">Objetivo</span> do post</div>
+            <p>Atualizar rápido, reduzir ruído e dar um “o que eu faço agora?” para o professor.</p>
+          </div>
+          <div class="callout">
+            <div class="title"><span class="grad">Recompensa</span> antes do CTA</div>
+            <p>Slide de resumo escaneável (4–6 bullets) para incentivar salvar/encaminhar.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card codewrap">
+        <h2><span class="dot"></span>Roteiro (texto para copiar)</h2>
+        <textarea id="roteiro" spellcheck="false">TEMPLATE — CARROSSEL DE ATUALIZAÇÃO (9 SLIDES)
+
+[Defina o tema]
+Tema/Evento: __________________________
+Recorte/Ano: __________________________
+Para quem: (professores de ___ / coordenação / gestores) __________________
+Fonte (link/órgão): ____________________
+
+SLIDE 1 — CAPA (HOOK + PROMESSA + SWIPE)
+Título 1: [TEMA + recorte/ano]
+Título 2: “Algumas coisas mudaram e você (talvez) ainda não viu”
+Micro-promessa: “Atualize-se em 60s”
+Instrução: “Arraste para o lado →”
+
+SLIDE 2 — #1 MUDANÇA PRINCIPAL (OBJETIVO)
+“#1 [nome curto da mudança]”
+Explique em 2–3 linhas, linguagem simples:
+• O que é:
+• Para quem se aplica:
+
+SLIDE 3 — DETALHES DO #1 (OPERACIONAL)
+Use lista (3–5 itens):
+• Onde aparece/vale:
+• Quando começa:
+• Como funciona:
+• O que observar:
+BOX “Detalhe importante”:
+• [condição, exceção, pegadinha ou regra específica]
+
+SLIDE 4 — POR QUE ISSO IMPORTA? (IMPACTO NA ROTINA)
+Pergunta-título: “Por que isso importa?”
+Traduza para a sala de aula em 2–4 linhas:
+• Impacta [planejamento/avaliação/estudantes/famílias] porque…
+
+SLIDE 5 — #2 SEGUNDA MUDANÇA (CONTEXTO)
+“#2 [nome curto]”
+Explique em 3–6 linhas:
+• O que mudou:
+• O que antes era:
+• Como fica agora:
+
+SLIDE 6 — POR QUE ESSA MUDANÇA? (CAUSA/RAZÃO)
+Pergunta-título: “Por que mudaram isso?”
+• Motivo oficial (1–2 linhas)
+• Leitura prática (1–2 linhas): “na prática, isso tende a…”
+
+SLIDE 7 — O QUE MUDA PRA VOCÊ? (APLICAÇÃO)
+Título: “Na prática, pra você…”
+Bullets (3 ações):
+• Ajuste 1 no planejamento:
+• Ajuste 2 nas atividades/avaliações:
+• Ajuste 3 no acompanhamento:
+Linha de alívio: “O que NÃO muda: [1 frase]”
+
+SLIDE 8 — RESUMO (ESCANEÁVEL)
+Título: “Resumo em 4 pontos”
+• Passa a…
+• Deixa de…
+• Continua…
+• Atenção: …
+
+SLIDE 9 — CTA (SOCIAL + RELAÇÃO)
+Pergunta: “Você já sabia disso?”
+Ação 1 (encaminhar): “Encaminhe para um(a) colega do seu segmento.”
+Ação 2 (salvar): “Salve para consultar no planejamento.”
+Ação 3 (comentário/DM opcional): “Comente ‘GUIA’ que eu te mando um checklist.”
+Fecho: “Siga para mais atualizações práticas (sem enrolação).”
+
+NOTAS DE ESCRITA
+• 1 ideia forte por slide.
+• Título curto + até 2 blocos de texto.
+• Prefira verbos e termos concretos (quando/como/para quem).
+• Cite a fonte (órgão/documento/link) em texto pequeno no rodapé de um slide.
+</textarea>
+        <div class="hint">Dica: preencha os campos em branco e mantenha a sequência (#1 → impacto → #2 → prática → resumo → CTA).</div>
+      </aside>
+    </div>
+
+    <section class="card">
+      <h2><span class="dot"></span>Estrutura</h2>
+      <ul class="list">
+        <li class="li"><b>1) Capa:</b> mudança + curiosidade + instrução de swipe.</li>
+        <li class="li"><b>2) Ponto #1:</b> novidade principal em linguagem simples.</li>
+        <li class="li"><b>3) Operacional:</b> quando/onde/como + box de detalhe importante.</li>
+        <li class="li"><b>4) Impacto:</b> “por que importa” traduzido para rotina docente.</li>
+        <li class="li"><b>5) Ponto #2:</b> segunda mudança relevante (com contexto).</li>
+        <li class="li"><b>6) Causa:</b> por que mudaram (motivo oficial + leitura prática).</li>
+        <li class="li"><b>7) Aplicação:</b> 3 implicações + “o que NÃO muda”.</li>
+        <li class="li"><b>8) Resumo:</b> recap em bullets (escaneável).</li>
+        <li class="li"><b>9) CTA:</b> encaminhar + salvar + seguir (e opcional comentário/DM).</li>
+      </ul>
+    </section>
+
+    <section class="card" id="slides">
+      <h2><span class="dot"></span>Slides sugeridos (1..9)</h2>
+      <div class="twoCol">
+        <div class="callout">
+          <div class="title"><span class="grad">Slide 1</span> — Capa</div>
+          <p>Fórmula: <b>[tema + recorte]</b> + <b>“mudou e você nem viu”</b> + <b>“em 60s”</b> + “arraste →”.</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Slide 2</span> — #1</div>
+          <p>O que mudou (objetivo) + 1 frase de tradução (“em outras palavras…”).</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Slide 3</span> — Detalhes</div>
+          <p>Lista 3–5 itens + box “Detalhe importante” (exceções/condições).</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Slide 4</span> — Por que importa?</div>
+          <p>Conecte com: planejamento, avaliação, tempo de aula, foco em habilidades, acompanhamento.</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Slide 5</span> — #2</div>
+          <p>Segunda mudança: destaque o que antes era e como fica (comparação curta).</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Slide 6</span> — Por que mudou?</div>
+          <p>Motivo oficial + “o que isso sinaliza” (interpretação prática).</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Slide 7</span> — O que muda pra você</div>
+          <p>3 ações concretas + 1 linha “o que não muda” para reduzir ansiedade.</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Slide 8</span> — Resumo</div>
+          <p>Bullets com verbos no início (Passa a…, Deixa de…, Continua…, Atenção…).</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Slide 9</span> — CTA</div>
+          <p>Pergunta + “encaminhe para…” + “salve…” + “siga…” + opcional “comente ‘GUIA’”.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="twoCol">
+      <section class="card">
+        <h2><span class="dot"></span>Elementos visuais</h2>
+        <ul class="list">
+          <li class="li"><b>Fundo:</b> azul/escuro com textura leve (grain/grid) para aparência “high-tech”.</li>
+          <li class="li"><b>Hierarquia:</b> título grande (pode ser serif) + corpo em sans (legibilidade).</li>
+          <li class="li"><b>Componentes fixos:</b> badge “#1/#2” em ciano; boxes com borda; setas e ícones minimalistas.</li>
+          <li class="li"><b>Respiração:</b> alternar slides mais textuais com 1 bloco de imagem/foto contextual.</li>
+          <li class="li"><b>Consistência:</b> manter posição do título e a altura do bloco de mídia ao longo do carrossel.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Copy e ganchos</h2>
+        <div class="mini">
+          <div class="callout">
+            <div class="title"><span class="grad">Ganchos de capa</span> (escolha 1)</div>
+            <p>1) “Mudou e quase ninguém percebeu.”<br/>2) “Se você dá aula de ___, isso muda seu planejamento.”<br/>3) “Atualização rápida: o que muda a partir de ____.”</p>
+          </div>
+          <div class="callout">
+            <div class="title"><span class="grad">Frases de transição</span> (retenção)</div>
+            <p>“Agora vem a parte que impacta sua rotina…”<br/>“Só que tem um detalhe importante…”<br/>“Na prática, isso significa…”</p>
+          </div>
+          <div class="callout">
+            <div class="title"><span class="grad">Tom</span> recomendado</div>
+            <p>Objetivo, calmo e útil. Sem alarme excessivo; use “urgência leve” com clareza e fonte.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="twoCol">
+      <section class="card">
+        <h2><span class="dot"></span>CTA</h2>
+        <ul class="list">
+          <li class="li"><b>Encaminhar:</b> “Envie para um(a) colega do seu segmento.”</li>
+          <li class="li"><b>Salvar:</b> “Salve para revisar no seu planejamento.”</li>
+          <li class="li"><b>Comentar:</b> “Comente ‘GUIA’ que eu mando um checklist.”</li>
+          <li class="li"><b>DM:</b> “Me chama no direct com ‘TEMA’ que eu te envio o modelo.”</li>
+          <li class="li"><b>Seguir:</b> “Siga para atualizações práticas (com fonte) + aplicações.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Checklist de criação</h2>
+        <ul class="list">
+          <li class="li"><b>Conteúdo:</b> tema definido + recorte/ano + para quem + 1–2 fontes confiáveis.</li>
+          <li class="li"><b>Mensagem:</b> mudança #1 e #2 nomeadas em até 4 palavras cada.</li>
+          <li class="li"><b>Utilidade:</b> slide “o que muda pra você” com 3 ações concretas.</li>
+          <li class="li"><b>Redução de ansiedade:</b> 1 linha “o que NÃO muda”.</li>
+          <li class="li"><b>Retenção:</b> usar perguntas-título e numeração (#1/#2).</li>
+          <li class="li"><b>Resumo:</b> 4–6 bullets com verbos no início.</li>
+          <li class="li"><b>Design:</b> margens 8–10%, alinhamento à esquerda, 1 ideia por slide, box de destaque padronizado.</li>
+          <li class="li"><b>CTA:</b> pedir encaminhar + salvar (no mínimo) e 1 ação extra (seguir/comentar/DM).</li>
+          <li class="li"><b>Revisão:</b> reduzir jargão, cortar linhas longas, checar legibilidade no celular.</li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2><span class="dot"></span>Variações</h2>
+      <div class="twoCol">
+        <div class="callout">
+          <div class="title"><span class="grad">Variação A</span> — “Mito vs Verdade” (mesma base)</div>
+          <p>Slides 2 e 5 viram “Mito 1 / Verdade 1” e “Mito 2 / Verdade 2”. Mantém impacto, aplicação e resumo.</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Variação B</span> — “Checklist pós-mudança”</div>
+          <p>Slide 7 vira checklist (5 itens) e o slide 8 vira modelo de rotina (ex.: “toda semana eu…”).</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Variação C</span> — “Para cada segmento”</div>
+          <p>Duplicar o slide 7 em 2 versões: anos iniciais vs finais; ou fundamental vs médio; ou coordenação vs professor.</p>
+        </div>
+        <div class="callout">
+          <div class="title"><span class="grad">Variação D</span> — “1 mudança só (mais curto)”</div>
+          <p>Carrossel de 7 slides: capa, mudança, detalhes, impacto, aplicação, resumo, CTA.</p>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <p style="margin:0; color: var(--muted); line-height:1.55;">Para preencher com copy pronta slide a slide, use um tema específico (ex.: “avaliação formativa”, “planejamento semanal”, “BNCC”, “IA na educação”, “recuperação paralela”).</p>
+    </section>
+
+    <footer>
+      Link do post original: <a class="link" href="https://www.instagram.com/p/DUjSxSzEUKd/" target="_blank" rel="noreferrer noopener">https://www.instagram.com/p/DUjSxSzEUKd/</a>
+    </footer>
+
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ta = document.getElementById('roteiro');
+      function setLabel(text){
+        const span = btn.querySelector('span');
+        if(span) span.textContent = text;
+      }
+      btn.addEventListener('click', async function(){
+        try{
+          ta.focus();
+          ta.select();
+          const text = ta.value;
+          if(navigator.clipboard && window.isSecureContext){
+            await navigator.clipboard.writeText(text);
+          } else {
+            document.execCommand('copy');
+          }
+          setLabel('Roteiro copiado');
+          setTimeout(()=>setLabel('Copiar roteiro'), 1500);
+        } catch(e){
+          setLabel('Falhou — selecione e copie');
+          setTimeout(()=>setLabel('Copiar roteiro'), 2000);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
