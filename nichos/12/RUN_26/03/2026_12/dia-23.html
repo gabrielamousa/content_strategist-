@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 23 — Microaula que bomba</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --card:#0f1624;
+      --card2:#0c1320;
+      --text:#e8eefc;
+      --muted:#a8b3cf;
+      --line:rgba(255,255,255,.08);
+      --shadow: 0 16px 40px rgba(0,0,0,.45);
+      --r:18px;
+      --g1: linear-gradient(90deg,#2be07c 0%, #2bb6ff 45%, #ff9a2b 100%);
+      --g2: radial-gradient(1200px 600px at 20% 0%, rgba(43,224,124,.18), transparent 55%),
+            radial-gradient(900px 500px at 80% 10%, rgba(43,182,255,.16), transparent 55%),
+            radial-gradient(900px 600px at 65% 90%, rgba(255,154,43,.12), transparent 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg);
+      background-image: var(--g2);
+      line-height:1.5;
+    }
+    a{ color: inherit; }
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 64px;
+    }
+    header{
+      display:flex;
+      gap:16px;
+      align-items:flex-start;
+      justify-content:space-between;
+      padding: 18px;
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(15,22,36,.72);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .h-left{ min-width: 0; }
+    .kicker{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    h1{
+      margin: 10px 0 6px;
+      font-size: 22px;
+      letter-spacing: .2px;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 70ch;
+    }
+    .h-right{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:flex-end;
+      flex: 0 0 auto;
+    }
+    .btn{
+      cursor:pointer;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.2);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 13px;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.14); background: rgba(0,0,0,.28); }
+    .btn-primary{
+      border: none;
+      background: var(--g1);
+      color:#071019;
+      box-shadow: 0 12px 30px rgba(43,182,255,.10);
+    }
+    .btn-primary:hover{ transform: translateY(-1px); filter: saturate(1.05); }
+    .link{
+      color: var(--muted);
+      font-size: 12px;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(168,179,207,.35);
+      padding-bottom: 2px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (min-width: 960px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .span-2{ grid-column: 1 / -1; }
+    }
+    section.card{
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(15,22,36,.66);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0;
+      padding: 14px 16px;
+      font-size: 15px;
+      letter-spacing: .2px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .badge{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #0b111b;
+      background: var(--g1);
+      padding: 6px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .content{
+      padding: 14px 16px 16px;
+      color: var(--text);
+    }
+    .content p{ margin: 0 0 10px; color: var(--muted); }
+    .content ul{ margin: 8px 0 0 18px; padding:0; }
+    .content li{ margin: 6px 0; color: var(--text); }
+    .hr{
+      height:1px;
+      background: var(--line);
+      margin: 14px 0;
+    }
+    .code{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: #d7e7ff;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+      white-space: pre-wrap;
+    }
+    .two-col{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 720px){
+      .two-col{ grid-template-columns: 1fr 1fr; }
+    }
+    .callout{
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(43,224,124,.10), rgba(43,182,255,.06) 55%, rgba(255,154,43,.06));
+      border-radius: 14px;
+      padding: 12px;
+      color: var(--text);
+    }
+    .callout strong{ color:#f2f6ff; }
+    .checklist{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    @media (min-width: 960px){
+      .checklist{ grid-template-columns: 1fr 1fr; }
+    }
+    .box{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .box h3{ margin:0 0 8px; font-size: 13px; color: #f0f5ff; }
+    .box ul{ margin:0 0 0 18px; }
+    .muted{ color: var(--muted); }
+    .footer{
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="h-left">
+        <div class="kicker">
+          <span class="pill">Nicho: Professores</span>
+          <span class="pill">Dia: 23</span>
+          <span class="pill">Formato: Reels</span>
+          <span class="pill">Pilar: Passo a passo</span>
+        </div>
+        <h1>Microaula que bomba: ensine 1 conceito com 3 aplicações</h1>
+        <p class="sub">Roteiro reproduzível para criar Reels de alta retenção: promessa específica + inclusão (iniciante/avançado) + analogia + entrega em camadas + CTA com tarefa corrigida.</p>
+      </div>
+      <div class="h-right">
+        <button class="btn btn-primary" id="copyBtn">Copiar roteiro</button>
+        <a class="link" href="https://www.instagram.com/p/DUls7n0j29V/" target="_blank" rel="noopener">Ver post original</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card span-2">
+        <h2>Resumo <span class="badge">o que faz engajar</span></h2>
+        <div class="content">
+          <div class="two-col">
+            <div class="callout">
+              <strong>Por que funciona:</strong>
+              <ul>
+                <li><strong>Promessa específica</strong> (1 conceito) + sensação de resolução (“de uma vez por todas”).</li>
+                <li><strong>Inclusão</strong> (“se você já viu / se nunca viu”) reduz abandono nos 3 primeiros segundos.</li>
+                <li><strong>Autoridade</strong> (“aqui não é dica, é aula”) aumenta valor percebido.</li>
+                <li><strong>Analogia</strong> (ponte do familiar → novo) diminui fricção cognitiva.</li>
+                <li><strong>Entrega em camadas</strong> (base → variação/erro → pergunta/prova) dá sensação de aula completa.</li>
+                <li><strong>Micro-ganchos</strong> a cada 8–12s para reset de atenção.</li>
+                <li><strong>CTA tarefa corrigida</strong> aumenta comentários com promessa clara de retorno.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <strong>Quando usar:</strong>
+              <ul>
+                <li>Para ensinar <strong>um ponto específico</strong> (não um tema amplo).</li>
+                <li>Para destravar dúvidas recorrentes (o “calcanhar de Aquiles” do aluno).</li>
+                <li>Para criar série semanal: “1 conceito / 3 usos / 1 tarefa”.</li>
+              </ul>
+              <div class="hr"></div>
+              <p class="muted"><strong>Meta:</strong> retenção alta + comentários úteis (correção/feedback) + percepção de aula.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura <span class="badge">30–60s</span></h2>
+        <div class="content">
+          <ol>
+            <li><strong>Hook (0–3s):</strong> promessa + inclusão (iniciante/avançado).</li>
+            <li><strong>Postura (3–6s):</strong> “aqui é aula” + “anota aí”.</li>
+            <li><strong>Analogia (6–15s):</strong> trazer para algo familiar do aluno.</li>
+            <li><strong>Regra essencial (15–25s):</strong> 1 frase que resolve 80%.</li>
+            <li><strong>Aplicação 1 (25–35s):</strong> caso base (o mais comum).</li>
+            <li><strong>Aplicação 2 (35–45s):</strong> variação ou erro comum (o que mais derruba nota).</li>
+            <li><strong>Aplicação 3 (45–55s):</strong> pergunta / situação real / mini-prova.</li>
+            <li><strong>Fechamento (55–60s):</strong> “isso é o essencial” + teaser honesto.</li>
+            <li><strong>CTA (últimos 3–6s):</strong> tarefa nos comentários + promessa de correção.</li>
+          </ol>
+          <div class="hr"></div>
+          <p class="muted"><strong>Regra de ouro:</strong> 1 conceito + 3 aplicações. Só isso. Quanto mais “aperto”, mais o aluno sente clareza.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro <span class="badge">template copiável</span></h2>
+        <div class="content">
+          <p class="muted">Substitua os campos entre colchetes. Mantenha a cadência (comandos curtos) para retenção.</p>
+          <div class="code" id="roteiroText">[TEXTO NA TELA: “Aprenda {CONCEITO} de uma vez por todas”】【
+
+(0–3s) HOOK
+“Hoje você vai aprender {CONCEITO} de uma vez por todas.”
+“Se você já viu {CONCEITO}, fica — eu vou te mostrar o ‘pulo do gato’.”
+“Se nunca viu, fica também — hoje você sai usando isso.”
+
+(3–6s) POSICIONAMENTO
+“Pega o caderno: aqui não é dica, é aula. Anota.”
+
+(6–15s) ANALOGIA (ponte do familiar → novo)
+“No dia a dia, quando você diz: ‘{EXEMPLO FAMILIAR 1}’ / ‘{EXEMPLO FAMILIAR 2}’, você está fazendo {IDEIA CENTRAL}.”
+“Em {DISCIPLINA}, isso aparece como {CONCEITO}.”
+
+(15–25s) REGRA ESSENCIAL (1 frase)
+“Regra: {CONCEITO} = {DEFINIÇÃO CURTA} + {QUANDO USAR}.”
+
+(25–35s) APLICAÇÃO 1 (caso base)
+“Exemplo 1 (o mais comum): {EXEMPLO 1}.”
+“Percebe que {O QUE OBSERVAR}?”
+
+(35–45s) APLICAÇÃO 2 (variação / erro comum)
+“Agora, o erro que mais acontece: {ERRO COMUM}.”
+“O certo é {CORREÇÃO} porque {MOTIVO CURTO}.”
+
+(45–55s) APLICAÇÃO 3 (pergunta / mini-prova)
+“Teste rápido: se eu te der {SITUAÇÃO}, você aplicaria {CONCEITO} como?”
+“Modelo: {MODELO RESPOSTA}.”
+
+(55–60s) FECHAMENTO + TEASER HONESTO
+“Pronto. Isso aqui é o essencial de {CONCEITO}.”
+“Tem outras camadas, mas se você dominar isso, já destrava 80%.”
+
+(últimos 3–6s) CTA (tarefa corrigida)
+“Agora comenta {NÚMERO} exemplos usando {CONCEITO} que eu corrijo um por um.”
+“Se você quer a parte 2 com {SUBTEMA}, escreve ‘PARTE 2’.”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais <span class="badge">edição simples</span></h2>
+        <div class="content">
+          <ul>
+            <li><strong>Texto na tela</strong> em blocos curtos (6–8 palavras por linha).</li>
+            <li><strong>Destaque com cor/degradê</strong> apenas em palavras-chave: {CONCEITO}, {ERRO}, {REGRA}.</li>
+            <li><strong>Jump cuts</strong> removendo pausas + ritmo de fala firme.</li>
+            <li><strong>Zoom leve</strong> quando entrar na Regra e no Erro comum.</li>
+            <li><strong>Legendas grandes</strong> e limpas (sempre).</li>
+            <li><strong>Reset de atenção</strong> a cada 8–12s: “Agora olha isso”, “Mas pera”, “Anota”.</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="muted"><strong>Enquadramento:</strong> plano médio, rosto bem iluminado, fundo limpo. Sem B-roll é ok (o valor é a clareza).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos <span class="badge">substituíveis</span></h2>
+        <div class="content">
+          <div class="two-col">
+            <div class="box">
+              <h3>Hooks (0–3s)</h3>
+              <ul>
+                <li>“Hoje você vai aprender {X} <strong>de uma vez por todas</strong>.”</li>
+                <li>“Se você já viu {X}, fica. Se nunca viu, fica também.”</li>
+                <li>“Em {TEMPO} segundos, você entende {X} <strong>sem decorar</strong>.”</li>
+                <li>“{X} é onde quase todo mundo erra — agora você não erra mais.”</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h3>Micro-ganchos (ao longo)</h3>
+              <ul>
+                <li>“Anota isso.”</li>
+                <li>“Agora o pulo do gato…”</li>
+                <li>“Mas pera — é aqui que confunde.”</li>
+                <li>“Se você lembrar só de uma coisa, é isso:”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="two-col">
+            <div class="box">
+              <h3>Frases de autoridade (sem arrogância)</h3>
+              <ul>
+                <li>“Aqui não é dica, é <strong>aula</strong>.”</li>
+                <li>“Eu vou te dar o jeito que eu ensino em sala.”</li>
+                <li>“Isso cai sempre e quase ninguém explica assim.”</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h3>Texto na tela (modelos)</h3>
+              <ul>
+                <li>“Regra: {X} = {Y}”</li>
+                <li>“Ex. 1: {…}”</li>
+                <li>“Erro comum: {…}”</li>
+                <li>“Teste: como você faria?”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA <span class="badge">comentários</span></h2>
+        <div class="content">
+          <p class="muted">Escolha <strong>apenas 1 CTA</strong> por Reel. O melhor aqui é CTA de tarefa corrigida.</p>
+          <ul>
+            <li><strong>Tarefa corrigida (padrão ouro):</strong> “Comenta {3–5} exemplos usando {CONCEITO} que eu corrijo.”</li>
+            <li><strong>Parte 2 (demanda):</strong> “Escreve ‘PARTE 2’ que eu faço com {SUBTEMA}.”</li>
+            <li><strong>Diagnóstico:</strong> “Comenta: você erra mais por {OPÇÃO A} ou {OPÇÃO B}?”</li>
+            <li><strong>Aplicação real:</strong> “Escreve um exemplo do seu contexto (trabalho/estudo) com {CONCEITO}.”</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Promessa obrigatória (clareza):</strong> se você pedir comentários, diga exatamente o que fará: “eu corrijo”, “eu respondo até amanhã”, “eu marco o modelo certo”.</n          </div>
+        </div>
+      </section>
+
+      <section class="card span-2">
+        <h2>Checklist <span class="badge">criação rápida</span></h2>
+        <div class="content">
+          <div class="checklist">
+            <div class="box">
+              <h3>Antes de gravar (conteúdo)</h3>
+              <ul>
+                <li>[ ] Definir <strong>1 conceito específico</strong> (recorte claro).</li>
+                <li>[ ] Escrever a <strong>promessa</strong> em 1 frase (“você sai aplicando…”).</li>
+                <li>[ ] Criar <strong>3 aplicações</strong>: base + variação/erro + pergunta/teste.</li>
+                <li>[ ] Preparar <strong>2 analogias</strong> (cotidiano do aluno / português / situação real).</li>
+                <li>[ ] Definir <strong>CTA tarefa</strong> (3–5 itens) e garantir que você vai corrigir.</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h3>Roteiro (ritmo e retenção)</h3>
+              <ul>
+                <li>[ ] Hook com <strong>inclusão</strong> (“se já viu / se nunca viu”).</li>
+                <li>[ ] Postura: “aqui é aula” + “anota”.</li>
+                <li>[ ] Regra em <strong>1 frase</strong>.</li>
+                <li>[ ] <strong>Micro-ganchos</strong> a cada 8–12s.</li>
+                <li>[ ] Fechamento: “essencial” + teaser honesto (sem enrolar).</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h3>Gravação</h3>
+              <ul>
+                <li>[ ] Iluminação frontal + áudio limpo (microfone, se possível).</li>
+                <li>[ ] Falar com <strong>frases curtas</strong> e pausas mínimas.</li>
+                <li>[ ] Olhar para a câmera nos trechos de promessa e CTA.</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h3>Edição</h3>
+              <ul>
+                <li>[ ] Cortes rápidos (remover respirações longas).</li>
+                <li>[ ] Texto na tela sincronizado: Regra + 3 exemplos.</li>
+                <li>[ ] Destaque visual só nas palavras-chave.</li>
+                <li>[ ] Legendas grandes e alto contraste.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span-2">
+        <h2>Variações <span class="badge">mesmo impacto</span></h2>
+        <div class="content">
+          <div class="two-col">
+            <div class="box">
+              <h3>Trocas seguras (substituições)</h3>
+              <ul>
+                <li><strong>“De uma vez por todas”</strong> → “sem confusão”, “sem decorar”, “do jeito certo”.</li>
+                <li><strong>“Aqui não é dica, é aula”</strong> → “isso aqui é método”, “isso cai na prova”, “é assim que eu ensino”.</li>
+                <li><strong>Analogia com português</strong> → analogia com rotina do aluno, meme leve, situação de prova, trabalho.</li>
+                <li><strong>3 aplicações (base/erro/pergunta)</strong> → (definição/exemplo/contraexemplo) ou (passo 1/passo 2/passo 3).</li>
+                <li><strong>Correção nos comentários</strong> → “eu te mando o modelo”, “eu marco o certo”, “eu te digo onde ajustar”.</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h3>Ideias por disciplina (exemplos rápidos)</h3>
+              <ul>
+                <li><strong>Matemática:</strong> {regra} → exemplo base → erro de sinal → questão de prova.</li>
+                <li><strong>Português:</strong> {crase/concordância} → quando usar → quando não usar → teste rápido.</li>
+                <li><strong>História:</strong> {conceito} → causa → exemplo → consequência (pergunta final).</li>
+                <li><strong>Inglês:</strong> {estrutura} → afirmativa → negativa → pergunta (tarefa de frases).</li>
+                <li><strong>Didática:</strong> {técnica} → como aplicar → erro comum → adaptação para turmas difíceis.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Como adaptar para outro tema:</strong> mantenha a estrutura e troque apenas {CONCEITO}, {ANALOGIA} e os 3 exemplos. O “motor” do engajamento é a combinação: promessa específica + ensino em camadas + tarefa corrigida.
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">Feito para executar rápido, repetir semanalmente e medir: retenção, salvamentos e comentários.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('roteiroText');
+      const original = btn.textContent;
+
+      async function copy(){
+        const text = textEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = original, 1400);
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = original, 1400);
+        }
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
