@@ -1,0 +1,438 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Carrossel “notícia + explicação” para Professores (8 slides)</title><style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.08);
+    --stroke:rgba(255,255,255,.12);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.56);
+    --shadow: 0 14px 45px rgba(0,0,0,.55);
+    --r12:12px;
+    --r16:16px;
+    --r20:20px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+    --g1: linear-gradient(90deg, #31FF8B 0%, #2C7DFF 45%, #FF8A3D 100%);
+    --g2: radial-gradient(1200px 600px at 20% 0%, rgba(44,125,255,.27), transparent 60%),
+          radial-gradient(1000px 520px at 90% 20%, rgba(49,255,139,.18), transparent 55%),
+          radial-gradient(900px 480px at 40% 100%, rgba(255,138,61,.16), transparent 55%);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{color:#9CC7FF; text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 80px}
+
+  header{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    border-radius: var(--r20);
+    padding:18px 18px;
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g1);
+    opacity:.12;
+    filter: blur(18px);
+    z-index:0;
+  }
+  .head-grid{position:relative; z-index:1; display:grid; grid-template-columns: 1.5fr 1fr; gap:12px; align-items:start}
+  .kicker{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    font-size:13px; color:var(--muted);
+  }
+  .pill{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.05);
+    padding:6px 10px;
+    border-radius:999px;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+  }
+  .dot{width:7px; height:7px; border-radius:999px; background: var(--g1)}
+  h1{margin:10px 0 6px; font-size:24px; line-height:1.15; letter-spacing:.2px}
+  .sub{margin:0; color:var(--muted); font-size:14.5px; line-height:1.35}
+
+  .actions{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap}
+  .btn{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.06);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius: 12px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:13.5px;
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  }
+  .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18)}
+  .btn.primary{
+    background: linear-gradient(180deg, rgba(44,125,255,.28), rgba(49,255,139,.10));
+    border-color: rgba(156,199,255,.35);
+  }
+
+  .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px}
+  @media (min-width: 900px){ .grid{grid-template-columns: 1fr 1fr} }
+
+  section.card{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.05);
+    border-radius: var(--r16);
+    padding:16px;
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  section.card:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: linear-gradient(90deg, rgba(49,255,139,.06), rgba(44,125,255,.06), rgba(255,138,61,.06));
+    opacity:.75;
+    mask: radial-gradient(520px 160px at 20% 0%, #000 20%, transparent 60%);
+    pointer-events:none;
+  }
+  .card > *{position:relative; z-index:1}
+
+  h2{margin:0 0 10px; font-size:16px; letter-spacing:.2px}
+  .meta{color:var(--muted2); font-size:13px}
+  .hr{height:1px; background:rgba(255,255,255,.10); margin:12px 0}
+
+  ul{margin:8px 0 0 18px; color:var(--muted); line-height:1.5}
+  li{margin:6px 0}
+  .callout{
+    border:1px dashed rgba(156,199,255,.35);
+    background: rgba(44,125,255,.10);
+    padding:12px;
+    border-radius: 14px;
+    margin-top:10px;
+    color: var(--text);
+  }
+  .callout strong{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+  .codebox{
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.28);
+    border-radius: 14px;
+    padding:12px;
+    overflow:auto;
+  }
+  pre{margin:0; white-space:pre-wrap; color:rgba(234,240,255,.86); font-size:13px; line-height:1.45; font-family:var(--mono)}
+
+  .two-col{display:grid; grid-template-columns: 1fr; gap:12px}
+  @media (min-width: 700px){ .two-col{grid-template-columns: 1fr 1fr} }
+
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; color:rgba(234,240,255,.78);
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.04);
+    padding:6px 10px;
+    border-radius: 999px;
+  }
+  .grad-text{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+  .toast{
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    background: rgba(10,14,28,.85);
+    border:1px solid rgba(255,255,255,.14);
+    color: rgba(234,240,255,.9);
+    padding:10px 12px;
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+    font-size: 13px;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+  .toast.show{opacity:1; transform: translateX(-50%) translateY(-2px)}
+
+  .small{font-size:12.5px; color: var(--muted2); line-height:1.45}
+</style></head><body><div class="wrap">
+  <header>
+    <div class="head-grid">
+      <div>
+        <div class="kicker">
+          <span class="pill"><span class="dot"></span><span><strong>Nicho:</strong> Professores</span></span>
+          <span class="pill"><span class="dot"></span><span><strong>Dia:</strong> 17</span></span>
+          <span class="pill"><span class="dot"></span><span><strong>Formato:</strong> Carrossel</span></span>
+          <span class="pill"><span class="dot"></span><span><strong>Pilar:</strong> <span class="grad-text">Prova</span></span></span>
+        </div>
+        <h1>Carrossel “notícia + explicação” para Professores (8 slides)</h1>
+        <p class="sub">Modelo reproduzível para transformar um dado/acontecimento em explicação simples, implicações práticas e CTA com alta taxa de comentários.</p>
+        <p class="meta">Post original: <a href="https://www.instagram.com/p/DVb6m5sEd_U/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DVb6m5sEd_U/</a></p>
+      </div>
+      <div class="actions">
+        <button class="btn primary" onclick="copyRoteiro()">Copiar roteiro</button>
+        <button class="btn" onclick="window.open('https://www.instagram.com/p/DVb6m5sEd_U/','_blank')">Abrir post original</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Resumo</h2>
+      <div class="small">Use quando você quer: (1) chamar atenção com uma “manchete” baseada em dado, (2) provar rápido, (3) explicar o “por quê” com metáfora/modelo mental, (4) traduzir em impacto real na sala, (5) fechar com pergunta polarizada (SIM/NÃO) + compartilhamento.</div>
+      <div class="hr"></div>
+      <div class="two-col">
+        <div>
+          <div class="badge">Objetivo</div>
+          <ul>
+            <li>Engajar com comentários (pergunta polarizada).</li>
+            <li>Construir credibilidade (prova visual até o slide 3).</li>
+            <li>Gerar salvamentos/compartilhamentos (impacto prático).</li>
+          </ul>
+        </div>
+        <div>
+          <div class="badge">Quando funciona melhor</div>
+          <ul>
+            <li>Mudança de política/regra escolar, avaliação, BNCC, tecnologia, comportamento.</li>
+            <li>Quando existe ao menos 1 fonte (dado, relatório, print de notícia, documento).</li>
+            <li>Quando dá para traduzir em “o que eu faço amanhã na aula?”.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Estrutura</h2>
+      <ul>
+        <li><strong>Slide 1:</strong> Hook/Manchete (choque + contexto rápido).</li>
+        <li><strong>Slide 2:</strong> Prova 1 (número + comparação com “normal”).</li>
+        <li><strong>Slide 3:</strong> Prova 2 (amplitude: outro lugar/caso).</li>
+        <li><strong>Slide 4:</strong> Virada (pergunta “por quê?” + hipótese principal).</li>
+        <li><strong>Slide 5:</strong> Modelo mental (metáfora simples do mecanismo).</li>
+        <li><strong>Slide 6:</strong> Impacto prático (o que muda para o professor) + mini-história.</li>
+        <li><strong>Slide 7:</strong> Autoridade/contraponto (o que órgão/estudo diz).</li>
+        <li><strong>Slide 8:</strong> Fechamento (SIM/NÃO) + CTAs (comentar, salvar, enviar, seguir).</li>
+      </ul>
+      <div class="callout"><strong>Regra de retenção:</strong> alternar <em>dado → explicação → prova → impacto</em> a cada 1–2 slides. Cada slide tem <strong>um</strong> elemento dominante (título OU número OU pergunta).</div>
+    </section>
+
+    <section class="card" style="grid-column: 1 / -1;">
+      <h2>Slides sugeridos (1..8)</h2>
+      <div class="codebox"><pre id="roteiro">TEMPLATE (substitua os campos entre colchetes)
+
+SLIDE 1 — HOOK (manchete + contexto)
+Headline (forte e curta): “CONFIRMADO: [DADO/COMPORTAMENTO] em [TEMA]”
+Sub (contexto em 1–2 linhas): “Depois de [MUDANÇA/DECISÃO], [GRUPO] está [CONSEQUÊNCIA CONCRETA].”
+Micro-CTA: “Arraste →”
+
+SLIDE 2 — PROVA 1 (número + comparação)
+Título: “O salto é fora do padrão” (ou “Isso não era assim.”)
+Corpo: “Em [LOCAL/FONTE], [NÚMERO] de [EVENTO]...”
+Bullets:
+→ “Antes: [BASELINE/ANO PASSADO]”
+→ “Agora: [ATUAL]”
+Visual: gráfico simples (barras) com os números destacados
+
+SLIDE 3 — PROVA 2 (amplia o escopo)
+Abertura: “Não foi só [CASO 1].”
+Dado: “Em [CASO 2], também aconteceu [DADO].”
+Fechamento: “Ou seja: [CONCLUSÃO DE AMPLITUDE].”
+Visual: mapa/ícones/prints de manchetes (1–3 fontes)
+
+SLIDE 4 — VIRADA (pergunta + hipótese)
+Pergunta grande: “Mas por que isso está acontecendo?”
+Hipótese: “A principal hipótese é: [CAUSA/MECANISMO].”
+Frase sublinhada: “[INCENTIVO/REGRA] mudou, então [COMPORTAMENTO] aumentou.”
+Box (opcional): “Ex.: quando [X], as pessoas tendem a [Y].”
+
+SLIDE 5 — MODELO MENTAL (metáfora)
+Título: “[TEMA] está virando um [METÁFORA: game/esteira/corrida/algoritmo]”
+Explicação em 2–4 linhas: “Quando [REGRA], o ‘melhor caminho’ vira [ATITUDE]. Resultado: [EFEITO].”
+Uma frase-chave: “Você não muda pessoas: você muda o sistema.” (ou equivalente)
+Visual: imagem simbólica (controle/engrenagem/tabuleiro)
+
+SLIDE 6 — IMPACTO PRÁTICO (professor) + mini-história
+Título: “O que isso muda na sua sala?”
+Corpo: “Se você [SITUAÇÃO], provavelmente vai notar [SINAL 1], [SINAL 2].”
+Mini-história (2–3 linhas): “Imagine a prof. [NOME], que [CENÁRIO]. Em 2 semanas, [EFEITO].”
+Fecho: “Isso afeta: [TEMPO], [APRENDIZAGEM], [CLIMA].”
+
+SLIDE 7 — AUTORIDADE / CONTRAPONTO
+Título: “O que [ÓRGÃO/ESTUDO/ESPECIALISTA] diz”
+Bullets (3 pontos):
+→ “[PONTO 1]”
+→ “[PONTO 2]”
+→ “[PONTO 3]”
+Nota de credibilidade: “Fonte: [LINK/INSTITUIÇÃO]”
+
+SLIDE 8 — FECHAMENTO + CTA
+Pergunta polarizada: “Na sua escola, isso é bom? SIM ou NÃO?”
+CTAs:
+1) “Comente SIM/NÃO e diga por quê em 1 frase.”
+2) “Salve para lembrar quando [SITUAÇÃO].”
+3) “Envie para um(a) professor(a)/coord. que precisa ver.”
+4) “Siga para mais: [PROMESSA DO PERFIL: estratégias/gestão/planejamento].”
+
+CHECK DE TEXTO POR SLIDE
+• Slide 1 e 8: poucas linhas (impacto e ação)
+• Slides 2–7: 25–60 palavras, parágrafos curtos, 2–4 bullets</pre></div>
+      <div class="small" style="margin-top:10px;">Dica: mantenha o “por quê?” no slide 4 obrigatoriamente para abrir loop de curiosidade. Até o slide 3, o leitor precisa ver pelo menos <strong>1 prova visual</strong> (gráfico/print).</div>
+    </section>
+
+    <section class="card">
+      <h2>Elementos visuais</h2>
+      <ul>
+        <li><strong>Identidade:</strong> “jornalismo explicativo” (infográfico + manchete).</li>
+        <li><strong>Fundo:</strong> cor sólida (azul/escuro) nos slides 2–7; foto de impacto no slide 1.</li>
+        <li><strong>Provas:</strong> gráfico simples (slide 2) + mapa/prints (slide 3).</li>
+        <li><strong>Leitura rápida:</strong> bullets com “→”, caixas de destaque e sublinhado pontual (1–2 por slide).</li>
+        <li><strong>Respiro:</strong> margens largas e no máximo 1 elemento dominante por slide.</li>
+      </ul>
+      <div class="callout"><strong>Atalho reproduzível:</strong> crie 2 “layouts-base” no Canva/Figma (Foto+Headline; Texto+Bullets+Prova) e só alterne entre eles.</div>
+    </section>
+
+    <section class="card">
+      <h2>Copy e ganchos</h2>
+      <div class="two-col">
+        <div>
+          <div class="badge">Headlines (Slide 1)</div>
+          <ul>
+            <li>“CONFIRMADO: [X%] dos alunos [não conseguem/estão…]”</li>
+            <li>“ALERTA: [comportamento] está virando padrão na escola”</li>
+            <li>“NUNCA ACONTECEU: [dado] em [contexto]”</li>
+            <li>“Depois de [mudança], aconteceu [consequência]”</li>
+          </ul>
+        </div>
+        <div>
+          <div class="badge">Conectores de retenção</div>
+          <ul>
+            <li>“Só que tem um detalhe…”</li>
+            <li>“Não foi um caso isolado.”</li>
+            <li>“A pergunta certa é: por quê?”</li>
+            <li>“O que isso muda para quem está em sala?”</li>
+            <li>“Agora vem a parte polêmica…”</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="badge">Checklist do título (rápido)</div>
+      <ul>
+        <li>Coloque 1 número/proporção (ou “nunca aconteceu”).</li>
+        <li>Inclua 1 consequência concreta (tempo, aprendizagem, disciplina, avaliação).</li>
+        <li>Amarre em um contexto temporal: “neste semestre / após / desde”.</li>
+        <li>Evite opinião no slide 1; guarde sua leitura para o slide 4–6.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>CTA</h2>
+      <ul>
+        <li><strong>Comentário (baixa fricção):</strong> “SIM ou NÃO?” + “por quê em 1 frase”.</li>
+        <li><strong>Salvar:</strong> “Salve para usar quando você for [planejar/corrigir/avaliar].”</li>
+        <li><strong>Compartilhar:</strong> “Envie para um(a) coordenador(a) / colega de área.”</li>
+        <li><strong>Crescimento:</strong> “Siga para [promessa específica do perfil].”</li>
+      </ul>
+      <div class="callout"><strong>Combo pronto:</strong> “SIM ou NÃO? Comente. Salve para consultar depois. Envie para 1 professor.”</div>
+    </section>
+
+    <section class="card">
+      <h2>Checklist de criação (reproduzível)</h2>
+      <ul>
+        <li><strong>1) Pauta:</strong> defina [tema] + [tese surpreendente] + [para quem] + [ação desejada].</li>
+        <li><strong>2) Provas:</strong> separe 2 fontes (print, relatório, notícia, dado interno da escola). Anote o link.</li>
+        <li><strong>3) Baseline:</strong> escolha um “antes vs agora” (ano passado, média histórica, outra turma/escola).</li>
+        <li><strong>4) Hipótese:</strong> escreva o mecanismo em 1 frase: “[regra] mudou → [incentivo] → [comportamento].”</li>
+        <li><strong>5) Metáfora:</strong> selecione 1 (game, corrida, funil, algoritmo, esteira, termômetro).</li>
+        <li><strong>6) Impacto prático:</strong> liste 3 consequências na rotina do professor + 1 mini-história.</li>
+        <li><strong>7) Design:</strong> 2 layouts-base + paleta (1 cor dominante + branco + 1 destaque).</li>
+        <li><strong>8) Revisão mobile:</strong> teste no zoom 100% do celular; corte palavras até caber.</li>
+        <li><strong>9) CTA:</strong> 1 pergunta polarizada + 1 de salvar + 1 de enviar.</li>
+        <li><strong>10) Legenda:</strong> repita tese + fontes + pergunta final (se quiser, comente “SIM/NÃO”).</li>
+      </ul>
+    </section>
+
+    <section class="card" style="grid-column: 1 / -1;">
+      <h2>Variações (mesmo impacto, outros temas)</h2>
+      <div class="two-col">
+        <div>
+          <div class="badge">Variação A — “Erro comum” (troca do Slide 2/3)</div>
+          <ul>
+            <li><strong>Slide 2:</strong> “O erro que está piorando [resultado]” (com dado/print).</li>
+            <li><strong>Slide 3:</strong> “Sinais de que você está caindo nisso” (3 sinais →).</li>
+            <li>O resto mantém: por quê (4), metáfora (5), impacto (6), autoridade (7), SIM/NÃO (8).</li>
+          </ul>
+        </div>
+        <div>
+          <div class="badge">Variação B — “Passo a passo” (transforma impacto em ação)</div>
+          <ul>
+            <li><strong>Slide 6:</strong> vira “O que fazer na prática (3 passos)”</li>
+            <li><strong>Slide 7:</strong> vira “Exemplo real/roteiro de aula” (mini-case + print do plano)</li>
+            <li><strong>Slide 8:</strong> CTA “Comente ‘ROTEIRO’ que eu envio um modelo” (captação)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="two-col">
+        <div>
+          <div class="badge">Substituições rápidas (pergunta / prova / metáfora)</div>
+          <ul>
+            <li><strong>Pergunta do Slide 4:</strong> “O que está incentivando isso?” / “Qual peça do sistema mudou?”</li>
+            <li><strong>Prova no Slide 2:</strong> gráfico → “print de comunicado” → “foto de quadro com números”</li>
+            <li><strong>Metáfora do Slide 5:</strong> game → “termômetro” (se é diagnóstico) → “esteira” (se é sobre ritmo)</li>
+          </ul>
+        </div>
+        <div>
+          <div class="badge">Exemplos de temas para Professores</div>
+          <ul>
+            <li>IA na correção: “o que muda e o que não muda”</li>
+            <li>Avaliação formativa vs somativa (mitos + impacto)</li>
+            <li>Indisciplina: indicador que ninguém está olhando</li>
+            <li>Planejamento semanal: erro que rouba tempo</li>
+            <li>Uso de celular: regra → incentivo → comportamento</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast">Roteiro copiado.</div>
+</div>
+
+<script>
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 1400);
+  }
+
+  async function copyRoteiro(){
+    const text = document.getElementById('roteiro').innerText;
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast('Roteiro copiado.');
+    }catch(e){
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Roteiro copiado (modo compatível).');
+    }
+  }
+</script>
+</body></html>
