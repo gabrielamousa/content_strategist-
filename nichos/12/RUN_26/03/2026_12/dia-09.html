@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dia 9 — Professores — Carrossel A vs B</title>
+  <style>
+    :root{
+      --bg0:#070A10;
+      --bg1:#0B1020;
+      --card:#0E162B;
+      --card2:#0C1326;
+      --text:#EAF1FF;
+      --muted:#A9B7D0;
+      --line:rgba(255,255,255,.10);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r16:16px;
+      --r22:22px;
+      --g1: linear-gradient(135deg,#37F3A4 0%, #3AA0FF 45%, #FFB84A 100%);
+      --g2: linear-gradient(135deg,rgba(55,243,164,.18),rgba(58,160,255,.16),rgba(255,184,74,.16));
+      --ok:#37F3A4;
+      --warn:#FFB84A;
+      --info:#3AA0FF;
+      --accent:#A98BFF;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(58,160,255,.18), transparent 60%),
+        radial-gradient(900px 600px at 90% 0%, rgba(55,243,164,.14), transparent 60%),
+        radial-gradient(900px 700px at 70% 110%, rgba(255,184,74,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:#B7CCFF; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+
+    header{
+      padding:18px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--r22);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(16px);
+      opacity:.9;
+      pointer-events:none;
+    }
+    header > *{position:relative}
+
+    .toprow{display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(0,0,0,.25);
+      backdrop-filter: blur(6px);
+      font-size:13px;
+      color:var(--muted);
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+    }
+    h1{
+      margin:14px 0 8px;
+      font-size: clamp(22px, 2.6vw, 34px);
+      letter-spacing: .2px;
+      line-height:1.15;
+    }
+    .sub{
+      color:var(--muted);
+      margin:0;
+      line-height:1.6;
+      max-width: 78ch;
+    }
+    .metaRow{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(14,22,43,.55);
+      font-size:12px;
+      color: var(--muted);
+    }
+    .chip strong{color:var(--text); font-weight:650}
+
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; margin-top:16px}
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--r22);
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+    }
+    .card .hd h2{margin:0; font-size:14px; color:var(--text); letter-spacing:.35px; text-transform:uppercase}
+    .card .bd{padding:16px}
+
+    .callout{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(14,22,43,.65);
+      border-radius: 18px;
+      padding:14px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .callout:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: var(--g2);
+      opacity:.55;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .callout > *{position:relative}
+    .callout p{margin:0; color:var(--muted); line-height:1.6}
+    .callout b{color:var(--text)}
+
+    ul{margin:0; padding-left:18px; color:var(--muted); line-height:1.7}
+    li{margin:6px 0}
+    .k{font-family: var(--mono); font-size: 12.5px; color:#D7E4FF}
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center}
+    button{
+      appearance:none; border:1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:650;
+    }
+    button.primary{
+      background: linear-gradient(135deg, rgba(55,243,164,.18), rgba(58,160,255,.16), rgba(255,184,74,.14));
+      border-color: rgba(255,255,255,.16);
+    }
+    button:hover{filter:brightness(1.06)}
+
+    .sectionTitle{display:flex; align-items:center; gap:10px}
+    .bar{width:14px; height:14px; border-radius:4px; background: var(--g1)}
+
+    .twoCol{display:grid; grid-template-columns: 1fr 1fr; gap:14px}
+    @media (max-width: 720px){ .twoCol{grid-template-columns:1fr} }
+
+    .script{
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(10,16,32,.65);
+      padding: 14px;
+      color: #DDE9FF;
+      font-family: var(--mono);
+      font-size: 12.7px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--line);
+      padding:7px 9px;
+      border-radius:999px;
+      color:var(--muted);
+      background: rgba(0,0,0,.18);
+      font-size:12px;
+      margin:6px 8px 0 0;
+    }
+    .tag .mini{width:8px; height:8px; border-radius:99px; background: var(--g1)}
+
+    .hr{height:1px; background: var(--line); margin:14px 0}
+    .small{font-size:12px; color:var(--muted); line-height:1.6}
+
+    .slides{counter-reset: s}
+    .slide{
+      counter-increment:s;
+      padding:12px 12px;
+      border:1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(14,22,43,.45);
+      margin:10px 0;
+    }
+    .slide .t{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:8px;
+      color: var(--text);
+      font-weight:750;
+    }
+    .slide .t:before{
+      content:"Slide " counter(s);
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #CFE0FF;
+      padding:6px 8px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background: rgba(0,0,0,.15);
+    }
+    .slide .c{color:var(--muted); line-height:1.65}
+
+    footer{margin-top:18px; color:var(--muted); font-size:12px}
+    .ok{color:var(--ok); font-weight:750}
+    .info{color:var(--info); font-weight:750}
+    .warn{color:var(--warn); font-weight:750}
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.45);
+      color: var(--text);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+    .toast.show{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="badge"><span class="dot"></span><span><b>Nicho:</b> Professores</span></div>
+        <div class="badge"><span><b>Dia:</b> 9</span></div>
+        <div class="badge"><span><b>Formato:</b> Carrossel</span></div>
+      </div>
+      <h1>A vs B no carrossel: compare e faça o aluno entender rápido</h1>
+      <p class="sub">Modelo reproduzível de carrossel (6–9 slides; recomendado 7) usando comparação lado a lado (A vs B) para gerar “clique de entendimento”, reter pelo padrão repetido e fechar com ponte para material/oferta via comentário com palavra-chave.</p>
+      <div class="metaRow">
+        <span class="chip"><strong>Pilar</strong>: Passo a passo</span>
+        <span class="chip"><strong>Objetivo</strong>: ensinar rápido + engajar + captar pedidos via comentário</span>
+        <span class="chip"><strong>Post original</strong>: <a href="https://www.instagram.com/p/DV0gwWmDiRm/" target="_blank" rel="noopener">abrir link</a></span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <div class="sectionTitle"><span class="bar"></span><h2>Resumo</h2></div>
+          <span class="chip"><strong>Ideia</strong>: comparação + repetição</span>
+        </div>
+        <div class="bd">
+          <div class="callout">
+            <p><b>Por que funciona:</b> dois exemplos em paralelo (A vs B) reduzem explicação, aumentam clareza imediata e criam curiosidade para ver a próxima variação. Para professores, serve tanto para conteúdo didático (conceitos/erros) quanto para marketing (material, curso, mentoria).</p>
+          </div>
+          <div class="hr"></div>
+          <ul>
+            <li><span class="ok">Entrega</span> valor em cada slide (microvitórias).</li>
+            <li><span class="info">Retenção</span> via padrão repetido + setinha “continue”.</li>
+            <li><span class="warn">Conversão</span> via ponte (slide 6) + oferta clara (slide 7).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div class="sectionTitle"><span class="bar"></span><h2>Estrutura</h2></div>
+          <span class="chip"><strong>Slides</strong>: 7 (ideal)</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>Slide 1:</b> capa + promessa + já traz 1 exemplo A vs B.</li>
+            <li><b>Slides 2–5:</b> 4 exemplos no mesmo padrão (prova por repetição).</li>
+            <li><b>Slide 6:</b> quebra + “não precisa ser difícil” + ponte para legenda + anúncio do material.</li>
+            <li><b>Slide 7:</b> oferta (3 bullets) + CTA de comentário com palavra-chave.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="small">
+            <b>Regra de ouro:</b> cada exemplo deve caber em <span class="k">3–7 palavras</span> por card (frase “punchline”). Se ficar longo, divida em dois slides.
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:16px">
+      <div class="hd">
+        <div class="sectionTitle"><span class="bar"></span><h2>Slides sugeridos (1..7)</h2></div>
+        <span class="chip"><strong>Layout</strong>: 2 cards lado a lado</span>
+      </div>
+      <div class="bd">
+        <div class="slides">
+          <div class="slide">
+            <div class="t"><span></span><span class="chip"><strong>Capa</strong> + 1º exemplo</span></div>
+            <div class="c">
+              <b>Topo:</b> “<span class="k">[TEMA]</span> e a mudança de <span class="k">[resultado/sentido]</span>”<br/>
+              <b>Card A:</b> <span class="k">[Exemplo 1 — versão A (erro/antes/mito)]</span><br/>
+              <b>Card B:</b> <span class="k">[Exemplo 1 — versão B (correto/depois/verdade)]</span><br/>
+              <b>Rodapé:</b> logo + seta de continuidade.
+            </div>
+          </div>
+          <div class="slide">
+            <div class="t"><span></span><span class="chip"><strong>Exemplo 2</strong></span></div>
+            <div class="c">Repete o padrão A vs B com um caso bem comum de sala/avaliação/explicação.</div>
+          </div>
+          <div class="slide">
+            <div class="t"><span></span><span class="chip"><strong>Exemplo 3</strong></span></div>
+            <div class="c">Inclui um exemplo “pegadinha” (parece igual, mas muda muito).</div>
+          </div>
+          <div class="slide">
+            <div class="t"><span></span><span class="chip"><strong>Exemplo 4</strong></span></div>
+            <div class="c">Exemplo prático do dia a dia do professor (fala de sala, instrução, feedback etc.).</div>
+          </div>
+          <div class="slide">
+            <div class="t"><span></span><span class="chip"><strong>Exemplo 5</strong></span></div>
+            <div class="c">Feche a sequência com o exemplo mais “útil amanhã” (aplicação imediata).</div>
+          </div>
+          <div class="slide">
+            <div class="t"><span></span><span class="chip"><strong>Ponte</strong> (quebra)</span></div>
+            <div class="c">
+              <b>Headline:</b> “Aprender <span class="k">[tema]</span> <b>NÃO</b> precisa ser difícil.”<br/>
+              <b>Botão/pílula:</b> “Leia a legenda para saber mais.”<br/>
+              <b>Linha:</b> “Aproveito para apresentar uma novidade:”<br/>
+              <b>Visual:</b> mockup/capa do material.
+            </div>
+          </div>
+          <div class="slide">
+            <div class="t"><span></span><span class="chip"><strong>Oferta</strong> + CTA</span></div>
+            <div class="c">
+              <b>Topo:</b> “No <span class="k">[nome do material]</span>, você aprende:”<br/>
+              <b>Bullets:</b> 3 benefícios objetivos (resultados, não recursos).<br/>
+              <b>Caixa:</b> “Quer o link com <span class="k">[bônus/desconto]</span>?”<br/>
+              <b>CTA grande:</b> “COMENTE: <span class="k">[PALAVRA]</span>”
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <div class="hd">
+        <div class="sectionTitle"><span class="bar"></span><h2>Roteiro (copiável)</h2></div>
+        <div class="btnrow">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="selectBtn">Selecionar texto</button>
+        </div>
+      </div>
+      <div class="bd">
+        <div id="script" class="script">CARROSSEL A vs B (7 slides) — NICHO: PROFESSORES
+
+1) DEFINIÇÕES RÁPIDAS (antes de abrir o Canva)
+- Tema: [__________]
+- Público (professores de): [__________]
+- Eixo do comparativo: ( ) erro vs correto  ( ) mito vs verdade  ( ) antes vs depois
+- Quantos exemplos: 5 (1 na capa + 4 no miolo)
+- Oferta: [curso/material/mentoria/aula] — [__________]
+- Palavra-chave (comentário): [__________]
+
+2) SLIDE 1 — CAPA QUE JÁ ENSINA
+Topo: “[TEMA] e a mudança de [resultado/sentido]”
+Cards:
+A: [Exemplo 1 — versão A]
+B: [Exemplo 1 — versão B]
+Rodapé: logo + seta
+
+3) SLIDES 2–5 — PROVA POR REPETIÇÃO
+Slide 2:
+A: [Exemplo 2A]
+B: [Exemplo 2B]
+
+Slide 3:
+A: [Exemplo 3A]
+B: [Exemplo 3B]
+
+Slide 4:
+A: [Exemplo 4A]
+B: [Exemplo 4B]
+
+Slide 5:
+A: [Exemplo 5A]
+B: [Exemplo 5B]
+
+4) SLIDE 6 — QUEBRA + PONTE
+Headline: “Aprender [tema] NÃO precisa ser difícil.”
+Botão: “Leia a legenda para saber mais.”
+Linha: “Aproveito para apresentar uma novidade:”
+Visual: capa/mockup do material
+
+5) SLIDE 7 — OFERTA + CTA
+Topo: “No [nome do material], você aprende:”
+✓ [benefício 1 — resultado]
+✓ [benefício 2 — resultado]
+✓ [benefício 3 — resultado]
+Caixa: “Quer receber o link com [bônus/desconto]?”
+CTA: “COMENTE: [PALAVRA]”
+
+6) LEGENDA (modelo curto)
+“Você já reparou como um detalhe muda tudo em [tema]?
+Salvei aqui 5 comparações A vs B pra você usar em sala/planejamento.
+
+Quer o material completo com [bônus]?
+Comente ‘[PALAVRA]’ que eu te mando o link no direct.”
+
+7) BOAS PRÁTICAS (para dar certo)
+- Frases curtas (3–7 palavras por card)
+- Mesma estrutura em todos os exemplos
+- Setinha/indicador de continuidade
+- Último slide com benefício claro + CTA simples</div>
+        <div class="small" style="margin-top:10px">Dica: mantenha o texto dos cards em <b>CAIXA ALTA</b> e use <b>duas colunas</b> sempre; isso acelera leitura e aumenta retenção.</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <div class="hd">
+        <div class="sectionTitle"><span class="bar"></span><h2>Elementos visuais</h2></div>
+        <span class="chip"><strong>Identidade</strong>: clean + high-tech</span>
+      </div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <div class="callout">
+              <p><b>Layout base (slides 1–5):</b> topo com título fixo + centro com 2 cards (A/B) + rodapé com logo e setinha.</p>
+            </div>
+            <div class="hr"></div>
+            <ul>
+              <li><b>Formato:</b> 1080×1350 (4:5).</li>
+              <li><b>Margens:</b> 80–110 px.</li>
+              <li><b>Cards:</b> 2 colunas, gap 40–60 px, raio 30–40 px.</li>
+              <li><b>Faixa inferior do card:</b> 180–220 px (texto do exemplo).</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout">
+              <p><b>Tipografia:</b> headline forte (Montserrat/League Spartan/Poppins ExtraBold) + texto auxiliar (Inter/Poppins). Use contraste alto e consistência.</p>
+            </div>
+            <div class="hr"></div>
+            <div>
+              <span class="tag"><span class="mini"></span> Título fixo no topo</span>
+              <span class="tag"><span class="mini"></span> 2 cards simétricos</span>
+              <span class="tag"><span class="mini"></span> Setinha no rodapé</span>
+              <span class="tag"><span class="mini"></span> Palavras-chave em cor</span>
+              <span class="tag"><span class="mini"></span> Slide 6/7 com menos imagem</span>
+            </div>
+            <div class="hr"></div>
+            <div class="small">
+              <b>Obs.:</b> Mesmo que o original use “papel/bege”, aqui a lógica permanece: <b>padrão repetido</b> + <b>comparação lado a lado</b> + <b>pouco texto</b>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <div class="hd">
+        <div class="sectionTitle"><span class="bar"></span><h2>Copy e ganchos</h2></div>
+        <span class="chip"><strong>Banco</strong>: pronto pra adaptar</span>
+      </div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px; text-transform:uppercase; letter-spacing:.35px; color:var(--text)">Títulos (até 9 palavras)</h3>
+            <ul>
+              <li>“<b>[Tema]</b> e a mudança de <b>[resultado]</b>”</li>
+              <li>“Parece igual, mas muda <b>tudo</b>”</li>
+              <li>“Um detalhe que muda a <b>interpretação</b>”</li>
+              <li>“Antes/depois de <b>[estratégia]</b> em sala”</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px; text-transform:uppercase; letter-spacing:.35px; color:var(--text)">Ganchos de legenda</h3>
+            <ul>
+              <li>“Você já viu aluno errar por causa de um detalhe assim?”</li>
+              <li>“Salva isso pra quando for preparar a próxima aula.”</li>
+              <li>“Eu uso essa comparação pra explicar em 30 segundos.”</li>
+              <li>“Quer que eu te mande o modelo pronto?”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <p><b>Fórmula dos cards (A/B):</b> verbo + objeto + contexto curto. Ex.: “<span class="k">DAR COMANDO GENÉRICO</span>” vs “<span class="k">DAR COMANDO OBSERVÁVEL</span>”.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <div class="hd">
+        <div class="sectionTitle"><span class="bar"></span><h2>CTA</h2></div>
+        <span class="chip"><strong>Primário</strong>: comentário</span>
+      </div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <div class="callout">
+              <p><b>CTA primário (slide 7):</b> “COMENTE: <span class="k">[PALAVRA]</span>” → baixa fricção, aumenta alcance, facilita envio por DM/manual.</p>
+            </div>
+            <div class="hr"></div>
+            <ul>
+              <li>Palavras-chave sugeridas: <span class="k">PLANO</span>, <span class="k">RUBRICA</span>, <span class="k">ATIVIDADE</span>, <span class="k">AULA</span>.</li>
+              <li>Inclua um <b>bônus</b> simples: “modelo + 5 exemplos extras”.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout">
+              <p><b>CTA secundário (slide 6):</b> “Leia a legenda” → aumenta tempo de permanência e dá contexto para a oferta.</p>
+            </div>
+            <div class="hr"></div>
+            <div class="small">
+              O CTA funciona melhor quando o benefício está <b>específico</b>: “te mando o link + modelo editável” ao invés de “te mando mais informações”.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <div class="hd">
+        <div class="sectionTitle"><span class="bar"></span><h2>Checklist de criação</h2></div>
+        <span class="chip"><strong>Objetivo</strong>: reproduzível</span>
+      </div>
+      <div class="bd">
+        <ul>
+          <li><b>1) Tema definido</b> (1 frase).</li>
+          <li><b>2) Eixo A vs B</b> escolhido (erro/correto, mito/verdade, antes/depois).</li>
+          <li><b>3) Lista de 5 exemplos</b> (em bullets; depois vira slide).</li>
+          <li><b>4) Frases curtíssimas</b> por card (3–7 palavras, caixa alta).</li>
+          <li><b>5) Padrão visual</b> repetido nos slides 1–5 (título fixo, 2 cards, rodapé).</li>
+          <li><b>6) Slide 6</b> com ponte + “Leia a legenda”.</li>
+          <li><b>7) Slide 7</b> com 3 benefícios + CTA de comentário.</li>
+          <li><b>8) Legenda</b> com: contexto (2–3 linhas) + utilidade + CTA.</li>
+          <li><b>9) Revisão final</b>: contraste, espaçamento, consistência e ortografia.</li>
+          <li><b>10) Publicação</b>: fixar comentário com palavra-chave + responder rápido os primeiros comentários.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <div class="hd">
+        <div class="sectionTitle"><span class="bar"></span><h2>Variações</h2></div>
+        <span class="chip"><strong>Use o mesmo molde</strong></span>
+      </div>
+      <div class="bd">
+        <div class="twoCol">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px; text-transform:uppercase; letter-spacing:.35px; color:var(--text)">Variações de tema (professores)</h3>
+            <ul>
+              <li>“Planejamento e a mudança de resultado”</li>
+              <li>“Avaliação e a mudança de interpretação”</li>
+              <li>“Feedback e a mudança de comportamento”</li>
+              <li>“Rotina de estudos e a mudança de desempenho”</li>
+              <li>“Combinados de sala e a mudança de clima”</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px; font-size:14px; text-transform:uppercase; letter-spacing:.35px; color:var(--text)">Variações de oferta</h3>
+            <ul>
+              <li>Material editável (Google Docs/Slides) + bônus de exemplos.</li>
+              <li>Aula gravada curta (20–30 min) + checklist.</li>
+              <li>Mentoria rápida (1h) + modelos prontos.</li>
+              <li>Mini-curso com exercícios + rubrica de correção.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <p><b>Atalho para escalar:</b> troque apenas os exemplos (slides 1–5). Mantenha design, CTA e estrutura. Isso cria série semanal no mesmo formato.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="small">Se você me disser <b>o tema</b> (ex.: gestão de sala, avaliação, alfabetização, inglês, redação), dá para montar 5 exemplos prontos + legenda completa mantendo este mesmo molde.</div>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast">Roteiro copiado.</div>
+
+  <script>
+    const scriptEl = document.getElementById('script');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), 1200);
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const text = scriptEl.innerText;
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Roteiro copiado.');
+      }catch(e){
+        // fallback
+        const range = document.createRange();
+        range.selectNodeContents(scriptEl);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+        showToast('Copiado (modo compatibilidade).');
+      }
+    });
+
+    document.getElementById('selectBtn').addEventListener('click', () => {
+      const range = document.createRange();
+      range.selectNodeContents(scriptEl);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      showToast('Texto selecionado.');
+    });
+  </script>
+</body>
+</html>
