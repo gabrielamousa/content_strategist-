@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 6 — Produtividade — Roteiro reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 16px;
+      --radius2: 22px;
+      --g1: linear-gradient(90deg,#2CFB9D 0%,#2FA7FF 55%,#FFB14A 100%);
+      --g2: radial-gradient(800px 400px at 12% 18%, rgba(47,167,255,.22), transparent 60%),
+            radial-gradient(700px 420px at 82% 20%, rgba(44,251,157,.18), transparent 55%),
+            radial-gradient(900px 520px at 55% 92%, rgba(255,177,74,.14), transparent 58%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,"Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+    }
+
+    .container{max-width:1120px; margin:0 auto; padding:28px 18px 60px;}
+
+    .top{
+      display:flex;
+      gap:16px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      padding:18px 18px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .top::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.16;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+
+    .top > *{position:relative; z-index:1;}
+
+    .kicker{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pill{
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(8px);
+    }
+
+    h1{
+      margin: 10px 0 6px;
+      font-size: clamp(20px, 2.6vw, 30px);
+      letter-spacing: .2px;
+      line-height:1.15;
+    }
+
+    .meta{
+      color: var(--muted);
+      font-size: 14px;
+      line-height:1.45;
+      max-width: 70ch;
+    }
+
+    a{color: #9bd7ff; text-decoration: none;}
+    a:hover{text-decoration: underline;}
+
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top: 8px;}
+
+    button{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor:pointer;
+      font-weight: 650;
+      letter-spacing:.2px;
+    }
+
+    button.primary{
+      border: 1px solid rgba(255,255,255,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    }
+
+    button:hover{transform: translateY(-1px);}
+
+    .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: var(--card);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .card .hd h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.4px;
+      text-transform: uppercase;
+      color: rgba(234,240,255,.86);
+      font-family: var(--mono);
+    }
+
+    .badge{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(234,240,255,.88);
+      background: rgba(255,255,255,.07);
+    }
+
+    .badge.grad{
+      border: 1px solid rgba(255,255,255,.18);
+      background: linear-gradient(90deg, rgba(44,251,157,.22), rgba(47,167,255,.18), rgba(255,177,74,.18));
+    }
+
+    .card .bd{padding: 14px 16px; color: var(--muted);}
+
+    .list{margin:0; padding-left: 18px;}
+    .list li{margin: 8px 0;}
+
+    .hr{height:1px; background: rgba(255,255,255,.10); margin: 12px 0;}
+
+    .callout{
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.05));
+    }
+
+    .callout strong{color: rgba(234,240,255,.92);}
+
+    .copybox{
+      width:100%;
+      min-height: 330px;
+      resize: vertical;
+      border-radius: 16px;
+      background: rgba(0,0,0,.35);
+      color: rgba(234,240,255,.92);
+      border:1px solid rgba(255,255,255,.14);
+      padding: 12px 12px;
+      font-family: var(--mono);
+      line-height: 1.45;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .small{font-size: 12.5px; color: var(--muted2);}
+
+    .twocol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 720px){
+      .twocol{grid-template-columns: 1fr;}
+    }
+
+    .chiprow{display:flex; flex-wrap:wrap; gap:8px; margin-top: 10px;}
+    .chip{font-family: var(--mono); font-size: 12px; color: rgba(234,240,255,.8); border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); padding:6px 10px; border-radius: 999px;}
+
+    .ok{color:#9EFBCB;}
+    .warn{color:#FFD08A;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <div>
+        <div class="kicker">
+          <span class="pill">Nicho: <strong>Produtividade</strong></span>
+          <span class="pill">Dia: <strong>6</strong></span>
+          <span class="pill">Formato: <strong>Carrossel</strong></span>
+          <span class="pill">Pilar: <strong>Checklist</strong></span>
+        </div>
+        <h1>8 práticas que uso pra produzir mais (sem virar refém do horário)</h1>
+        <p class="meta">Baseado no modelo “lista + contexto” do post original: <a href="https://www.instagram.com/p/DUUD9feEVV9/" target="_blank" rel="noopener noreferrer">instagram.com/p/DUUD9feEVV9/</a>. Ideia: 1 prática por slide, repetição com variação, foto real de fundo e um badge fixo (estilo “player/cartão”) para unidade visual.</p>
+        <div class="actions">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="selectBtn">Selecionar texto</button>
+          <span class="small" id="copyStatus" aria-live="polite"></span>
+        </div>
+      </div>
+      <div style="min-width:240px; max-width:360px;">
+        <div class="callout">
+          <div class="small">Objetivo do post</div>
+          <div style="margin-top:6px; color: rgba(234,240,255,.92); font-weight: 700;">Entregar micro-recompensas por slide e gerar salvamentos</div>
+          <div class="hr"></div>
+          <div class="small"><strong class="ok">Promessa:</strong> mais foco + mais execução com menos atrito</div>
+          <div class="small" style="margin-top:6px;"><strong class="warn">Regra de ouro:</strong> 1 ideia central por slide (sem textão)</div>
+          <div class="chiprow" aria-label="Destaques">
+            <span class="chip">foto real</span>
+            <span class="chip">badge fixo</span>
+            <span class="chip">#x/8</span>
+            <span class="chip">deslize →</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge grad">Reproduzível</span>
+        </div>
+        <div class="bd">
+          <p>Carrossel de curadoria com 8 slides (capa + 6 práticas + fechamento). Cada slide segue o mesmo molde: <strong>nome curto</strong> → <strong>frase de contexto</strong> → <strong>benefício prático</strong>. Fechamento pede <strong>salvar</strong> e <strong>comentar palavra-chave</strong> para receber checklist.</p>
+          <div class="twocol">
+            <div class="callout">
+              <div class="small"><strong>Para quem</strong></div>
+              <div style="margin-top:6px;">Quem vive ocupado, mas sente que o dia “some” (CLT, autônomos, estudantes).</div>
+            </div>
+            <div class="callout">
+              <div class="small"><strong>Resultado esperado</strong></div>
+              <div style="margin-top:6px;">Mais controle da agenda + menos procrastinação + execução consistente.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="badge">8 slides</span>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><strong>Capa:</strong> promessa + público + “salve” implícito</li>
+            <li><strong>Slides 2–7:</strong> 1 prática por slide (nome + contexto + como usar)</li>
+            <li><strong>Slide 8:</strong> CTA (salvar + comentar) + gancho do próximo tema</li>
+          </ol>
+          <div class="hr"></div>
+          <p class="small"><strong>Padrão de texto por slide:</strong> Headline (4–9 palavras) + 2–4 linhas. Rodapé: “#x/8 • Deslize →”.</p>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Slides sugeridos (1..8)</h2>
+          <span class="badge grad">Pronto pra postar</span>
+        </div>
+        <div class="bd">
+          <textarea class="copybox" id="script" spellcheck="false">CARROSSEL (8 SLIDES) — PRODUTIVIDADE
+
+SLIDE 1 — CAPA
+HEADLINE: 8 PRÁTICAS QUE USO PRA PRODUZIR MAIS
+SUB: sem trabalhar mais horas (e sem virar refém do horário)
+RODAPÉ: Salve pra usar na semana • Deslize →
+
+SLIDE 2 — PRÁTICA #1
+HEADLINE: 1 LISTA SÓ (POR DIA)
+TEXTO: Eu paro de “abrir 10 frentes”.
+Escolho uma lista principal do dia.
+Benefício: menos ansiedade + mais conclusão.
+RODAPÉ: #2/8 • Deslize →
+BADGE (fixo): MÉTODO
+
+SLIDE 3 — PRÁTICA #2
+HEADLINE: 90 MIN DE FOCO + PAUSA
+TEXTO: Bloco único, sem multitarefa.
+Depois eu descanso 10–15 min.
+Benefício: energia estável e execução real.
+RODAPÉ: #3/8 • Deslize →
+BADGE (fixo): ROTINA
+
+SLIDE 4 — PRÁTICA #3
+HEADLINE: 3 TAREFAS “NÃO-NEGOCIÁVEIS”
+TEXTO: Se eu fizer só essas 3, o dia valeu.
+O resto é bônus.
+Benefício: clareza do que move a agulha.
+RODAPÉ: #4/8 • Deslize →
+BADGE (fixo): CHECKLIST
+
+SLIDE 5 — PRÁTICA #4
+HEADLINE: DECISÃO PADRONIZADA
+TEXTO: Eu crio regras simples:
+“reunião só à tarde”, “resposta 2x/dia”.
+Benefício: menos microdecisões (menos fadiga).
+RODAPÉ: #5/8 • Deslize →
+BADGE (fixo): REGRA
+
+SLIDE 6 — PRÁTICA #5
+HEADLINE: 10 MIN DE PLANEJAMENTO (DOM)
+TEXTO: Agenda primeiro (tempo), depois tarefas.
+Eu travo blocos e deixo folgas reais.
+Benefício: semana mais leve e previsível.
+RODAPÉ: #6/8 • Deslize →
+BADGE (fixo): PLANO
+
+SLIDE 7 — PRÁTICA #6 (TOP 1)
+HEADLINE: SE EU SÓ PUDESSE ESCOLHER 1…
+SUBHEAD: Revisão de fim do dia (5 min)
+TEXTO: O que foi feito? O que ficou? Qual o 1º passo amanhã?
+Benefício: você dorme com a mente “fechada”.
+RODAPÉ: #7/8 • Deslize →
+BADGE (fixo): TOP 1
+
+SLIDE 8 — FECHAMENTO / CTA
+HEADLINE: QUAL VOCÊ VAI TESTAR HOJE?
+TEXTO: Salve este post pra aplicar na semana.
+Comente “FOCO” que eu mando a versão em checklist.
+GANCHO: Quer um próximo carrossel com “planejamento em 15 min” ou “anti-procrastinação”?&#10;&#10;LEGENDA (SUGESTÃO)
+Eu não fiquei mais produtivo fazendo mais.
+Fiquei mais produtivo reduzindo atrito, escolhendo melhor e repetindo o básico.
+
+Comente: qual prática você já faz e qual vai testar por 7 dias?
+
+✅ Salve pra consultar quando o dia estiver caótico.
+➡️ Envie pra alguém que vive dizendo “tô sem tempo”.</textarea>
+          <div class="hr"></div>
+          <p class="small">Dica: mantenha o <strong>badge fixo</strong> no mesmo lugar em todos os slides (ex.: canto superior esquerdo). Isso aumenta reconhecimento e retenção.</p>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="badge">Direção de arte</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Fundo:</strong> foto real (mesa, café, notebook, rua, academia) com espaço negativo.</li>
+            <li><strong>Card/overlay:</strong> retângulo arredondado semitransparente (sempre na mesma posição).</li>
+            <li><strong>Destaques:</strong> sublinhado/etiqueta com degradê (verde → azul → laranja) para 1 palavra por slide.</li>
+            <li><strong>Indicador:</strong> “#x/8” + “Deslize →” no rodapé.</li>
+            <li><strong>Tipografia:</strong> Headline sans pesada em CAIXA ALTA; body em sans leve/regular.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="small"><strong>Canvas:</strong> 1080×1350 (4:5). Teste contraste: se a foto estiver clara, use gradiente escuro no rodapé.</div>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="badge grad">Plug-and-play</span>
+        </div>
+        <div class="bd">
+          <div class="twocol">
+            <div>
+              <div class="callout">
+                <div class="small"><strong>Ganchos de capa (escolha 1)</strong></div>
+                <ul class="list">
+                  <li>“8 práticas que eu uso pra produzir mais (sem trabalhar mais)”</li>
+                  <li>“Se seu dia some e você não sabe como…”</li>
+                  <li>“Produtividade sem motivação: só com estrutura”</li>
+                </ul>
+              </div>
+              <div style="height:12px"></div>
+              <div class="callout">
+                <div class="small"><strong>Frases curtas (para slides)</strong></div>
+                <ul class="list">
+                  <li>“O resto é bônus.”</li>
+                  <li>“Menos decisão, mais execução.”</li>
+                  <li>“Uma lista. Um bloco. Uma entrega.”</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <div class="callout">
+                <div class="small"><strong>Modelos de texto (1 ideia central)</strong></div>
+                <ul class="list">
+                  <li><strong>Prático:</strong> “Quando eu preciso [contexto], eu uso [método]. Funciona porque [mecanismo].”</li>
+                  <li><strong>Dor → solução:</strong> “Se você sente [dor], experimente [prática]. O foco é [mudança concreta].”</li>
+                  <li><strong>Curadoria:</strong> “Isso é bom pra [perfil], principalmente quando [situação].”</li>
+                </ul>
+              </div>
+              <div style="height:12px"></div>
+              <div class="callout">
+                <div class="small"><strong>Retenção (adicione 1)</strong></div>
+                <ul class="list">
+                  <li>“Meu TOP 1 no slide 7”</li>
+                  <li>Alternar 1 slide “curto e forte” a cada 2</li>
+                  <li>Rodapé consistente: #x/8 + Deslize →</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="badge">1 principal + 1 secundária</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Principal:</strong> “Salve pra aplicar na semana.”</li>
+            <li><strong>Secundária:</strong> “Comente <strong>FOCO</strong> que eu mando a versão em checklist.”</li>
+            <li><strong>Engajamento:</strong> “Qual prática você quer que eu transforme em passo a passo?”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="small">Dica: use palavra-chave curta e alinhada ao tema (FOCO, ROTINA, PLANO). Responda comentários com uma pergunta de continuidade.</p>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <span class="badge grad">Antes de postar</span>
+        </div>
+        <div class="bd">
+          <div class="twocol">
+            <div>
+              <div class="callout">
+                <div class="small"><strong>Conteúdo (estrutura)</strong></div>
+                <ul class="list">
+                  <li>Definir <strong>1 promessa</strong> (resultado claro)</li>
+                  <li>Selecionar <strong>6 práticas</strong> (cada uma fecha em si)</li>
+                  <li>Organizar sequência: foco → planejamento → execução → energia → emoções</li>
+                  <li>Inserir “Top 1” para retenção (slide 7)</li>
+                  <li>Último slide com CTA + gancho do próximo post</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <div class="callout">
+                <div class="small"><strong>Design (consistência)</strong></div>
+                <ul class="list">
+                  <li>1080×1350, margens seguras, texto legível</li>
+                  <li>Badge/overlay no mesmo local em todos os slides</li>
+                  <li>1 cor de destaque (degradê) por slide, sem exagero</li>
+                  <li>Rodapé com “#x/8” + “Deslize →”</li>
+                  <li>Revisão final: ortografia + contraste em 3 aparelhos</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="small"><strong>Checklist de legenda</strong></div>
+            <ul class="list">
+              <li>1º parágrafo: reforce a promessa + contexto pessoal (“o que mudou pra mim”)</li>
+              <li>1 pergunta direta no final (comentários)</li>
+              <li>CTA: salvar + palavra-chave</li>
+              <li>Hashtags: 5–12 (misture amplo + específico)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="badge">Próximos posts</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Variação A (Foco):</strong> “7 coisas que eu cortei pra ter foco”</li>
+            <li><strong>Variação B (Planejamento):</strong> “Meu planejamento de 15 min (com template)”</li>
+            <li><strong>Variação C (Procrastinação):</strong> “5 gatilhos que me fazem procrastinar + o que eu faço”</li>
+            <li><strong>Variação D (Energia):</strong> “Rotinas de 10 min pra recuperar energia no meio do dia”</li>
+            <li><strong>Variação E (Checklist/recursos):</strong> “Ferramentas simples que eu uso (sem app caro)”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="small">Mantenha o mesmo sistema visual (foto real + badge fixo). Troque apenas o texto e o rótulo do badge: MÉTODO / ROTINA / REGRA / FERRAMENTA.</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const ta = document.getElementById('script');
+      const copyBtn = document.getElementById('copyBtn');
+      const selectBtn = document.getElementById('selectBtn');
+      const status = document.getElementById('copyStatus');
+
+      function setStatus(msg){
+        status.textContent = msg;
+        setTimeout(()=>{ if(status.textContent===msg) status.textContent=''; }, 2200);
+      }
+
+      selectBtn.addEventListener('click', () => {
+        ta.focus();
+        ta.select();
+        setStatus('Texto selecionado.');
+      });
+
+      copyBtn.addEventListener('click', async () => {
+        try{
+          await navigator.clipboard.writeText(ta.value);
+          setStatus('Roteiro copiado.');
+        }catch(e){
+          ta.focus();
+          ta.select();
+          const ok = document.execCommand('copy');
+          setStatus(ok ? 'Roteiro copiado.' : 'Não foi possível copiar.');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
