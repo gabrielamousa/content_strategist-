@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 16 — Professores — Template carrossel polêmico</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0C1328;
+      --card2:#0A1022;
+      --text:#EAF0FF;
+      --muted:#AEB8D6;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.14);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+
+      --g1: linear-gradient(90deg, #22c55e, #1ea4ff, #ff8a00);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(30,164,255,.18), rgba(255,138,0,.18));
+      --g3: radial-gradient(800px 380px at 20% 10%, rgba(30,164,255,.18), transparent 55%),
+            radial-gradient(700px 360px at 85% 20%, rgba(34,197,94,.14), transparent 55%),
+            radial-gradient(700px 420px at 60% 90%, rgba(255,138,0,.12), transparent 55%);
+
+      --ok:#66f2a5;
+      --warn:#ffbe5c;
+      --info:#79b7ff;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g3), linear-gradient(180deg, var(--bg0), var(--bg1) 55%, #060914);
+    }
+
+    a{color:#9dd3ff; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 70px}
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(12,19,40,.86), rgba(10,16,34,.72));
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius2);
+      padding:18px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: var(--g2);
+      opacity:.85;
+      pointer-events:none;
+      mask: linear-gradient(#000, transparent 70%);
+    }
+    .hgrid{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px; position:relative}
+    @media (max-width: 860px){ .hgrid{grid-template-columns:1fr; } }
+
+    .kicker{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      font-family:var(--mono);
+      font-size:12px; color:var(--muted);
+    }
+    .pill{
+      border:1px solid var(--line2);
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+    }
+    .pill strong{color:var(--text); font-weight:650}
+
+    h1{
+      margin:10px 0 6px;
+      font-size: clamp(20px, 3.1vw, 30px);
+      line-height:1.15;
+      letter-spacing:-.02em;
+    }
+    .sub{color:var(--muted); margin:0; line-height:1.5}
+
+    .actions{display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap}
+    @media (max-width: 860px){ .actions{justify-content:flex-start; margin-top:6px} }
+    .btn{
+      border:1px solid var(--line2);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: 12px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:600;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      display:inline-flex; align-items:center; gap:10px;
+    }
+    .btn:hover{background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      border:none;
+      background: var(--g1);
+      color:#06101a;
+    }
+    .btn .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: rgba(6,16,26,.9);
+      box-shadow: 0 0 0 3px rgba(6,16,26,.14);
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(12,19,40,.85), rgba(10,16,34,.72));
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(700px 220px at 10% 0%, rgba(30,164,255,.10), transparent 60%),
+                 radial-gradient(650px 240px at 95% 10%, rgba(34,197,94,.10), transparent 60%),
+                 radial-gradient(650px 260px at 70% 100%, rgba(255,138,0,.08), transparent 65%);
+      pointer-events:none;
+    }
+
+    .card .inner{padding:16px 16px; position:relative}
+    .card h2{
+      margin:0 0 10px;
+      font-size: 16px;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+      color: rgba(234,240,255,.92);
+      display:flex; align-items:center; gap:10px;
+    }
+    .bar{
+      height:10px; width:10px; border-radius:4px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.05);
+    }
+    .card p, .card li{color:var(--muted); line-height:1.55}
+    .card ul{margin:10px 0 0; padding-left:18px}
+    .card li{margin:6px 0}
+
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 900px){ .cols{grid-template-columns:1fr;} }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius:16px;
+      padding:12px 12px;
+    }
+    .callout strong{color:var(--text)}
+
+    .tagrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .tag{font-family:var(--mono); font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid var(--line2); background: rgba(255,255,255,.04); color: rgba(234,240,255,.88)}
+
+    .routebox{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(7,10,18,.55);
+      border-radius: 18px;
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .routebox:before{
+      content:"";
+      position:absolute;
+      top:0; left:0; right:0;
+      height:2px;
+      background: var(--g1);
+      opacity:.95;
+    }
+
+    .script{
+      margin:0;
+      padding:14px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: rgba(234,240,255,.92);
+      white-space: pre-wrap;
+    }
+
+    .mini{font-size:12px; color:rgba(174,184,214,.9)}
+    .hr{height:1px; background: var(--line); margin:14px 0}
+
+    .two{
+      display:grid; grid-template-columns: 1.1fr .9fr; gap:12px;
+    }
+    @media (max-width: 960px){ .two{grid-template-columns: 1fr;} }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(10,16,34,.85);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(-2px)}
+
+    .kbd{
+      font-family: var(--mono);
+      font-size: 11px;
+      border:1px solid rgba(255,255,255,.16);
+      padding: 2px 7px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.05);
+      color: rgba(234,240,255,.92);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hgrid">
+        <div>
+          <div class="kicker">
+            <span class="pill"><strong>Nicho:</strong> Professores</span>
+            <span class="pill"><strong>Dia:</strong> 16</span>
+            <span class="pill"><strong>Formato:</strong> Carrossel</span>
+            <span class="pill"><strong>Pilar:</strong> Mito vs Verdade</span>
+          </div>
+          <h1>Carrossel polêmico que professores salvam (template 10 slides)</h1>
+          <p class="sub">Estrutura reproduzível para explicar uma “polêmica”, mostrar o mecanismo por trás, traduzir impactos e fechar com orientação prática + CTA binário.</p>
+          <div class="tagrow">
+            <span class="tag">tese forte</span>
+            <span class="tag">antes vs agora</span>
+            <span class="tag">impacto sistêmico</span>
+            <span class="tag">personas</span>
+            <span class="tag">o que fazer</span>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DTyXuGjEff5/" target="_blank" rel="noopener noreferrer">
+            <span class="dot"></span>
+            Abrir post original
+          </a>
+          <button class="btn primary" id="copyBtn" type="button">
+            <span class="dot"></span>
+            Copiar roteiro
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="inner">
+          <h2><span class="bar"></span>Resumo</h2>
+          <div class="two">
+            <div class="callout">
+              <p><strong>Ideia central:</strong> comece com uma afirmação “difícil de ignorar”, explique objetivamente <strong>o que mudou</strong>, prove por que importa (antes vs agora + um fator agravante), faça o leitor se enxergar (personas) e finalize com <strong>passos claros</strong>.</p>
+              <p class="mini">Funciona para: mudança de regra da rede, política escolar, avaliação, indisciplina, BNCC, IA, diário eletrônico, carreira, carga horária, etc.</p>
+            </div>
+            <div class="routebox">
+              <p style="margin:0 0 8px"><strong>Use quando:</strong></p>
+              <ul style="margin:0; padding-left:18px">
+                <li>há confusão, boato ou indignação no seu tema;</li>
+                <li>você precisa “traduzir” o que está acontecendo;</li>
+                <li>quer elevar comentários e salvamentos com utilidade real.</li>
+              </ul>
+              <div class="hr"></div>
+              <p class="mini" style="margin:0"><strong>Meta de retenção:</strong> 1 ideia por slide + “capítulos” (A bomba / O fator X / O efeito colateral).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner">
+          <h2><span class="bar"></span>Estrutura</h2>
+          <div class="cols">
+            <div class="callout">
+              <p><strong>Objetivo:</strong> atenção → explicação → prova → impacto → orientação → CTA.</p>
+              <ul>
+                <li><strong>Slides:</strong> 7 a 12 (recomendado: 10).</li>
+                <li><strong>Tom:</strong> alarmante-controlado (urgência sem histeria).</li>
+                <li><strong>Regra:</strong> uma tela = uma ideia principal + 1 destaque visual.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <p><strong>Fórmula (macro):</strong></p>
+              <ul>
+                <li><strong>1</strong> Capa (tese + promessa)</li>
+                <li><strong>2</strong> O gatilho (“o que mudou”)</li>
+                <li><strong>3</strong> Antes vs Agora (por que piora)</li>
+                <li><strong>4–6</strong> Mecanismo + impactos (camadas)</li>
+                <li><strong>7</strong> Personas (identificação)</li>
+                <li><strong>8</strong> Reenquadramento (opcional)</li>
+                <li><strong>9</strong> O que fazer (passos)</li>
+                <li><strong>10</strong> CTA (SIM/NÃO + salvar)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner">
+          <h2><span class="bar"></span>Slides sugeridos (1..10)</h2>
+          <div class="cols">
+            <div>
+              <div class="callout">
+                <p><strong>Slide 1 — CAPA</strong><br>
+                <span class="mini">Tese polêmica + promessa de explicação</span></p>
+                <p class="mini" style="margin-top:8px"><span class="kbd">Fórmula</span> “O/A [TEMA] mais [ADJ FORTE] de [PERÍODO]?”</p>
+              </div>
+              <div class="callout" style="margin-top:12px">
+                <p><strong>Slide 2 — O GATILHO (“A bomba”)</strong><br>
+                <span class="mini">O que mudou, quando, por quem, em 3–5 linhas</span></p>
+              </div>
+              <div class="callout" style="margin-top:12px">
+                <p><strong>Slide 3 — Antes vs Agora</strong><br>
+                <span class="mini">3 bullets “antes” + 1 frase “agora”</span></p>
+              </div>
+              <div class="callout" style="margin-top:12px">
+                <p><strong>Slide 4 — O fator agravante</strong><br>
+                <span class="mini">A variável crítica que explica o problema</span></p>
+              </div>
+              <div class="callout" style="margin-top:12px">
+                <p><strong>Slide 5 — Efeito colateral (sistêmico)</strong><br>
+                <span class="mini">Como o sistema reage (comportamento das pessoas)</span></p>
+              </div>
+            </div>
+            <div>
+              <div class="callout">
+                <p><strong>Slide 6 — Impacto na prática (decisão)</strong><br>
+                <span class="mini">O que fica mais difícil e qual dúvida central surge</span></p>
+              </div>
+              <div class="callout" style="margin-top:12px">
+                <p><strong>Slide 7 — Personas</strong><br>
+                <span class="mini">3 perfis que se reconhecem + frase curta</span></p>
+              </div>
+              <div class="callout" style="margin-top:12px">
+                <p><strong>Slide 8 — Reenquadramento (opcional)</strong><br>
+                <span class="mini">“O pior não é X. É Y.” (sustenta a tese)</span></p>
+              </div>
+              <div class="callout" style="margin-top:12px">
+                <p><strong>Slide 9 — O que fazer agora</strong><br>
+                <span class="mini">3 ações imediatas + tom de apoio</span></p>
+              </div>
+              <div class="callout" style="margin-top:12px">
+                <p><strong>Slide 10 — CTA</strong><br>
+                <span class="mini">Pergunta binária + salvar + compartilhar + seguir</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="roteiro">
+        <div class="inner">
+          <h2><span class="bar"></span>Roteiro</h2>
+          <p class="mini" style="margin-top:-2px">Preencha os campos entre colchetes. Se quiser adaptar para outro tema, substitua apenas: [TEMA], [MUDANÇA], [VARIÁVEL], [CONSEQUÊNCIA], [AÇÕES].</p>
+          <pre class="script" id="scriptText">CARROSSEL (10 SLIDES) — “POLÊMICA EXPLICADA + ORIENTAÇÃO PRÁTICA”
+
+1) CAPA
+Título: “O/A [TEMA] mais [ADJETIVO FORTE] de [ANO/PERÍODO]?”
+Sub: “Vou te explicar o que mudou em [CONTEXTO] e o que fazer agora.”
+Micro-CTA: “Arraste →”
+
+2) O GATILHO (A BOMBA / O QUE MUDOU)
+Título-seção: “A bomba”
+Texto (3–5 linhas):
+“Em [DATA], [ÓRGÃO/ESCOLA/REDE] anunciou [MUDANÇA].
+Isso impacta [QUEM] porque [MOTIVO EM 1 FRASE].
+A principal mudança é: [REGRA NOVA EM 1 FRASE].”
+
+3) POR QUE ISSO É PROBLEMA? (ANTES VS AGORA)
+Título: “Por que isso é [INJUSTO/RUIM/INEFICIENTE]?”
+Antes (3 bullets):
+✅ [PREMISSA 1]
+✅ [PREMISSA 2]
+✅ [PREMISSA 3]
+Agora (1 frase): “Com a nova regra, [CONTRASTE CLARO].”
+
+4) MECANISMO (O FATOR QUE PIORA)
+Título: “[VARIÁVEL X]: o grande vilão?”
+Texto:
+“O [VARIÁVEL] pesa mais porque [RAZÃO].
+Na prática, isso faz [EFEITO DIRETO].
+Resultado: [CONCLUSÃO FORTE EM 1 FRASE].”
+Destaque (caixa): “Quando [CONDIÇÃO], o dano é maior.”
+
+5) IMPACTO SISTÊMICO (EFEITO COLATERAL)
+Título: “Efeito colateral”
+Story:
+“Sabe aquele [PERSONA] que [COMPORTAMENTO]?
+Com a mudança, ela tende a [NOVO COMPORTAMENTO].
+Isso [INFLA/PIORA/EMBARAÇA] [INDICADOR].”
+Caixa: “E isso pode gerar: [CONSEQUÊNCIA MACRO].”
+
+6) IMPACTO NA PRÁTICA (DECISÃO/ESTRATÉGIA)
+Título: “O que fica mais difícil?”
+Texto:
+“Com mais [VARIÁVEIS], fica mais difícil [DECISÃO].
+A dúvida central vira: ‘[PERGUNTA DIFÍCIL]’.”
+Orientação (caixa): “Regra prática: se você [CONDIÇÃO], faça [AÇÃO].”
+
+7) RESUMO POR PERSONAS (IDENTIFICAÇÃO)
+Título: “Resumo do cenário”
+Persona 1: “[PERFIL 1]: ‘[FRASE CURTA]’”
+Persona 2: “[PERFIL 2]: ‘[FRASE CURTA]’”
+Persona 3: “[PERFIL 3]: ‘[FRASE CURTA]’”
+Fecho: “Sentimento geral: [PALAVRA FORTE]. Mas o problema é [SISTEMA], não você.”
+
+8) REENQUADRAMENTO (OPCIONAL)
+Título: “O pior não é [X]. É [Y].”
+Texto:
+“[X] já é ruim por [RAZÃO].
+Mas [Y] porque [RAZÃO DECISIVA].”
+
+9) O QUE FAZER AGORA (3 AÇÕES)
+Título: “O que dá pra fazer agora”
+Texto:
+“Você não está sozinho.
+3 próximos passos:
+1) [AÇÃO 1 — simples e imediata]
+2) [AÇÃO 2 — ajuste de estratégia/processo]
+3) [AÇÃO 3 — comunicação/registro/apoio]”
+Mini: “Se quiser, eu faço a Parte 2 com um passo a passo completo.”
+
+10) CTA FINAL (BINÁRIO + SALVAR + COMPARTILHAR)
+Título: “Você concorda?”
+Texto:
+“Comente SIM ou NÃO.
+Salve pra consultar quando [SITUAÇÃO].
+Compartilhe com um professor/coordenador que precisa ver isso.
+Siga pra mais conteúdos sobre [TEMA GUARDA-CHUVA].”</pre>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner">
+          <h2><span class="bar"></span>Elementos visuais</h2>
+          <div class="cols">
+            <div class="callout">
+              <p><strong>Identidade (reproduzível):</strong></p>
+              <ul>
+                <li><strong>Fundo escuro</strong> com grid/ruído bem sutil.</li>
+                <li><strong>Caixas de destaque</strong> (conclusões parciais) com borda suave.</li>
+                <li><strong>Sublinhado/marcador</strong> em 1–2 trechos por slide.</li>
+                <li><strong>“Capítulos”</strong> em títulos: “A bomba”, “Efeito colateral”, “O que fazer”.</li>
+                <li>Branding discreto: @ no rodapé + numeração “1/10”.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <p><strong>Direção de composição:</strong></p>
+              <ul>
+                <li>Capa: foto emocional (frustração/espanto) + título grande + seta “arraste”.</li>
+                <li>Miolo: texto em colunas curtas (estilo artigo), respiro e hierarquia clara.</li>
+                <li>Paleta: base azul/escura + destaques em degradê (verde/azul/laranja).</li>
+                <li>Ícones: check ✅ no “Antes”; setas → para orientar; no máximo 1–2 por slide.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner">
+          <h2><span class="bar"></span>Copy e ganchos</h2>
+          <div class="cols">
+            <div class="callout">
+              <p><strong>Ganchos de capa (substituíveis):</strong></p>
+              <ul>
+                <li>“A [MUDANÇA] mais injusta para professores em [ANO]?”</li>
+                <li>“O maior erro que estão repetindo em [AVALIAÇÃO/PLANEJAMENTO]?”</li>
+                <li>“A decisão que vai mexer no seu [TEMPO/ROTINA/APRENDIZAGEM]”</li>
+                <li>“Você também achou isso absurdo? Entenda em 7–10 telas.”</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <p><strong>Frases-ponte (retenção):</strong></p>
+              <ul>
+                <li>“E piora quando você entende o detalhe do [VARIÁVEL].”</li>
+                <li>“O problema não é só a regra. É o comportamento que ela incentiva.”</li>
+                <li>“Se você é [PERFIL], isso muda sua decisão em [PONTO].”</li>
+                <li>“No final, eu te digo o que fazer agora (sem achismo).”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:12px">
+            <p><strong>Banco de substituições (mesmo impacto):</strong></p>
+            <ul>
+              <li><strong>“Injusto”</strong> → “ineficiente”, “desalinhado”, “inviável”, “desorganizado”, “contraditório”.</li>
+              <li><strong>“A bomba / o que mudou”</strong> → “a virada”, “a nova regra”, “o detalhe que ninguém notou”.</li>
+              <li><strong>“Competição”</strong> → “pressão”, “sobrecarga”, “ruído”, “instabilidade”, “desigualdade”.</li>
+              <li><strong>“O que fazer agora”</strong> → “3 passos”, “plano de ação”, “como se proteger”, “como se adaptar”.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner">
+          <h2><span class="bar"></span>CTA</h2>
+          <div class="cols">
+            <div class="callout">
+              <p><strong>CTA principal (binário):</strong></p>
+              <ul>
+                <li>“Você concorda? Comente <strong>SIM</strong> ou <strong>NÃO</strong>.”</li>
+                <li>“Você acha que isso ajuda ou atrapalha? <strong>AJUDA</strong>/<strong>ATRAPALHA</strong>.”</li>
+              </ul>
+              <p class="mini"><strong>Por que funciona:</strong> reduz fricção (resposta fácil) e aumenta comentários.</p>
+            </div>
+            <div class="callout">
+              <p><strong>CTA de valor (salvar/compartilhar):</strong></p>
+              <ul>
+                <li>“Salve para usar quando for [PLANEJAR/AVALIAR/CONVERSAR COM FAMÍLIAS].”</li>
+                <li>“Compartilhe com um professor/coordenador que precisa ver isso.”</li>
+                <li>“Quer Parte 2 com um passo a passo? Comente <strong>QUERO</strong>.”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner">
+          <h2><span class="bar"></span>Checklist</h2>
+          <div class="cols">
+            <div class="callout">
+              <p><strong>Checklist de criação (texto/copy):</strong></p>
+              <ul>
+                <li>Capa com tese em <strong>até 10 palavras</strong> + promessa de explicação.</li>
+                <li>Slide 2 responde: <strong>o que mudou, quando, por quem, pra quem</strong>.</li>
+                <li>Slide 3 com <strong>Antes vs Agora</strong> (comparação instantânea).</li>
+                <li>Slides 4–6: cada um adiciona <strong>uma camada</strong> (mecanismo → impacto → decisão).</li>
+                <li>Slide 7 com <strong>personas</strong> (3 perfis) para compartilhamento.</li>
+                <li>Slide 9 com <strong>3 ações</strong> claras (sem depender de opinião).</li>
+                <li>Slide 10 com CTA: <strong>SIM/NÃO + salvar + compartilhar + seguir</strong>.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <p><strong>Checklist de design/UX:</strong></p>
+              <ul>
+                <li>Numeração 1/10 e títulos “capítulo” em todas as telas.</li>
+                <li>1 destaque por slide (caixa/sublinhar), não mais que isso.</li>
+                <li>Contraste alto: texto claro em fundo escuro; linhas curtas.</li>
+                <li>Capa com seta “arraste” + foto emocional coerente com a tese.</li>
+                <li>Padronize margens e espaçamentos (parecer “editorial”).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="inner">
+          <h2><span class="bar"></span>Variações</h2>
+          <div class="cols">
+            <div class="callout">
+              <p><strong>Variação A — “Boato vs Realidade” (Mito vs Verdade)</strong></p>
+              <ul>
+                <li>Slide 1: “MITO: [frase forte] / VERDADE: [frase forte]”</li>
+                <li>Slide 2–4: “De onde veio” + “o que a regra diz” + “o que muda na prática”</li>
+                <li>Slide 9: “Como agir sem cair no mito” (3 passos)</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <p><strong>Variação B — “Erro comum”</strong></p>
+              <ul>
+                <li>Troque “A bomba” por “O erro que parece certo”.</li>
+                <li>Slide 3 vira: “Por que parece funcionar” vs “por que dá ruim”.</li>
+                <li>Slide 9: “Faça isso no lugar” (3 ações).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:12px">
+            <p><strong>Variação C — reduzir para 7 slides (quando o tema é simples):</strong></p>
+            <ul>
+              <li>1 Capa</li>
+              <li>2 O que mudou</li>
+              <li>3 Antes vs Agora</li>
+              <li>4 Fator agravante</li>
+              <li>5 Impacto prático</li>
+              <li>6 O que fazer (3 passos)</li>
+              <li>7 CTA binário + salvar</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast">Roteiro copiado. Cole no seu Docs/Notion.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      async function copy(){
+        const value = text.innerText;
+        try{
+          await navigator.clipboard.writeText(value);
+          toast.classList.add('show');
+          window.setTimeout(()=>toast.classList.remove('show'), 1600);
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = value;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          toast.classList.add('show');
+          window.setTimeout(()=>toast.classList.remove('show'), 1600);
+        }
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
