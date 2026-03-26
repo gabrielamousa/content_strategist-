@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ficha Reproduzível — Produtividade (Dia 22)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:#0E1630cc;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.16);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.58);
+    --shadow: 0 14px 40px rgba(0,0,0,.45);
+    --radius:16px;
+    --radius2:22px;
+    --gradA: linear-gradient(90deg, #23d18b 0%, #2aa7ff 50%, #ff9a3c 100%);
+    --gradB: linear-gradient(135deg, rgba(35,209,139,.22), rgba(42,167,255,.18), rgba(255,154,60,.14));
+    --green:#23d18b;
+    --blue:#2aa7ff;
+    --orange:#ff9a3c;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background:
+      radial-gradient(1200px 800px at 20% 10%, rgba(42,167,255,.10), transparent 60%),
+      radial-gradient(900px 650px at 75% 20%, rgba(35,209,139,.10), transparent 60%),
+      radial-gradient(1100px 700px at 50% 110%, rgba(255,154,60,.08), transparent 65%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px;}
+
+  header{
+    position:relative;
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border-radius: var(--radius2);
+    padding:22px 18px;
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--gradB);
+    filter: blur(18px);
+    opacity:.8;
+    pointer-events:none;
+  }
+  header > *{position:relative}
+
+  .topline{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .chips{display:flex; gap:10px; flex-wrap:wrap;}
+  .chip{
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    backdrop-filter: blur(10px);
+    color: var(--muted);
+    padding:8px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    line-height: 1;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .dot{width:8px; height:8px; border-radius:999px; background: var(--gradA);}
+  .chip strong{color: var(--text); font-weight: 650;}
+
+  h1{
+    margin:14px 0 10px;
+    font-size: clamp(20px, 3.2vw, 34px);
+    letter-spacing: -0.02em;
+    line-height:1.12;
+  }
+  .sub{
+    margin:0;
+    color: var(--muted);
+    font-size: 14.5px;
+    line-height: 1.5;
+    max-width: 78ch;
+  }
+
+  a{color: #9fd7ff; text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+    margin-top: 16px;
+  }
+  @media(min-width: 980px){
+    .grid{grid-template-columns: 1fr 1fr;}
+    .span2{grid-column: 1 / -1;}
+  }
+
+  .card{
+    border:1px solid var(--stroke);
+    background: rgba(12,18,40,.62);
+    border-radius: var(--radius);
+    padding:16px 16px 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size: 15px;
+    font-weight: 750;
+    letter-spacing: .01em;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .bar{
+    height:10px;
+    width: 38px;
+    border-radius: 999px;
+    background: var(--gradA);
+    box-shadow: 0 6px 20px rgba(42,167,255,.15);
+  }
+  .card p, .card li{color: var(--muted);}
+  .card p{margin: 8px 0; line-height: 1.55;}
+
+  ul{margin:10px 0 0; padding:0 0 0 18px;}
+  li{margin:7px 0; line-height:1.55;}
+
+  .kpi{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:10px;
+    margin-top: 12px;
+  }
+  .pill{
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.14);
+    border-radius: 14px;
+    padding: 10px 10px;
+    min-height: 58px;
+  }
+  .pill .t{font-size:12px; color: var(--muted2); margin:0;}
+  .pill .v{margin:6px 0 0; font-weight: 750; color: var(--text); letter-spacing: -0.01em;}
+
+  .mono{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: rgba(234,240,255,.86);
+  }
+
+  .route{
+    position:relative;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid var(--stroke2);
+    background: rgba(0,0,0,.20);
+    overflow:hidden;
+  }
+  .route:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--gradB);
+    opacity:.55;
+    filter: blur(16px);
+    pointer-events:none;
+  }
+  .route > *{position:relative}
+
+  .btnRow{display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px;}
+  button{
+    border:1px solid var(--stroke2);
+    background: rgba(0,0,0,.22);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius: 12px;
+    cursor:pointer;
+    font-weight: 650;
+    letter-spacing: .01em;
+  }
+  button.primary{
+    border:0;
+    background: var(--gradA);
+    color:#061018;
+  }
+  button:hover{filter: brightness(1.05)}
+
+  .twoCols{display:grid; grid-template-columns: 1fr; gap:12px;}
+  @media(min-width: 980px){
+    .twoCols{grid-template-columns: 1fr 1fr;}
+  }
+
+  .callout{
+    border:1px dashed rgba(255,255,255,.18);
+    background: rgba(255,255,255,.04);
+    padding:12px;
+    border-radius: 14px;
+    color: var(--muted);
+  }
+
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.14);
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+  .tag i{width:10px; height:10px; border-radius:999px; display:inline-block;}
+  .g{background: rgba(35,209,139,.95)}
+  .b{background: rgba(42,167,255,.95)}
+  .o{background: rgba(255,154,60,.95)}
+
+  textarea{
+    width:100%;
+    min-height: 360px;
+    resize: vertical;
+    border-radius: 14px;
+    border:1px solid var(--stroke);
+    padding: 12px;
+    background: rgba(0,0,0,.20);
+    color: rgba(234,240,255,.9);
+    outline:none;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  .footerNote{margin-top: 14px; color: var(--muted2); font-size: 12.5px;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <span class="chip"><span class="dot"></span><strong>Nicho:</strong> Produtividade</span>
+          <span class="chip"><span class="dot"></span><strong>Dia:</strong> 22</span>
+          <span class="chip"><span class="dot"></span><strong>Formato:</strong> Carrossel</span>
+          <span class="chip"><span class="dot"></span><strong>Pilar:</strong> Passo a passo</span>
+        </div>
+        <div class="chip"><span class="dot"></span><strong>Original:</strong> <a href="https://www.instagram.com/p/DVtpPrUjF34/" target="_blank" rel="noopener noreferrer">instagram.com/p/DVtpPrUjF34</a></div>
+      </div>
+      <h1>A cultura do “sempre ocupado” está roubando seu foco</h1>
+      <p class="sub">Template editorial + high-tech para ensinar um conceito (com nome), provar com exemplos e fechar com checklist salvável. Estruturado para você trocar o tema sem perder impacto.</p>
+      <div class="kpi">
+        <div class="pill"><p class="t">Objetivo</p><p class="v">Salvamentos + compartilhamentos</p></div>
+        <div class="pill"><p class="t">Promessa</p><p class="v">3 princípios + checklist aplicável</p></div>
+        <div class="pill"><p class="t">Tempo de leitura</p><p class="v">40–70s (7 slides)</p></div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card span2">
+        <h2><span class="bar"></span>Resumo</h2>
+        <div class="twoCols">
+          <div>
+            <p><strong>Ideia central:</strong> começar com uma afirmação forte (tensão), mostrar uma cena real, dar nome ao padrão, ensinar 3 princípios com exemplos e fechar com uma lista que dá vontade de salvar.</p>
+            <p><strong>Por que funciona:</strong> combina identificação (situação cotidiana) + clareza (definição simples) + ação (listas curtas) + retenção (progressão visual e microcuriosidade).</p>
+          </div>
+          <div class="callout">
+            <p><strong class="mono">Como adaptar para qualquer tema:</strong></p>
+            <ul>
+              <li>Troque “sempre ocupado” por uma crença/hábito do seu tema (ex.: “perfeccionismo”, “comparação”, “correria”, “hustle”).</li>
+              <li>Troque “foco” por um resultado desejado (ex.: “consistência”, “energia”, “clareza”, “resultados”).</li>
+              <li>Mantenha a sequência: <span class="mono">Hook → Cena → Nome → 3 Princípios → Checklist → CTA</span>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Estrutura</h2>
+        <ul>
+          <li><strong>Slide 1 (Capa):</strong> acusação + promessa prática.</li>
+          <li><strong>Slide 2 (Cena real):</strong> frase/print típico + contraste “não precisa X; precisa Y”.</li>
+          <li><strong>Slide 3 (Definição):</strong> “isso tem um nome” + 3 sintomas.</li>
+          <li><strong>Slide 4 (Princípio 1):</strong> 1 regra + 4 exemplos.</li>
+          <li><strong>Slide 5 (Princípio 2 + prova):</strong> 1 regra + 4 exemplos + citação/print.</li>
+          <li><strong>Slide 6 (Princípio 3 + checklist):</strong> 5–7 itens salváveis.</li>
+          <li><strong>Slide 7 (Banco de ideias + CTA):</strong> 6 ideias + “salve/comente”.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Elementos visuais</h2>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px">
+          <span class="tag"><i class="g"></i>Destaque (verde)</span>
+          <span class="tag"><i class="b"></i>Destaque (azul)</span>
+          <span class="tag"><i class="o"></i>Destaque (laranja)</span>
+        </div>
+        <ul>
+          <li><strong>Fundo:</strong> escuro com leve textura/granulado e vinheta suave.</li>
+          <li><strong>Cards:</strong> borda suave + blur (glass) + sombras discretas.</li>
+          <li><strong>Destaques:</strong> sublinhados/mini-barras em degradê (verde→azul→laranja).</li>
+          <li><strong>Componentes:</strong> “print/citação” em caixa, setas “arrasta”, bullets pequenos, sticker minimal.</li>
+          <li><strong>Tipografia:</strong> título forte (sans) + texto curto (sans) + microtextos em mono para “tech/editorial”.</li>
+        </ul>
+      </section>
+
+      <section class="card span2">
+        <h2><span class="bar"></span>Slides sugeridos (1..7)</h2>
+        <div class="twoCols">
+          <div class="route">
+            <p class="mono"><strong>Slide 1 — CAPA</strong></p>
+            <p><strong>Título:</strong> “A cultura do <span class="mono">[HÁBITO/CRENÇA]</span> está roubando seu <span class="mono">[RESULTADO]</span>.”</p>
+            <p><strong>Sub:</strong> “Como <span class="mono">[PROMESSA]</span> sem <span class="mono">[OBJEÇÃO/DOR]</span>.”</p>
+            <p class="mono">Nota: mantenha 2–3 linhas no máximo; contraste alto.</p>
+          </div>
+          <div class="route">
+            <p class="mono"><strong>Slide 2 — CENA REAL</strong></p>
+            <p><strong>Balão/print:</strong> “<span class="mono">[FRASE TÍPICA DO PÚBLICO]</span>”</p>
+            <p><strong>Contraste:</strong> “Você não precisa de <span class="mono">[SOLUÇÃO GRANDE]</span>. Você precisa de <span class="mono">[MICRO-HÁBITO]</span>.”</p>
+            <p class="mono">Ex.: “quando eu estiver menos ocupado a gente faz” → “sistema pequeno > dia perfeito”.</p>
+          </div>
+          <div class="route">
+            <p class="mono"><strong>Slide 3 — NOME + DEFINIÇÃO</strong></p>
+            <p><strong>Hook:</strong> “Isso tem um nome: <span class="mono">[NOME DO PADRÃO]</span>.”</p>
+            <p><strong>Definição:</strong> “Não é <span class="mono">[MITO]</span>; é <span class="mono">[VERDADE SIMPLES]</span>.”</p>
+            <p><strong>Sintomas (3):</strong> <span class="mono">[S1]</span> • <span class="mono">[S2]</span> • <span class="mono">[S3]</span></p>
+          </div>
+          <div class="route">
+            <p class="mono"><strong>Slide 4 — PRINCÍPIO 1</strong></p>
+            <p><strong>Princípio:</strong> <span class="mono">[REGRA CURTA]</span></p>
+            <p><strong>Porque:</strong> <span class="mono">[MECANISMO EM 1 FRASE]</span></p>
+            <p><strong>Exemplos (4):</strong> <span class="mono">[E1]</span>, <span class="mono">[E2]</span>, <span class="mono">[E3]</span>, <span class="mono">[E4]</span>.</p>
+          </div>
+          <div class="route">
+            <p class="mono"><strong>Slide 5 — PRINCÍPIO 2 + PROVA</strong></p>
+            <p><strong>Princípio:</strong> <span class="mono">[DIMINUA A FRICÇÃO]</span></p>
+            <p><strong>Exemplos (4):</strong> <span class="mono">[E1]</span>, <span class="mono">[E2]</span>, <span class="mono">[E3]</span>, <span class="mono">[E4]</span>.</p>
+            <p><strong>Prova:</strong> caixa com citação/print curto reforçando o ponto (sem textão).</p>
+          </div>
+          <div class="route">
+            <p class="mono"><strong>Slide 6 — PRINCÍPIO 3 + CHECKLIST</strong></p>
+            <p><strong>Princípio:</strong> <span class="mono">[SEJA O INICIADOR / PROTEJA O SISTEMA]</span></p>
+            <p><strong>Checklist (5–7):</strong> itens de ação com verbos no imperativo.</p>
+            <p class="mono">Regra: cada item tem 6–10 palavras, no máximo.</p>
+          </div>
+          <div class="route">
+            <p class="mono"><strong>Slide 7 — BANCO DE IDEIAS + CTA</strong></p>
+            <p><strong>Grade 2×3:</strong> 6 ideias prontas (curtas) para aplicar já.</p>
+            <p><strong>CTA:</strong> “Salve para a próxima semana” + “comente <span class="mono">[PALAVRA]</span> para receber o template”.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2><span class="bar"></span>Roteiro</h2>
+        <p class="sub">Abaixo vai um roteiro pronto (exemplo em Produtividade) + campos para substituição. Você pode copiar e trocar os colchetes.</p>
+        <div class="btnRow">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="selectBtn">Selecionar texto</button>
+          <button id="resetBtn">Voltar ao exemplo</button>
+        </div>
+        <div style="margin-top:12px">
+<textarea id="scriptArea">CARROSSEL (7 slides) — TEMPLATE REPRODUZÍVEL
+
+SLIDE 1 — CAPA
+Título: A cultura do “sempre ocupado” está roubando seu foco.
+Sub: Como produzir com consistência sem virar refém da agenda.
+Micro: (arrasta →)
+
+SLIDE 2 — CENA REAL (identificação)
+Print/Frase comum: “Me chama quando você estiver menos ocupado.”
+Contraste:
+Você não precisa de um “dia perfeito”.
+Você precisa de um sistema pequeno que roda em dias imperfeitos.
+Linha: A gente tenta compensar tudo de uma vez… e perde o básico.
+
+SLIDE 3 — ISSO TEM UM NOME (definição + sintomas)
+Título: Isso tem um nome: “produtividade de catch-up”.
+Definição: Não é falta de capacidade; é excesso de recomeços.
+Parece com:
+• planejar demais e executar pouco
+• viver apagando incêndio
+• concentrar tudo em 1 dia e falhar no resto
+
+SLIDE 4 — PRINCÍPIO 1 (consistência > intensidade)
+Título: Consistência vence intensidade.
+Porque: foco é resultado de repetição + ambiente, não de motivação.
+Exemplos:
+• 2 blocos de 25min por dia (fixos)
+• “top 1” diário antes de qualquer app
+• revisão de 10min no fim do dia
+• 1 tarefa difícil antes do almoço
+
+SLIDE 5 — PRINCÍPIO 2 (reduza a fricção) + PROVA
+Título: Reduza a fricção do começo.
+Sub: você não precisa de mais tempo; precisa de menos atrito.
+Exemplos:
+• checklists por tipo de tarefa (criar / responder / decidir)
+• abrir o doc certo (não “pensar no tema”)
+• padrão de agenda: 2 janelas de mensagens/dia
+• reuniões só com pauta + decisão esperada
+Prova (caixa): “Quem protege o início protege o resto do dia.”
+
+SLIDE 6 — PRINCÍPIO 3 (proteja o sistema) + CHECKLIST
+Título: Proteja seu sistema (não sua intenção).
+Checklist da semana:
+[ ] escolha 2 horários fixos de foco (30–50min)
+[ ] defina seu “Top 1” do dia na noite anterior
+[ ] limite mensagens a 2 janelas
+[ ] crie um bloco “admin” de 30min (2× na semana)
+[ ] faça uma lista ‘em espera’ para não recarregar a cabeça
+[ ] encerre o dia com 10min de fechamento (próximo passo)
+Extra: Está tudo bem ter dias leves (manutenção) e dias pesados (criação).
+
+SLIDE 7 — BANCO DE IDEIAS + CTA
+Título: Ideias rápidas para recuperar foco (sem mudar sua vida)
+2×3:
+• “Top 1” + timer de 25min
+• 1 reunião a menos por semana
+• modelo de resposta para mensagens
+• bloco de planejamento de 15min (2ª e 5ª)
+• lista ‘Próximo passo’ por projeto
+• rotina de fechamento (10min)
+CTA: Salve para montar sua próxima semana. Comente “TEMPLATE” que eu te mando a versão editável.
+
+SUBSTITUIÇÕES (1 min)
+[HÁBITO/CRENÇA] = “sempre ocupado” | “perfeccionismo” | “multitarefa” | “urgência”
+[RESULTADO] = foco | consistência | clareza | energia
+[FRASE TÍPICA] = uma frase real do seu público (print de DM funciona)
+[NOME DO PADRÃO] = dê um nome curto e memorável (ex.: “catch-up”, “modo incêndio”, “planejamento-zumbi”)
+</textarea>
+        </div>
+        <p class="footerNote">Dica: mantenha cada slide com no máximo 40–55 palavras (exceto checklist/banco de ideias).</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Copy e ganchos</h2>
+        <ul>
+          <li><strong>Hook de capa (polêmico/contraintuitivo):</strong> “A cultura do <span class="mono">[X]</span> está destruindo <span class="mono">[Y]</span>.”</li>
+          <li><strong>Hook de contraste:</strong> “Você não precisa de <span class="mono">[grande]</span>. Precisa de <span class="mono">[pequeno + repetível]</span>.”</li>
+          <li><strong>Hook de nome:</strong> “Isso tem um nome: <span class="mono">[termo]</span>.”</li>
+          <li><strong>Hook de promessa clara:</strong> “3 princípios para <span class="mono">[promessa]</span> sem <span class="mono">[dor]</span>.”</li>
+          <li><strong>Frase “salvável”:</strong> “Proteja o começo do dia e o resto melhora.”</li>
+        </ul>
+        <div class="callout" style="margin-top:12px">
+          <p><strong class="mono">Banco rápido de substituições (mesmo impacto)</strong></p>
+          <ul>
+            <li>“está roubando” → “está sabotando” | “está drenando” | “está quebrando”</li>
+            <li>“Como fazer X sem Y” → “Como X mesmo quando Y”</li>
+            <li>“isso tem um nome” → “o erro aqui é” | “o padrão escondido é”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>CTA</h2>
+        <ul>
+          <li><strong>Primário (salvamento):</strong> “Salve este carrossel para montar sua próxima semana.”</li>
+          <li><strong>Comentário (palavra-chave):</strong> “Comente <span class="mono">TEMPLATE</span> que eu te mando a checklist editável.”</li>
+          <li><strong>Compartilhamento:</strong> “Envie para alguém que vive tentando ‘compensar’ tudo.”</li>
+          <li><strong>Pergunta final:</strong> “Qual princípio você vai testar primeiro: 1, 2 ou 3?”</li>
+        </ul>
+        <p class="mono">Regra: 1 CTA principal + 1 CTA secundário. Não coloque 3 pedidos fortes no mesmo slide.</p>
+      </section>
+
+      <section class="card span2">
+        <h2><span class="bar"></span>Checklist (criação e publicação)</h2>
+        <div class="twoCols">
+          <div>
+            <p><strong>Antes de escrever</strong></p>
+            <ul>
+              <li>Defina <span class="mono">[HÁBITO/CRENÇA]</span> e <span class="mono">[RESULTADO]</span> em 1 frase.</li>
+              <li>Escolha 1 cena real (DM, frase, situação) para o slide 2.</li>
+              <li>Crie um nome curto para o padrão (slide 3).</li>
+            </ul>
+            <p><strong>Escrita (qualidade)</strong></p>
+            <ul>
+              <li>1 ideia por slide (exceto listas).</li>
+              <li>Princípios em frases “de camiseta” (curtas e memoráveis).</li>
+              <li>Exemplos sempre concretos (tempo, ação, contexto).</li>
+              <li>Checklist com verbos no imperativo.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Design (retenção)</strong></p>
+            <ul>
+              <li>Capa com contraste alto + subtítulo (promessa).</li>
+              <li>Indicador “arrasta →” em 3 slides (1, 2 e 6/7).</li>
+              <li>1 caixa de prova (citação/print) no slide 5.</li>
+              <li>Espaço negativo: não encostar texto nas bordas.</li>
+              <li>Destaque com degradê apenas no que você quer que a pessoa lembre.</li>
+            </ul>
+            <p><strong>Publicação</strong></p>
+            <ul>
+              <li>Legenda: 1 parágrafo curto + bullets + CTA.</li>
+              <li>Fixe um comentário com a palavra-chave (<span class="mono">TEMPLATE</span>).</li>
+              <li>Teste a capa em 1080×1350 e em miniatura.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2><span class="bar"></span>Variações</h2>
+        <div class="twoCols">
+          <div class="callout">
+            <p><strong>Variação A (Mito vs Verdade dentro do mesmo roteiro)</strong></p>
+            <ul>
+              <li>Slide 3 vira: “Mito: <span class="mono">[X]</span> | Verdade: <span class="mono">[Y]</span>”.</li>
+              <li>Slides 4–6 continuam com 3 princípios e exemplos.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p><strong>Variação B (Erro comum → correção)</strong></p>
+            <ul>
+              <li>Slide 2: “O erro não é <span class="mono">[A]</span>. É <span class="mono">[B]</span>.”</li>
+              <li>Slide 5: prova vira “antes/depois” (mini-case de 2 linhas).</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p><strong>Variação C (para outro nicho, mantendo impacto)</strong></p>
+            <ul>
+              <li>Bem-estar: “A cultura do ‘mudar tudo’ está sabotando sua saúde.”</li>
+              <li>Finanças: “A cultura do ‘depois eu vejo’ está roubando seu dinheiro.”</li>
+              <li>Estudos: “A cultura do ‘só estudo quando dá’ está quebrando sua consistência.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p><strong>Variação D (encaixe com oferta)</strong></p>
+            <ul>
+              <li>CTA final: “Comente <span class="mono">PLANILHA</span>” / “<span class="mono">AULA</span>” / “<span class="mono">GUIA</span>”.</li>
+              <li>Slide 7: substitua “ideias” por “mini-template” (ex.: modelo de semana).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+  const defaultText = document.getElementById('scriptArea').value;
+
+  function copyText(){
+    const ta = document.getElementById('scriptArea');
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    navigator.clipboard.writeText(ta.value).then(() => {
+      const btn = document.getElementById('copyBtn');
+      const old = btn.textContent;
+      btn.textContent = 'Copiado!';
+      setTimeout(()=> btn.textContent = old, 1200);
+    }).catch(() => {
+      alert('Não foi possível copiar automaticamente. Selecione e copie manualmente.');
+    });
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', copyText);
+  document.getElementById('selectBtn').addEventListener('click', () => {
+    const ta = document.getElementById('scriptArea');
+    ta.focus();
+    ta.select();
+  });
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.getElementById('scriptArea').value = defaultText;
+  });
+</script>
+</body>
+</html>
