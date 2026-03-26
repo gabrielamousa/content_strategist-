@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dia 12 — Carrossel de Prova Social (Professores)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.085);
+    --stroke:rgba(255,255,255,.10);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.55);
+    --shadow: 0 14px 40px rgba(0,0,0,.45);
+    --r16:16px;
+    --r22:22px;
+    --g1: linear-gradient(90deg,#22c55e 0%,#38bdf8 45%,#fb923c 100%);
+    --g2: radial-gradient(1200px 600px at 20% 10%, rgba(56,189,248,.22), transparent 55%),
+          radial-gradient(900px 520px at 70% 15%, rgba(34,197,94,.18), transparent 60%),
+          radial-gradient(900px 520px at 55% 80%, rgba(251,146,60,.14), transparent 60%);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
+  }
+  a{color:#8be9ff;text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1100px;margin:0 auto;padding:26px 16px 56px}
+  header{
+    position:relative;
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.04));
+    border-radius:var(--r22);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  header::before{
+    content:"";
+    position:absolute;inset:-2px;
+    background: var(--g1);
+    opacity:.12;
+    filter: blur(18px);
+  }
+  .head-inner{position:relative;padding:18px 18px 16px}
+  .kicker{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    font-family:var(--mono);
+    color:var(--muted);
+    font-size:12px;
+  }
+  .pill{
+    border:1px solid var(--stroke);
+    background:rgba(0,0,0,.25);
+    padding:6px 10px;
+    border-radius:999px;
+  }
+  h1{
+    margin:10px 0 8px;
+    font-size: clamp(20px, 3.1vw, 34px);
+    line-height:1.15;
+    letter-spacing:.2px;
+  }
+  .subtitle{
+    margin:0;
+    color:var(--muted);
+    max-width:72ch;
+    font-size:14.5px;
+    line-height:1.45;
+  }
+  .head-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .btn{
+    appearance:none;border:none;cursor:pointer;
+    padding:10px 12px;
+    border-radius:12px;
+    background:rgba(255,255,255,.10);
+    border:1px solid var(--stroke);
+    color:var(--text);
+    font-weight:600;
+  }
+  .btn:hover{background:rgba(255,255,255,.14)}
+  .btn.primary{
+    background:linear-gradient(90deg,rgba(34,197,94,.22),rgba(56,189,248,.18),rgba(251,146,60,.18));
+    border:1px solid rgba(255,255,255,.16);
+  }
+  .grid{display:grid;grid-template-columns: 1.15fr .85fr; gap:14px; margin-top:16px}
+  @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
+
+  .card{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.04));
+    border-radius:var(--r22);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card .inner{padding:16px 16px 14px}
+  .card h2{
+    margin:0 0 10px;
+    font-size:14px;
+    color:var(--muted);
+    font-family:var(--mono);
+    letter-spacing:.6px;
+    text-transform:uppercase;
+  }
+  .card h3{margin:0 0 8px;font-size:18px}
+  .card p{margin:0 0 10px;color:var(--muted);line-height:1.55}
+  ul{margin:8px 0 0 18px;color:var(--muted);line-height:1.58}
+  li{margin:6px 0}
+  .hl{
+    background:var(--g1);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-weight:800;
+  }
+  .note{
+    padding:10px 12px;
+    border-radius:14px;
+    background:rgba(0,0,0,.26);
+    border:1px dashed rgba(255,255,255,.18);
+    color:var(--muted);
+    font-size:13px;
+  }
+  .divider{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+
+  .script{
+    white-space:pre-wrap;
+    font-family:var(--mono);
+    font-size:12.8px;
+    line-height:1.55;
+    color:rgba(234,240,255,.84);
+    background:rgba(0,0,0,.28);
+    border:1px solid rgba(255,255,255,.10);
+    padding:14px;
+    border-radius:16px;
+  }
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width: 920px){ .cols{grid-template-columns:1fr} }
+
+  .badgeRow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+  .badge{
+    font-family:var(--mono);
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.06);
+    color:rgba(234,240,255,.8);
+  }
+  .footer{
+    margin-top:14px;
+    color:var(--muted2);
+    font-size:12.5px;
+    line-height:1.5;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-inner">
+        <div class="kicker">
+          <span class="pill">Nicho: Professores</span>
+          <span class="pill">Dia: 12</span>
+          <span class="pill">Formato: Carrossel</span>
+          <span class="pill">Pilar: Prova</span>
+          <span class="pill">Link: <a href="https://www.instagram.com/p/DT_RurAEc9f/" target="_blank" rel="noreferrer">post original</a></span>
+        </div>
+        <h1>Carrossel de resultados: <span class="hl">prova social</span> que gera confiança</h1>
+        <p class="subtitle">Modelo reproduzível para professores: padrão fixo por slide (aluno → resultado → evidência) para criar escaneabilidade, volume de conquistas e conversão via CTA no final.</p>
+        <div class="head-actions">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <a class="btn" href="#slides">Ver slides sugeridos</a>
+          <a class="btn" href="#checklist">Ir para checklist</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="resumo">
+        <div class="inner">
+          <h2>Resumo</h2>
+          <p><strong>Objetivo:</strong> construir autoridade e confiança com <span class="hl">prova social</span> (resultados reais + evidências).</p>
+          <p><strong>Mecânica:</strong> repetir um layout fixo e trocar apenas <em>pessoa + resultado + evidência</em>. Isso aumenta retenção (“quero ver o próximo”) e credibilidade (“tem muita gente conseguindo”).</p>
+          <div class="badgeRow">
+            <span class="badge">Alta escaneabilidade</span>
+            <span class="badge">Baixa leitura</span>
+            <span class="badge">Volume de casos</span>
+            <span class="badge">Conversão via comentário/DM</span>
+          </div>
+          <div class="divider"></div>
+          <div class="note"><strong>Privacidade:</strong> blur/ocultar CPF, matrícula, e-mails, telefones, @, QR code, nome de escola e qualquer dado sensível. Use consentimento explícito do aluno/responsável.</div>
+        </div>
+      </section>
+
+      <section class="card" id="metadados">
+        <div class="inner">
+          <h2>Metadados (para calendário)</h2>
+          <p><strong>Título curto:</strong> Carrossel de resultados: prova social que gera confiança</p>
+          <p><strong>Instrução curta:</strong> Monte 6–10 slides repetindo o mesmo layout: aluno + resultado + evidência. Feche com CTA de comentário/DM para entregar um guia ou modelo.</p>
+          <p><strong>Pilar:</strong> Prova</p>
+          <p><strong>Formato:</strong> Carrossel</p>
+          <div class="divider"></div>
+          <h2>Checklist de replicação rápida</h2>
+          <ul>
+            <li>Escolha 1 métrica central (nota, evolução, aprovação, participação, entrega).</li>
+            <li>Separe 5–9 evidências (prints) e padronize o recorte.</li>
+            <li>Ordene do resultado mais impactante para o mais “pé no chão”.</li>
+            <li>Padronize nomes (primeiro nome + inicial / iniciais) por privacidade.</li>
+            <li>Inclua slide final com CTA (comentário/DM + oferta de guia/modelo).</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" id="estrutura" style="margin-top:14px">
+      <div class="inner">
+        <h2>Estrutura</h2>
+        <div class="cols">
+          <div>
+            <h3>Arquitetura recomendada (6 a 10 slides)</h3>
+            <ul>
+              <li><strong>Slide 1 (Capa):</strong> hook + promessa + “arraste →”.</li>
+              <li><strong>Slides 2–7/9 (Cases):</strong> repetir padrão (aluno + número + disciplina + evidência).</li>
+              <li><strong>Último slide (Fechamento):</strong> síntese + CTA de conversão.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Sequência de impacto (ordem dos casos)</h3>
+            <ul>
+              <li>Comece com o <strong>maior resultado</strong> (efeito “uau”).</li>
+              <li>Intercale <strong>variações de prova</strong> (print DM/WhatsApp, boletim, feedback).</li>
+              <li>Inclua 1–2 casos “possíveis” (pé no chão) para gerar identificação.</li>
+              <li>Feche com “delta” (<strong>+X pontos</strong> / “de Y para Z”).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="slides" style="margin-top:14px">
+      <div class="inner">
+        <h2>Slides sugeridos (1..9)</h2>
+        <ul>
+          <li><strong>Slide 1 — Capa:</strong> “SÓ DEU [SUA ESTRATÉGIA]” + “em [RESULTADO] de [PERÍODO]” + “Arraste →”.</li>
+          <li><strong>Slide 2 — Case #1 (maior):</strong> [Aluno] + [Resultado] + evidência (print).</li>
+          <li><strong>Slide 3 — Case #2:</strong> [Aluno] + [Resultado] + 1 frase de depoimento.</li>
+          <li><strong>Slide 4 — Case #3 (com contexto):</strong> [Resultado] + “em [disciplina]” + “com [rotina/estratégia]”.</li>
+          <li><strong>Slide 5 — Case #4 (prova diferente):</strong> print de feedback/boletim/registro de plataforma.</li>
+          <li><strong>Slide 6 — Case #5 (pé no chão):</strong> melhoria realista (ex.: 5,2 → 7,1).</li>
+          <li><strong>Slide 7 — Case #6 (delta):</strong> “+X pontos” / “superou Y”.</li>
+          <li><strong>Slide 8 — Mini-síntese:</strong> “O que se repetiu nesses resultados?” (3 bullets).</li>
+          <li><strong>Slide 9 — CTA final:</strong> convite para comentar “GUIA”/“MODELO” ou enviar DM.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" id="roteiro" style="margin-top:14px">
+      <div class="inner">
+        <h2>Roteiro (texto reproduzível)</h2>
+        <div class="script" id="scriptText">CARROSSEL — PROVA SOCIAL (PROFESSORES)
+
+SLIDE 1 — CAPA
+Linha 1: SÓ DEU [NOME DA SUA ROTINA / MÉTODO]
+Linha 2: em [RESULTADO] de [TURMA/PROVA/PERÍODO] [ANO]
+Sub: Ano após ano, meus alunos entregam resultados mensuráveis.
+Micro-CTA: Arraste para o lado →
+
+SLIDE 2 — CASE #1 (MAIOR RESULTADO)
+Sticker nome: [NOME/INICIAIS]
+Número grande: [RESULTADO]
+Sub do número: EM [DISCIPLINA/OBJETIVO]
+Evidência: (print da nota/DM/boletim)
+Microcontexto (opcional): “+ [X] pontos em [Y semanas]”
+
+SLIDE 3 — CASE #2 (RESULTADO + DEPOIMENTO)
+Sticker nome: [NOME/INICIAIS]
+Número grande: [RESULTADO]
+Sub: EM [DISCIPLINA]
+Evidência: print com 1 frase forte (ex.: “finalmente virei o jogo…”) 
+
+SLIDE 4 — CASE #3 (RESULTADO + CONTEXTO)
+Sticker nome: [NOME/INICIAIS]
+Número grande: [RESULTADO]
+Sub: EM [HABILIDADE] (ex.: interpretação, redação, resolução)
+Evidência: print
+1 linha: “O que mudou: [rotina curta/estratégia]”
+
+SLIDE 5 — CASE #4 (PROVA DIFERENTE)
+Sticker nome: [NOME/INICIAIS]
+Número grande: [RESULTADO]
+Sub: EM [DISCIPLINA]
+Evidência: screenshot de feedback do responsável / registro da plataforma / boletim (dados ocultos)
+
+SLIDE 6 — CASE #5 (PÉ NO CHÃO, MUITO BOM)
+Sticker nome: [NOME/INICIAIS]
+Número grande: [DE Y → Z]
+Sub: EM [DISCIPLINA]
+Evidência: print
+1 linha: “consistência > intensidade”
+
+SLIDE 7 — CASE #6 (DELTA)
+Sticker nome: [NOME/INICIAIS]
+Número grande: +[X] PONTOS
+Sub: EM [DISCIPLINA]
+Evidência: print
+
+SLIDE 8 — SÍNTESE (POR QUE FUNCIONOU)
+Título: O que esses resultados têm em comum?
+Bullets (3):
+• Planejamento semanal simples
+• Acompanhamento (correção + feedback)
+• Repertório/treino direcionado
+
+SLIDE 9 — FECHAMENTO + CTA
+Título: Quer aplicar isso com seus alunos?
+Texto: Eu te envio o passo a passo/modelo.
+CTA 1: Comente “GUIA” que eu mando.
+CTA 2: Ou me chama no direct com “MODELO”.
+CTA 3 (extra): Salve este post para usar antes da próxima prova.</div>
+        <div class="footer">Dica: mantenha o mesmo layout em todos os slides de cases. A repetição é parte do gatilho de retenção.</div>
+      </div>
+    </section>
+
+    <section class="card" id="visuais" style="margin-top:14px">
+      <div class="inner">
+        <h2>Elementos visuais</h2>
+        <div class="cols">
+          <div>
+            <h3>Kit de componentes (Canva/Figma)</h3>
+            <ul>
+              <li>Foto circular do aluno (com anel/borda suave).</li>
+              <li>Sticker do nome (retângulo arredondado + rotação 5–10°).</li>
+              <li>Sticker do resultado (verde) + sombra leve.</li>
+              <li>Subtexto “EM [X]”.</li>
+              <li>Card do print (grande, arredondado) com sombra.</li>
+              <li>Rodapé fixo com logo/assinatura.</li>
+              <li>Na capa: “Arraste →”.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Identidade (direção visual)</h3>
+            <ul>
+              <li><strong>Fundo:</strong> base escura / azul profundo com textura geométrica leve.</li>
+              <li><strong>Paleta:</strong> 1 cor base (azul) + 1 destaque (verde) + neutros.</li>
+              <li><strong>Tipografia:</strong> sans forte (Inter/Poppins/Montserrat), caixa alta para headline e número.</li>
+              <li><strong>Legibilidade:</strong> foco no número e no “EM [disciplina]”; o print precisa “parecer real” mesmo sem leitura completa.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="copy" style="margin-top:14px">
+      <div class="inner">
+        <h2>Copy e ganchos</h2>
+        <div class="cols">
+          <div>
+            <h3>Fórmulas de capa (hooks)</h3>
+            <ul>
+              <li><strong>SÓ DEU</strong> [SUA ROTINA/MÉTODO] em [RESULTADO] de [PERÍODO].</li>
+              <li>O que meus alunos conquistaram em [X semanas] com [estratégia].</li>
+              <li>Antes: [dor]. Depois: [resultado] (com evidências).</li>
+              <li>Resultados da turma de [série] em [disciplina] (prints reais).</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Microcopys por slide (1 linha)</h3>
+            <ul>
+              <li>“Quando a correção vira plano, a nota vira consequência.”</li>
+              <li>“Treino direcionado &gt; lista infinita.”</li>
+              <li>“Pouco por dia, toda semana.”</li>
+              <li>“Feedback rápido muda o jogo.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="cta" style="margin-top:14px">
+      <div class="inner">
+        <h2>CTA</h2>
+        <div class="cols">
+          <div>
+            <h3>CTA principal (último slide — conversão)</h3>
+            <ul>
+              <li>Comente <strong>“GUIA”</strong> que eu te envio o passo a passo.</li>
+              <li>Me chama no direct com <strong>“MODELO”</strong> para receber o template.</li>
+              <li>Salve este post para montar o seu próximo acompanhamento.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>CTA secundário (legenda — captação de provas)</h3>
+            <ul>
+              <li>Se você é meu aluno, me manda seu resultado com print (com autorização) para aparecer no próximo carrossel.</li>
+              <li>Professores: quer que eu adapte isso para sua disciplina? Responda <strong>“QUERO”</strong> no direct.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="checklist" style="margin-top:14px">
+      <div class="inner">
+        <h2>Checklist</h2>
+        <div class="cols">
+          <div>
+            <h3>Conteúdo (provas e narrativa)</h3>
+            <ul>
+              <li>[ ] Definir 1 métrica central (nota/aprovação/evolução).</li>
+              <li>[ ] Separar 5–9 evidências (prints) e pedir autorizações.</li>
+              <li>[ ] Escolher 1–2 frases curtas de depoimento (quando houver).</li>
+              <li>[ ] Ordenar casos: maior → médio → identificação → delta.</li>
+              <li>[ ] Escrever o slide final com promessa + entrega (guia/modelo).</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Design (padronização e velocidade)</h3>
+            <ul>
+              <li>[ ] Criar um template com componentes fixos (foto, stickers, card do print, logo).</li>
+              <li>[ ] Manter o <strong>número</strong> como maior elemento do slide.</li>
+              <li>[ ] Garantir contraste alto (texto claro em fundo escuro).</li>
+              <li>[ ] Padronizar cortes de prints (mesma proporção e borda arredondada).</li>
+              <li>[ ] Revisar privacidade: blur em tudo que identifique.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="variacoes" style="margin-top:14px">
+      <div class="inner">
+        <h2>Variações</h2>
+        <div class="cols">
+          <div>
+            <h3>Por objetivo</h3>
+            <ul>
+              <li><strong>Captação de alunos (reforço):</strong> CTA “Avalio seu nível e te digo a rota (direct ‘DIAGNÓSTICO’)”.</li>
+              <li><strong>Venda de curso:</strong> CTA “Quer as aulas + plano de estudos? Direct ‘TURMA’”.</li>
+              <li><strong>Marca pessoal:</strong> Slide 8 vira “3 princípios do meu método” (sem entregar o ouro).</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Por tipo de prova</h3>
+            <ul>
+              <li><strong>Fundamental:</strong> evolução, participação e constância (ex.: leitura/fluência).</li>
+              <li><strong>Ensino médio:</strong> notas, simulados, redação, aprovação.</li>
+              <li><strong>Concursos/vestibular:</strong> ranking, aprovação, salto de pontuação.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="note"><strong>Upgrade de conversão:</strong> no último slide, troque “GUIA” por uma palavra específica do seu tema (ex.: “REDAÇÃO”, “SIMULADO”, “PLANO”). Palavras específicas aumentam comentário qualificado.</div>
+      </div>
+    </section>
+
+    <p class="footer">Página gerada para uso interno de criação. Ajuste termos e promessas para a sua realidade e evite divulgar dados sensíveis.</p>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const text = document.getElementById('scriptText').innerText;
+    btn.addEventListener('click', async function(){
+      try{
+        await navigator.clipboard.writeText(text);
+        const old = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.textContent=old, 1400);
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const old = btn.textContent;
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.textContent=old, 1400);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
