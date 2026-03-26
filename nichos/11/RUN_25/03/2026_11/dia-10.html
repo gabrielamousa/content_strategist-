@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dia 10 — Produtividade — Frase-enigma que vira insight</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.56);
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --r12:12px;
+      --r16:16px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --g1: linear-gradient(90deg, #22c55e 0%, #3b82f6 45%, #f97316 100%);
+      --g2: radial-gradient(1200px 600px at 10% -10%, rgba(34,197,94,.25), transparent 55%),
+            radial-gradient(1000px 500px at 90% 0%, rgba(59,130,246,.28), transparent 56%),
+            radial-gradient(1000px 500px at 45% 110%, rgba(249,115,22,.22), transparent 60%);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+      min-height:100vh;
+    }
+    a{color:#93c5fd; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+
+    header{
+      display:flex; gap:16px; align-items:flex-start; justify-content:space-between;
+      padding:18px 18px;
+      border:1px solid var(--stroke);
+      border-radius:var(--r16);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:var(--g1);
+      opacity:.10;
+      filter:blur(14px);
+      pointer-events:none;
+    }
+    .h-left{position:relative; z-index:1; min-width:0}
+    .kicker{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:8px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.3px;
+    }
+    .pill b{color:var(--text); font-weight:600}
+    h1{margin:0 0 8px; font-size:22px; line-height:1.2; letter-spacing:.2px}
+    .sub{margin:0; color:var(--muted); font-size:13.5px; line-height:1.45}
+
+    .h-right{position:relative; z-index:1; display:flex; flex-direction:column; gap:10px; align-items:flex-end}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      user-select:none;
+      transition:transform .08s ease, background .2s ease, border-color .2s ease;
+      font-weight:600;
+      font-size:13px;
+      min-width:160px;
+    }
+    .btn:hover{background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.16)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border-color:rgba(255,255,255,.18);
+    }
+    .tiny{font-size:12px; color:var(--muted2)}
+
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+      .h-right{align-items:flex-start}
+      .btn{min-width:unset; width:100%}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      border-radius:var(--r16);
+      box-shadow: 0 14px 44px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:.35px; text-transform:uppercase; color:rgba(234,240,255,.86)}
+    .card .bd{padding:14px 16px}
+
+    .highlight{
+      display:inline;
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:800;
+    }
+
+    ul{margin:10px 0 0 18px; padding:0}
+    li{margin:7px 0; color:var(--muted); line-height:1.45}
+
+    .script{
+      font-family:var(--mono);
+      font-size:12.8px;
+      line-height:1.55;
+      color:rgba(234,240,255,.86);
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:12px;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+    }
+
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 720px){.cols{grid-template-columns:1fr}}
+
+    .tagrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .tag{
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      color:rgba(234,240,255,.78);
+      font-size:12px;
+    }
+
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+
+    .checklist li{margin:8px 0}
+    .checklist b{color:rgba(234,240,255,.92)}
+
+    .toast{
+      position:fixed; right:16px; bottom:16px;
+      background:rgba(10,14,28,.88);
+      border:1px solid rgba(255,255,255,.14);
+      color:rgba(234,240,255,.92);
+      padding:10px 12px;
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      opacity:0; transform:translateY(8px);
+      transition:opacity .25s ease, transform .25s ease;
+      pointer-events:none;
+      font-size:12.5px;
+    }
+    .toast.show{opacity:1; transform:translateY(0)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="h-left">
+        <div class="kicker">
+          <span class="pill"><b>Nicho</b>: Produtividade</span>
+          <span class="pill"><b>Dia</b>: 10</span>
+          <span class="pill"><b>Formato</b>: Reels</span>
+          <span class="pill"><b>Pilar</b>: Passo a passo</span>
+        </div>
+        <h1>A “nuvem” que sabota sua produtividade (e como subir acima)</h1>
+        <p class="sub">Baseado no mecanismo de <span class="highlight">frase enigmática → tradução direta → ação prática</span> para aumentar retenção (reassistir) e comentários (interpretação).</p>
+        <p class="sub">Post original: <a href="https://www.instagram.com/p/DVy4B4kjhk_/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DVy4B4kjhk_/</a></p>
+      </div>
+      <div class="h-right">
+        <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        <div class="tiny">Copia o bloco “Roteiro (20–25s)” para a área de transferência.</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd"><h2>Resumo</h2><span class="pill">Objetivo: retenção + salvamentos</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <p class="sub" style="margin:0 0 8px">Você abre com uma frase-mistério (poética) que cria tensão. Em seguida, traduz em linguagem simples (produtividade) e entrega 3 proteções de consistência. Fecha com punchline citável + CTA duplo.</p>
+              <div class="tagrow">
+                <span class="tag">Frase-enigma</span>
+                <span class="tag">Virada poético → prático</span>
+                <span class="tag">3 passos</span>
+                <span class="tag">Comentário-gatilho</span>
+                <span class="tag">Salvar</span>
+              </div>
+            </div>
+            <div>
+              <ul>
+                <li><b>Tempo:</b> 20–25s</li>
+                <li><b>Cadência:</b> 4–8 palavras por frase</li>
+                <li><b>Cortes:</b> a cada 0,7–1,5s</li>
+                <li><b>O “pulo do gato”:</b> não explicar no 1º segundo</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd"><h2>Metadados do calendário</h2></div>
+        <div class="bd">
+          <ul>
+            <li><b>Título:</b> A “nuvem” que sabota sua produtividade (e como subir acima)</li>
+            <li><b>Instrução curta:</b> Grave um Reel de 20–25s: comece com frase-enigma, traduza e dê 3 passos. Feche com punchline + CTA.</li>
+            <li><b>Pilar:</b> Passo a passo</li>
+            <li><b>Formato:</b> Reels</li>
+          </ul>
+          <div class="divider"></div>
+          <p class="sub" style="margin:0"><span class="highlight">Sugestão de áudio:</span> atmosférico/low beat, volume baixo, priorize voz + legendas dinâmicas.</p>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="hd"><h2>Estrutura</h2><span class="pill">0–2s / 2–7s / 7–18s / 18–22s / 22–25s</span></div>
+        <div class="bd">
+          <ul>
+            <li><b>1) Hook (0–2s):</b> frase curta, ambígua e memorável (sem explicação).</li>
+            <li><b>2) Tradução (2–7s):</b> “isso significa…” + 1 linha direta conectando com produtividade.</li>
+            <li><b>3) Passo a passo (7–18s):</b> 3 micro-ações que reduzem atrito e protegem consistência.</li>
+            <li><b>4) Punchline (18–22s):</b> fechamento citável (parece “frase de efeito” útil).</li>
+            <li><b>5) CTA (22–25s):</b> salvar + comentar palavra-chave (para checklist).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Roteiro (20–25s)</h2><span class="pill">Pronto para gravar</span></div>
+        <div class="bd">
+          <div class="script" id="scriptText">HOOK (0–2s)
+“Algumas nuvens têm ciúmes.”
+
+TRADUÇÃO (2–7s)
+“Isto é: quando você tenta mudar, o seu ambiente tenta te puxar pro padrão antigo.”
+
+PASSO A PASSO (7–18s)
+“Três proteções de consistência:”
+“1) Bloqueia 25 minutos — hoje.”
+“2) Remove UMA distração agora: aba, celular, notificação.”
+“3) Regra do início: começar é obrigatório. Continuar é bônus.”
+
+PUNCHLINE (18–22s)
+“Não negocie com nuvens. Sobe acima delas.”
+
+CTA (22–25s)
+“Salva pra quando bater o ruído.”
+“E comenta ‘CÉU’ que eu te mando o checklist.”</div>
+          <div class="divider"></div>
+          <p class="sub" style="margin:0"><span class="highlight">Dica de performance:</span> diga o hook olhando direto na câmera, sem sorrir; a “virada” (poético → prático) acontece na palavra “isto é”.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Elementos visuais</h2><span class="pill">High-tech minimalista</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <ul>
+                <li><b>Cold open:</b> texto grande no 1º frame (“Algumas nuvens têm ciúmes.”).</li>
+                <li><b>Legenda:</b> dinâmica com palavras-chave em destaque: “ambiente”, “padrão antigo”, “25 min”, “UMA distração”, “começar”.</li>
+                <li><b>Virada visual:</b> na hora do “Três proteções…”, mudar enquadramento (zoom-out leve) ou plano (mesa/agenda).</li>
+                <li><b>B-roll (opcional):</b> céu/nuvens (1–2 takes) + mesa de trabalho/cronômetro.</li>
+              </ul>
+            </div>
+            <div>
+              <ul>
+                <li><b>Paleta:</b> fundo escuro + destaques em degradê (verde/azul/laranja).</li>
+                <li><b>SFX:</b> whoosh bem suave entre tradução e passo a passo.</li>
+                <li><b>Ritmo:</b> cortes rápidos; remova respirações longas.</li>
+                <li><b>On-screen:</b> use “3 proteções” como título fixo no canto.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><span class="pill">Para testar em A/B</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <p class="sub" style="margin:0 0 8px"><span class="highlight">Hooks (até 6 palavras)</span></p>
+              <ul>
+                <li>“Algumas nuvens têm ciúmes.”</li>
+                <li>“Tem gente que odeia progresso.”</li>
+                <li>“O barulho aumenta quando você muda.”</li>
+                <li>“Seu ambiente cobra o ‘de antes’.”</li>
+              </ul>
+            </div>
+            <div>
+              <p class="sub" style="margin:0 0 8px"><span class="highlight">Legenda curta (modelo)</span></p>
+              <div class="script">Quando você melhora, o sistema ao redor tenta te devolver pro “normal”.
+
+Hoje, faz só isso:
+• 25 min bloqueados
+• 1 distração removida
+• começar é obrigatório
+
+Qual é a sua “nuvem” agora?
+Comenta “CÉU” que eu mando o checklist.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>CTA</h2><span class="pill">Salvar + comentar</span></div>
+        <div class="bd">
+          <ul>
+            <li><b>CTA principal (salvar):</b> “Salva isso pra quando bater o ruído.”</li>
+            <li><b>CTA de comentário (palavra-chave):</b> “Comenta ‘CÉU’ que eu te mando o checklist.”</li>
+            <li><b>CTA de compartilhamento (extra):</b> “Manda pra alguém que tá tentando mudar de fase.”</li>
+          </ul>
+          <div class="divider"></div>
+          <p class="sub" style="margin:0"><span class="highlight">Regra:</span> o CTA de comentário tem que prometer uma recompensa específica (checklist/roteiro/modelo) para valer o esforço.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Checklist de criação</h2><span class="pill">Reproduzível</span></div>
+        <div class="bd">
+          <ul class="checklist">
+            <li><b>Pré:</b> Escolha 1 metáfora simples (nuvem/ruído/peso/ponte/maré).</li>
+            <li><b>Pré:</b> Escreva 1 frase-enigma (até 6 palavras).</li>
+            <li><b>Pré:</b> Defina 1 promessa: “3 proteções de consistência”.</li>
+            <li><b>Roteiro:</b> 0–2s hook sem explicação.</li>
+            <li><b>Roteiro:</b> 2–7s tradução direta (“isto é…”).</li>
+            <li><b>Roteiro:</b> 7–18s 3 passos (instruções simples e executáveis).</li>
+            <li><b>Roteiro:</b> 18–22s punchline citável.</li>
+            <li><b>Roteiro:</b> 22–25s CTA salvar + palavra-chave.</li>
+            <li><b>Edição:</b> Texto grande no 1º frame + palavras-chave destacadas.</li>
+            <li><b>Edição:</b> Cortes a cada 0,7–1,5s (ou mudança visual).</li>
+            <li><b>Publicação:</b> Legenda curta + 1 pergunta + CTA repetido.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Variações</h2><span class="pill">Mesma estrutura, novos ângulos</span></div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <p class="sub" style="margin:0 0 8px"><span class="highlight">Variação 1 — Procrastinação (ruído)</span></p>
+              <div class="script">HOOK: “O ruído fica mais alto.”
+TRADUÇÃO: “Quando você vai focar, sua mente tenta te salvar do desconforto.”
+PASSOS: 1) 10 min só pra começar 2) ambiente sem notificações 3) define 1 próxima ação
+PUNCHLINE: “Não discuta com o ruído. Execute.”
+CTA: “Salva + comenta ‘RUÍDO’.”</div>
+            </div>
+            <div>
+              <p class="sub" style="margin:0 0 8px"><span class="highlight">Variação 2 — Ambiente (padrão antigo)</span></p>
+              <div class="script">HOOK: “O ‘de antes’ te chama.”
+TRADUÇÃO: “Quando você muda, o seu contexto tenta te manter igual.”
+PASSOS: 1) bloco de foco fixo 2) sinal visível (timer/placa) 3) regra: 1 tarefa antes de mensagens
+PUNCHLINE: “Seu futuro não pede permissão.”
+CTA: “Comenta ‘FUTURO’.”</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <p class="sub" style="margin:0"><span class="highlight">Recomendação de teste:</span> publique 2 versões mudando apenas o hook e o punchline; mantenha os 3 passos iguais para isolar o que melhora retenção.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      btn.addEventListener('click', async ()=>{
+        const value = text.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(value);
+          showToast('Roteiro copiado.');
+        } catch(e){
+          try{
+            const ta = document.createElement('textarea');
+            ta.value = value;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            ta.remove();
+            showToast('Roteiro copiado.');
+          } catch(err){
+            showToast('Não foi possível copiar automaticamente.');
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
