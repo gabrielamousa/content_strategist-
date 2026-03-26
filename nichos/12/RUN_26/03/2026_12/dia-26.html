@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 26 — Bastidor que vira jogo</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0C1222;
+      --panel2:#0A0F1D;
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+
+      --g1: linear-gradient(135deg,#37F59E 0%, #33A2FF 48%, #FF8A2A 100%);
+      --g2: linear-gradient(135deg, rgba(55,245,158,.18), rgba(51,162,255,.16), rgba(255,138,42,.16));
+      --green:#37F59E;
+      --blue:#33A2FF;
+      --orange:#FF8A2A;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 10% 10%, rgba(51,162,255,.14), transparent 60%),
+        radial-gradient(900px 500px at 90% 20%, rgba(255,138,42,.12), transparent 55%),
+        radial-gradient(900px 700px at 40% 100%, rgba(55,245,158,.10), transparent 60%),
+        linear-gradient(180deg, #050711 0%, #070A12 60%, #050711 100%);
+      line-height:1.35;
+    }
+
+    a{color:inherit}
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 60px;
+    }
+
+    header{
+      position:relative;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.03) 100%);
+      border-radius: calc(var(--radius) + 6px);
+      padding:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(18px);
+      opacity:.9;
+      z-index:0;
+    }
+
+    .head{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    .kpis{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+
+    .pill{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background: rgba(12,18,34,.55);
+      color: var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+
+    .pill strong{color:var(--text); font-weight:650}
+
+    h1{
+      margin:0;
+      font-size:20px;
+      letter-spacing:.2px;
+    }
+
+    .sub{
+      color:var(--muted);
+      font-size:13px;
+      margin:0;
+      max-width:78ch;
+    }
+
+    .top-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      margin-top:4px;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--stroke2);
+      background: rgba(12,18,34,.55);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-size:13px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+    }
+
+    .btn:hover{border-color: rgba(255,255,255,.22); background: rgba(12,18,34,.72)}
+    .btn:active{transform: translateY(1px)}
+
+    .btn-primary{
+      border:1px solid rgba(255,255,255,.18);
+      background: linear-gradient(135deg, rgba(55,245,158,.14), rgba(51,162,255,.14), rgba(255,138,42,.14));
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+
+    @media (max-width: 920px){
+      .grid{grid-template-columns: 1fr;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,.02) 100%);
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    .card h2{
+      font-size:14px;
+      margin:0 0 10px 0;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+      color: rgba(234,240,255,.92);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background: var(--g1);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+      flex: 0 0 auto;
+    }
+
+    .card p, .card li{color: var(--muted); font-size:13.5px}
+    .card strong{color: var(--text)}
+
+    .two-col{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    @media (max-width: 720px){
+      .two-col{grid-template-columns: 1fr;}
+    }
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin:12px 0;
+    }
+
+    .list{
+      margin:0;
+      padding-left: 18px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      border:1px solid var(--stroke);
+      background: rgba(10,15,29,.7);
+      border-radius:999px;
+      font-size:12px;
+      color: var(--muted);
+      margin:2px 6px 6px 0;
+      white-space:nowrap;
+    }
+
+    .badge i{
+      width:8px;height:8px;border-radius:999px;
+      background: var(--g1);
+      display:inline-block;
+    }
+
+    .script{
+      width:100%;
+      min-height: 520px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(7,10,18,.55);
+      color: rgba(234,240,255,.92);
+      padding:14px;
+      outline:none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12.8px;
+      line-height:1.45;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+
+    .mini{
+      font-size:12px;
+      color: var(--muted);
+      margin-top:10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .link{
+      color: rgba(234,240,255,.9);
+      text-decoration:none;
+      border-bottom:1px dotted rgba(255,255,255,.25);
+    }
+
+    .link:hover{border-bottom-color: rgba(255,255,255,.55)}
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(12,18,34,.92);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      padding: 10px 12px;
+      color: rgba(234,240,255,.92);
+      font-size: 13px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 50;
+    }
+
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(-2px)}
+
+    .section-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+
+    @media (min-width: 920px){
+      .section-grid{grid-template-columns: 1fr 1fr}
+      .span-2{grid-column: 1 / -1}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head">
+        <div class="kpis">
+          <span class="pill"><strong>Nicho</strong>: Professores</span>
+          <span class="pill"><strong>Dia</strong>: 26</span>
+          <span class="pill"><strong>Formato</strong>: Reels</span>
+          <span class="pill"><strong>Pilar</strong>: Bastidores</span>
+        </div>
+
+        <div>
+          <h1>Bastidor que vira jogo: o Reel perfeito pra reter</h1>
+          <p class="sub">Template reproduzível para transformar um bastidor comum em sequência de mini-desafios (gamificação) com micro-recompensas a cada 3–6s. Funciona sem áudio, com cortes rápidos e humor leve.</p>
+        </div>
+
+        <div class="top-actions">
+          <a class="btn" href="https://www.instagram.com/p/DWFStx3B1pg/" target="_blank" rel="noopener" aria-label="Abrir post original">
+            Abrir post original
+          </a>
+          <button class="btn btn-primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+
+        <div class="mini">
+          <span>Identidade visual sugerida: fundo escuro + cards com borda suave + destaques em degradê (verde/azul/laranja).</span>
+          <span>Meta: 30–45s • cortes: 1–2s • 3–4 desafios</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="dot"></span>Roteiro (pronto para gravar)</h2>
+        <textarea class="script" id="script" spellcheck="false">TÍTULO (interno): “Fui [AÇÃO] e a atividade virou um jogo”
+DURAÇÃO: 30–45s | PÚBLICO: professores | TOM: bastidor + humor leve
+
+[0:00–0:02] HOOK (curiosidade + bastidor real)
+Vídeo: plano fechado na folha/caderno/tela + sua mão com caneta.
+Texto na tela: “Fui [corrigir/planejar/organizar] e aconteceu isso:”
+Áudio (falado): “Fui [AÇÃO] e me deparei com isso aqui…”
+
+[0:02–0:06] CONTRASTE (rotina normal)
+Vídeo: você marcando “certo, certo, certo…” bem rápido.
+Texto na tela: “Tudo normal… até virar a página”
+Áudio (falado): “Tava indo tudo normal…”
+
+[0:06–0:14] DESAFIO 1 (microtensão → microvitória)
+Vídeo: revela o 1º desafio (ex.: “ache o erro / ache a diferença / ligações corretas”).
+Texto na tela: “DESAFIO 1: [NOME]”
+Áudio (falado): “Quando eu virei… tinha: ‘[DESAFIO]’.”
+Ação: aponte 2–3 tentativas rápidas.
+Fala curta: “Tá… achei que era isso… não.”
+Vitória: zoom no acerto + “ACHEI!”
+
+[0:14–0:26] DESAFIO 2 (muda a dinâmica)
+Opção A: labirinto / ligue os pontos
+Opção B: caça-palavras / código / seta
+Texto na tela: “DESAFIO 2: [NOME] (valendo!)”
+Ação: 1 falha real (mostre o caminho errado) → corte → caminho certo.
+Fala curta: “Isso aqui tava pedindo socorro.” / “Não leva a lugar nenhum…”
+Vitória: som de click (opcional) + zoom.
+
+[0:26–0:36] DESAFIO 3 (o mais ‘difícil’ para aumentar retenção)
+Ex.: cruzadinha com termos da aula / encontrar um número específico / achar uma palavra escondida.
+Texto na tela: “DESAFIO 3: [NOME]”
+Ação: varredura rápida (speed ramp) + pausa dramática de 0,5s.
+Fala curta: “Cadê o [TERMO]?” / “Eu juro que procurei.”
+Vitória: “ACHEI!” + seta/realce.
+
+[0:36–0:45] FECHAMENTO (humor + identificação + CTA)
+Vídeo: você termina a correção e aponta pro “prêmio” (se houver) ou fecha o caderno.
+Fala: “Agora que eu zerei… o que eu ganho? Um chocolate?”
+Texto na tela: “Quem tem aluno assim?”
+CTA falado: “Comenta ‘EU TENHO’ e marca um professor que vai entender.”
+
+LEGENDA (curta):
+“Isso só acontece com a gente. Qual desafio você colocaria na próxima prova: 1) ache o erro 2) labirinto 3) cruzadinha? Comenta o número.”
+
+HASHTAGS (3–7):
+#professores #vidadeprofessor #educacao #docencia #escola #planejamento #avaliacao</textarea>
+        <div class="mini">
+          <span>Dica: mantenha “tentativa real” (um erro) — aumenta autenticidade e tempo de tela.</span>
+          <span>Status: <span style="color: rgba(55,245,158,.95)">reproduzível</span> • editável por tema</span>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2><span class="dot"></span>Resumo</h2>
+        <p><strong>Por que funciona:</strong> coloca o público dentro de um bastidor íntimo + transforma a rotina em mini-jogos. O cérebro quer “resolver junto”. Cada desafio cria um microclímax a cada poucos segundos, elevando retenção.</p>
+        <div class="hr"></div>
+        <div>
+          <span class="badge"><i></i>Hook de curiosidade</span>
+          <span class="badge"><i></i>Gamificação</span>
+          <span class="badge"><i></i>Microvitórias</span>
+          <span class="badge"><i></i>Variedade com tema único</span>
+          <span class="badge"><i></i>Assistível sem áudio</span>
+          <span class="badge"><i></i>Humor leve</span>
+        </div>
+
+        <div class="hr"></div>
+        <h2><span class="dot"></span>Estrutura (sequência fixa)</h2>
+        <ol class="list">
+          <li><strong>Hook (0–2s):</strong> “Fui [AÇÃO] e me deparei com isso…”</li>
+          <li><strong>Contraste (2–6s):</strong> rotina “certo, certo…”</li>
+          <li><strong>Desafio 1 (6–14s):</strong> achar/identificar algo</li>
+          <li><strong>Desafio 2 (14–26s):</strong> dinâmica diferente + 1 falha</li>
+          <li><strong>Desafio 3 (26–36s):</strong> o mais difícil + speed ramp</li>
+          <li><strong>Fechamento (36–45s):</strong> punchline + CTA</li>
+        </ol>
+
+        <div class="hr"></div>
+        <h2><span class="dot"></span>CTA (escolha 1)</h2>
+        <ul class="list">
+          <li>“Você também tem aluno assim? Comenta <strong>EU TENHO</strong>.”</li>
+          <li>“Quer um modelo disso pra sua matéria? Comenta <strong>DESAFIO</strong>.”</li>
+          <li>“Marca um professor que vai se identificar.”</li>
+          <li>“Qual foi o mais difícil? <strong>1 / 2 / 3</strong>.”</li>
+        </ul>
+      </aside>
+    </div>
+
+    <div class="section-grid">
+      <section class="card">
+        <h2><span class="dot"></span>Elementos visuais</h2>
+        <div class="two-col">
+          <div>
+            <p><strong>Câmera/planos</strong></p>
+            <ul class="list">
+              <li>Plano fechado (folha/caderno/tablet) + mão/caneta.</li>
+              <li>Zoom rápido no “acerto”.</li>
+              <li>Reação mínima (só mão/risadinha/“não acredito”).</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Edição</strong></p>
+            <ul class="list">
+              <li>Jump cuts a cada 1–2s (tira pausas).</li>
+              <li>Speed ramp nas “varreduras” (procurar número/palavra).</li>
+              <li>Texto na tela nomeando cada desafio (sem áudio funciona).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p><strong>Áudio (opcional):</strong> clicks/pops no acerto; buzz no erro; volume baixo para não competir com voz.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Copy e ganchos (substituíveis)</h2>
+        <p><strong>Hook base (troque apenas os colchetes):</strong></p>
+        <ul class="list">
+          <li>“Fui <strong>[corrigir/planejar/lançar nota]</strong> e me deparei com isso aqui…”</li>
+          <li>“Olha o que apareceu na <strong>[prova/atividade/caderno]</strong>…”</li>
+          <li>“Quando eu virei a página… virou <strong>um desafio</strong>.”</li>
+        </ul>
+        <div class="hr"></div>
+        <p><strong>Frases de tensão (para segurar):</strong></p>
+        <ul class="list">
+          <li>“Isso não leva a lugar nenhum…”</li>
+          <li>“Eu juro que procurei.”</li>
+          <li>“Cadê o <strong>[termo/conceito/resultado]</strong>?”</li>
+        </ul>
+        <div class="hr"></div>
+        <p><strong>Microvitórias (sempre iguais):</strong> “Ok… agora foi.” / “ACHEI!” / “Tá aqui!”</p>
+      </section>
+
+      <section class="card span-2">
+        <h2><span class="dot"></span>Checklist de criação (reproduzível)</h2>
+        <div class="two-col">
+          <div>
+            <p><strong>Pré-produção (10–15 min)</strong></p>
+            <ul class="list">
+              <li>[ ] Escolha 1 bastidor comum: corrigir prova, revisar tarefa, olhar caderno, montar aula, conferir trabalhos.</li>
+              <li>[ ] Defina 1 surpresa (bilhete, desenho, “pegadinha”, desafio, pedido engraçado).</li>
+              <li>[ ] Separe 3–4 mini-desafios visuais (rápidos):
+                <ul class="list">
+                  <li>[ ] Ache o erro / ache a diferença</li>
+                  <li>[ ] Labirinto / ligue os pontos</li>
+                  <li>[ ] Caça-palavras / cruzadinha (termos da matéria)</li>
+                  <li>[ ] Ache o número/palavra/objeto diferente</li>
+                </ul>
+              </li>
+              <li>[ ] Escreva a punchline final (recompensa): “o que eu ganho? [chocolate/café/folga]”.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Gravação + edição (30–45 min)</strong></p>
+            <ul class="list">
+              <li>[ ] Grave já começando com o hook (sem introdução).</li>
+              <li>[ ] Plano fechado + luz forte e uniforme (evite sombra da mão).</li>
+              <li>[ ] Faça 1 erro real (um caminho errado) antes do acerto.</li>
+              <li>[ ] Texto na tela: “Desafio 1/2/3” + nome curto.</li>
+              <li>[ ] Corte tudo que não é ação (1–2s por take).</li>
+              <li>[ ] Zoom/realce no acerto (círculo/seta).</li>
+              <li>[ ] Final: punchline + CTA de comentário/marcação.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p><strong>Publicação:</strong> legenda com pergunta (simples) + CTA único (evite 3 CTAs ao mesmo tempo).</p>
+      </section>
+
+      <section class="card span-2">
+        <h2><span class="dot"></span>Variações (mesmo impacto com outros temas)</h2>
+        <div class="two-col">
+          <div>
+            <p><strong>Troque o bastidor (mantém a estrutura)</strong></p>
+            <ul class="list">
+              <li><strong>Planejamento:</strong> “Fui montar a aula e encontrei um ‘desafio’ no material…”</li>
+              <li><strong>Correção digital:</strong> “Fui corrigir no Google Forms e apareceu isso…”</li>
+              <li><strong>Coordenação:</strong> “Fui fechar as notas e uma coisa me travou…” (vira jogo: achar inconsistência).</li>
+              <li><strong>Sala de aula:</strong> “Peguei o caderno pra dar visto e…”</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Troque os desafios (equivalentes)</strong></p>
+            <ul class="list">
+              <li><strong>Exatas:</strong> encontre o passo errado / ache o número escondido / labirinto de operações.</li>
+              <li><strong>Humanas:</strong> ligue conceito→autor / caça-termos / “qual afirmação é falsa?”.</li>
+              <li><strong>Idiomas:</strong> encontre o falso cognato / complete a frase / caça-palavras com vocabulário.</li>
+              <li><strong>Edu infantil:</strong> achar diferenças / formas / cores / padrões.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p><strong>Substituições de copy (plug-and-play):</strong></p>
+        <ul class="list">
+          <li>“Fui [AÇÃO] e isso virou um jogo” → “Fui [AÇÃO] e virei participante do desafio.”</li>
+          <li>“Achei!” → “Tá aqui!” / “Não acredito…” / “Consegui!”</li>
+          <li>“O que eu ganho?” → “Isso vale ponto?” / “Tem prêmio?” / “Quem criou isso merece…”</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const copyBtn = document.getElementById('copyBtn');
+      const script = document.getElementById('script');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        window.clearTimeout(window.__t);
+        window.__t = window.setTimeout(()=>toast.classList.remove('show'), 1600);
+      }
+
+      copyBtn.addEventListener('click', async () => {
+        try{
+          script.select();
+          script.setSelectionRange(0, script.value.length);
+          await navigator.clipboard.writeText(script.value);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          try{
+            document.execCommand('copy');
+            showToast('Roteiro copiado.');
+          }catch(err){
+            showToast('Não consegui copiar automaticamente. Selecione e copie.');
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
