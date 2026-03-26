@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha Reproduzível — Reset produtivo</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0D1222;
+      --panel2:#0B1020;
+      --text:#EAF0FF;
+      --muted:#A7B0C7;
+      --line:rgba(255,255,255,.08);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --g1: linear-gradient(135deg, #22C55E 0%, #3B82F6 45%, #F59E0B 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(59,130,246,.18), rgba(245,158,11,.18));
+      --green:#22C55E;
+      --blue:#3B82F6;
+      --orange:#F59E0B;
+      --chip: rgba(255,255,255,.06);
+      --focus: 0 0 0 3px rgba(59,130,246,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(59,130,246,.18), transparent 55%),
+        radial-gradient(900px 600px at 85% 20%, rgba(245,158,11,.14), transparent 55%),
+        radial-gradient(900px 700px at 55% 90%, rgba(34,197,94,.12), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    a{color:inherit}
+
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 54px;
+    }
+
+    header{
+      position: relative;
+      padding: 20px;
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(18px);
+      opacity:.85;
+      pointer-events:none;
+    }
+
+    header > *{position:relative}
+
+    .toprow{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items:center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      align-items:center;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--chip);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .2px;
+    }
+
+    .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: var(--g1);
+    }
+
+    h1{
+      font-size: clamp(22px, 3.3vw, 34px);
+      margin: 0 0 10px;
+      letter-spacing: -0.5px;
+    }
+
+    .sub{
+      color: var(--muted);
+      margin: 0;
+      max-width: 76ch;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 600;
+      cursor:pointer;
+      transition: transform .05s ease, background .2s ease, border-color .2s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      white-space:nowrap;
+    }
+
+    .btn:hover{background: rgba(255,255,255,.085); border-color: rgba(255,255,255,.14)}
+    .btn:active{transform: translateY(1px)}
+    .btn:focus{outline:none; box-shadow: var(--focus)}
+
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(59,130,246,.18), rgba(245,158,11,.18));
+      border-color: rgba(255,255,255,.18);
+    }
+
+    .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 920px){
+      .grid{grid-template-columns: 1fr;}
+    }
+
+    .card{
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 50px rgba(0,0,0,.35);
+      padding: 16px;
+    }
+
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing: .2px;
+    }
+
+    .card p, .card li{color: var(--muted)}
+
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 520px){
+      .kpis{grid-template-columns: 1fr;}
+    }
+
+    .kpi{
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.2);
+      border: 1px solid var(--line);
+    }
+
+    .kpi .label{
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .kpi .value{
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section{
+      margin-top: 14px;
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.025));
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .sectionHeader{
+      padding: 14px 16px;
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+    }
+
+    .sectionHeader h3{
+      margin:0;
+      font-size: 14px;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+      color: #DDE6FF;
+    }
+
+    .sectionHeader .hint{
+      margin:0;
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 80ch;
+    }
+
+    .sectionBody{padding: 14px 16px;}
+
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 920px){
+      .cols{grid-template-columns: 1fr;}
+    }
+
+    .box{
+      padding: 14px;
+      border-radius: var(--radius);
+      background: rgba(7,10,18,.35);
+      border: 1px solid var(--line);
+    }
+
+    .box h4{
+      margin:0 0 10px;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    ul{margin: 10px 0 0 18px}
+    li{margin: 6px 0}
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: #D9E2FF;
+      background: rgba(255,255,255,.05);
+    }
+
+    .tag .b{
+      width:8px;height:8px;border-radius:999px;
+      background: var(--g1);
+    }
+
+    .script{
+      font-family: var(--mono);
+      font-size: 13px;
+      white-space: pre-wrap;
+      background: rgba(0,0,0,.25);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      color: #EAF0FF;
+    }
+
+    .hr{
+      height:1px;
+      background: var(--line);
+      margin: 12px 0;
+    }
+
+    .gradText{
+      background: var(--g1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .note{
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(59,130,246,.25);
+      background: rgba(59,130,246,.08);
+      color: #D9E5FF;
+      margin-top: 10px;
+    }
+
+    .muted{color: var(--muted)}
+    .small{font-size: 13px}
+
+    .footer{
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 0 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="meta">
+          <span class="chip"><span class="dot"></span><strong>Nicho:</strong>&nbsp;Produtividade</span>
+          <span class="chip"><strong>Dia:</strong>&nbsp;19</span>
+          <span class="chip"><strong>Formato:</strong>&nbsp;Carrossel</span>
+          <span class="chip"><strong>Pilar:</strong>&nbsp;Passo a passo</span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DViuk3mDAyE/" target="_blank" rel="noopener noreferrer">Ver post original</a>
+          <button class="btn btnPrimary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+      <h1><span class="gradText">Reset produtivo</span>: como recomeçar após uma semana ruim</h1>
+      <p class="sub">Modelo reproduzível (6 slides) que começa com acolhimento, gera clareza rápida e termina com um plano mínimo viável — ideal para aumentar <strong>salvamentos</strong> e <strong>compartilhamentos</strong>.</p>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Resumo</h2>
+        <div class="kpis">
+          <div class="kpi"><div class="label">Objetivo</div><div class="value">Tirar culpa → criar controle → voltar ao ritmo</div></div>
+          <div class="kpi"><div class="label">Estrutura</div><div class="value">Capa + 5 passos numerados</div></div>
+          <div class="kpi"><div class="label">Promessa</div><div class="value">Ação pequena + regra temporária + plano</div></div>
+        </div>
+        <div class="note small"><strong>Dica de performance:</strong> use <em>tempo específico</em> (10 min, 48h) e um <em>mantra</em> no final de cada slide para aumentar a sensação de conclusão.</div>
+      </div>
+
+      <div class="card">
+        <h2>Metadados para calendário</h2>
+        <ul>
+          <li><strong>Título curto:</strong> Reset produtivo: como recomeçar após uma semana ruim</li>
+          <li><strong>Instrução curta:</strong> Carrossel 6 slides (capa + 5 passos) com ações mínimas e CTA de salvar + comentar.</li>
+          <li><strong>Pilar:</strong> Passo a passo</li>
+          <li><strong>Formato:</strong> Carrossel</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="small muted">Este template foi desenhado para ser trocado por qualquer tema: foco, rotina, hábitos, organização, planejamento, procrastinação, autocuidado produtivo.</div>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="sectionHeader">
+        <div>
+          <h3>Estrutura</h3>
+          <p class="hint">Sequência persuasiva fixa: <strong>Permissão → Clareza → Ação mínima → Regra temporária → Plano de retorno</strong>.</p>
+        </div>
+        <span class="tag"><span class="b"></span>6 slides • 4:5 (1080×1350)</span>
+      </div>
+      <div class="sectionBody">
+        <div class="cols">
+          <div class="box">
+            <h4>Macro (reproduzível)</h4>
+            <ul>
+              <li><strong>Slide 1 (Capa):</strong> “Como [AÇÃO] depois de [SITUAÇÃO]”</li>
+              <li><strong>Slide 2:</strong> Passo 1 — permissão / normalização (sem culpa)</li>
+              <li><strong>Slide 3:</strong> Passo 2 — debrief curto (clareza sem ruminação)</li>
+              <li><strong>Slide 4:</strong> Passo 3 — ação mínima (controle rápido)</li>
+              <li><strong>Slide 5:</strong> Passo 4 — regra temporária (24–72h) para reduzir exigência</li>
+              <li><strong>Slide 6:</strong> Passo 5 — plano mínimo (3 itens) + CTA</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h4>Micro (o que cada slide precisa ter)</h4>
+            <ul>
+              <li><strong>Título</strong> (verbo + benefício)</li>
+              <li><strong>Label</strong> (regra simples em 1 linha)</li>
+              <li><strong>Bullets</strong> (2–5 ações escaneáveis)</li>
+              <li><strong>Mantra final</strong> (1 linha memorável)</li>
+            </ul>
+            <div class="note small"><strong>Regra:</strong> primeiro retire peso (culpa/exigência), depois peça ação. Isso aumenta adesão.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="roteiro">
+      <div class="sectionHeader">
+        <div>
+          <h3>Roteiro</h3>
+          <p class="hint">Texto pronto + campos substituíveis. Mantenha <strong>passos numerados</strong> e <strong>tempo específico</strong> para retenção.</p>
+        </div>
+        <span class="tag"><span class="b"></span>plug-and-play</span>
+      </div>
+      <div class="sectionBody">
+        <div class="script" id="scriptText">CARROSSEL — 6 SLIDES (Capa + 5 passos)
+
+[SLIDE 1 — CAPA]
+Título: Como [AÇÃO] depois de [SITUAÇÃO DOLOROSA]
+Subtítulo (opcional): Em 5 passos (sem se cobrar)
+
+[SLIDE 2 — PASSO 1 / PERMISSÃO]
+Título: Pause sem culpa
+Label: Pare de tentar [COMPORTAMENTO QUE PIORA] hoje.
+Bullets:
+- Faça uma pausa de [3–10] minutos (respira + água)
+- Diga: “eu só preciso recomeçar, não compensar”
+- Foque em regular energia antes de performance
+Mantra: Você não retoma o controle enquanto ainda está correndo.
+
+[SLIDE 3 — PASSO 2 / CLAREZA]
+Título: Debrief de 10 minutos
+Label: Reflita, não espiralize.
+Perguntas (responda em 1 linha cada):
+- O que realmente aconteceu?
+- O que estava no meu controle?
+- O que drenou mais energia?
+Mantra: Escrever tira peso da cabeça.
+
+[SLIDE 4 — PASSO 3 / AÇÃO MÍNIMA]
+Título: Organize UMA coisa pequena
+Label: Resete o ambiente primeiro.
+Bullets (escolha 3):
+- Limpe a mesa por 5 min OU abra a agenda
+- Feche abas + organize downloads (o mínimo)
+- Liste 3 tarefas pequenas para amanhã
+Mantra: Espaço livre, mente mais leve.
+
+[SLIDE 5 — PASSO 4 / REGRA TEMPORÁRIA]
+Título: Abaixe a barra por 48 horas
+Label: Esforço mínimo viável.
+Foco (marque o que vale para você):
+- 1 prioridade por dia (no máximo 2)
+- sono / comida / água
+- 1 bloco sem tela
+- movimento leve (10–20 min)
+Mantra: Consistência &gt; perfeição.
+
+[SLIDE 6 — PASSO 5 / PLANO DE RETORNO]
+Título: Volte devagar (com um plano simples)
+Label: Pequenas promessas = confiança de volta.
+Instrução: Escolha 3 coisas que fariam amanhã ser um sucesso:
+1) 1 compromisso fixo (o que já está no calendário)
+2) 1 tarefa importante (a que destrava o resto)
+3) 1 tarefa rápida (para ganhar momentum)
+Pro tip: Coloque buffer de 15 min entre blocos.
+CTA: Salve para usar na próxima semana difícil. Comente “RESET” que eu envio um checklist em PDF.</div>
+
+        <div class="note small"><strong>Adaptação rápida:</strong> troque [AÇÃO] e [SITUAÇÃO] da capa, e substitua os bullets por ações do seu tema mantendo a mesma ordem emocional (acolher → clarear → agir pequeno → reduzir exigência → planejar).</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionHeader">
+        <div>
+          <h3>Slides sugeridos (1..6)</h3>
+          <p class="hint">Sugestão de conteúdo por slide para produção no Canva/Figma com consistência visual.</p>
+        </div>
+        <span class="tag"><span class="b"></span>carrossel 4:5</span>
+      </div>
+      <div class="sectionBody">
+        <div class="cols">
+          <div class="box">
+            <h4>Slides 1–3</h4>
+            <ul>
+              <li><strong>1:</strong> Capa com promessa (texto grande + 1 detalhe visual “editorial”).</li>
+              <li><strong>2:</strong> Step 1 (Permissão) — 3 bullets + mantra.</li>
+              <li><strong>3:</strong> Step 2 (Clareza) — 3 perguntas + frase “sem ruminar”.</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h4>Slides 4–6</h4>
+            <ul>
+              <li><strong>4:</strong> Step 3 (Ação mínima) — “organize UMA coisa”.</li>
+              <li><strong>5:</strong> Step 4 (Regra 48h) — checklist de foco mínimo viável.</li>
+              <li><strong>6:</strong> Step 5 (Plano) — framework 3 itens + CTA (salvar/comentar).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionHeader">
+        <div>
+          <h3>Elementos visuais</h3>
+          <p class="hint">Identidade sugerida: fundo escuro high-tech (para esta ficha) e estética editorial/calminha no post (para maximizar salvamentos).</p>
+        </div>
+        <span class="tag"><span class="b"></span>consistência visual</span>
+      </div>
+      <div class="sectionBody">
+        <div class="cols">
+          <div class="box">
+            <h4>Direção de arte (post)</h4>
+            <ul>
+              <li>Background com foto “vida real” (mesa, café, planner, cama arrumando).</li>
+              <li>Card central com cantos 16–24px + sombra leve.</li>
+              <li>“Step 1…5” como etiqueta fixa no canto (progressão).</li>
+              <li>Paleta neutra (bege/off-white/cinza) + 1 cor de destaque.</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h4>Guia rápido (Canva/Figma)</h4>
+            <ul>
+              <li>Tamanho: 1080×1350 (4:5).</li>
+              <li>Hierarquia: Título (100%), label (60%), bullets (65%), mantra (60% itálico).</li>
+              <li>Fontes: serif na capa (Playfair/Cormorant) + sans no conteúdo (Inter/Montserrat).</li>
+              <li>Espaçamento: margens internas do card 40–56px; bullets bem respirados.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionHeader">
+        <div>
+          <h3>Copy e ganchos</h3>
+          <p class="hint">Copys curtas, gentis e específicas. Use “como” + situação emocional reconhecível.</p>
+        </div>
+        <span class="tag"><span class="b"></span>ganchos prontos</span>
+      </div>
+      <div class="sectionBody">
+        <div class="cols">
+          <div class="box">
+            <h4>Ganchos (capa) — substituíveis</h4>
+            <ul>
+              <li>Como retomar o foco depois de uma semana caótica</li>
+              <li>Como sair do modo apagar incêndio em 5 passos</li>
+              <li>Como voltar à rotina depois de doença/viagem</li>
+              <li>Como planejar a semana quando você está sem energia</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h4>Frases âncora (mantras) — alto impacto</h4>
+            <ul>
+              <li>Você não precisa compensar. Você precisa recomeçar.</li>
+              <li>Clareza antes de cobrança.</li>
+              <li>Uma ação pequena cria tração.</li>
+              <li>Consistência &gt; perfeição.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="note small"><strong>Checklist de copy:</strong> (1) tem um tempo específico? (2) dá permissão? (3) tem 1 micro-ação imediata? (4) fecha com mantra?</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionHeader">
+        <div>
+          <h3>CTA</h3>
+          <p class="hint">Escolha 1 CTA principal + 1 secundário. Evite excesso para não perder conversão.</p>
+        </div>
+        <span class="tag"><span class="b"></span>salvar • comentar • compartilhar</span>
+      </div>
+      <div class="sectionBody">
+        <div class="cols">
+          <div class="box">
+            <h4>CTAs prontos (engajamento)</h4>
+            <ul>
+              <li><strong>Salvar:</strong> “Salve para usar na próxima semana difícil.”</li>
+              <li><strong>Comentário:</strong> “Qual passo você vai fazer hoje: 1, 2, 3, 4 ou 5?”</li>
+              <li><strong>Compartilhar:</strong> “Envie para alguém que precisa de um reset.”</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h4>CTAs prontos (captura / oferta)</h4>
+            <ul>
+              <li><strong>Lead:</strong> “Comente ‘RESET’ que eu envio o checklist em PDF.”</li>
+              <li><strong>Direct:</strong> “Quer adaptar isso para sua rotina? Me chama no direct.”</li>
+              <li><strong>Produto:</strong> “Quer um plano de retomada personalizado? Link na bio.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionHeader">
+        <div>
+          <h3>Checklist</h3>
+          <p class="hint">Lista de produção para tornar o post realmente reproduzível (conteúdo + design + publicação).</p>
+        </div>
+        <span class="tag"><span class="b"></span>produção</span>
+      </div>
+      <div class="sectionBody">
+        <div class="cols">
+          <div class="box">
+            <h4>Checklist de criação (conteúdo)</h4>
+            <ul>
+              <li>Definir [AÇÃO] e [SITUAÇÃO] em 1 frase (capa).</li>
+              <li>Passo 1: 1 frase de permissão + 3 bullets.</li>
+              <li>Passo 2: 3 perguntas objetivas (1 linha cada).</li>
+              <li>Passo 3: 3 micro-ações (5–10 min).</li>
+              <li>Passo 4: regra temporária (24–72h) com 4 itens.</li>
+              <li>Passo 5: framework “3 coisas” + 1 pro tip.</li>
+              <li>Inserir mantra no fim de cada slide.</li>
+              <li>Escolher 1 CTA principal + palavra-chave (ex.: “RESET”).</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h4>Checklist de design (carrossel)</h4>
+            <ul>
+              <li>Criar componente “card central” e duplicar para slides 2–6.</li>
+              <li>Fixar etiqueta “Step 1…5” no mesmo lugar.</li>
+              <li>Manter contraste alto (legibilidade no mobile).</li>
+              <li>Padronizar: títulos curtos, bullets com 5–9 palavras.</li>
+              <li>Exportar em 1080×1350 (PNG/JPG qualidade alta).</li>
+            </ul>
+            <div class="hr"></div>
+            <h4>Checklist de publicação</h4>
+            <ul>
+              <li>Legenda: 1 parágrafo de acolhimento + resumo do passo a passo + CTA.</li>
+              <li>Hashtags (3–8) específicas do tema.</li>
+              <li>Primeiro comentário (opcional): repetir CTA “comente RESET”.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionHeader">
+        <div>
+          <h3>Variações</h3>
+          <p class="hint">Trocas de tema mantendo a mesma estrutura (mesmo impacto). Use as substituições sugeridas.</p>
+        </div>
+        <span class="tag"><span class="b"></span>adaptações</span>
+      </div>
+      <div class="sectionBody">
+        <div class="cols">
+          <div class="box">
+            <h4>Temas de produtividade (prontos para trocar)</h4>
+            <ul>
+              <li><strong>Procrastinação:</strong> “Como voltar a agir depois de travar”</li>
+              <li><strong>Planejamento:</strong> “Como planejar a semana quando tudo mudou”</li>
+              <li><strong>Foco:</strong> “Como recuperar o foco após dias fragmentados”</li>
+              <li><strong>Organização:</strong> “Como destralhar a mente quando a casa/rotina bagunça”</li>
+              <li><strong>Trabalho/estudo:</strong> “Como se recuperar de uma semana improdutiva sem virar a noite”</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h4>Substituições que preservam efeito (guia rápido)</h4>
+            <ul>
+              <li><strong>Tempo específico:</strong> 10 min → 7/12/15 min; 48h → 24/72h.</li>
+              <li><strong>Ação mínima:</strong> “organize mesa” → “limpe inbox” / “revise agenda” / “separe materiais”.</li>
+              <li><strong>Regra temporária:</strong> “1 prioridade/dia” → “2 blocos de 25min” / “apenas manutenção”.</li>
+              <li><strong>Plano 3 itens:</strong> (fixo/impacto/rápida) → (energia alta/média/baixa) ou (hoje/amanhã/esta semana).</li>
+              <li><strong>Mantra:</strong> “consistência &gt; perfeição” → “feito é melhor que perfeito” (sem romantizar excesso).</li>
+            </ul>
+            <div class="note small"><strong>Regra de ouro:</strong> se você mudar o tema, não mude a ordem emocional dos passos. É isso que faz o carrossel “pegar”.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">Cabeçalho exigido incluso (Nicho, Dia, Título, link do post original). HTML responsivo com botão “Copiar roteiro”.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+      function setLabel(msg){
+        const original = btn.textContent;
+        btn.textContent = msg;
+        setTimeout(()=> btn.textContent = original, 1300);
+      }
+      btn.addEventListener('click', async () => {
+        const content = text.innerText;
+        try{
+          await navigator.clipboard.writeText(content);
+          setLabel('Roteiro copiado');
+        }catch(e){
+          try{
+            const ta = document.createElement('textarea');
+            ta.value = content;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            ta.remove();
+            setLabel('Roteiro copiado');
+          }catch(err){
+            setLabel('Não foi possível copiar');
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
