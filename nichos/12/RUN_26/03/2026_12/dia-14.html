@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 14 — Novo professor na equipe</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.75);
+      --muted2:rgba(234,240,255,.6);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r12:12px;
+      --r16:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --g1: linear-gradient(90deg, #1EE7A8 0%, #2AA7FF 45%, #FFB55C 100%);
+      --g2: linear-gradient(135deg, rgba(30,231,168,.18), rgba(42,167,255,.16), rgba(255,181,92,.14));
+      --ok:#1EE7A8;
+      --warn:#FFB55C;
+      --info:#2AA7FF;
+      --focus: 0 0 0 3px rgba(42,167,255,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(900px 480px at 75% -10%, rgba(42,167,255,.25), transparent 60%),
+        radial-gradient(720px 420px at 12% 0%, rgba(30,231,168,.18), transparent 55%),
+        radial-gradient(820px 520px at 50% 110%, rgba(255,181,92,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      font-family:var(--sans);
+      line-height:1.35;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 44px}
+    header{
+      border:1px solid var(--stroke);
+      background: var(--g2);
+      border-radius: 18px;
+      padding:18px 18px 16px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background: radial-gradient(600px 140px at 20% 0%, rgba(30,231,168,.18), transparent 65%),
+                  radial-gradient(520px 140px at 70% 20%, rgba(42,167,255,.18), transparent 62%),
+                  radial-gradient(520px 160px at 90% 60%, rgba(255,181,92,.16), transparent 62%);
+      pointer-events:none;
+    }
+    .headgrid{position:relative;display:grid;gap:12px}
+    .topline{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      font-size:12px;
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.18);
+      border-radius:999px;
+      color:var(--muted);
+      backdrop-filter: blur(6px);
+    }
+    .title{
+      font-size:22px;
+      letter-spacing:.2px;
+      margin:0;
+    }
+    .subtitle{margin:0;color:var(--muted);font-size:13.5px}
+    .linkrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .link{
+      font-size:13px;
+      color:var(--muted);
+      text-decoration:none;
+      border-bottom:1px dashed rgba(234,240,255,.35);
+      padding-bottom:2px;
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      appearance:none;border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:650;
+      font-size:13px;
+      cursor:pointer;
+      transition:.15s transform, .15s background, .15s border;
+    }
+    .btn:hover{transform: translateY(-1px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+    .btn:focus{outline:none;box-shadow:var(--focus)}
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(30,231,168,.18), rgba(42,167,255,.14), rgba(255,181,92,.12));
+      border-color: rgba(255,255,255,.18);
+    }
+    main{margin-top:16px;display:grid;gap:14px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      border:1px solid var(--stroke);
+      background: var(--card);
+      border-radius: var(--r16);
+      padding:14px 14px 12px;
+      box-shadow: 0 10px 34px rgba(0,0,0,.35);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:.35px;
+      text-transform:uppercase;
+      color:rgba(234,240,255,.86);
+      display:flex;align-items:center;gap:10px;
+    }
+    .bar{
+      height:10px;width:10px;border-radius:3px;
+      background: var(--g1);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.04);
+      flex:0 0 auto;
+    }
+    .p{margin:0 0 10px;color:var(--muted);font-size:14px}
+    ul{margin:10px 0 0 18px;color:var(--muted);padding:0}
+    li{margin:6px 0}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+    @media (max-width:520px){.kpis{grid-template-columns:1fr}}
+    .kpi{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);
+      border-radius:14px;
+      padding:10px 10px;
+    }
+    .kpi .label{font-size:12px;color:var(--muted2)}
+    .kpi .value{font-size:13px;font-weight:720;margin-top:4px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      padding:8px 10px;border-radius:999px;
+      color:var(--muted);
+      font-size:12.5px;
+      margin:8px 8px 0 0;
+    }
+    .dot{width:8px;height:8px;border-radius:50%}
+    .dot.ok{background:var(--ok)}
+    .dot.info{background:var(--info)}
+    .dot.warn{background:var(--warn)}
+    .script{
+      font-family: var(--mono);
+      font-size:12.5px;
+      color: rgba(234,240,255,.86);
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding:12px;
+      white-space: pre-wrap;
+      overflow:auto;
+      line-height:1.45;
+    }
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .note{
+      font-size:12.5px;color:var(--muted2);
+      border-left:3px solid rgba(42,167,255,.55);
+      padding:8px 10px;margin:10px 0 0;
+      background:rgba(42,167,255,.06);
+      border-radius:10px;
+    }
+    .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:820px){.twoCol{grid-template-columns:1fr}}
+    .mini{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);
+      border-radius:14px;
+      padding:12px;
+    }
+    .mini h3{margin:0 0 8px;font-size:13px;color:rgba(234,240,255,.9)}
+    .mini p{margin:0;color:var(--muted);font-size:13.5px}
+    .checklist{margin:0;padding:0;list-style:none}
+    .checklist li{
+      display:flex;gap:10px;align-items:flex-start;
+      margin:8px 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .box{
+      width:18px;height:18px;border-radius:6px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.18);
+      flex:0 0 auto;
+      margin-top:1px;
+    }
+    .muted{color:var(--muted2)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headgrid">
+        <div class="topline">
+          <div class="chips">
+            <span class="chip">Nicho: <strong>Professores</strong></span>
+            <span class="chip">Dia: <strong>14</strong></span>
+            <span class="chip">Pilar: <strong>Autoridade</strong></span>
+            <span class="chip">Formato: <strong>Reels</strong></span>
+          </div>
+          <div class="actions">
+            <button class="btn btnPrimary" id="copyBtn" type="button">Copiar roteiro</button>
+            <a class="btn" href="https://www.instagram.com/p/DUB0dIuESk4/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          </div>
+        </div>
+        <div>
+          <h1 class="title">Novo professor na equipe: roteiro de anúncio que prende até o fim</h1>
+          <p class="subtitle">Estratégia replicável: suspense + provas rápidas + quebra de padrão com clipe + CTA comunitário.</p>
+        </div>
+        <div class="linkrow">
+          <a class="link" href="https://www.instagram.com/p/DUB0dIuESk4/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DUB0dIuESk4/</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid">
+        <section class="card">
+          <h2><span class="bar"></span>Resumo</h2>
+          <p class="p">Use um anúncio com “lacuna de informação”: você promete revelar a novidade, empilha 2–3 provas de autoridade sem dizer o nome e só então mostra o(a) novo(a) professor(a) em um clipe curto e energético. Fecha com um CTA único e comunitário (comentário/boas-vindas/palavra-chave).</p>
+          <div class="kpis">
+            <div class="kpi"><div class="label">Duração ideal</div><div class="value">18–28s</div></div>
+            <div class="kpi"><div class="label">Estrutura</div><div class="value">6 blocos (rápidos)</div></div>
+            <div class="kpi"><div class="label">Objetivo</div><div class="value">Retenção + confiança</div></div>
+          </div>
+          <div>
+            <span class="pill"><span class="dot info"></span>Segure o nome até o reveal</span>
+            <span class="pill"><span class="dot ok"></span>Liste 3 provas em frases de 1 linha</span>
+            <span class="pill"><span class="dot warn"></span>CTA único (sem “segue + curte + marca”)</span>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2><span class="bar"></span>Estrutura (sequência reproduzível)</h2>
+          <ul>
+            <li><strong>1) Hook:</strong> “Chegou a hora de revelar…” (sem nome)</li>
+            <li><strong>2) Por que importa:</strong> benefício direto para o aluno</li>
+            <li><strong>3) Provas rápidas (2–3):</strong> autoridade + valor humano + prova social</li>
+            <li><strong>4) Teaser / quebra:</strong> “Roda aí.” + transição</li>
+            <li><strong>5) Reveal:</strong> clipe do professor com bordão + promessa + para quem é</li>
+            <li><strong>6) Fechamento:</strong> CTA comunitário e simples</li>
+          </ul>
+          <p class="note"><strong>Regra de ouro:</strong> cada frase deve caber em 1 corte (1–2s). Se você precisar explicar, está longo.</p>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="row">
+          <h2 style="margin:0"><span class="bar"></span>Roteiro (pronto para gravar)</h2>
+          <span class="muted" style="font-size:12.5px">Preencha os campos entre colchetes</span>
+        </div>
+        <div class="script" id="scriptText">CENA 1 (1–2s) — câmera frontal, energia alta
+“Chegou a hora de revelar o(a) novo(a) professor(a) de [MATÉRIA/TEMA] aqui na [ESCOLA/PLATAFORMA].”
+
+CENA 2 (2–4s) — benefício em 1 frase
+“Isso vai deixar sua preparação [MAIS DIRECIONADA/MAIS COMPLETA/MAIS CLARA] — principalmente pra [OBJETIVO: ENEM/VESTIBULAR/PROVAS].”
+
+CENA 3 (6–9s) — 3 provas rápidas (1 linha cada)
+“Primeiro: [CREDENCIAL FORTE em 6–10 palavras].
+Segundo: [TRACO HUMANO: didática/energia/clareza].
+Terceiro: [PROVA SOCIAL: referência/reconhecido/resultados].”
+
+CENA 4 (1s) — quebra de padrão
+“Roda aí.”
+
+CENA 5 (5–8s) — clipe do(a) professor(a) (áudio limpo, alto)
+“Eu sou [NOME], professor(a) de [TEMA]. Se você quer [RESULTADO], vem comigo que eu vou te mostrar [O QUE VAI ACONTECER: aulas/prática/método].”
+
+CENA 6 (2–5s) — fechamento + CTA único
+“Comenta ‘[PALAVRA-CHAVE]’ pra dar boas-vindas e eu te mando [AULA 1/MATERIAL/CRONOGRAMA] (ou: link na bio). Tamo junto.”</div>
+        <p class="note"><strong>Dica de execução:</strong> se o clipe do professor tiver um bordão, use como “pico” de energia no meio do vídeo.</p>
+      </section>
+
+      <div class="twoCol">
+        <section class="card">
+          <h2><span class="bar"></span>Elementos visuais</h2>
+          <div class="mini">
+            <h3>Texto na tela (sugestão enxuta)</h3>
+            <ul>
+              <li>NOVIDADE NA EQUIPE</li>
+              <li>“Vou revelar…”</li>
+              <li>Mais preparação pra você</li>
+              <li>Referência na área</li>
+              <li>SURPRESA: Prof. [NOME]</li>
+              <li>Comenta “[PALAVRA]”</li>
+            </ul>
+          </div>
+          <div class="mini" style="margin-top:12px">
+            <h3>Edição (padrão high-retention)</h3>
+            <ul>
+              <li>Jump cuts a cada frase (1–2s por corte)</li>
+              <li>Palavras-chave destacadas (1 linha)</li>
+              <li>Whoosh leve no “Roda aí” + transição</li>
+              <li>Mini zoom-in no “revelar” e no “surpresa”</li>
+              <li>Legendas dinâmicas (sem poluição)</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2><span class="bar"></span>Copy e ganchos</h2>
+          <div class="mini">
+            <h3>Hooks (escolha 1)</h3>
+            <ul>
+              <li>“Chegou a hora de revelar quem entrou pra equipe…”</li>
+              <li>“Esse reforço vai mudar sua preparação — e hoje eu mostro quem é.”</li>
+              <li>“Vocês pediram e agora é oficial: tem um nome grande chegando.”</li>
+            </ul>
+          </div>
+          <div class="mini" style="margin-top:12px">
+            <h3>Provas (modelos prontos)</h3>
+            <ul>
+              <li><strong>Autoridade:</strong> “X anos”, “aprovou Y alunos”, “autor do método Z”</li>
+              <li><strong>Valor humano:</strong> “didática absurda”, “explica simples”, “energia lá em cima”</li>
+              <li><strong>Prova social:</strong> “referência”, “muito conhecido”, “aula viral”</li>
+            </ul>
+            <p class="note"><strong>Filtro:</strong> prova boa é específica OU muito reconhecível em 1 frase.</p>
+          </div>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2><span class="bar"></span>CTA</h2>
+        <p class="p"><strong>Escolha 1 CTA principal</strong> (o resto vira comentário fixado):</p>
+        <ul>
+          <li>“Comenta <strong>‘BEM-VINDO’</strong> pro(a) Prof. [NOME].”</li>
+          <li>“Quer a primeira aula? Escreve <strong>‘AULA’</strong>.”</li>
+          <li>“Comenta <strong>‘QUERO’</strong> que eu te mando o cronograma.”</li>
+          <li>“Marca um amigo que precisa de [TEMA].”</li>
+        </ul>
+        <p class="note"><strong>Comentário fixado (modelo):</strong> “Aula 1 + material gratuito: [link] — comenta ‘AULA’ que eu mando também.”</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Checklist de criação (operacional)</h2>
+        <div class="twoCol">
+          <div class="mini">
+            <h3>Pré-produção (10–20 min)</h3>
+            <ul class="checklist">
+              <li><span class="box"></span>Definir a novidade: [nome] + [matéria] + [para quem]</li>
+              <li><span class="box"></span>Escolher 1 benefício central (uma frase)</li>
+              <li><span class="box"></span>Listar 3 provas (autoridade, humano, social)</li>
+              <li><span class="box"></span>Pedir clipe 5–8s do professor (energia + bordão)</li>
+              <li><span class="box"></span>Definir palavra-chave do CTA (AULA / BEM-VINDO / QUERO)</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Gravação + edição (30–60 min)</h3>
+            <ul class="checklist">
+              <li><span class="box"></span>Gravar hook “vou revelar” (sem nome)</li>
+              <li><span class="box"></span>Gravar benefício em 1 frase (sem aula longa)</li>
+              <li><span class="box"></span>Gravar 3 provas (1 linha cada)</li>
+              <li><span class="box"></span>Corte “Roda aí” + transição com SFX leve</li>
+              <li><span class="box"></span>Inserir clipe do professor com áudio limpo</li>
+              <li><span class="box"></span>Nome só aparece no reveal (texto + fala)</li>
+              <li><span class="box"></span>Legendas dinâmicas + palavras destacadas</li>
+              <li><span class="box"></span>Publicar com CTA único + comentário fixado</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Variações (mesma lógica, outros usos)</h2>
+        <div class="twoCol">
+          <div class="mini">
+            <h3>Variação 1 — “Aula gratuita” (sem professor novo)</h3>
+            <p>Troque o reveal do professor pelo reveal do benefício: “Roda aí” → corte para trecho da aula (antes/depois, exercício, resolução).</p>
+            <ul>
+              <li>Provas: “tema mais cobrado”, “método”, “resultado de alunos”</li>
+              <li>CTA: “Comenta ‘AULA’ que eu mando o link”</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Variação 2 — “Novo módulo/curso”</h3>
+            <p>Segure o nome do curso até o reveal. Empilhe 3 razões (dor do aluno → solução → prova) e revele: “é o módulo [X]”.</p>
+            <ul>
+              <li>Provas: “o que mais reprova”, “o que mais cai”, “o que destrava”</li>
+              <li>CTA: “Escreve ‘QUERO’ pra receber a ementa”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const el = document.getElementById('scriptText');
+      function copyText(text){
+        if (navigator.clipboard && navigator.clipboard.writeText){
+          return navigator.clipboard.writeText(text);
+        }
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try{ document.execCommand('copy'); } catch(e) {}
+        document.body.removeChild(ta);
+        return Promise.resolve();
+      }
+      btn.addEventListener('click', async function(){
+        const text = el.innerText.trim();
+        const original = btn.textContent;
+        btn.textContent = 'Copiando…';
+        try{
+          await copyText(text);
+          btn.textContent = 'Roteiro copiado';
+        } finally {
+          setTimeout(()=> btn.textContent = original, 1400);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
