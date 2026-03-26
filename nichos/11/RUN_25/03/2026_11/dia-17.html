@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 17 — Produtividade</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B1226;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.08);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --good:#15D36B;
+      --blue:#3B82F6;
+      --orange:#F59E0B;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(59,130,246,.18), transparent 60%),
+        radial-gradient(900px 700px at 80% 20%, rgba(245,158,11,.16), transparent 55%),
+        radial-gradient(1000px 900px at 55% 95%, rgba(21,211,107,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 44px;}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--r20);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .headbar{
+      padding:18px 18px 14px;
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+
+    .kpis{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .pill{
+      font-size:12px;
+      letter-spacing:.2px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+
+    .pill strong{color:var(--text); font-weight:650}
+
+    .title{
+      padding:0 18px 18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+
+    h1{
+      margin:0;
+      font-size:26px;
+      line-height:1.15;
+      letter-spacing:-.4px;
+    }
+
+    .subtitle{color:var(--muted); font-size:14px; line-height:1.35; margin:0;}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.16)}
+
+    .btnPrimary{
+      border:0;
+      background: linear-gradient(90deg, rgba(21,211,107,.95), rgba(59,130,246,.95), rgba(245,158,11,.95));
+      color:#071013;
+      font-weight:750;
+    }
+
+    .btnLink{font-family:var(--mono); font-size:12px; color:var(--muted)}
+    .btnLink:hover{color:var(--text)}
+
+    main{margin-top:18px; display:grid; grid-template-columns: 1fr; gap:14px;}
+
+    @media (min-width: 940px){
+      main{grid-template-columns: 1.05fr .95fr; gap:14px; align-items:start;}
+      .right{position:sticky; top:16px;}
+    }
+
+    section.card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .cardHeader{
+      padding:14px 14px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+
+    .cardHeader h2{margin:0; font-size:14px; letter-spacing:.2px; color:var(--text)}
+    .tag{
+      font-size:11px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      background: rgba(0,0,0,.15);
+      white-space:nowrap;
+    }
+
+    .content{padding:14px; color:var(--muted); font-size:14px; line-height:1.5;}
+    .content p{margin:0 0 10px}
+    .content p:last-child{margin-bottom:0}
+
+    .grid2{display:grid; grid-template-columns: 1fr; gap:10px;}
+    @media (min-width: 520px){.grid2{grid-template-columns: 1fr 1fr;}}
+
+    .mini{
+      border:1px solid rgba(255,255,255,.09);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .mini h3{margin:0 0 6px; font-size:13px; color:var(--text)}
+    .mini p{margin:0; font-size:13px; color:var(--muted); line-height:1.45}
+
+    .gradMark{
+      width:10px; height:10px; border-radius:3px; display:inline-block; margin-right:8px;
+      background: linear-gradient(135deg, var(--good), var(--blue), var(--orange));
+      vertical-align:middle;
+    }
+
+    ol, ul{margin:10px 0 0 18px; padding:0}
+    li{margin:6px 0}
+
+    .codebox{
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.18));
+      border-radius: 16px;
+      padding:12px;
+      overflow:auto;
+    }
+
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      font-family: var(--mono);
+      font-size:12px;
+      line-height:1.5;
+      color: rgba(234,240,255,.86);
+    }
+
+    .hint{font-size:12px; color:var(--muted2); margin-top:10px}
+
+    .checklist{display:grid; grid-template-columns: 1fr; gap:10px;}
+    @media (min-width: 520px){.checklist{grid-template-columns: 1fr 1fr;}}
+
+    .check{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.09);
+      background: rgba(0,0,0,.14);
+    }
+    .box{
+      width:16px; height:16px; border-radius:4px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.04);
+      margin-top:2px;
+      flex:0 0 auto;
+    }
+
+    .muted{color:var(--muted2)}
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(10,14,28,.85);
+      color: var(--text);
+      font-size: 13px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(-2px)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headbar">
+        <div class="kpis">
+          <span class="pill"><strong>Nicho:</strong> Produtividade</span>
+          <span class="pill"><strong>Dia:</strong> 17</span>
+          <span class="pill"><strong>Formato:</strong> Carrossel</span>
+          <span class="pill"><strong>Pilar:</strong> Erro comum</span>
+        </div>
+        <div class="actions">
+          <a class="btn btnLink" href="https://www.instagram.com/p/DU-wsaXDsjl/" target="_blank" rel="noreferrer">Abrir post original ↗</a>
+          <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <div class="title">
+        <h1>7 hábitos “inocentes” que sabotam seu foco todo dia</h1>
+        <p class="subtitle">Carrossel reproduzível: capa com promessa + história curta + lista numerada (nome→exemplo→custo→punchline) + CTA com palavra-chave para comentários.</p>
+      </div>
+    </header>
+
+    <main>
+      <div class="left">
+        <section class="card">
+          <div class="cardHeader">
+            <h2><span class="gradMark"></span>Resumo</h2>
+            <span class="tag">O que este post faz</span>
+          </div>
+          <div class="content">
+            <p><strong>Ideia central:</strong> transformar comportamentos “normais” em <strong>erros invisíveis</strong> que custam foco/tempo/energia, e levar o público até um <strong>próximo passo simples</strong> (comentar uma palavra e receber um recurso/explicação).</p>
+            <div class="grid2" style="margin-top:12px">
+              <div class="mini">
+                <h3>Por que funciona</h3>
+                <p>Lista numerada cria “missão de completar”, a história reduz resistência, e a alternância visual (claro/escuro) mantém ritmo.</p>
+              </div>
+              <div class="mini">
+                <h3>Quando usar</h3>
+                <p>Para <strong>educar com impacto</strong>: foco, procrastinação, disciplina, gestão de tempo, hábitos, saúde mental no trabalho.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHeader">
+            <h2><span class="gradMark"></span>Estrutura</h2>
+            <span class="tag">Macro + lógica persuasiva</span>
+          </div>
+          <div class="content">
+            <p><strong>Sequência persuasiva (reproduzível):</strong></p>
+            <ol>
+              <li><strong>Familiaridade</strong>: “eu também fazia isso” (baixa defesa)</li>
+              <li><strong>Autoridade leve</strong>: “estudando/na prática eu percebi…”</li>
+              <li><strong>Reenquadramento</strong>: o comum vira sabotagem (custo invisível)</li>
+              <li><strong>Lista com exemplos cotidianos</strong>: fácil de se ver no texto</li>
+              <li><strong>Consequência clara</strong>: tempo/energia/ansiedade/irritação/resultado</li>
+              <li><strong>Ação simples</strong>: comentar/salvar/compartilhar</li>
+            </ol>
+            <p class="hint"><strong>Regra de ouro:</strong> cada slide precisa ser entendido em <strong>2–3 segundos</strong>.</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHeader">
+            <h2><span class="gradMark"></span>Slides sugeridos (1..10)</h2>
+            <span class="tag">Modelo preenchível</span>
+          </div>
+          <div class="content">
+            <ol>
+              <li><strong>Capa (hook + promessa)</strong><br><span class="muted">“X hábitos/coisas ‘inocentes’ que estão [verbo forte] sua [meta]” + “arraste →”</span></li>
+              <li><strong>Contexto pessoal</strong><br><span class="muted">“Eu achava normal [comportamento]. Minha rotina era: [3 exemplos].”</span></li>
+              <li><strong>Virada (tensão + alerta)</strong><br><span class="muted">“O que eu não via: isso estava me treinando para [problema]. Cuidado com estes X:”</span></li>
+              <li><strong>Item 1</strong>: Nome do hábito + exemplo + custo + punchline</li>
+              <li><strong>Item 2</strong>: Nome do hábito + exemplo + custo + punchline</li>
+              <li><strong>Item 3</strong>: Nome do hábito + exemplo + custo + punchline</li>
+              <li><strong>Item 4</strong>: Nome do hábito + exemplo + custo + punchline</li>
+              <li><strong>Item 5</strong>: Nome do hábito + exemplo + custo + punchline</li>
+              <li><strong>Itens 6 & 7 (compactação)</strong><br><span class="muted">Dois hábitos no mesmo slide para acelerar o fechamento.</span></li>
+              <li><strong>CTA</strong><br><span class="muted">“Quer o [recurso/roteiro]? Comente ‘[PALAVRA]’.” + reforço de salvar/compartilhar</span></li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="card" id="roteiro">
+          <div class="cardHeader">
+            <h2><span class="gradMark"></span>Roteiro</h2>
+            <span class="tag">Copiável + adaptável</span>
+          </div>
+          <div class="content">
+            <div class="codebox">
+              <pre id="scriptText">CARROSSEL (10 slides) — TEMPLATE PREENCHÍVEL
+
+SLIDE 1 — CAPA (HOOK)
+Título: “X [hábitos/coisas] ‘inocentes’ que estão [VERBO FORTE] sua/seu [META/RESULTADO]”
+Sub: “arraste →”
+
+SLIDE 2 — CONTEXTO (CONEXÃO)
+“Eu achava que [COMPORTAMENTO] era normal.
+Eu fazia isso: [EXEMPLO 1], [EXEMPLO 2], [EXEMPLO 3].”
+
+SLIDE 3 — VIRADA (ALERTA + PROMESSA)
+“O que eu não via: isso estava me treinando para [PROBLEMA].
+Cuidado com estes X [hábitos/coisas]:”
+
+SLIDE 4 — #1 (NOME → EXEMPLO → CUSTO → PUNCHLINE)
+“1) [NOME DO HÁBITO em 3–6 palavras]
+Ex.: [SITUAÇÃO 1] / [SITUAÇÃO 2]
+Preço: [CUSTO em tempo/energia/foco]
+Punchline: [FRASE curta memorável]”
+
+SLIDE 5 — #2
+“2) [NOME]
+Ex.: …
+Preço: …
+Punchline: …”
+
+SLIDE 6 — #3
+“3) [NOME]
+Ex.: …
+Preço: …
+Punchline: …”
+
+SLIDE 7 — #4
+“4) [NOME]
+Ex.: …
+Preço: …
+Punchline: …”
+
+SLIDE 8 — #5 (pode ter “explicação de mecanismo”)
+“5) [NOME]
+Ex.: …
+Preço: …
+Mecanismo (1 linha): [por que isso puxa seu foco]
+Punchline: …”
+
+SLIDE 9 — #6 e #7 (COMPACTO)
+“6) [NOME] → [CUSTO em 1 linha]
+7) [NOME] → [CUSTO em 1 linha]
+Fecho: ‘Parece pouco. Repetido, vira padrão.’”
+
+SLIDE 10 — CTA (AÇÃO SIMPLES)
+“Quer o [CHECKLIST/TEMPLATE/PASSO A PASSO]?
+Comente: ‘[PALAVRA-CHAVE]’
+(+) Salve para revisar amanhã.”
+
+NOTAS DE COPY (para manter o impacto)
+- Frases curtas. 1 ideia por bloco.
+- Use 1 tríade memorável (ex.: “tempo, energia e irritação”).
+- Evite jargão; use “custo invisível”.
+- Mantenha o tom: conversa direta + alerta cuidadoso.</pre>
+            </div>
+            <p class="hint">Dica: substitua os campos em [colchetes] e mantenha o mesmo ritmo (lista + punchline).</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHeader">
+            <h2><span class="gradMark"></span>Elementos visuais</h2>
+            <span class="tag">Direção de arte + UX do carrossel</span>
+          </div>
+          <div class="content">
+            <p><strong>Ritmo visual (alternância):</strong> intercale 2 estilos para evitar monotonia.</p>
+            <div class="grid2" style="margin-top:10px">
+              <div class="mini">
+                <h3>Sistema A — Card claro sobre foto</h3>
+                <p>Foto lifestyle + card claro com bordas suaves. Ícone “janela” (3 bolinhas) no canto. Texto escuro e centralizado.</p>
+              </div>
+              <div class="mini">
+                <h3>Sistema B — Fundo escuro editorial</h3>
+                <p>Fundo escuro com textura muito sutil. Texto off-white. Realce com faixa translúcida por trás da frase principal.</p>
+              </div>
+            </div>
+            <p style="margin-top:10px"><strong>Regras rápidas:</strong></p>
+            <ul>
+              <li>Formato 1080×1350 (4:5), margem segura 80–110px.</li>
+              <li>Texto centralizado e escaneável.</li>
+              <li>Destaque 1–3 palavras por slide (bold/faixa), não mais.</li>
+              <li>Capa com seta “→” e promessa clara (número + verbo forte + alvo).</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHeader">
+            <h2><span class="gradMark"></span>Copy e ganchos</h2>
+            <span class="tag">Fórmulas prontas</span>
+          </div>
+          <div class="content">
+            <p><strong>Fórmulas de capa (substituíveis):</strong></p>
+            <ul>
+              <li>“X hábitos ‘inocentes’ que estão <strong>sabotando</strong> sua [meta]”</li>
+              <li>“X coisas que parecem normais, mas <strong>roubam</strong> seu [recurso] todo dia”</li>
+              <li>“X erros silenciosos que estão <strong>matando</strong> sua [rotina/resultado]”</li>
+              <li>“X micro-hábitos que estão te <strong>treinando</strong> para [problema]”</li>
+            </ul>
+            <p><strong>Ganchos para slide 2–3 (conexão + virada):</strong></p>
+            <ul>
+              <li>“Eu achava normal… até perceber o custo.”</li>
+              <li>“Parece inofensivo, mas repete e vira padrão.”</li>
+              <li>“Você não ‘perde tempo’. Você treina seu cérebro para perder tempo.”</li>
+            </ul>
+            <p><strong>Modelo de item (mantém retenção):</strong></p>
+            <ul>
+              <li><strong>Nome</strong> do hábito (curto)</li>
+              <li><strong>Exemplos</strong> do cotidiano (2–3)</li>
+              <li><strong>Custo</strong> (tempo/energia/clareza/ansiedade)</li>
+              <li><strong>Punchline</strong> (1 frase que dá “clique”)</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <div class="right">
+        <section class="card">
+          <div class="cardHeader">
+            <h2><span class="gradMark"></span>CTA</h2>
+            <span class="tag">Engajamento + lead</span>
+          </div>
+          <div class="content">
+            <p><strong>CTA principal (padrão):</strong> comentário com palavra-chave para entregar recurso.</p>
+            <ul>
+              <li>“Comente <strong>FOCO</strong> que eu te mando o checklist.”</li>
+              <li>“Comente <strong>ROTINA</strong> para receber o template.”</li>
+              <li>“Comente <strong>ANTI</strong> e eu te mando um plano de 7 dias.”</li>
+            </ul>
+            <p><strong>CTA secundário (reforço):</strong> “Salve para revisar amanhã” + “Envie para alguém do ‘só um minutinho’.”</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHeader">
+            <h2><span class="gradMark"></span>Checklist</h2>
+            <span class="tag">Criação auditável</span>
+          </div>
+          <div class="content">
+            <div class="checklist">
+              <div class="check"><span class="box"></span><div><strong>Número (5–9)</strong><div class="muted">Cria “missão de completar”</div></div></div>
+              <div class="check"><span class="box"></span><div><strong>Verbo forte</strong><div class="muted">“sabotando/roubando/matando/treinando”</div></div></div>
+              <div class="check"><span class="box"></span><div><strong>História/observação</strong><div class="muted">“eu achava normal…”</div></div></div>
+              <div class="check"><span class="box"></span><div><strong>Virada clara</strong><div class="muted">Normal → custo invisível</div></div></div>
+              <div class="check"><span class="box"></span><div><strong>Itens com 4 partes</strong><div class="muted">nome→exemplo→custo→punchline</div></div></div>
+              <div class="check"><span class="box"></span><div><strong>Alternância visual</strong><div class="muted">claro/escuro para ritmo</div></div></div>
+              <div class="check"><span class="box"></span><div><strong>Poucas palavras</strong><div class="muted">entender em 2–3s</div></div></div>
+              <div class="check"><span class="box"></span><div><strong>CTA simples</strong><div class="muted">1 ação: comentar/salvar</div></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHeader">
+            <h2><span class="gradMark"></span>Variações</h2>
+            <span class="tag">Mesma estrutura, outros temas</span>
+          </div>
+          <div class="content">
+            <p><strong>Substituições que mantêm impacto (plug-and-play):</strong></p>
+            <ul>
+              <li><strong>Alvo do título</strong>: foco → energia → disciplina → criatividade → consistência</li>
+              <li><strong>Verbo forte</strong>: sabotando → roubando → drenando → travando → atrasando</li>
+              <li><strong>“Inocentes”</strong>: pequenos → comuns → diários → imperceptíveis → disfarçados</li>
+              <li><strong>Autoridade</strong>: “na prática” / “com clientes” / “depois de testar por 30 dias”</li>
+            </ul>
+            <p><strong>3 temas prontos para aplicar agora (mesmo formato):</strong></p>
+            <ul>
+              <li><strong>Planejamento semanal</strong>: “7 erros que fazem seu planejamento falhar até terça”</li>
+              <li><strong>Procrastinação</strong>: “7 gatilhos ‘besta’ que te jogam no modo fuga”</li>
+              <li><strong>Trabalho profundo</strong>: “7 hábitos que quebram seu deep work sem você perceber”</li>
+            </ul>
+            <p class="hint">Se quiser aumentar conversão: prometa um recurso específico no CTA (checklist/planilha/template) e entregue no DM.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div class="toast" id="toast">Roteiro copiado.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=> toast.classList.remove('show'), 1400);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = textEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado (modo compatível).');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
