@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 9 — Produtividade — Desafio 100 microações</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.085);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.58);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --g1: linear-gradient(92deg, #20E3B2 0%, #57C7FF 48%, #FFB15A 100%);
+      --g2: linear-gradient(140deg, rgba(32,227,178,.22), rgba(87,199,255,.18), rgba(255,177,90,.16));
+      --ok:#20E3B2;
+      --warn:#FFB15A;
+      --info:#57C7FF;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 10% -10%, rgba(87,199,255,.18), transparent 55%),
+        radial-gradient(900px 600px at 110% 10%, rgba(32,227,178,.14), transparent 55%),
+        radial-gradient(800px 600px at 50% 120%, rgba(255,177,90,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      letter-spacing: .1px;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 54px}
+
+    .header{
+      border:1px solid var(--stroke);
+      background: var(--g2);
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow);
+      padding:20px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      filter: blur(22px);
+      opacity:.18;
+      pointer-events:none;
+    }
+
+    .topline{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; position:relative}
+
+    .chips{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.24);
+      border:1px solid rgba(255,255,255,.14);
+      font-size:12px;
+      color: var(--muted);
+      backdrop-filter: blur(8px);
+    }
+    .dot{width:8px;height:8px;border-radius:50%}
+    .dot.ok{background:var(--ok)}
+    .dot.info{background:var(--info)}
+    .dot.warn{background:var(--warn)}
+
+    .title{
+      margin:12px 0 6px;
+      font-size: clamp(20px, 3.2vw, 30px);
+      line-height: 1.15;
+      position:relative;
+    }
+    .subtitle{color:var(--muted); margin:0; font-size:14px; line-height:1.5; position:relative}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; position:relative}
+    .btn{
+      border-radius: 12px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.2)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(32,227,178,.18), rgba(87,199,255,.14));
+      border-color: rgba(87,199,255,.25);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:16px;
+    }
+    @media (min-width: 920px){
+      .grid{grid-template-columns: 1.05fr .95fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.055);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 0;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .card h2{margin:0; font-size:14px; color:rgba(234,240,255,.92); letter-spacing:.2px}
+    .badge{
+      font-family: var(--mono);
+      font-size: 11px;
+      padding:6px 8px;
+      border-radius: 10px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      color: var(--muted);
+    }
+    .card .bd{padding:12px 14px 14px}
+    .muted{color: var(--muted)}
+    .muted2{color: var(--muted2)}
+
+    .list{margin:0; padding-left: 18px; color: var(--muted); line-height:1.55}
+    .list li{margin:6px 0}
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin: 12px 0;
+    }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      border-radius: var(--radius2);
+      padding:12px 12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .callout:before{
+      content:"";
+      position:absolute;
+      left:-20%; top:-60%;
+      width:70%; height:220%;
+      background: var(--g1);
+      opacity:.10;
+      filter: blur(18px);
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+    .callout .k{font-family: var(--mono); font-size:11px; color: var(--muted2)}
+    .callout .v{margin-top:6px; color: var(--text); line-height:1.55}
+
+    .script{
+      background: rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: var(--radius);
+      padding:14px;
+      font-family: var(--mono);
+      color: rgba(234,240,255,.88);
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .twoCol{display:grid; grid-template-columns:1fr; gap:10px}
+    @media (min-width: 920px){
+      .twoCol{grid-template-columns:1fr 1fr}
+    }
+
+    .pillrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .pill{
+      padding:7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footerNote{margin-top:14px; color: var(--muted2); font-size:12px; line-height:1.6}
+
+    .link{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+    }
+    .link span{font-family: var(--mono); font-size:11px; opacity:.9}
+
+    .okText{color: rgba(32,227,178,.95)}
+    .infoText{color: rgba(87,199,255,.95)}
+    .warnText{color: rgba(255,177,90,.95)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="topline">
+        <div class="chips">
+          <div class="chip"><span class="dot info"></span><strong>Nicho:</strong>&nbsp;Produtividade</div>
+          <div class="chip"><span class="dot ok"></span><strong>Dia:</strong>&nbsp;9</div>
+          <div class="chip"><span class="dot warn"></span><strong>Formato:</strong>&nbsp;Reels</div>
+          <div class="chip"><strong>Pilar:</strong>&nbsp;Passo a passo</div>
+        </div>
+        <div class="actions">
+          <a class="link" href="https://www.instagram.com/p/DVt7PpHkrq1/" target="_blank" rel="noopener noreferrer"><span>Post original</span>↗</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+
+      <h1 class="title">Desafio 100 microações: transforme metas em um jogo (10x10)</h1>
+      <p class="subtitle">Modelo reproduzível para gravar em 25–45s: meta numérica + tabela visual + regra simples + objeções reduzidas + CTA de salvar/comentar.</p>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <div class="badge">O que entregar em 1 Reel</div>
+        </div>
+        <div class="bd">
+          <div class="callout">
+            <div class="k">Ideia central</div>
+            <div class="v">Pegue uma meta grande e <span class="infoText">converta em 100 microações</span> com uma grade (10x10). Cada quadrado marcado = progresso visível. O final é inevitável se completar.</div>
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Promessa:</strong> você não precisa de motivação; precisa de um sistema simples, visual e flexível.</li>
+            <li><strong>Mecanismo:</strong> microcompromissos + gamificação + resultado claro.</li>
+            <li><strong>Objeção dissolvida:</strong> sem prazo fixo (faça no seu ritmo).</li>
+          </ul>
+          <div class="pillrow">
+            <div class="pill">Baixa fricção</div>
+            <div class="pill">Visual “top-down”</div>
+            <div class="pill">Números grandes na tela</div>
+            <div class="pill">Final previsível</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <div class="badge">Timing sugerido (25–45s)</div>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><strong>Hook (0–2s):</strong> desafio + meta numérica específica.</li>
+            <li><strong>Entrega imediata (2–6s):</strong> “vou te mostrar a tabela”.</li>
+            <li><strong>Como fazer (6–15s):</strong> grade + numeração + regra.</li>
+            <li><strong>Regra do jogo (15–25s):</strong> executar e marcar quadradinhos.</li>
+            <li><strong>Recompensa/resultado (25–30s):</strong> o que acontece quando completar.</li>
+            <li><strong>Redução de objeções (30–38s):</strong> sem prazo; adapte à rotina.</li>
+            <li><strong>CTA (38–45s):</strong> salvar + comentar palavra-chave + seguir.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Roteiro (reproduzível)</h2>
+          <div class="badge">Falas + texto na tela + cenas</div>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div>
+              <div class="callout">
+                <div class="k">Como usar</div>
+                <div class="v">Substitua os campos entre colchetes. Escolha uma meta que caiba em <span class="okText">1 unidade mensurável</span> (pomodoro, página, sessão, tarefa).</div>
+              </div>
+              <div class="hr"></div>
+              <div class="muted" style="font-size:13px; line-height:1.6;">
+                <strong>Meta exemplo (produtividade):</strong> “100 pomodoros para finalizar meu projeto”.<br/>
+                <strong>Alternativas:</strong> 50 sessões de estudo • 100 e-mails respondidos • 30 blocos de foco • 100 arquivos organizados.
+              </div>
+            </div>
+            <div>
+              <div class="callout">
+                <div class="k">Áudio/ritmo</div>
+                <div class="v">Cortes a cada 1–2s. Alternar <span class="infoText">rosto (hook/CTA)</span> ↔ <span class="warnText">mão desenhando/marcando</span>. SFX leve de caneta/check opcional.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div id="script" class="script">CENA 1 (0–2s) — ROSTO (camera frontal)
+TEXTO NA TELA: “Desafio: 100 [microações] → [resultado]”
+FALA: “Desafio rápido: 100 [microações] pra [resultado]. E eu vou te mostrar a tabela mais simples pra começar hoje.”
+
+CENA 2 (2–6s) — TOP-DOWN (mão + papel)
+TEXTO NA TELA: “Grade 10x10 = 100 quadradinhos”
+FALA: “Pega uma folha e faz uma grade 10 por 10. Isso vira 100 quadradinhos.”
+
+CENA 3 (6–12s) — TOP-DOWN (zoom leve)
+TEXTO NA TELA: “Numere 1–100”
+FALA: “Agora numera de 1 a 100.”
+
+CENA 4 (12–18s) — TOP-DOWN (apontar com a caneta)
+TEXTO NA TELA: “1 quadrado = 1 [unidade]”
+FALA: “Regra do jogo: cada número é 1 [unidade]. Exemplo: 1 pomodoro, 1 página lida, 1 tarefa fechada.”
+
+CENA 5 (18–26s) — B-ROLL (marcando 3–6 quadrados já feitos)
+TEXTO NA TELA: “Fez → marca. Simples.”
+FALA: “Fez a unidade? Você marca o quadradinho. É isso. Você enxerga seu progresso na hora.”
+
+CENA 6 (26–33s) — TOP-DOWN (mostrar a grade + apontar o ‘100’)
+TEXTO NA TELA: “Completou = [resultado final]”
+FALA: “Quando completar tudo, você chega em [resultado final]. O final fica previsível — e isso te dá consistência.”
+
+CENA 7 (33–38s) — ROSTO (objecção)
+TEXTO NA TELA: “Sem prazo. No seu ritmo.”
+FALA: “E o melhor: não tem prazo fixo. Faz no seu ritmo, conforme sua rotina.”
+
+CENA 8 (38–45s) — ROSTO + CLOSE na tabela
+TEXTO NA TELA: “Salva + comenta ‘TABELA’”
+FALA: “Salva esse Reel pra montar a sua hoje. E comenta ‘TABELA’ que eu faço uma versão pra [estudos/rotina/foco/organização] e te mando a ideia pronta.”</div>
+
+          <div class="footerNote">Dica de encaixe: grave primeiro todas as cenas top-down em sequência (mais rápido), depois grave o rosto (hook/CTA) e finalize com 1 take da tabela pronta como âncora visual.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <div class="badge">Retenção + estética</div>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Plano principal:</strong> top-down com mesa limpa, folha branca e caneta de ponta fina.</li>
+            <li><strong>Detalhes que prendem:</strong> close na numeração 1–100 e no ato de marcar quadradinhos.</li>
+            <li><strong>Textos:</strong> grandes e minimalistas; destaque números (10x10, 1–100, resultado).</li>
+            <li><strong>Final:</strong> mostrar grade parcialmente marcada + “sem prazo” na tela.</li>
+            <li><strong>Edição:</strong> jump cuts; zoom-in nos passos críticos; SFX suave (escrita/check).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <div class="badge">Modelos prontos</div>
+        </div>
+        <div class="bd">
+          <div class="callout">
+            <div class="k">Hook (escolha 1)</div>
+            <div class="v">
+              <ul class="list">
+                <li>“100 [microações] pra [resultado]. Quer a tabela pra começar hoje?”</li>
+                <li>“Se você fizer 1 quadradinho por dia, você chega em [resultado] sem perceber.”</li>
+                <li>“Uma grade 10x10 que transforma [meta] em um jogo.”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="k">Legenda (curta, direta)</div>
+            <div class="v"><strong>Você não precisa de motivação. Precisa de um sistema visual.</strong><br/>Faça uma grade 10x10, numere 1–100 e marque um quadradinho toda vez que fizer 1 [unidade].<br/><br/><span class="muted">Comenta “TABELA” + seu tema (estudos/rotina/foco) que eu adapto.</span></div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="k">Textos na tela (pack)</div>
+            <div class="v">
+              <div class="pillrow">
+                <div class="pill">Desafio: 100 ações → resultado</div>
+                <div class="pill">Grade 10x10</div>
+                <div class="pill">Numere 1–100</div>
+                <div class="pill">1 quadrado = 1 unidade</div>
+                <div class="pill">Fez → marca</div>
+                <div class="pill">Sem prazo</div>
+                <div class="pill">Salva + “TABELA”</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <div class="badge">Simples + alinhado</div>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Salvar (prioritário):</strong> “Salva pra fazer a sua grade hoje.”</li>
+            <li><strong>Comentário (palavra-chave):</strong> “Comenta ‘TABELA’ + seu objetivo que eu adapto.”</li>
+            <li><strong>Follow:</strong> “Segue pra mais sistemas simples de produtividade (sem depender de app).”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <div class="badge">Pré • Gravação • Edição • Publicação</div>
+        </div>
+        <div class="bd">
+          <div class="callout">
+            <div class="k">Pré-produção</div>
+            <div class="v">
+              <ul class="list">
+                <li>Definir meta: <strong>[N unidades]</strong> → <strong>[resultado específico]</strong>.</li>
+                <li>Escolher unidade clara: pomodoro / tarefa / página / sessão.</li>
+                <li>Definir grade: 10x10 (100) ou 5x20 (100) conforme o enquadramento.</li>
+                <li>Definir regra em 1 frase: “1 quadrado = 1 [unidade]”.</li>
+                <li>Separar cenário: mesa limpa, papel, caneta, luz lateral.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="k">Gravação</div>
+            <div class="v">
+              <ul class="list">
+                <li>70% top-down (desenhar, numerar, marcar).</li>
+                <li>30% rosto (hook + objeção “sem prazo” + CTA).</li>
+                <li>Gravar B-roll: marcar 5–10 quadradinhos já preenchidos (efeito progresso).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="k">Edição</div>
+            <div class="v">
+              <ul class="list">
+                <li>Cortes a cada 1–2s; remover pausas (jump cuts).</li>
+                <li>Textos grandes com números; zoom nos passos (10x10, 1–100, regra).</li>
+                <li>Final com a tabela visível por 1–2s + CTA (salvar/comentar).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="k">Publicação</div>
+            <div class="v">
+              <ul class="list">
+                <li>Primeira linha da legenda = a promessa (sistema visual).</li>
+                <li>Pinned comment: “Comenta ‘TABELA’ + seu objetivo que eu adapto.”</li>
+                <li>Hashtags (3–6): #produtividade #foco #rotina #habitos #estudos</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Variações (para fazer série)</h2>
+          <div class="badge">Mesma estrutura, outra meta</div>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="callout">
+              <div class="k">Variações de tema (plug-and-play)</div>
+              <div class="v">
+                <ul class="list">
+                  <li>“100 pomodoros → terminar o TCC/projeto.”</li>
+                  <li>“50 sessões de estudo → fechar [matéria].”</li>
+                  <li>“30 blocos de foco → tirar [projeto] do papel.”</li>
+                  <li>“100 arquivos organizados → desktop limpo.”</li>
+                  <li>“40 e-mails/semana → inbox zerada.”</li>
+                </ul>
+              </div>
+            </div>
+            <div class="callout">
+              <div class="k">Variações de gancho (troca rápida)</div>
+              <div class="v">
+                <ul class="list">
+                  <li>“Você só precisa começar pequeno: 1 quadradinho.”</li>
+                  <li>“Se você odeia planner, faz isso numa folha.”</li>
+                  <li>“Sem app. Sem fórmula. Só um jogo de progresso.”</li>
+                  <li>“Se a meta parece grande, você está olhando errado.”</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="footerNote">Sugestão de série: “Tabelas que resolvem (sem motivação)”. Faça 1 por semana mudando apenas a unidade (pomodoro, sessão, página, tarefa).</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const el = document.getElementById('script');
+      function copyText(txt){
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(txt);
+        }
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        ta.setAttribute('readonly','');
+        ta.style.position='absolute';
+        ta.style.left='-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        return Promise.resolve();
+      }
+      btn.addEventListener('click', async function(){
+        const txt = el ? el.innerText : '';
+        try{
+          await copyText(txt);
+          const old = btn.innerText;
+          btn.innerText = 'Roteiro copiado';
+          setTimeout(()=> btn.innerText = old, 1200);
+        }catch(e){
+          const old = btn.innerText;
+          btn.innerText = 'Falha ao copiar';
+          setTimeout(()=> btn.innerText = old, 1200);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
