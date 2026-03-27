@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 25 — Design Gráfico — Roteiro de Carrossel</title>
+  <style>
+    :root{
+      --bg:#070A0F;
+      --card:#0C1220;
+      --card2:#0A1020;
+      --text:#E8EEF8;
+      --muted:#A9B4C7;
+      --border:rgba(255,255,255,.10);
+      --border2:rgba(255,255,255,.14);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --grad: linear-gradient(90deg, #2DFF7A 0%, #30A8FF 45%, #FF9A2D 100%);
+      --green:#2DFF7A;
+      --blue:#30A8FF;
+      --orange:#FF9A2D;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(900px 520px at 10% -10%, rgba(45,255,122,.18), transparent 55%),
+        radial-gradient(900px 520px at 90% 0%, rgba(48,168,255,.18), transparent 55%),
+        radial-gradient(1000px 540px at 50% 110%, rgba(255,154,45,.14), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family:var(--sans);
+      line-height:1.45;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+
+    header{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:18px 18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--grad);
+      opacity:.12;
+      filter: blur(18px);
+      z-index:0;
+    }
+    header .row{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;position:relative;z-index:1;flex-wrap:wrap}
+    .badge{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--border2);
+      background: rgba(10,16,32,.55);
+      backdrop-filter: blur(10px);
+      font-family:var(--mono);
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--grad)}
+    h1{
+      margin:10px 0 6px;
+      font-size:22px;
+      letter-spacing:-.3px;
+      line-height:1.15;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      max-width:80ch;
+    }
+    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .btn{
+      appearance:none; border:1px solid var(--border2);
+      background: rgba(12,18,32,.65);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      text-decoration:none;
+      display:inline-flex; align-items:center; gap:10px;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.22); background: rgba(12,18,32,.85)}
+    .btn.primary{
+      border-color: rgba(45,255,122,.35);
+      background: linear-gradient(180deg, rgba(45,255,122,.18), rgba(12,18,32,.65));
+    }
+    .btn .ic{width:10px;height:10px;border-radius:3px;background:var(--grad)}
+    .grid{display:grid;grid-template-columns: 1.05fr .95fr; gap:14px; margin-top:14px}
+
+    .card{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .card:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(700px 220px at 10% 0%, rgba(45,255,122,.10), transparent 55%),
+                  radial-gradient(700px 220px at 90% 0%, rgba(48,168,255,.10), transparent 55%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .card > *{position:relative;z-index:1}
+
+    .section-title{
+      display:flex;align-items:center;gap:10px;
+      font-size:13px;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin:0 0 10px;
+    }
+    .section-title .bar{height:10px;width:46px;border-radius:999px;background:var(--grad);opacity:.95}
+
+    .pillrow{display:flex;flex-wrap:wrap;gap:8px}
+    .pill{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(10,16,32,.55);
+      color: var(--text);
+      font-size:13px;
+    }
+    .pill b{font-family:var(--mono);font-weight:700;color:rgba(232,238,248,.95)}
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    ul{margin:8px 0 0 18px;color:var(--text)}
+    li{margin:7px 0}
+    .muted{color:var(--muted)}
+
+    .codebox{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(7,10,15,.55);
+      border-radius: var(--radius2);
+      padding:14px;
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.45;
+      white-space:pre-wrap;
+      overflow:auto;
+    }
+
+    .kpi{
+      display:flex;gap:10px;flex-wrap:wrap;margin-top:10px
+    }
+    .kpi .item{
+      flex: 1;
+      min-width: 190px;
+      border:1px solid var(--border);
+      border-radius: 14px;
+      padding:12px;
+      background: rgba(10,16,32,.45);
+    }
+    .kpi .item .t{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:0 0 6px}
+    .kpi .item .v{margin:0;font-weight:700}
+
+    .full{grid-column: 1 / -1}
+
+    .slides{
+      counter-reset: slide;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .slide{
+      border:1px solid var(--border);
+      background: rgba(10,16,32,.52);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .slide h3{
+      margin:0 0 8px;
+      font-size:14px;
+      letter-spacing:-.2px;
+    }
+    .slide h3:before{
+      counter-increment: slide;
+      content: counter(slide) ". ";
+      color: rgba(232,238,248,.9);
+      font-family: var(--mono);
+      font-weight:700;
+    }
+    .slide .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+    .tag{
+      font-family: var(--mono);
+      font-size:12px;
+      padding:5px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--muted);
+      background: rgba(7,10,15,.35);
+    }
+
+    .footer-note{
+      padding:14px 16px;
+      border-radius: 18px;
+      border:1px solid var(--border);
+      background: rgba(12,18,32,.55);
+      margin-top:14px;
+      color: var(--muted);
+      font-size:13px;
+    }
+
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+      .two{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="row">
+        <div>
+          <div class="badge"><span class="dot"></span> Nicho: <b>Design Gráfico</b> &nbsp;|&nbsp; Dia: <b>25</b></div>
+          <h1>Chega de carrossel genérico: manifesto visual em 5 slides</h1>
+          <p class="sub">Roteiro reproduzível para um carrossel minimalista (alto contraste + tipografia pesada) com narrativa provocativa: hook → identificação → diagnóstico → causa/virada → punchline final compartilhável.</p>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DWUoleFlO0p/" target="_blank" rel="noopener noreferrer"><span class="ic"></span> Ver post original</a>
+          <button class="btn primary" id="copyBtn" type="button"><span class="ic"></span> Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="section-title"><span class="bar"></span> Resumo</div>
+        <div class="pillrow">
+          <div class="pill"><b>Formato</b>: Carrossel (5 slides)</div>
+          <div class="pill"><b>Pilar</b>: Mito vs Verdade (desconstrução do “conteúdo genérico”)</div>
+          <div class="pill"><b>Promessa</b>: gerar retenção com choque + ritmo + punch</div>
+        </div>
+        <div class="kpi">
+          <div class="item"><p class="t">Objetivo</p><p class="v">Interrupção de padrão + compartilhamento</p></div>
+          <div class="item"><p class="t">Tom (escolha 1)</p><p class="v">Agressivo / Irônico / “Amor duro” / Profissional</p></div>
+          <div class="item"><p class="t">Mecânica</p><p class="v">Frases curtas + lista de dores + clímax</p></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><span class="bar"></span> Estrutura</div>
+        <ul>
+          <li><b>Slide 1 — Hook</b>: frase gigante (pode cortar no enquadramento) para choque/curiosidade.</li>
+          <li><b>Slide 2 — Identificação/metalinguagem</b>: “esses [formatos/hábitos]…” (aproxima e prende).</li>
+          <li><b>Slide 3 — Diagnóstico</b>: lista curta (3–5 itens) com ritmo.</li>
+          <li><b>Slide 4 — Causa + convocação</b>: aponta origem do problema + chama para fazer diferente.</li>
+          <li><b>Slide 5 — Punch final</b>: imagem/ícone memeável + frase curtíssima (opcional).</li>
+        </ul>
+        <p class="muted" style="margin:10px 0 0">Leitura: Hook → Identificação → Dor → Causa → Convocação → “Soco visual”.</p>
+      </section>
+
+      <section class="card full">
+        <div class="section-title"><span class="bar"></span> Roteiro</div>
+        <div class="two">
+          <div>
+            <p style="margin:0 0 8px"><b>Blocos preenchíveis (substituições)</b></p>
+            <ul>
+              <li><b>[TEMA]</b>: o assunto (ex.: “portfólio”, “logos genéricos”, “posts educativos”).</li>
+              <li><b>[PRÁTICA]</b>: o que você critica (ex.: “usar sempre o mesmo template”).</li>
+              <li><b>[FORMATO/HÁBITO]</b>: o comportamento (ex.: “carrosséis iguais”, “reels copiados”).</li>
+              <li><b>[SINTOMAS]</b>: 3–5 adjetivos/efeitos (ex.: “previsível”, “sem contraste”, “sem ideia”).</li>
+              <li><b>[CAUSA/ORIGEM]</b>: a raiz (ex.: “medo de arriscar”, “falta de referência”).</li>
+              <li><b>[AÇÃO]</b>: o convite (ex.: “testar variações”, “estudar referência de verdade”).</li>
+            </ul>
+          </div>
+          <div>
+            <p style="margin:0 0 8px"><b>Regras de copy (para manter o impacto)</b></p>
+            <ul>
+              <li>1 ideia por slide. 1–2 frases no máximo (exceto lista do slide 3).</li>
+              <li>Verbos fortes e diretos (“pare”, “chega”, “vocês estão…”).</li>
+              <li>Use cortes de linha “poéticos” (quebra proposital para ritmo).</li>
+              <li>Escalada: cada slide sobe 1 nível de tensão até o 4.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="codebox" id="scriptText">TEMPLATE — CARROSSEL (5 SLIDES)
+
+SLIDE 1 — HOOK (H1 gigante, pode cortar)
+Texto (escolha 1):
+- CHEGA DE [TEMA/PRÁTICA].
+- VOCÊS ESTÃO ESTRAGANDO [TEMA].
+- [TEMA] FICOU CHATO. E EU POSSO PROVAR.
+Microtexto topo (opcional): UM CONTEÚDO POR [@SEUUSER]
+Elemento recorrente: * (ou outro marcador da sua identidade)
+
+SLIDE 2 — IDENTIFICAÇÃO / METALINGUAGEM (H2)
+Texto (modelos):
+- com esses [FORMATO/HÁBITO]… pelo amor.
+- todo mundo fazendo [FORMATO/HÁBITO] igual…
+- dá pra ver o template a 3 km de distância.
+
+SLIDE 3 — DIAGNÓSTICO (lista 3–5 itens)
+Estrutura:
+“[TEMA] já tá:
+- [SINTOMA 1],
+- [SINTOMA 2],
+- [SINTOMA 3],
+(…)
+e ninguém fala.”
+
+SLIDE 4 — CAUSA + CONVOCAÇÃO (clímax)
+Parte A (causa):
+- principalmente porque [CAUSA/ORIGEM].
+Parte B (convite):
+- ENTÃO VAMOS [AÇÃO]?
+Variações do convite:
+- vamos criar 3 versões antes de escolher 1.
+- vamos começar pela ideia, não pelo layout.
+- vamos estudar referência sem copiar.
+
+SLIDE 5 — PUNCH FINAL (imagem/ícone memeável)
+Visual: ícone/selo/sticker/gesto/objeto do nicho (simples, agressivo, memorável)
+Texto curto (opcional):
+- pronto. falei.
+- *
+- salva e evita passar vergonha.</div>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><span class="bar"></span> Elementos visuais</div>
+        <ul>
+          <li><b>Direção de arte</b>: minimalismo brutalista/digital (seco, sem sombra/sem textura).</li>
+          <li><b>Paleta</b>: 1 cor chapada “assinatura” + texto em alto contraste (preto ou quase preto).</li>
+          <li><b>Tipografia</b>: 1 sans grotesca (Inter/Helvetica/Space Grotesk). Pesos: Black/Bold + Regular.</li>
+          <li><b>Composição</b>: margens generosas (8–12%), muito espaço negativo.</li>
+          <li><b>Recurso-chave</b>: texto gigante cortado no frame (slide 1) para curiosidade.</li>
+          <li><b>Elemento recorrente</b>: “*” (pode ser ponto, quadrado, seta, carimbo, 01/05).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><span class="bar"></span> Copy e ganchos</div>
+        <p style="margin:0 0 8px"><b>Modelos de hook (substituições com mesmo impacto)</b></p>
+        <ul>
+          <li><b>Agressivo</b>: “CHEGA DE [X].” / “PARE DE [X] ASSIM.”</li>
+          <li><b>Polemizante</b>: “VOCÊS ESTÃO ESTRAGANDO [X].”</li>
+          <li><b>Prova</b>: “[X] FICOU CHATO. E EU POSSO PROVAR.”</li>
+          <li><b>Ironia</b>: “mais um [FORMATO] igualzinho… sério?”</li>
+        </ul>
+        <p class="muted" style="margin:10px 0 0">Dica: mesmo sem palavrão, mantenha a energia com verbos de corte e sentença curta.</p>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><span class="bar"></span> CTA</div>
+        <ul>
+          <li><b>Compartilhamento</b>: “Envia pra quem ainda faz [X].”</li>
+          <li><b>Salvamento</b>: “Salva pra lembrar na próxima criação.”</li>
+          <li><b>Comentário</b>: “Qual desses você mais vê por aí?”</li>
+          <li><b>Isca</b>: “Quer o template? Comenta ‘TEMPLATE’.”</li>
+        </ul>
+        <p class="muted" style="margin:10px 0 0">Escolha 1 CTA para não quebrar o clima de manifesto.</p>
+      </section>
+
+      <section class="card full">
+        <div class="section-title"><span class="bar"></span> Checklist</div>
+        <div class="two">
+          <div>
+            <p style="margin:0 0 8px"><b>Checklist de criação (design)</b></p>
+            <ul>
+              <li>[ ] Fundo chapado (1 cor forte) + contraste máximo no texto</li>
+              <li>[ ] 1 família sans (Bold/Black + Regular)</li>
+              <li>[ ] Margens 8–12% + bastante respiro</li>
+              <li>[ ] Slide 1 com texto cortado (oversize)</li>
+              <li>[ ] Elemento recorrente por slide (ex.: “*”)</li>
+              <li>[ ] Último slide com imagem/ícone simples e memorável</li>
+            </ul>
+          </div>
+          <div>
+            <p style="margin:0 0 8px"><b>Checklist de roteiro (conteúdo)</b></p>
+            <ul>
+              <li>[ ] Hook polarizante (sem explicar demais)</li>
+              <li>[ ] Metalinguagem/identificação (1–2 linhas)</li>
+              <li>[ ] Diagnóstico em lista (3–5 sintomas, palavras simples)</li>
+              <li>[ ] Causa clara + convocação prática</li>
+              <li>[ ] Punch final (memeável) + CTA discreto</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card full">
+        <div class="section-title"><span class="bar"></span> Variações</div>
+        <div class="slides">
+          <div class="slide">
+            <h3>Troca de tom (mesma estrutura, outro “sabor”)</h3>
+            <div class="meta">
+              <span class="tag">Agressivo →</span><span class="tag">Irônico leve →</span><span class="tag">Profissional →</span><span class="tag">Educativo</span>
+            </div>
+            <div class="muted">Substitua palavrões por verbos fortes e cortes curtos: “pare”, “chega”, “tá sabotando”, “não faz sentido”.</div>
+          </div>
+          <div class="slide">
+            <h3>Variação de estrutura (7 ou 10 slides)</h3>
+            <div class="meta"><span class="tag">+Slide</span><span class="tag">Aprofundamento</span></div>
+            <div class="muted">Insira entre o 3 e o 4: “o que isso causa” + “exemplo rápido” (antes/depois). Mantém retenção sem perder o manifesto.</div>
+          </div>
+          <div class="slide">
+            <h3>Substituições de elemento recorrente (no lugar do “*”)</h3>
+            <div class="meta"><span class="tag">Marca</span><span class="tag">Ritmo</span></div>
+            <div class="muted">Use: •, ■, →, 01/05, carimbo “CHEGA”, ou um mini-ícone do nicho (ex.: cursor, grid, lápis).</div>
+          </div>
+          <div class="slide">
+            <h3>Punch final sem ofensa (ainda memeável)</h3>
+            <div class="meta"><span class="tag">Share</span><span class="tag">Print</span></div>
+            <div class="muted">Troque gesto/choque por: selo “APROVADO/REPROVADO”, sticker “pronto, falei”, mini-pôster tipográfico, screenshot editado, ou ícone com escala absurda.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card full">
+        <div class="section-title"><span class="bar"></span> Slides sugeridos (1..5)</div>
+        <div class="slides">
+          <div class="slide">
+            <h3>Hook (texto gigante cortado)</h3>
+            <div class="meta"><span class="tag">H1</span><span class="tag">CORTADO</span><span class="tag">CHOQUE</span></div>
+            <div class="muted">Ex.: “CHEGA DE [TEMA]” ou “PARE DE [PRÁTICA]”. Assinatura pequena no topo.</div>
+          </div>
+          <div class="slide">
+            <h3>Identificação / metalinguagem</h3>
+            <div class="meta"><span class="tag">H2</span><span class="tag">IRONIA</span></div>
+            <div class="muted">Ex.: “com esses [FORMATOS/HÁBITOS]… sério?”. 1–2 linhas.</div>
+          </div>
+          <div class="slide">
+            <h3>Diagnóstico em lista (3–5)</h3>
+            <div class="meta"><span class="tag">LISTA</span><span class="tag">RITMO</span></div>
+            <div class="muted">Use palavras curtas e visuais: “previsível”, “flat”, “sem contraste”, “sem ideia”.</div>
+          </div>
+          <div class="slide">
+            <h3>Causa + convocação (clímax)</h3>
+            <div class="meta"><span class="tag">CAUSA</span><span class="tag">AÇÃO</span><span class="tag">VIRADA</span></div>
+            <div class="muted">“Principalmente porque [CAUSA]. Então vamos [AÇÃO]?”</div>
+          </div>
+          <div class="slide">
+            <h3>Punch final (imagem/ícone)</h3>
+            <div class="meta"><span class="tag">MEMEÁVEL</span><span class="tag">CTA DISCRETO</span></div>
+            <div class="muted">Imagem simples + frase final curta (“pronto, falei.”). Ideal para print/compartilhar.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer-note">
+      <b>Como adaptar para outro tema sem perder o impacto:</b> mantenha (1) hook polarizante curto, (2) lista de sintomas, (3) causa única, (4) convocação prática e (5) punch visual final. Troque apenas os placeholders ([TEMA], [SINTOMAS], [CAUSA], [AÇÃO]) e preserve o ritmo.
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+
+      async function copy(){
+        const value = text.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(value);
+          const old = btn.innerHTML;
+          btn.innerHTML = '<span class="ic"></span> Roteiro copiado';
+          setTimeout(()=>{ btn.innerHTML = old; }, 1400);
+        }catch(e){
+          // Fallback
+          const range = document.createRange();
+          range.selectNodeContents(text);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          document.execCommand('copy');
+          sel.removeAllRanges();
+          const old = btn.innerHTML;
+          btn.innerHTML = '<span class="ic"></span> Roteiro copiado';
+          setTimeout(()=>{ btn.innerHTML = old; }, 1400);
+        }
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
