@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 27 — Design Gráfico — Roteiro Carrossel</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.04);
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.56);
+      --shadow:0 12px 40px rgba(0,0,0,.55);
+      --r16:16px;
+      --r20:20px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+      --g1: linear-gradient(90deg, #2DFF7B 0%, #00C2FF 45%, #FF9A2A 100%);
+      --g2: radial-gradient(1200px 600px at 12% 10%, rgba(45,255,123,.22), transparent 55%),
+            radial-gradient(900px 520px at 90% 20%, rgba(0,194,255,.18), transparent 52%),
+            radial-gradient(900px 520px at 60% 96%, rgba(255,154,42,.14), transparent 55%);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 54px}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      border-radius:var(--r20);
+      padding:18px 18px 14px;
+      overflow:hidden;
+      position:relative;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      filter: blur(20px);
+      opacity:.18;
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1}
+
+    .topline{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin-bottom:10px;
+    }
+
+    .meta{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .pill{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.18);
+      padding:6px 10px;
+      border-radius:999px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      backdrop-filter: blur(6px);
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: var(--g1);
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size: clamp(18px, 2.4vw, 28px);
+      letter-spacing:-0.02em;
+      line-height:1.12;
+    }
+
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+    }
+
+    .linkrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-top:14px}
+    .link{
+      color:var(--muted);
+      text-decoration:none;
+      border-bottom:1px dashed rgba(234,240,255,.35);
+      padding-bottom:2px;
+    }
+    .link:hover{color:var(--text); border-bottom-color:rgba(234,240,255,.65)}
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--stroke2);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      box-shadow: 0 10px 25px rgba(0,0,0,.35);
+      transition: transform .12s ease, border-color .12s ease;
+    }
+    .btn:hover{transform: translateY(-1px); border-color:rgba(255,255,255,.22)}
+    .btn .spark{
+      width:10px; height:10px; border-radius:3px;
+      background: var(--g1);
+      display:inline-block;
+    }
+
+    main{margin-top:16px; display:grid; grid-template-columns: 1.1fr .9fr; gap:14px}
+    @media (max-width: 980px){ main{grid-template-columns:1fr;}}
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border-radius:var(--r20);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+
+    .card h2{
+      margin:0 0 10px;
+      font-size:15px;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+      color:rgba(234,240,255,.86);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .card h2 .bar{height:10px; width:54px; border-radius:999px; background: var(--g1); opacity:.9}
+
+    .card p, .card li{color:var(--muted); line-height:1.5; font-size:14px}
+    .card ul{margin:10px 0 0; padding-left:18px}
+
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width: 720px){ .grid2{grid-template-columns:1fr;}}
+
+    .kbd{
+      font-family:var(--mono);
+      font-size:12px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      padding:2px 8px;
+      border-radius:8px;
+      color:rgba(234,240,255,.85);
+    }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      border-radius: 16px;
+      padding:12px;
+      margin-top:10px;
+    }
+    .callout strong{color:rgba(234,240,255,.92)}
+
+    textarea{
+      width:100%;
+      min-height: 430px;
+      border-radius: 16px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.25);
+      color: rgba(234,240,255,.9);
+      padding:12px 12px;
+      line-height:1.5;
+      font-size:13px;
+      font-family: var(--mono);
+      outline:none;
+    }
+
+    .small{font-size:12px; color:var(--muted2)}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+
+    .tag{
+      font-size:12px;
+      color:rgba(234,240,255,.86);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+
+    .hr{height:1px; background: rgba(255,255,255,.10); margin:12px 0}
+
+    .slides{counter-reset: slide; margin: 0; padding-left: 0; list-style:none}
+    .slides li{
+      counter-increment: slide;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 10px 10px;
+      margin: 8px 0;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .slides li:before{
+      content: counter(slide);
+      flex:0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: var(--g1);
+      color:#061018;
+      font-weight:800;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-top:2px;
+    }
+
+    .ok{color:rgba(45,255,123,.95)}
+    .warn{color:rgba(255,154,42,.95)}
+
+    footer{margin-top:14px; color:var(--muted2); font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="meta">
+          <span class="pill"><span class="dot"></span><strong>Nicho:</strong>&nbsp;Design Gráfico</span>
+          <span class="pill"><span class="dot"></span><strong>Dia:</strong>&nbsp;27</span>
+          <span class="pill"><span class="dot"></span><strong>Formato:</strong>&nbsp;Carrossel</span>
+          <span class="pill"><span class="dot"></span><strong>Pilar:</strong>&nbsp;Mito vs Verdade</span>
+        </div>
+        <button class="btn" id="copyBtn" type="button" title="Copiar o roteiro completo">
+          <span class="spark"></span>
+          Copiar roteiro
+          <span class="kbd">Ctrl/Cmd+C</span>
+        </button>
+      </div>
+
+      <h1>Não existe fórmula mágica: faça isso em vez de buscar viralizar</h1>
+      <p class="subtitle">Roteiro reproduzível no estilo “anti-fórmula mágica”: hook por negação, confissão curta, reframe e CTA direto — com ritmo de microfrases e alternância visual high-tech.</p>
+
+      <div class="linkrow">
+        <a class="link" href="https://www.instagram.com/p/DVtUGldDjIg/" target="_blank" rel="noopener noreferrer">Post original: https://www.instagram.com/p/DVtUGldDjIg/</a>
+        <div class="meta">
+          <span class="tag">Canvas 1080×1350</span>
+          <span class="tag">7–12 slides (recomendado 10)</span>
+          <span class="tag">1 ideia por slide</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2><span class="bar"></span>Resumo</h2>
+        <p><strong>Objetivo:</strong> desmontar a expectativa de “me dá a fórmula”, gerar identificação com relatos rápidos (flop vs acerto), entregar um <em>reframe</em> (não há controle/garantia) e orientar um caminho mais sustentável — finalizando com um CTA simples.</p>
+        <div class="callout">
+          <p style="margin:0"><strong>Quando usar:</strong> temas com muita promessa pronta e ansiedade por resultado (viralização, vendas, portfólio, clientes, produtividade, IA, etc.).</p>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2><span class="bar"></span>Instrução de execução</h2>
+        <ul>
+          <li>Escreva como conversa (caixa baixa, frases curtas).</li>
+          <li>Abra com <strong>negação</strong> para criar curiosidade.</li>
+          <li>Faça 2 micro-histórias: <span class="warn">com expectativa → dá ruim</span> e <span class="ok">sem expectativa → dá bom</span>.</li>
+          <li>Traga uma tese e um alerta em cascata (efeitos).</li>
+          <li>Feche com <strong>1 CTA</strong> (seguir/salvar/comentar/enviar).</li>
+        </ul>
+      </aside>
+
+      <section class="card">
+        <h2><span class="bar"></span>Estrutura</h2>
+        <div class="grid2">
+          <div>
+            <p style="margin:0"><strong>Progressão (macro):</strong></p>
+            <ul>
+              <li>Promessa (esperada) → <strong>negação</strong></li>
+              <li>Prova emocional (2 contrastes)</li>
+              <li>Tese → pergunta de virada</li>
+              <li>Consequências → novo caminho</li>
+              <li>CTA direto</li>
+            </ul>
+          </div>
+          <div>
+            <p style="margin:0"><strong>Regras de ritmo:</strong></p>
+            <ul>
+              <li>6–20 palavras por slide</li>
+              <li>1 ideia por slide</li>
+              <li>Quebra de linha como “pausa”</li>
+              <li>2–4 palavras em destaque</li>
+              <li>Alternância de fundo para “batida”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Roteiro</h2>
+        <p class="small">Abaixo está um template “preenchível”. Troque os campos entre colchetes para adaptar a qualquer tema.</p>
+        <textarea id="script" readonly>
+CARROSSEL (10 SLIDES) — TEMPLATE “ANTI-FÓRMULA MÁGICA”
+
+[Configuração rápida]
+Tema central: [TEMA]
+Resultado desejado do público: [RESULTADO]
+Comportamento obsessivo comum: [OBSESSÃO]
+Alternativa que você defende: [ALTERNATIVA]
+CTA único: [SEGUIR | SALVAR | COMENTAR | ENVIAR]
+
+SLIDE 1 — HOOK (negação + loop)
+“eu não posso te dizer como [RESULTADO]…”
+(* elemento fixo no topo: asterisco/ícone da marca)
+
+SLIDE 2 — QUEBRA (honestidade)
+“porque eu não controlo [VARIÁVEL EXTERNA].”
+“e ninguém controla.”
+
+SLIDE 3 — HISTÓRIA 1 (expectativa → queda)
+“já fiz [AÇÃO] jurando que ia [PROMESSA].”
+“flopou.”
+
+SLIDE 4 — HISTÓRIA 2 (sem expectativa → acerto)
+“e já fiz [AÇÃO] só porque fazia sentido.”
+“e deu [RESULTADO REAL / SINAL POSITIVO].”
+
+SLIDE 5 — TESE (mito vs verdade)
+“pelo que eu vi: não existe fórmula mágica pra [RESULTADO].”
+
+SLIDE 6 — PERGUNTA DE VIRADA (reframe)
+“então por que não trocar [OBSESSÃO] por [ALTERNATIVA]?”
+
+SLIDE 7 — ARGUMENTO CENTRAL (custo emocional)
+“buscar [RESULTADO] vira depender de [VALIDAÇÃO / ALGORITMO / TERCEIROS]
+ pra se sentir [EMOÇÃO: bom/suficiente/seguro].”
+
+SLIDE 8 — ALERTA + CASCATA
+“cuidado.”
+“isso pode te deixar: [EFEITO 1] → [EFEITO 2] → [EFEITO 3].”
+
+SLIDE 9 — DIREÇÃO (novo caminho prático)
+“cria pra [VOCÊ / SEU PROCESSO / SUA VERDADE].”
+“e pra [NÚCLEO: clientes ideais / quem já te acompanha / quem precisa disso].”
+
+SLIDE 10 — CTA (um pedido só + energia visual)
+“se isso fez sentido:
+[CTA ÚNICO EM CAIXA ALTA].”
+(opcional: “bora.” + ícones apontando)
+
+—
+NOTAS DE ESCRITA
+• caixa baixa = conversa
+• use 1 punchline por slide
+• destaque 2–4 palavras (“flopou”, “cuidado”, “fórmula mágica”, etc.)
+• mantenha o CTA simples: 1 ação.</textarea>
+        <div class="row" style="margin-top:10px">
+          <div class="small">Dica: antes de desenhar, valide se o roteiro funciona em texto puro (sem depender do visual).</div>
+          <div class="small">Marcações: <span class="kbd">[colchetes]</span> = substituir.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Slides sugeridos (1..10)</h2>
+        <ol class="slides">
+          <li><div><strong>Hook por negação</strong><br><span class="small">Frase curta + metáfora visual (aspiração).</span></div></li>
+          <li><div><strong>Honestidade / perda de controle</strong><br><span class="small">Quebra a promessa implícita do nicho.</span></div></li>
+          <li><div><strong>Confissão 1</strong><br><span class="small">Expectativa alta → “flopou”.</span></div></li>
+          <li><div><strong>Confissão 2</strong><br><span class="small">Sem pressão → resultado real inesperado.</span></div></li>
+          <li><div><strong>Tese</strong><br><span class="small">“não existe fórmula” (mito vs verdade).</span></div></li>
+          <li><div><strong>Pergunta de virada</strong><br><span class="small">Reposiciona o foco para algo sustentável.</span></div></li>
+          <li><div><strong>Custo emocional</strong><br><span class="small">Dependência de validação/variável externa.</span></div></li>
+          <li><div><strong>Alerta em cascata</strong><br><span class="small">3 efeitos em sequência (crescendo).</span></div></li>
+          <li><div><strong>Novo caminho</strong><br><span class="small">Criar para você + núcleo que importa.</span></div></li>
+          <li><div><strong>CTA direto</strong><br><span class="small">1 pedido + energia visual (ícones apontando).</span></div></li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Elementos visuais</h2>
+        <ul>
+          <li><strong>Fundo:</strong> escuro (#0B0B0B) com alto contraste.</li>
+          <li><strong>Ritmo:</strong> alternar slides escuros com slides de destaque (cor/gradiente) para “batida” de swipe.</li>
+          <li><strong>Composição:</strong> texto centralizado + muito respiro (80% de área negativa).</li>
+          <li><strong>Elemento fixo:</strong> asterisco/ícone no topo direito em todos os slides para unidade.</li>
+          <li><strong>Camadas:</strong> texto “eco” em cinza por trás + punchline em cor viva na frente.</li>
+          <li><strong>Imagem:</strong> slide 1 com metáfora (escada/céu/porta/luz) e slide final com ícones grandes (mãos/setas).</li>
+        </ul>
+        <div class="callout">
+          <p style="margin:0"><strong>Paleta sugerida (substituível):</strong> Fundo #0B0B0B • Cinza #6B6B6B • Destaques em degradê (verde/azul/laranja) ou 1 neon principal.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Copy e ganchos</h2>
+        <div class="grid2">
+          <div>
+            <p style="margin:0"><strong>Modelos de hook (slide 1):</strong></p>
+            <ul>
+              <li>“eu não posso te dizer como <strong>[RESULTADO]</strong>…”</li>
+              <li>“eu não sei te ensinar a <strong>[VERBO]</strong>…”</li>
+              <li>“parei de tentar <strong>[OBJETIVO POPULAR]</strong> e foi aí que <strong>[BENEFÍCIO REAL]</strong>”</li>
+              <li>“a verdade sobre <strong>[TEMA]</strong> que ninguém gosta de ouvir”</li>
+            </ul>
+          </div>
+          <div>
+            <p style="margin:0"><strong>Palavras de impacto (troque por equivalentes do seu nicho):</strong></p>
+            <ul>
+              <li>“flopou” → “travou” / “não andou” / “morreu”</li>
+              <li>“fórmula mágica” → “atalho” / “hack” / “receita pronta”</li>
+              <li>“cuidado” → “atenção” / “sério” / “não cai nessa”</li>
+              <li>“depender de validação” → “jogar no algoritmo” / “viver de aprovação”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p style="margin:0"><strong>Checklist de texto (pra manter o estilo):</strong></p>
+        <ul>
+          <li>Caixa baixa (voz humana) + pontuação com pausa (… / ?) para retenção.</li>
+          <li>Frases “cortadas” em 2 linhas (setup → punch).</li>
+          <li>2 micro-histórias em contraste (com pressão vs sem pressão).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>CTA</h2>
+        <p style="margin:0"><strong>Regra:</strong> 1 pedido, explícito, grande, sem rodeio.</p>
+        <ul>
+          <li>“se isso fez sentido: <strong>ME SEGUE</strong> pra mais sobre <strong>[TEMA]</strong>.”</li>
+          <li>“quer um exemplo aplicado em <strong>[CASO]</strong>? comenta <strong>‘QUERO’</strong>.”</li>
+          <li>“salva pra ler quando bater a ansiedade por <strong>[RESULTADO]</strong>.”</li>
+          <li>“manda pra alguém que precisa ouvir isso hoje.”</li>
+        </ul>
+        <div class="callout">
+          <p style="margin:0"><strong>Visual do CTA:</strong> palavra final em caixa alta + gradiente/neon + ícones apontando para o gesto de ação (seguir/salvar).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Checklist</h2>
+        <ul>
+          <li>[ ] Slide 1 abre loop (negação + curiosidade).</li>
+          <li>[ ] 1 ideia por slide; nenhuma frase “explica demais”.</li>
+          <li>[ ] Existe contraste (expectativa → queda / leveza → acerto).</li>
+          <li>[ ] A virada está clara no meio (tese + pergunta).</li>
+          <li>[ ] Alerta com 3 consequências (cascata).</li>
+          <li>[ ] Alternância de fundo cria ritmo de leitura.</li>
+          <li>[ ] Elemento fixo (asterisco/assinatura) em todos os slides.</li>
+          <li>[ ] CTA final é único e explícito.</li>
+          <li>[ ] Revisão: legibilidade no celular (zoom 100%).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Variações</h2>
+        <p style="margin:0"><strong>Como adaptar para outro tema sem perder impacto:</strong></p>
+        <ul>
+          <li><strong>Troque o “resultado desejado”</strong> (viralizar) por: “fechar clientes”, “criar um portfólio forte”, “cobrar mais caro”, “ter consistência”, “aprender [ferramenta]”, “entrar no mercado”.</li>
+          <li><strong>Troque a variável externa</strong> (algoritmo/viral) por: “aprovação do cliente”, “mercado”, “tendências”, “briefing confuso”, “sorte”, “timing”.</li>
+          <li><strong>Troque o novo caminho</strong> por: processo, consistência, clareza, posicionamento, repertório, estudo aplicado, feedback do público certo.</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="grid2">
+          <div>
+            <p style="margin:0"><strong>Versão 7 slides (mais rápida):</strong></p>
+            <ul>
+              <li>1 Hook</li>
+              <li>2 Quebra</li>
+              <li>3 Contraste (queda)</li>
+              <li>4 Contraste (acerto)</li>
+              <li>5 Tese + pergunta (junto)</li>
+              <li>6 Alerta + cascata (junto)</li>
+              <li>7 Direção + CTA (junto)</li>
+            </ul>
+          </div>
+          <div>
+            <p style="margin:0"><strong>Versão “design gráfico” (substituições prontas):</strong></p>
+            <ul>
+              <li>[RESULTADO] → “ter um portfólio que abre portas”</li>
+              <li>[OBSESSÃO] → “copiar tendência e esperar aprovação”</li>
+              <li>[ALTERNATIVA] → “projeto autoral + clareza de posicionamento”</li>
+              <li>[VALIDAÇÃO] → “curtida/cliente aleatório/virar ‘referência’ rápido”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="card" style="padding:12px 14px; border-radius:16px">
+        <div class="row">
+          <div>
+            <div style="font-weight:700; color:rgba(234,240,255,.9)">Entrega pronta para reprodução</div>
+            <div class="small">Duplicar, substituir os campos e montar no Canva/Figma mantendo o ritmo visual.</div>
+          </div>
+          <div class="small">Sugestão: salve este roteiro como modelo “ANTI-FÓRMULA”.</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ta = document.getElementById('script');
+
+      async function copy(){
+        const text = ta.value;
+        try{
+          await navigator.clipboard.writeText(text);
+          btn.innerHTML = '<span class="spark"></span>Roteiro copiado<span class="kbd">OK</span>';
+          setTimeout(()=>{
+            btn.innerHTML = '<span class="spark"></span>Copiar roteiro <span class="kbd">Ctrl/Cmd+C</span>';
+          }, 1600);
+        } catch(e){
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          btn.innerHTML = '<span class="spark"></span>Copiado (modo compatível)<span class="kbd">OK</span>';
+          setTimeout(()=>{
+            btn.innerHTML = '<span class="spark"></span>Copiar roteiro <span class="kbd">Ctrl/Cmd+C</span>';
+          }, 1600);
+        }
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
