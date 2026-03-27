@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 19 — Roteiro reproduzível (Design Gráfico)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,0.72);
+      --muted2: rgba(234,240,255,0.56);
+      --shadow: 0 18px 60px rgba(0,0,0,0.55);
+      --radius: 16px;
+      --radius2: 12px;
+      --g1: linear-gradient(90deg, #28E08A 0%, #2DB7FF 45%, #FF8A2A 100%);
+      --g2: linear-gradient(180deg, rgba(40,224,138,0.25) 0%, rgba(45,183,255,0.18) 55%, rgba(255,138,42,0.16) 100%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; padding:0;
+      background:
+        radial-gradient(900px 500px at 20% -10%, rgba(45,183,255,0.22) 0%, rgba(45,183,255,0.00) 60%),
+        radial-gradient(900px 500px at 80% 0%, rgba(40,224,138,0.18) 0%, rgba(40,224,138,0.00) 58%),
+        radial-gradient(900px 500px at 70% 110%, rgba(255,138,42,0.14) 0%, rgba(255,138,42,0.00) 62%),
+        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+      color:var(--text);
+      font-family:var(--sans);
+      line-height:1.35;
+    }
+
+    .wrap{ max-width:1120px; margin:0 auto; padding:28px 18px 64px; }
+
+    header{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--radius) + 4px);
+      overflow:hidden;
+    }
+
+    .topbar{
+      padding:18px 18px 14px;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      background: radial-gradient(900px 220px at 20% 0%, rgba(45,183,255,0.18) 0%, rgba(45,183,255,0.00) 70%),
+                  radial-gradient(900px 220px at 80% 0%, rgba(40,224,138,0.14) 0%, rgba(40,224,138,0.00) 70%);
+    }
+
+    .badge{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.20);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.2px;
+      backdrop-filter: blur(10px);
+    }
+
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: var(--g1);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
+    }
+
+    .hgroup{ padding:16px 18px 18px; }
+    h1{ margin:0 0 8px; font-size:22px; font-weight:750; letter-spacing:-0.3px; }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .metaGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+      padding: 0 18px 18px;
+    }
+
+    .metaCard{
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,0.04);
+      padding: 12px 12px;
+      display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
+    }
+    .metaCard strong{ font-size:12px; color: rgba(234,240,255,0.82); }
+    .metaCard .val{ font-size:13px; color: var(--muted); margin-top:4px; }
+    a{ color:#BFE9FF; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap:14px;
+    }
+
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .cardHdr{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.00) 100%);
+    }
+
+    .cardHdr .title{
+      font-size:13px;
+      font-weight:700;
+      letter-spacing:0.22px;
+      color: rgba(234,240,255,0.9);
+      text-transform: uppercase;
+    }
+
+    .pill{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      color: rgba(234,240,255,0.78);
+      background: rgba(255,255,255,0.04);
+      white-space:nowrap;
+    }
+
+    .cardBody{ padding:14px 16px 16px; }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    @media (max-width: 560px){
+      .kpi{ grid-template-columns: 1fr; }
+    }
+
+    .kpi .box{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.03) 100%);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .kpi .box:before{
+      content:"";
+      position:absolute;
+      inset:-1px -1px auto -1px;
+      height:3px;
+      background: var(--g1);
+      opacity:0.85;
+    }
+
+    .kpi .box .label{ font-size:12px; color: var(--muted2); }
+    .kpi .box .value{ margin-top:6px; font-weight:800; letter-spacing:-0.3px; }
+
+    .list{ margin:0; padding-left:18px; color: var(--muted); }
+    .list li{ margin:8px 0; }
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,0.10);
+      margin: 14px 0;
+    }
+
+    textarea{
+      width:100%;
+      min-height: 480px;
+      resize: vertical;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.22);
+      color: rgba(234,240,255,0.92);
+      padding: 14px 14px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.45;
+      outline:none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+    }
+
+    .btnRow{ display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-top:10px; }
+
+    button{
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      color: rgba(234,240,255,0.92);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:700;
+      letter-spacing:0.2px;
+    }
+
+    button.primary{
+      background: var(--g1);
+      color: #071018;
+      border: none;
+    }
+
+    .note{ color: var(--muted2); font-size: 13px; }
+
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+    .chip{
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: rgba(234,240,255,0.78);
+      font-size:12px;
+    }
+
+    .twoCol{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width: 760px){ .twoCol{ grid-template-columns: 1fr; } }
+
+    .callout{
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(40,224,138,0.10) 0%, rgba(45,183,255,0.06) 55%, rgba(255,138,42,0.05) 100%);
+      padding: 12px 12px;
+      color: rgba(234,240,255,0.80);
+    }
+
+    .footer{ margin-top:16px; color: rgba(234,240,255,0.45); font-size: 12px; text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div class="badge"><span class="dot"></span><span><strong>Nicho:</strong> Design Gráfico</span></div>
+        <div class="badge"><span><strong>Dia:</strong> 19</span></div>
+        <div class="badge"><span><strong>Formato:</strong> Carrossel</span></div>
+        <div class="badge"><span><strong>Pilar:</strong> Checklist</span></div>
+      </div>
+      <div class="hgroup">
+        <h1>As 7 melhores fontes para um design editorial forte</h1>
+        <p class="sub">Link do post original: <a href="https://www.instagram.com/p/DWCJvmbDg02/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DWCJvmbDg02/</a></p>
+      </div>
+      <div class="metaGrid">
+        <div class="metaCard">
+          <div>
+            <strong>Instrução curta</strong>
+            <div class="val">Capa com promessa + série de itens (1 por slide) + fechamento com CTA de comentário e entrega no DM.</div>
+          </div>
+          <div class="pill">1080×1350 • 8 slides</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardHdr">
+          <div class="title">Resumo</div>
+          <div class="pill">Roteiro reproduzível</div>
+        </div>
+        <div class="cardBody">
+          <div class="kpi">
+            <div class="box"><div class="label">Objetivo</div><div class="value">Curadoria que gera saves</div></div>
+            <div class="box"><div class="label">Mecânica</div><div class="value">Lista colecionável (1 item/tela)</div></div>
+            <div class="box"><div class="label">Conversão</div><div class="value">Comentário + DM (palavra-chave)</div></div>
+          </div>
+          <div class="callout">
+            A lógica do post é: <strong>Hook absoluto</strong> → <strong>valor em série</strong> (itens rápidos) → <strong>CTA operacional</strong>. Isso funciona para qualquer tema em que “escolhas confiáveis” tenham valor (fontes, ferramentas, referências, prompts, livros, plugins, presets, frameworks).
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHdr">
+          <div class="title">Estrutura</div>
+          <div class="pill">Hook → Série → CTA</div>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p class="note"><strong>Macro (recomendado)</strong></p>
+              <ul class="list">
+                <li><strong>Slide 1:</strong> Capa/Promessa (superlativo + público/objetivo)</li>
+                <li><strong>Slides 2–(N-1):</strong> Itens (1 por slide, exemplo visual + nome)</li>
+                <li><strong>Slide N:</strong> Fechamento (bônus + palavra-chave + entrega no DM)</li>
+              </ul>
+            </div>
+            <div>
+              <p class="note"><strong>Parâmetros replicáveis</strong></p>
+              <ul class="list">
+                <li><strong>N:</strong> 6 a 10 slides (doce: 8)</li>
+                <li><strong>Itens:</strong> 5 a 9 (1 por tela)</li>
+                <li><strong>Texto por slide:</strong> 1 bloco grande + 1 micro legenda</li>
+                <li><strong>Ritmo:</strong> alternância de layout (A/B) para reduzir monotonia</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="note"><strong>Regra de ouro</strong>: o slide precisa ser entendível em 1 segundo. Se virou parágrafo, perdeu o look “editorial/high-impact”.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHdr">
+          <div class="title">Roteiro</div>
+          <div class="chips">
+            <span class="chip">Coleção/curadoria</span>
+            <span class="chip">Alta retenção</span>
+            <span class="chip">Repetição com variação</span>
+          </div>
+        </div>
+        <div class="cardBody">
+          <textarea id="roteiro" spellcheck="false">ROTEIRO (CARROSSEL) — TEMPLATE PREENCHÍVEL
+
+[CONFIG]
+- Nicho: Design Gráfico (adapte)
+- Tema: [TEMA CENTRAL]
+- Promessa (capa): “AS [N] MELHORES [ITENS]”
+- Para quem/objetivo (sub): “PARA [OBJETIVO OU PÚBLICO]”
+- Número de itens: [5–9]
+- Palavra-chave do CTA: [PALAVRA]
+- Entrega no DM: [LINK/PDF/TEMPLATE/LISTA]
+
+[SLIDE 1 — CAPA (Hook)]
+Headline (gigante): AS [N] MELHORES [ITENS]
+Sub (pequeno): PARA [OBJETIVO/PÚBLICO]
+Micro-sinalização: → (swipe)
+Branding: [SUA MARCA]
+
+[SLIDES 2 a (N-1) — ITENS (1 por slide)]
+Para cada item i:
+- Texto grande (exemplo/resultado): [EXEMPLO VISUAL DO ITEM]
+  (ex.: para fontes: escreva uma palavra forte; para ferramentas: um “uso”; para paletas: um mood; para prompts: um resultado)
+- Legenda (cinza, micro): [NOME DO ITEM] (+ opcional: “use em: [contexto]”)
+- Indicador: →
+- Branding discreto
+
+[SLIDE N — FECHAMENTO/CTA]
+Bloco 1 (desejo): Quer [BENEFÍCIO PRINCIPAL]?
+Bloco 2 (bônus): + Eu te mando [EXTRA: pack completo / PDF / template / lista]
+Bloco 3 (ação simples): Comenta “[PALAVRA]”
+Bloco 4 (entrega): que eu envio no direct.
+Rodapé: [SUA MARCA] • (opcional) “Salva pra consultar depois”
+
+[LEGENDA (CAPTION) — MODELO]
+1) Gancho (1 frase): As escolhas certas de [TEMA] fazem seu [RESULTADO] subir de nível.
+2) Contexto (2–3 linhas): Separei [N] opções que funcionam para [CENÁRIO] e são fáceis de aplicar.
+3) Instrução: Salva este post para usar como referência.
+4) CTA: Quer o pack/lista completa? Comenta “[PALAVRA]” que eu mando no direct.
+5) Hashtags (opcional): #[nicho] #[tema] #[processo]
+
+[CHECK DE QUALIDADE]
+- Entendi em 1s? (sim/não)
+- 1 item por slide? (sim/não)
+- Repetição visual consistente? (sim/não)
+- CTA com ação operacional + entrega clara? (sim/não)</textarea>
+          <div class="btnRow">
+            <div class="note">Dica: troque apenas os campos entre colchetes e mantenha a mesma “engenharia” de retenção.</div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button class="primary" id="copyBtn">Copiar roteiro</button>
+              <button id="selectBtn">Selecionar texto</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHdr">
+          <div class="title">Slides sugeridos (1..8)</div>
+          <div class="pill">Sugestão padrão</div>
+        </div>
+        <div class="cardBody">
+          <ol class="list">
+            <li><strong>Capa:</strong> “AS 7 MELHORES [ITENS]” + “PARA [OBJETIVO]”</li>
+            <li><strong>Item 1:</strong> Exemplo visual grande + nome do item</li>
+            <li><strong>Item 2:</strong> Exemplo visual grande + nome do item</li>
+            <li><strong>Item 3:</strong> Exemplo visual grande + nome do item</li>
+            <li><strong>Item 4:</strong> Exemplo visual grande + nome do item</li>
+            <li><strong>Item 5:</strong> Exemplo visual grande + nome do item</li>
+            <li><strong>Item 6:</strong> Exemplo visual grande + nome do item (opcional)</li>
+            <li><strong>CTA:</strong> “Quer o pack completo?” + “comenta ‘[PALAVRA]’” + “te envio no direct”</li>
+          </ol>
+          <div class="hr"></div>
+          <p class="note"><strong>Variação de compressão:</strong> se tiver 5 itens, faça 7 slides (1 capa + 5 itens + 1 CTA). Se tiver 9 itens, faça 11 slides (1 + 9 + 1) ou divida em Parte 1/Parte 2.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHdr">
+          <div class="title">Elementos visuais</div>
+          <div class="pill">DNA editorial/high-impact</div>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><strong>Paleta:</strong> 1 cor dominante + 1 cor de texto + 1 neutro (alto contraste).</li>
+            <li><strong>Layout A (impacto):</strong> fundo sólido + headline gigante “quase estourando”.</li>
+            <li><strong>Layout B (cartaz no cartaz):</strong> fundo neutro + retângulo central com a cor dominante + exemplo grande dentro.</li>
+            <li><strong>Hierarquia:</strong> “gigante (impacto) + micro (informação)”.</li>
+            <li><strong>Assinatura/branding:</strong> pequeno e consistente em todos os slides.</li>
+            <li><strong>Indicador de swipe:</strong> seta → recorrente para continuidade.</li>
+            <li><strong>Textura pontual:</strong> pincelada/rasura no máximo 1–2 vezes no carrossel para “pico de energia”.</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="note"><strong>Specs rápidas:</strong> 1080×1350 (4:5), margens seguras 80–120px, grade 6–8 colunas, área principal 65–75% da altura.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHdr">
+          <div class="title">Copy e ganchos</div>
+          <div class="pill">Modelos substituíveis</div>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p class="note"><strong>Ganchos para capa (troque X/Y/Z)</strong></p>
+              <ul class="list">
+                <li>AS [N] MELHORES [ITENS] PARA [OBJETIVO]</li>
+                <li>[N] [ITENS] QUE DEIXAM [RESULTADO] MAIS [ADJETIVO]</li>
+                <li>O GUIA RÁPIDO: [ITENS] PARA [CENÁRIO]</li>
+                <li>[N] REFERÊNCIAS DE [TEMA] (QUE FUNCIONAM)</li>
+              </ul>
+            </div>
+            <div>
+              <p class="note"><strong>Microcopy por item (legenda curta)</strong></p>
+              <ul class="list">
+                <li>[NOME DO ITEM]</li>
+                <li>[NOME] • melhor para: [USO RÁPIDO]</li>
+                <li>[NOME] • vibe: [MOOD]</li>
+                <li>Se você faz [PÚBLICO], salva esta opção: [NOME]</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="note"><strong>Por que o superlativo funciona:</strong> ativa “curadoria implícita”. Você não está listando tudo; está selecionando o que é confiável.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHdr">
+          <div class="title">CTA</div>
+          <div class="pill">Comentário → DM</div>
+        </div>
+        <div class="cardBody">
+          <p class="note"><strong>Fórmula</strong>: Pergunta de desejo + bônus + instrução operacional + promessa de entrega.</p>
+          <ul class="list">
+            <li><strong>Pergunta:</strong> “Quer [benefício principal]?”</li>
+            <li><strong>Bônus:</strong> “+ eu te mando [pack/lista/template]”</li>
+            <li><strong>Ação:</strong> “Comenta ‘[PALAVRA]’”</li>
+            <li><strong>Entrega:</strong> “que eu envio no direct.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="note"><strong>Palavras-chave que performam bem (substituíveis):</strong></p>
+          <div class="chips">
+            <span class="chip">PACK</span>
+            <span class="chip">LISTA</span>
+            <span class="chip">PDF</span>
+            <span class="chip">TEMPLATE</span>
+            <span class="chip">LINK</span>
+            <span class="chip">GUIA</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHdr">
+          <div class="title">Checklist</div>
+          <div class="pill">Criação auditável</div>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><strong>Definição:</strong> [tema], [público], [objetivo], [promessa em 7–9 palavras].</li>
+            <li><strong>Curadoria:</strong> selecione 5–9 itens com critério explícito (ex.: “alto contraste”, “fácil de aplicar”, “popular + 2 raras”).</li>
+            <li><strong>Roteiro:</strong> capa + itens + CTA (sem texto médio).</li>
+            <li><strong>Layout:</strong> 2 variações (A/B) alternadas; margens consistentes; seta → em todos.</li>
+            <li><strong>Tipografia:</strong> escala extrema no exemplo; legenda micro em cinza; alinhamento consistente.</li>
+            <li><strong>Export:</strong> 1080×1350, nitidez alta, compressão controlada.</li>
+            <li><strong>Legenda:</strong> 1 gancho + 2 linhas de contexto + “salva” + CTA palavra-chave.</li>
+            <li><strong>Publicação:</strong> fixe comentário com a palavra-chave e/ou instrução.</li>
+            <li><strong>Pós:</strong> responda comentários nas primeiras 2h (acelera distribuição).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHdr">
+          <div class="title">Variações</div>
+          <div class="pill">Adaptações com mesmo impacto</div>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p class="note"><strong>Troque “fontes” por:</strong></p>
+              <ul class="list">
+                <li><strong>Design:</strong> “7 grids”, “7 combinações tipográficas”, “7 estilos de layout”, “7 referências de posters”, “7 packs de mockups”.</li>
+                <li><strong>Social media:</strong> “7 ganchos”, “7 CTAs”, “7 estruturas de carrossel”.</li>
+                <li><strong>Produtividade:</strong> “7 atalhos”, “7 templates”, “7 automações”.</li>
+                <li><strong>Educação:</strong> “7 conceitos”, “7 exercícios”, “7 exemplos resolvidos”.</li>
+              </ul>
+            </div>
+            <div>
+              <p class="note"><strong>Substituições dentro dos slides (mantendo o padrão)</strong></p>
+              <ul class="list">
+                <li><strong>Texto grande</strong> pode ser: “antes/depois”, “princípio”, “mini-check”, “exemplo aplicado”, “frase curta que demonstra o item”.</li>
+                <li><strong>Legenda micro</strong> pode ser: nome do método, ferramenta, referência, link curto (ou “onde usar”).</li>
+                <li><strong>CTA</strong> pode entregar: PDF, template, link, board do Pinterest/figma, checklist, pack de arquivos.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="note"><strong>Variação de ângulo (mesma estrutura):</strong> “As melhores X” (desejo) → “As X que ninguém te mostra” (curiosidade) → “X essenciais para iniciantes” (clareza) → “X para [resultado] em 10 minutos” (velocidade).</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">Template HTML/UX para roteiro reproduzível — fundo escuro, cards suaves e destaques em degradê.</div>
+  </div>
+
+  <script>
+    const ta = document.getElementById('roteiro');
+    const copyBtn = document.getElementById('copyBtn');
+    const selectBtn = document.getElementById('selectBtn');
+
+    async function copyText(){
+      const text = ta.value;
+      try{
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Copiado!';
+        setTimeout(()=> copyBtn.textContent = 'Copiar roteiro', 1200);
+      }catch(e){
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        copyBtn.textContent = 'Copiado!';
+        setTimeout(()=> copyBtn.textContent = 'Copiar roteiro', 1200);
+      }
+    }
+
+    copyBtn.addEventListener('click', copyText);
+    selectBtn.addEventListener('click', ()=>{ ta.focus(); ta.select(); });
+  </script>
+</body>
+</html>
