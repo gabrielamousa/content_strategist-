@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 28 — Design Gráfico — Roteiro de Carrossel</title>
+  <style>
+    :root{
+      --bg0:#07090f;
+      --bg1:#0b1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+
+      --g1: linear-gradient(90deg, #36f28b 0%, #2ad0ff 40%, #ffb648 98%);
+      --g2: radial-gradient(1200px 600px at 15% 0%, rgba(54,242,139,.20), rgba(0,0,0,0) 55%),
+            radial-gradient(1000px 600px at 80% 30%, rgba(42,208,255,.18), rgba(0,0,0,0) 55%),
+            radial-gradient(900px 600px at 55% 110%, rgba(255,182,72,.15), rgba(0,0,0,0) 55%);
+
+      --radius: 18px;
+      --radius2: 14px;
+      --pad: 18px;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: linear-gradient(180deg, var(--bg0), var(--bg1));
+      background-image: var(--g2);
+      background-attachment: fixed;
+    }
+
+    a{color:inherit}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px;}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border-radius: calc(var(--radius) + 6px);
+      padding:22px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g1);
+      opacity:.11;
+      filter: blur(12px);
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1}
+
+    .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+    .meta{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.20);
+      padding:6px 10px;
+      border-radius:999px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:50%;
+      background: var(--g1);
+    }
+
+    h1{margin:14px 0 8px; font-size: clamp(20px, 2.2vw + 14px, 34px); line-height:1.1; letter-spacing:-.02em;}
+    .subtitle{margin:0; color: var(--muted); max-width: 78ch; font-size: 14.5px; line-height: 1.5;}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+    .btn{
+      appearance:none; border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 600;
+      font-size: 13.5px;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      display:inline-flex; gap:10px; align-items:center;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.085); border-color: rgba(255,255,255,.16);}
+    .btn.primary{
+      border: none;
+      background: var(--g1);
+      color:#061019;
+    }
+    .btn.primary:hover{filter:saturate(1.05) brightness(1.02)}
+    .btn small{font-weight:700; font-family: var(--mono); opacity:.85}
+
+    main{margin-top:18px; display:grid; grid-template-columns: 1fr; gap: 14px;}
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.045));
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card:after{
+      content:"";
+      position:absolute;
+      top:-80px; right:-140px;
+      width: 320px; height: 320px;
+      background: var(--g1);
+      opacity:.08;
+      filter: blur(24px);
+      transform: rotate(18deg);
+    }
+    .card > *{position:relative; z-index:1}
+
+    .card h2{
+      margin:0 0 10px;
+      font-size: 15px;
+      letter-spacing:.02em;
+      text-transform: uppercase;
+      color: rgba(234,240,255,.85);
+    }
+    .card p, .card li{color: var(--muted); line-height: 1.55; font-size: 14.5px;}
+    .grid2{display:grid; grid-template-columns: 1fr; gap: 14px;}
+    @media (min-width: 980px){
+      main{grid-template-columns: 1.15fr .85fr; align-items:start}
+      .grid2{grid-template-columns: 1fr 1fr;}
+    }
+
+    .list{margin:0; padding-left: 18px;}
+    .list li{margin: 6px 0;}
+
+    .code{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.26);
+      border-radius: var(--radius2);
+      padding: 14px;
+      font-family: var(--mono);
+      color: rgba(234,240,255,.86);
+      font-size: 12.8px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      overflow:auto;
+    }
+
+    .kbd{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border:1px solid rgba(255,255,255,.15);
+      background: rgba(0,0,0,.20);
+      color: rgba(234,240,255,.82);
+    }
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin: 12px 0;
+    }
+
+    .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+    .chip{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12.5px;
+      color: rgba(234,240,255,.8);
+    }
+
+    .badge{
+      display:inline-block;
+      background: var(--g1);
+      color:#051018;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing:.01em;
+    }
+
+    .twoCol{display:grid; grid-template-columns: 1fr; gap:12px;}
+    @media (min-width: 980px){
+      .twoCol{grid-template-columns: 1fr 1fr;}
+    }
+
+    .mutedSmall{color: var(--muted2); font-size: 12.8px}
+    .linkRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-top:8px}
+    .link{
+      color: rgba(234,240,255,.9);
+      text-decoration:none;
+      border-bottom: 1px dashed rgba(234,240,255,.35);
+    }
+    .link:hover{border-bottom-color: rgba(234,240,255,.8)}
+
+    footer{margin-top:16px; color: var(--muted2); font-size: 12.5px; text-align:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="meta">
+          <span class="pill"><span class="dot"></span> Nicho: <strong>Design Gráfico</strong></span>
+          <span class="pill">Dia: <strong>28</strong></span>
+          <span class="pill">Formato: <strong>Carrossel</strong></span>
+          <span class="pill">Pilar: <strong>Mito vs Verdade</strong></span>
+        </div>
+        <div class="meta">
+          <span class="pill">Referência: <a class="link" href="https://www.instagram.com/p/DVOZr65jhEi/" target="_blank" rel="noreferrer">Post original</a></span>
+        </div>
+      </div>
+
+      <h1>Roteiro reproduzível — “Se eu sou X… então cadê Y?”</h1>
+      <p class="subtitle">Use a narrativa <strong>provocação → contraste → redefinição → exemplos → tese → reframe → CTA</strong>. Texto como protagonista, fundo escuro e destaque em degradê (verde/azul/laranja) para guiar a leitura.</p>
+
+      <div class="actions">
+        <button class="btn primary" id="copyBtn" type="button">Copiar roteiro <small>CTRL/CMD+C</small></button>
+        <a class="btn" href="#slides">Ver slides sugeridos</a>
+        <a class="btn" href="#checklist">Ir para checklist</a>
+      </div>
+
+      <div class="linkRow">
+        <span class="mutedSmall">Dica: substitua <span class="kbd">X</span> (identidade) e <span class="kbd">Y</span> (essência/resultado) e mantenha a mesma cadência.</span>
+        <span class="mutedSmall">Tempo de criação: 40–70 min (texto + diagramação).</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>Resumo</h2>
+        <p><span class="badge">Objetivo</span> Fazer o público perceber que o “essencial” do tema não está só no óbvio (ferramentas/tendências), mas no impacto real e no comportamento — e conduzir para seguir/salvar/comentar.</p>
+        <div class="twoCol">
+          <div>
+            <p><strong>Promessa do post:</strong> “Você acha que <span class="kbd">Y</span> é só <span class="kbd">A</span>, mas <span class="kbd">Y</span> também está em <span class="kbd">B</span> (e isso muda como você cria/decide).”</p>
+            <p><strong>Quando usar:</strong> para reposicionar um conceito, corrigir percepção do público e reforçar autoridade com linguagem simples.</p>
+          </div>
+          <div>
+            <p><strong>Ingredientes que dão retenção:</strong></p>
+            <ul class="list">
+              <li>gancho em forma de pergunta (abre loop mental);</li>
+              <li>contraste visual (foto calma → fundo preto manifesto);</li>
+              <li>negação + curiosidade (“não tá só em…”);</li>
+              <li>listas escaneáveis (pílulas/cards);</li>
+              <li>tese curta e memorável (4–6 palavras);</li>
+              <li>CTA com energia (imediato e sem rodeio).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+        <div class="chips">
+          <span class="chip">Tom: provocativo + manifesto</span>
+          <span class="chip">Ritmo: curto → lista → curto → tese → lista → insight</span>
+          <span class="chip">Destaque: 1–3 palavras por slide</span>
+          <span class="chip">Assinatura: asterisco/ícone fixo</span>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Metadados (calendário)</h2>
+        <div class="code">Título: Se eu sou designer… então cadê o design?
+Instrução curta: Carrossel 10 slides com gancho provocativo, reframe e tese curta. Fundo escuro + acento neon; fecha com CTA imperativo.
+Pilar: Mito vs Verdade
+Formato: carrossel</div>
+        <div class="hr"></div>
+        <p class="mutedSmall"><strong>Adaptação rápida:</strong> troque “designer/design” por <span class="kbd">[identidade/tema]</span> e <span class="kbd">[essência/resultado]</span>. Mantenha o contraste “o que virou ruído” vs “o que realmente importa”.</p>
+      </aside>
+
+      <section class="card">
+        <h2>Estrutura</h2>
+        <p><strong>Macro-sequência (10 slides):</strong> (1) Hook + tensão → (2) Diagnóstico do ruído → (3) Virada curta → (4–5) Redefinição (mundo + comportamento) → (6) Tese → (7) Ampliação rítmica → (8) Insight/reframe → (9) CTA → (10) Fechamento opcional.</p>
+        <div class="twoCol">
+          <div>
+            <p><strong>Fórmula do Hook (Slide 1):</strong></p>
+            <div class="code">“Se eu sou [IDENTIDADE], então cadê o [ESSÊNCIA/RESULTADO]?”</div>
+            <p class="mutedSmall">Funciona porque confronta uma incoerência percebida e convida o leitor a “provar” a resposta arrastando para o lado.</p>
+          </div>
+          <div>
+            <p><strong>Fórmula da Tese (Slide 6):</strong></p>
+            <div class="code">“[ESSÊNCIA] é [SUBSTANTIVO FORTE].”
+
+Exemplos de substantivo forte:
+- decisão
+- estratégia
+- linguagem
+- cuidado
+- consistência
+- intenção
+- sistema</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="slides">
+        <h2>Slides sugeridos (1..10)</h2>
+        <p class="mutedSmall">Use 7–12 slides. Abaixo, o modelo “clássico” (10) com texto pronto + campo de substituição.</p>
+        <div class="code" id="roteiroText">SLIDE 1 — HOOK (pergunta + tensão)
+Texto:
+“se eu sou [IDENTIDADE], então cadê o [ESSÊNCIA]?”
+Destaque (degradê): [IDENTIDADE] e/ou [ESSÊNCIA]
+Visual: foto ampla/"vazia" OU fundo suave (abre com calma)
+
+SLIDE 2 — DIAGNÓSTICO (o ruído do mercado)
+Texto topo:
+“ultimamente foi só aquelas né”
+Lista (3–5 itens):
+“conteúdo sobre [RUÍDO 1]”
+“conteúdo sobre [RUÍDO 2]”
+“conteúdo sobre [RUÍDO 3]”
+Pill (pergunta): “então cadê o [ESSÊNCIA]?”
+
+SLIDE 3 — VIRADA CURTA (punch)
+Texto grande:
+“tá bem [AQUI]”
+Destaque (degradê): AQUI
+Visual: fundo preto + ícone/asterisco fixo
+
+SLIDE 4 — REFRAME 1 (onde está no mundo)
+Ghost text (fundo, baixo contraste):
+“[ESSÊNCIA] não tá só na tela…”
+Pílulas/cards (5–7):
+“tá em [OBJETO/SITUAÇÃO 1]”
+“tá em [OBJETO/SITUAÇÃO 2]”
+“tá em [OBJETO/SITUAÇÃO 3]”
+…
+
+SLIDE 5 — REFRAME 2 (como aparece no comportamento)
+Texto:
+“tá em como você [VERBO 1] e se [VERBO 2]”
+Exemplos de verbos substituíveis:
+- escolhe / posiciona
+- fala / responde
+- organiza / simplifica
+- recorta / prioriza
+Micro (opcional): “e numa coisa eu concordo com [REFERÊNCIA]…”
+
+SLIDE 6 — TESE (definição memorável)
+Texto grande:
+“[ESSÊNCIA] é [SUBSTANTIVO FORTE]”
+Rodapé (1–2 linhas):
+“quando você entende isso, [BENEFÍCIO 1] e [BENEFÍCIO 2].”
+
+SLIDE 7 — AMPLIAÇÃO RÍTMICA (repetição cadenciada)
+Formato coluna:
+“[ÁREA 1]?” — “[ESSÊNCIA]”
+“[ÁREA 2]?” — “[ESSÊNCIA]”
+“[ÁREA 3]?” — “[ESSÊNCIA]”
+“[ÁREA 4]?” — “[ESSÊNCIA]”
+Destaque (degradê): sempre em [ESSÊNCIA]
+
+SLIDE 8 — INSIGHT (o invisível que funciona)
+Texto:
+“sabe o [EXEMPLO COTIDIANO] que você [FAZ] e nem percebe?”
+Sub:
+“porque nada nele te incomoda.”
+Fecho:
+“então, é [ESSÊNCIA].”
+
+SLIDE 9 — CTA DIRETO (pico de energia)
+Texto grande:
+“ME SEGUE!!”
+Linha menor (cinza):
+“agora para de fazer pergunta e vem aprender [PROMESSA CURTA].”
+
+SLIDE 10 — FECHAMENTO OPCIONAL (conversa/ação)
+Escolha 1:
+A) “quer a parte 2? comenta ‘QUERO’”
+B) “salva pra usar quando for [AÇÃO].”
+C) “manda pra alguém que tá perdido em [PROBLEMA].”
+D) “me chama no DM com ‘[PALAVRA]’ que eu te envio [RECURSO].”</div>
+        <div class="hr"></div>
+        <p class="mutedSmall"><strong>Contagem de palavras:</strong> prefira frases curtas; no mobile, mire em 1–3 linhas no H1 e 3–6 itens nas listas.</p>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <div class="grid2">
+          <div>
+            <p><strong>Identidade (high-tech, limpa):</strong></p>
+            <ul class="list">
+              <li>fundo escuro com alto contraste;</li>
+              <li>destaque em degradê (verde → azul → laranja) só nas palavras-chave;</li>
+              <li>texto centralizado com muito respiro;</li>
+              <li>um elemento recorrente (asterisco/ícone) em posição fixa;</li>
+              <li>alternância: 1–2 slides com foto/ambiente no início, resto "manifesto" (preto).</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>“Design system” do carrossel:</strong></p>
+            <ul class="list">
+              <li><strong>Pílula</strong> (para pergunta/mini-CTA): retângulo arredondado, preenchimento claro, texto escuro.</li>
+              <li><strong>Cards/etiquetas</strong>: 5–7 itens, arranjo em “nuvem” (irregular, mas equilibrado).</li>
+              <li><strong>Ghost text</strong>: frase grande em cinza escuro (baixa opacidade) atrás do título.</li>
+              <li><strong>Assinatura</strong>: microcopy no rodapé (mesma posição sempre).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="mutedSmall"><strong>Fontes sugeridas:</strong> Inter, Manrope, Helvetica Now (ou qualquer sans geométrica). Regra: pouca variação de peso, muita variação de escala.</p>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos</h2>
+        <div class="twoCol">
+          <div>
+            <p><strong>Ganchos substituíveis (mesmo impacto):</strong></p>
+            <div class="code">1) “Se eu sou [X]… então cadê o [Y]?”
+2) “Todo mundo fala de [A], mas e o [Y]?”
+3) “Você não tá sem [Y]. Você tá sem [____].”
+4) “Não é sobre [A]. É sobre [B].”
+5) “O [Y] de verdade é invisível — e é por isso que funciona.”</div>
+          </div>
+          <div>
+            <p><strong>Banco de substituições (preencha rápido):</strong></p>
+            <div class="code">[IDENTIDADE] = designer | social media | arquiteto | gestor | criador | marca
+[ESSÊNCIA] = design | estratégia | experiência | clareza | consistência | conversão
+[RUÍDOS] = ferramentas | tendências | hacks | estética | algoritmo | IA
+[OBJETOS/SITUAÇÕES] = embalagem | onboarding | cardápio | sinalização | checkout | pitch
+[ÁREAS] = apresentação | proposta | site | atendimento | email | produto
+[VERBOS] = escolhe | escreve | organiza | prioriza | simplifica | posiciona</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="mutedSmall"><strong>Regra de ouro:</strong> sempre contraste “o que parece ser” vs “o que é”, e traduza o conceito em exemplos cotidianos (objetos, microdecisões e experiências).</p>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <p><strong>CTA principal (estilo manifesto):</strong> curto, imperativo e grande. Em seguida, um complemento em cinza com benefício.</p>
+        <div class="grid2">
+          <div>
+            <p><strong>Modelos prontos:</strong></p>
+            <div class="code">Crescimento:
+“ME SEGUE!!”
+“pra mais [TEMA] sem enrolação.”
+
+Salvamento:
+“SALVA ISSO.”
+“pra lembrar quando for [AÇÃO].”
+
+Conversa:
+“COMENTA ‘QUERO’”
+“que eu faço a parte 2 com [EXEMPLOS].”
+
+Lead/DM:
+“ME CHAMA NO DM com ‘[PALAVRA]’”
+“que eu te mando [RECURSO].”</div>
+          </div>
+          <div>
+            <p><strong>Escolha o CTA pelo objetivo:</strong></p>
+            <ul class="list">
+              <li><strong>Alcance:</strong> seguir + enviar para alguém.</li>
+              <li><strong>Engajamento:</strong> comentário com palavra-chave.</li>
+              <li><strong>Construção de biblioteca:</strong> salvar + checklists.</li>
+              <li><strong>Venda:</strong> DM com palavra + entrega rápida (arquivo, mini diagnóstico, aula).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="checklist">
+        <h2>Checklist</h2>
+        <div class="twoCol">
+          <div>
+            <p><strong>Checklist de roteiro (antes de diagramar):</strong></p>
+            <ul class="list">
+              <li>[ ] Defini <strong>X (identidade)</strong> e <strong>Y (essência/resultado)</strong> em 1 linha.</li>
+              <li>[ ] Listei <strong>3–5 ruídos</strong> do nicho (o que as pessoas confundem).</li>
+              <li>[ ] Escrevi a <strong>tese em 4–6 palavras</strong> (Slide 6).</li>
+              <li>[ ] Separei <strong>5–7 exemplos concretos</strong> (objetos/situações).</li>
+              <li>[ ] Montei <strong>4–6 perguntas</strong> para repetição rítmica (Slide 7).</li>
+              <li>[ ] Fechei com <strong>1 CTA principal</strong> + <strong>1 ação secundária</strong> (salvar/comentar/DM).</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Checklist de design (produção):</strong></p>
+            <ul class="list">
+              <li>[ ] Fundo escuro, contraste forte, margens generosas.</li>
+              <li>[ ] Destaque em degradê apenas em <strong>1–3 palavras/slide</strong>.</li>
+              <li>[ ] Alternância: 1–2 slides com foto → resto com fundo preto.</li>
+              <li>[ ] Mesmo tipo; variar principalmente <strong>escala</strong>.</li>
+              <li>[ ] Elemento fixo de marca (asterisco/assinatura) consistente.</li>
+              <li>[ ] Legibilidade mobile: frases curtas, sem blocos longos.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="mutedSmall"><strong>Controle de qualidade:</strong> se você tirar todas as palavras em destaque, ainda dá pra entender? Se não, você destacou demais.</p>
+      </section>
+
+      <section class="card">
+        <h2>Variações</h2>
+        <p><strong>Como adaptar para outro tema sem perder impacto:</strong></p>
+        <div class="grid2">
+          <div>
+            <p><strong>Variação A — “Identidade vs Entrega”</strong></p>
+            <div class="code">Slide 1: “se eu sou [X], então cadê o [Y]?”
+Slide 2: ruídos que fazem você parecer “genérico”
+Slide 6 (tese): “[Y] é [DECISÃO/CRITÉRIO]”
+Slide 8: exemplo cotidiano onde o detalhe muda tudo
+CTA: seguir + salvar</div>
+          </div>
+          <div>
+            <p><strong>Variação B — “Mito vs Verdade” (mais explícita)</strong></p>
+            <div class="code">Slide 1: “todo mundo acha que [Y] é [MITO].”
+Slide 2: “mas na prática…” (ruídos)
+Slide 3: “verdade:”
+Slides 4–7: exemplos e abrangência
+Slide 8: reframe invisível
+CTA: comentar “MITO” ou “VERDADE” + seguir</div>
+          </div>
+          <div>
+            <p><strong>Variação C — “Checklist manifesto”</strong></p>
+            <div class="code">Slide 1: pergunta provocativa
+Slide 2: “pare de…” (3 bullets)
+Slide 3: “comece a…” (3 bullets)
+Slide 6: tese curta
+Slide 7: áreas + repetição
+Slide 9: CTA “ME SEGUE!!”
+Slide 10: “salva pra usar”</div>
+          </div>
+          <div>
+            <p><strong>Substituições rápidas (plug-and-play)</strong></p>
+            <div class="code">Troque:
+- “ultimamente foi só…” → “de uns tempos pra cá é só…” / “virou moda falar de…”
+- “tá bem aqui” → “é exatamente isso” / “é nessa parte”
+- “não tá só em…” → “não mora só em…” / “não é só sobre…”
+- “então, é Y.” → “isso é Y.” / “aí você achou o Y.”</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Use este guia como template: substitua os campos entre colchetes e mantenha o ritmo (curto → lista → curto → tese → lista → insight → CTA).</p>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('roteiroText');
+      const originalLabel = btn.textContent;
+
+      async function copy(){
+        const text = textEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = originalLabel, 1200);
+        } catch (e){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = originalLabel, 1200);
+        }
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
