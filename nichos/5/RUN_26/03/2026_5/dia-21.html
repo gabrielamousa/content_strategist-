@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 21 — Design Gráfico — Roteiro reproduzível</title>
+<style>
+  :root{
+    --bg0:#070A0F;
+    --bg1:#0B1020;
+    --card:#0D1426CC;
+    --card2:#0B1224B3;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.16);
+    --txt:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.52);
+    --shadow: 0 18px 50px rgba(0,0,0,.45);
+    --r:18px;
+    --r2:14px;
+    --g1: linear-gradient(135deg,#28F08A 0%, #15B5FF 44%, #FF8A00 100%);
+    --g2: radial-gradient(900px 420px at 15% 20%, rgba(40,240,138,.18) 0%, rgba(21,181,255,.12) 35%, rgba(255,138,0,.10) 60%, rgba(0,0,0,0) 72%);
+    --g3: radial-gradient(800px 420px at 85% 20%, rgba(21,181,255,.14) 0%, rgba(255,138,0,.10) 40%, rgba(0,0,0,0) 70%);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--txt);
+    background:
+      var(--g2),
+      var(--g3),
+      linear-gradient(180deg,var(--bg0) 0%, var(--bg1) 70%, #070A0F 100%);
+  }
+  a{color:inherit}
+  .wrap{max-width:1100px;margin:0 auto;padding:26px 18px 52px}
+
+  .header{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.03) 100%);
+    border-radius:calc(var(--r) + 6px);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+  .header:before{
+    content:"";
+    position:absolute;inset:-2px;
+    background:var(--g1);
+    opacity:.18;
+    filter:blur(18px);
+    pointer-events:none;
+  }
+  .headerInner{position:relative;padding:18px 18px 16px;display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+  .meta{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center
+  }
+  .pill{
+    border:1px solid var(--stroke2);
+    background:rgba(255,255,255,.04);
+    color:var(--muted);
+    padding:7px 10px;
+    border-radius:999px;
+    font-size:12px;
+    letter-spacing:.2px;
+  }
+  .pill strong{color:var(--txt);font-weight:650}
+  .titleBlock{min-width:min(640px,100%)}
+  h1{margin:10px 0 6px;font-size:24px;line-height:1.15;letter-spacing:-.02em}
+  .sub{color:var(--muted);margin:0;font-size:13.5px;line-height:1.45}
+  .link{
+    display:inline-flex;gap:8px;align-items:center;
+    margin-top:10px;
+    color:var(--muted);
+    text-decoration:none;
+    border-bottom:1px dashed rgba(255,255,255,.22);
+    padding-bottom:2px
+  }
+  .link:hover{color:var(--txt)}
+
+  .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .btn{
+    border:1px solid var(--stroke2);
+    background:rgba(255,255,255,.05);
+    color:var(--txt);
+    padding:10px 12px;
+    border-radius:12px;
+    font-size:13px;
+    cursor:pointer;
+    transition:transform .12s ease, background .12s ease, border-color .12s ease;
+    user-select:none;
+  }
+  .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.07)}
+  .btn.primary{
+    border-color:transparent;
+    background:linear-gradient(135deg, rgba(40,240,138,.22) 0%, rgba(21,181,255,.18) 44%, rgba(255,138,0,.16) 100%);
+    position:relative;
+  }
+  .btn.primary:before{
+    content:"";
+    position:absolute;inset:0;
+    border-radius:12px;
+    padding:1px;
+    background:var(--g1);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+            mask-composite:exclude;
+    opacity:.9;
+    pointer-events:none;
+  }
+  .btn small{color:var(--muted)}
+
+  .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+  @media (min-width: 920px){
+    .grid{grid-template-columns: 1fr 1fr}
+    .span2{grid-column:1 / -1}
+  }
+
+  .card{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,.03) 100%);
+    border-radius:var(--r);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 16px 10px;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.02);
+  }
+  .card .hd h2{margin:0;font-size:14px;letter-spacing:.2px}
+  .badge{
+    font-family:var(--mono);
+    font-size:11px;
+    color:rgba(255,255,255,.78);
+    padding:6px 9px;
+    border-radius:999px;
+    background:rgba(0,0,0,.25);
+    border:1px solid rgba(255,255,255,.10)
+  }
+  .card .bd{padding:14px 16px 16px}
+  .card p{margin:0 0 10px;color:var(--muted);font-size:13.5px;line-height:1.55}
+  .card p:last-child{margin-bottom:0}
+
+  .k{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:12px;
+    color:rgba(255,255,255,.86);
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.10);
+    padding:3px 7px;
+    border-radius:10px;
+  }
+
+  ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.6}
+  li{margin:6px 0}
+
+  .twoCol{display:grid;grid-template-columns:1fr;gap:10px}
+  @media (min-width: 560px){.twoCol{grid-template-columns:1fr 1fr}}
+
+  .callout{
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(0,0,0,.22);
+    padding:12px 12px;
+    border-radius:var(--r2);
+    position:relative;
+    overflow:hidden;
+  }
+  .callout:before{
+    content:"";
+    position:absolute;inset:-2px;
+    background:var(--g1);
+    opacity:.13;
+    filter:blur(18px);
+    pointer-events:none;
+  }
+  .callout > *{position:relative}
+
+  .scriptBox{
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(0,0,0,.35);
+    border-radius:var(--r);
+    padding:14px;
+  }
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    font-family:var(--mono);
+    font-size:12.6px;
+    line-height:1.55;
+    color:rgba(234,240,255,.86);
+  }
+  .hr{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+
+  .footerNote{color:var(--muted2);font-size:12.5px;line-height:1.5;margin-top:14px}
+
+  .toast{
+    position:fixed;
+    inset:auto 16px 16px auto;
+    background:rgba(10,16,32,.92);
+    border:1px solid rgba(255,255,255,.14);
+    color:rgba(234,240,255,.92);
+    padding:10px 12px;
+    border-radius:12px;
+    font-size:13px;
+    box-shadow: 0 18px 50px rgba(0,0,0,.55);
+    display:none;
+    max-width:min(320px, calc(100vw - 32px));
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="headerInner">
+        <div class="titleBlock">
+          <div class="meta">
+            <span class="pill"><strong>Nicho</strong>: Design Gráfico</span>
+            <span class="pill"><strong>Dia</strong>: 21</span>
+            <span class="pill"><strong>Formato</strong>: Carrossel</span>
+            <span class="pill"><strong>Pilar</strong>: Checklist</span>
+          </div>
+          <h1>Carrossel tipográfico: lista que gera saves e DMs</h1>
+          <p class="sub">Roteiro reproduzível para criar um carrossel “poster tipográfico” com promessa forte, curadoria em sequência e CTA por palavra-chave (comentário/DM).</p>
+          <a class="link" href="https://www.instagram.com/p/DV1R8UuDtZj/" target="_blank" rel="noopener noreferrer">Post original: https://www.instagram.com/p/DV1R8UuDtZj/</a>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="copyHooksBtn">Copiar ganchos</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card span2">
+        <div class="hd"><h2>Resumo</h2><span class="badge">Objetivo</span></div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="callout">
+              <p><span class="k">O que é</span> Um carrossel de 8 slides com estética high-contrast e tipografia como imagem: capa com promessa, 5 itens em sequência, um slide de “salvar” e um slide final que converte (comentário com palavra-chave).</p>
+            </div>
+            <div class="callout">
+              <p><span class="k">Por que funciona</span> Ritmo repetitivo (mesmo layout) + variação controlada (itens) + micro-CTA silencioso (seta/continuidade) + CTA com recompensa (link/pack/checklist via DM).</p>
+            </div>
+          </div>
+          <p class="footerNote">Use quando você tiver uma lista/curadoria: fontes, grids, paletas, plugins, hacks, passos, erros, prompts, templates, referências.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Estrutura</h2><span class="badge">Sequência</span></div>
+        <div class="bd">
+          <p><span class="k">Duração</span> 8 slides (1:1 1080×1080) • 1 ideia por slide • leitura em 2 segundos.</p>
+          <ul>
+            <li><strong>Slide 1 (Capa):</strong> Hook + promessa + contexto (benefício claro).</li>
+            <li><strong>Slides 2–6 (Conteúdo):</strong> Item #1…#5 em pôster tipográfico (nome do item como protagonista) + microlegenda.</li>
+            <li><strong>Slide 7 (Retenção):</strong> “Salva pra não perder” (ou “manda pra alguém”).</li>
+            <li><strong>Slide 8 (Conversão):</strong> CTA conversacional + palavra-chave para comentar (entrega por DM).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Slides sugeridos (1..8)</h2><span class="badge">Mapa</span></div>
+        <div class="bd">
+          <ul>
+            <li><strong>1.</strong> “{LISTA} que {RESULTADO} em {CONTEXTO}” + seta →</li>
+            <li><strong>2.</strong> {ITEM 1} (gigante) • legenda: “Melhor para {uso}”</li>
+            <li><strong>3.</strong> {ITEM 2} • legenda: “Funciona quando {cenário}”</li>
+            <li><strong>4.</strong> {ITEM 3} • legenda: “Evite se {restrição}” (opcional)</li>
+            <li><strong>5.</strong> {ITEM 4} • legenda: “Combine com {recomendação}”</li>
+            <li><strong>6.</strong> {ITEM 5} • legenda: “Se você quer {benefício}, usa em {peça}”</li>
+            <li><strong>7.</strong> “SALVA ISSO” / “CHECKLIST” / “GUIA RÁPIDO” (alto impacto)</li>
+            <li><strong>8.</strong> Pergunta + recompensa + instrução: comentar “{PALAVRA}”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd"><h2>Roteiro</h2><span class="badge">Copiável</span></div>
+        <div class="bd">
+          <div class="scriptBox" id="script">
+            <pre>CONFIGURAÇÃO
+- Formato: 1080×1080 (1:1)
+- Margens seguras: 96px (ajuste 80–120px)
+- Regra: 1 ideia por slide, contraste extremo, tipografia como peça
+
+SLIDE 1 — CAPA (HOOK)
+Texto (máx. 6–10 palavras, CAIXA ALTA):
+“{LISTA/CURADORIA} que {RESULTADO} em {CONTEXTO}”
+Sub (opcional, minúsculo): “pra {público} que quer {benefício}”
+Micro-CTA: “→” (canto inferior direito)
+
+SLIDES 2–6 — ITENS (ENTREGA RÁPIDA)
+Padrão por slide:
+H1 (gigante, corta bordas): “{ITEM #}”
+H2 (1 linha): “Use quando {situação}” OU “Melhor para {uso}”
+Elemento fixo: assinatura/marca + “→”
+
+SLIDE 7 — RETENÇÃO (AÇÃO)
+H1: “SALVA PRA NÃO PERDER”
+Alternativas: “GUARDA ESSE GUIA” | “MANDA PRA UM AMIGO” | “REFERÊNCIAS AQUI”
+
+SLIDE 8 — CTA (CONVERSÃO)
+Bloco 1 (pergunta):
+“Quer o pacote completo de {tema} pra {resultado}?”
+Bloco 2 (instrução + recompensa):
+“Comenta ‘{PALAVRA}’ que eu te mando o link/arquivo no direct.”
+Destaque de cor: somente “{PALAVRA}”
+
+LEGENDA (CAPTION) — MODELO
+1) 1 frase de promessa: “Esses {itens} te ajudam a {resultado} em {contexto}.”
+2) Mini instrução: “Salva pra consultar quando for criar.”
+3) CTA: “Quer a lista completa + bônus? comenta ‘{PALAVRA}’.”
+4) P.S.: “Se preferir, me chama no direct com “{PALAVRA}”.”
+
+FIXOS DE RETENÇÃO
+- Repetir seta “→” em todos os slides 1–7
+- Manter o mesmo grid; mudar apenas o protagonista (item)
+- Inserir pelo menos 1 slide explícito de “salvar”</pre>
+          </div>
+          <div class="footerNote">Dica de execução: deixe pronto um componente de slide (brand + seta + estilos H1/H2). Duplicar 5 vezes e substituir apenas o {ITEM} e a microlegenda.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Elementos visuais</h2><span class="badge">Identidade</span></div>
+        <div class="bd">
+          <p><strong>Sistema (reproduzível):</strong> tipografia como imagem, escala exagerada, poucos elementos, alto contraste, repetição com variação controlada.</p>
+          <ul>
+            <li><strong>Paleta:</strong> 2–3 cores por slide. (No original: cor de impacto + neutro + cinza de texto.)</li>
+            <li><strong>Grid:</strong> margens generosas; alinhamentos rígidos; respiro.</li>
+            <li><strong>Elementos fixos:</strong> assinatura/marca em um canto + seta “→”.</li>
+            <li><strong>Decoração opcional:</strong> arcos/círculos cortados nas bordas (principalmente no CTA final).</li>
+            <li><strong>Tipografia:</strong> H1 bold/condensada; H2 simples e legível; 1 palavra destacada por cor.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><span class="badge">Fórmulas</span></div>
+        <div class="bd">
+          <p><span class="k">Fórmula da capa</span> <strong>[Lista/Curadoria]</strong> + <strong>[resultado]</strong> + <strong>[contexto]</strong></p>
+          <div class="hr"></div>
+          <p><strong>Modelos (substituíveis):</strong></p>
+          <ul>
+            <li>“{N} {itens} que deixam {X} com cara de {resultado}”</li>
+            <li>“{itens} pra {tarefa} sem parecer {erro comum}”</li>
+            <li>“Se você faz {atividade}, precisa dessas {coisas}”</li>
+            <li>“{N} escolhas que aumentam {métrica} em {contexto}”</li>
+            <li>“O kit de {tema} pra você {benefício} hoje”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Microlegendas (slides 2–6):</strong></p>
+          <ul>
+            <li>“Melhor para: {uso}”</li>
+            <li>“Quando usar: {situação}”</li>
+            <li>“Evite se: {restrição}”</li>
+            <li>“Combina com: {par}”</li>
+            <li>“Atalho: {dica de aplicação}”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>CTA</h2><span class="badge">Comentário / DM</span></div>
+        <div class="bd">
+          <p><strong>Objetivo:</strong> 1 ação simples + 1 recompensa clara.</p>
+          <ul>
+            <li><strong>Modelo base:</strong> “Quer <em>{resultado}</em> com <em>{recurso}</em> + <em>{bônus}</em>? Comenta <strong>‘{PALAVRA}’</strong> que eu te mando no direct.”</li>
+            <li><strong>Recompensas que convertem:</strong> pack (zip), lista de links, template (Figma/Canva), checklist PDF, biblioteca, presets, tabela de referência.</li>
+            <li><strong>Palavras-chave boas:</strong> KIT, PACK, LISTA, GUIA, TIPO, GRID, COR, MOCKUP (curtas e fáceis de moderar).</li>
+          </ul>
+          <div class="callout" style="margin-top:12px">
+            <p><strong>Regra de ouro:</strong> destaque visual (cor) em apenas <em>uma</em> palavra: a palavra-chave.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd"><h2>Checklist de criação</h2><span class="badge">Antes de postar</span></div>
+        <div class="bd">
+          <div class="twoCol">
+            <div>
+              <p><strong>Conteúdo</strong></p>
+              <ul>
+                <li>[ ] A capa promete um <strong>resultado</strong> claro em 2s?</li>
+                <li>[ ] Cada slide tem <strong>1 ideia</strong> e leitura instantânea?</li>
+                <li>[ ] Os 5 itens são <strong>curadoria real</strong> (sem encher linguiça)?</li>
+                <li>[ ] O slide 7 pede explicitamente <strong>Salvar/Enviar</strong>?</li>
+                <li>[ ] O CTA final tem <strong>1 ação</strong> + <strong>1 recompensa</strong>?</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Design</strong></p>
+              <ul>
+                <li>[ ] Contraste alto (teste em 25% de zoom)?</li>
+                <li>[ ] Margens seguras consistentes (80–120px)?</li>
+                <li>[ ] Elemento de continuidade (seta/numeração) em 1–7?</li>
+                <li>[ ] Tipografia com escala “pôster” e cortes controlados?</li>
+                <li>[ ] Consistência de estilos H1/H2/assinatura em todos os slides?</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="footerNote">Se você quiser testar variações sem perder o “impacto”, mantenha o mesmo grid e mude só: (1) a promessa da capa, (2) o protagonista do slide (item), (3) a palavra-chave do CTA.</p>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd"><h2>Variações</h2><span class="badge">Adaptações com o mesmo impacto</span></div>
+        <div class="bd">
+          <p><strong>Trocas rápidas (sem quebrar a estrutura):</strong></p>
+          <ul>
+            <li><strong>Tema (itens):</strong> fontes → paletas → grids → plugins → atalhos → erros → prompts → referências.</li>
+            <li><strong>Slide 7 (retenção):</strong> “Salva” → “Checklist” → “Favorita” → “Volta aqui depois” → “Envia pra equipe”.</li>
+            <li><strong>CTA (recompensa):</strong> link → template → PDF → pack → “lista completa + bônus”.</li>
+            <li><strong>Quantidade de itens:</strong> 3 ou 7 itens (ajuste slides 2–6 e mantenha 1 slide de retenção + 1 de CTA).</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Variações de posicionamento (A/B):</strong></p>
+          <ul>
+            <li><strong>V1 (padrão):</strong> CTA só no slide 8 (limpo e direto).</li>
+            <li><strong>V2 (mais agressivo):</strong> microtexto no canto dos slides 2–6: “Comenta ‘{PALAVRA}’ p/ receber o pack”.</li>
+            <li><strong>V3 (mais autoridade):</strong> slide extra antes do “salva” com mini prova: “Usei isso em {projeto} / resultado {métrica}”.</li>
+          </ul>
+          <div class="callout" style="margin-top:12px">
+            <p><span class="k">Substituições prontas</span></p>
+            <ul>
+              <li>“bombar” → “dar cara de pro” | “parecer premium” | “vender mais” | “ficar mais legível”</li>
+              <li>“flyers” → “posts” | “capas” | “apresentações” | “identidades” | “portfólio”</li>
+              <li>“fontes” → “paletas” | “grids” | “combinações” | “regras” | “checklists”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast">Copiado.</div>
+  </div>
+
+<script>
+  function toast(msg){
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.style.display = 'block';
+    clearTimeout(window.__t);
+    window.__t = setTimeout(()=>{el.style.display='none';}, 1500);
+  }
+
+  function copyText(text){
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(()=>toast('Roteiro copiado para a área de transferência.'));
+      return;
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try{ document.execCommand('copy'); toast('Roteiro copiado para a área de transferência.'); }
+    catch(e){ toast('Não foi possível copiar automaticamente.'); }
+    document.body.removeChild(ta);
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const text = document.getElementById('script').innerText.trim();
+    copyText(text);
+  });
+
+  document.getElementById('copyHooksBtn').addEventListener('click', () => {
+    const hooks = [
+      'MODELOS DE CAPA (HOOK)\n- “{N} {itens} que deixam {X} com cara de {resultado}”\n- “{itens} pra {tarefa} sem parecer {erro comum}”\n- “Se você faz {atividade}, precisa dessas {coisas}”\n- “{N} escolhas que aumentam {métrica} em {contexto}”\n- “O kit de {tema} pra você {benefício} hoje”\n\nCTA\n- “Comenta \'{PALAVRA}\' que eu te mando o {recurso} no direct.”'
+    ].join('\n');
+    copyText(hooks);
+  });
+</script>
+</body>
+</html>
