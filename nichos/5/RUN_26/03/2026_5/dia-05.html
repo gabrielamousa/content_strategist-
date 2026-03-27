@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 5 — Design Gráfico — Roteiro de Carrossel</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --g1: linear-gradient(135deg, #22c55e 0%, #06b6d4 45%, #fb923c 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.18) 0%, rgba(6,182,212,.18) 45%, rgba(251,146,60,.18) 100%);
+      --focus: 0 0 0 3px rgba(6,182,212,.24), 0 0 0 1px rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(6,182,212,.18), transparent 55%),
+        radial-gradient(900px 500px at 80% 15%, rgba(34,197,94,.16), transparent 55%),
+        radial-gradient(900px 600px at 70% 85%, rgba(251,146,60,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 44px}
+
+    .topbar{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+      padding:18px 18px;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      position:relative;
+      overflow:hidden;
+    }
+    .topbar:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g2);
+      filter:blur(24px);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .topbar > *{position:relative}
+
+    .meta{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-width: 220px;
+    }
+    .pillRow{display:flex; flex-wrap:wrap; gap:8px}
+    .pill{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.24);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .pill strong{color:var(--text); font-weight:650}
+
+    .titleBlock{flex:1; min-width: 280px}
+    h1{
+      margin:0;
+      font-size:20px;
+      line-height:1.2;
+      letter-spacing:-.2px;
+    }
+    .sub{
+      margin-top:8px;
+      color:var(--muted);
+      line-height:1.35;
+      font-size:14px;
+      max-width: 72ch;
+    }
+    .linkLine{
+      margin-top:10px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      color:var(--muted2);
+      font-size:12.5px;
+    }
+    .linkLine a{color:var(--text); text-decoration:none; border-bottom:1px dashed rgba(234,240,255,.35)}
+    .linkLine a:hover{border-bottom-color:rgba(234,240,255,.8)}
+
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
+    .btn{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:13px;
+      cursor:pointer;
+      transition:.15s ease;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      box-shadow: 0 10px 26px rgba(0,0,0,.25);
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background:rgba(255,255,255,.09)}
+    .btn:focus{outline:none; box-shadow:var(--focus)}
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(6,182,212,.16), rgba(251,146,60,.16));
+      border-color: rgba(234,240,255,.18);
+    }
+    .icon{
+      width:18px;
+      height:18px;
+      display:inline-block;
+      background:var(--g1);
+      -webkit-mask: var(--mask);
+      mask: var(--mask);
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media (min-width: 900px){
+      .grid{grid-template-columns: 1.1fr .9fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .cardHeader{
+      padding:16px 16px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .cardHeader h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+      text-transform:uppercase;
+      color:rgba(234,240,255,.85);
+    }
+    .tag{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.7);
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.22);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+    .cardBody{padding:14px 16px 16px}
+
+    .list{margin:0; padding-left:18px; color:var(--muted); line-height:1.55; font-size:14px}
+    .list li{margin:8px 0}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .mini{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.22);
+      border-radius:var(--radius2);
+      padding:12px;
+      min-height:80px;
+    }
+    .mini .label{font-size:12px; color:var(--muted2); text-transform:uppercase; letter-spacing:.2px}
+    .mini .value{margin-top:8px; font-size:14px; color:var(--text); line-height:1.35}
+
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      color:rgba(234,240,255,.85);
+      background:rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:var(--radius2);
+      padding:14px;
+      font-family:var(--mono);
+      font-size:12.6px;
+      line-height:1.55;
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 900px){
+      .twoCol{grid-template-columns: 1fr 1fr}
+    }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,.22));
+      border-radius:var(--radius2);
+      padding:12px 12px;
+      color:rgba(234,240,255,.78);
+      line-height:1.5;
+      font-size:13.5px;
+      position:relative;
+      overflow:hidden;
+    }
+    .callout:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g2);
+      opacity:.55;
+      filter:blur(28px);
+      pointer-events:none;
+    }
+    .callout > *{position:relative}
+
+    .hr{
+      height:1px;
+      background:rgba(255,255,255,.10);
+      margin:14px 0;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,.65);
+      border:1px solid rgba(255,255,255,.16);
+      color:rgba(234,240,255,.9);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:12.5px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      opacity:0;
+      pointer-events:none;
+      transition: .18s ease;
+    }
+    .toast.show{opacity:1; bottom:22px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="meta">
+        <div class="pillRow">
+          <div class="pill"><strong>Nicho:</strong> Design Gráfico</div>
+          <div class="pill"><strong>Dia:</strong> 5</div>
+          <div class="pill"><strong>Formato:</strong> Carrossel</div>
+          <div class="pill"><strong>Pilar:</strong> Passo a passo</div>
+        </div>
+        <div class="linkLine">
+          <span>Post original:</span>
+          <a href="https://www.instagram.com/p/DVrTkq7jrGI/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DVrTkq7jrGI/</a>
+        </div>
+      </div>
+
+      <div class="titleBlock">
+        <h1>Troque o “padrão” do design: carrossel de alternativas (modelo)</h1>
+        <p class="sub">Template reproduzível para criar carrosséis do tipo “X é ótimo, mas ficou comum → aqui vão N alternativas prontas”, com visual colecionável e CTA forte para salvar.</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn btnPrimary" id="copyBtn" type="button" aria-label="Copiar roteiro">
+          <span class="icon" style="--mask:url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path fill=\"black\" d=\"M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 18H8V7h11v16z\"/></svg>');"></span>
+          Copiar roteiro
+        </button>
+        <a class="btn" href="#slides">Ir para slides</a>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo: sair do óbvio + gerar saves</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div class="callout">
+              <strong>Ideia central:</strong> validar um padrão popular (fonte, grid, paleta, mockup, estilo) e apresentar <strong>N alternativas</strong> em slides repetíveis, fáceis de aplicar.
+            </div>
+            <div class="callout">
+              <strong>Quando usar:</strong> sempre que você quiser “curadoria” (lista) e um post colecionável que a pessoa salva para consultar depois.
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="kpi">
+            <div class="mini"><div class="label">Estrutura</div><div class="value">Capa → Contexto/virada → Alternativas (1 por slide) → Fechamento/CTA</div></div>
+            <div class="mini"><div class="label">Tamanho recomendado</div><div class="value">10–11 slides (4:5 — 1080×1350)</div></div>
+            <div class="mini"><div class="label">Promessa</div><div class="value">“Veja N opções prontas para substituir X e melhorar Y”</div></div>
+            <div class="mini"><div class="label">CTA principal</div><div class="value">Salvar + próximo passo (link na bio / direct / aula / produto)</div></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardHeader">
+          <h2>Estrutura (sequência)</h2>
+          <span class="tag">Macro em 4 blocos</span>
+        </div>
+        <div class="cardBody">
+          <ol class="list">
+            <li><strong>Capa / Hook:</strong> pergunta provocativa + promessa de lista + “salve”.</li>
+            <li><strong>Contexto / Por quê:</strong> valida o padrão + mostra o custo (“ficou comum”).</li>
+            <li><strong>Conteúdo em série:</strong> cada slide = 1 alternativa (mesmo template).</li>
+            <li><strong>Fechamento:</strong> pergunta + CTA de salvar + próximo passo.</li>
+          </ol>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Regra de ouro:</strong> 1 slide = 1 ideia. A repetição do layout acelera consumo e aumenta retenção.
+          </div>
+        </div>
+      </aside>
+
+      <section class="card" id="slides">
+        <div class="cardHeader">
+          <h2>Slides sugeridos (1..11)</h2>
+          <span class="tag">modelo plug-and-play</span>
+        </div>
+        <div class="cardBody">
+          <pre id="roteiroText">SLIDE 1 — CAPA (hook)
+Headline: “Que tal trocar [PADRÃO]?”
+Sub: “Vem ver [N] alternativas pra [BENEFÍCIO]”
+Selo/linha: “Salve pra usar depois”
+Rodapé/topo: @seuperfil
+
+SLIDE 2 — CONTEXTO + VIRADA
+Headline: “[PADRÃO] é queridinho (e faz sentido)”
+Cartelas (2–3 bullets):
+• [Motivo 1: versátil]
+• [Motivo 2: fácil de ler]
+• [Motivo 3: todo mundo tem/usa]
+Virada: “Mas por isso ficou comum.”
+Pergunta: “Bora sair do óbvio?”
+
+SLIDE 3 — ALTERNATIVA 01
+Rótulo: “ALTERNATIVA 01”
+Nome grande: “[OPÇÃO 01]”
+Linha alfabeto: “Aa Bb Cc 0123”
+Nota curta: “Ideal pra [uso principal].”
+
+SLIDE 4 — ALTERNATIVA 02
+Rótulo: “ALTERNATIVA 02”
+Nome grande: “[OPÇÃO 02]”
+Linha alfabeto: “Aa Bb Cc 0123”
+Nota curta: “Boa para [contexto].”
+
+SLIDE 5 — ALTERNATIVA 03
+Rótulo: “ALTERNATIVA 03”
+Nome grande: “[OPÇÃO 03]”
+Linha alfabeto: “Aa Bb Cc 0123”
+Nota curta: “Se você quer [efeito].”
+
+SLIDE 6 — ALTERNATIVA 04
+Rótulo: “ALTERNATIVA 04”
+Nome grande: “[OPÇÃO 04]”
+Linha alfabeto: “Aa Bb Cc 0123”
+Nota curta: “Funciona bem em [uso].”
+
+SLIDE 7 — ALTERNATIVA 05
+Rótulo: “ALTERNATIVA 05”
+Nome grande: “[OPÇÃO 05]”
+Linha alfabeto: “Aa Bb Cc 0123”
+Nota curta: “Para um look mais [atributo].”
+
+SLIDE 8 — ALTERNATIVA 06 (opcional)
+Rótulo: “ALTERNATIVA 06”
+Nome grande: “[OPÇÃO 06]”
+Linha alfabeto: “Aa Bb Cc 0123”
+Nota curta: “Dá um ar de [atributo].”
+
+SLIDE 9 — COMO ESCOLHER (slide de amarração)
+Headline: “Como escolher a melhor?”
+3 bullets curtos:
+• Se é [objetivo], use [opções X]
+• Se é [objetivo], use [opções Y]
+• Se é [objetivo], use [opções Z]
+Micro-CTA: “Salva pra testar depois”
+
+SLIDE 10 — BÔNUS (variação rápida)
+Headline: “Bônus: combinações que funcionam”
+Exemplos:
+• [Opção A] + [Opção B]
+• [Opção C] + [Opção D]
+
+SLIDE 11 — FECHAMENTO + CTA
+Headline: “Curtiu? Quer a parte 2?”
+CTA 1 (engajamento): “Salve pra consultar quando for criar.”
+CTA 2 (próximo passo): “Quer aprender [tema]? link na bio / me chama no direct com ‘[PALAVRA]’.”
+Prova opcional: “+ de [n] projetos / portfólio no perfil”</pre>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardHeader">
+          <h2>Elementos visuais</h2>
+          <span class="tag">consistência + colecionável</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><strong>Tratamento único nas fotos:</strong> aplique 1 preset fixo (cor + contraste + leve vinheta) pra unificar.</li>
+            <li><strong>Textura:</strong> grão/ruído uniforme (8–20%) para “amarrar” o carrossel.</li>
+            <li><strong>Estrutura do slide:</strong> 1 foto + espaço negativo para o texto; evite poluição.</li>
+            <li><strong>Hierarquia tipográfica:</strong> Nome da alternativa gigante; rótulo pequeno com tracking alto; nota curta em cartela.</li>
+            <li><strong>Camada humana:</strong> rabiscos (seta, círculo, sublinhado) com parcimônia para ritmo.</li>
+            <li><strong>Formato:</strong> 1080×1350 (4:5). Margens seguras: 80–120px.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">valida → tensiona → entrega</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <div class="callout"><strong>Fórmula do hook (capa):</strong><br/>“Que tal trocar <span style="background:var(--g2); padding:2px 6px; border-radius:8px; border:1px solid rgba(255,255,255,.12)">[O PADRÃO]</span>?”<br/>“Vem ver <strong>[N]</strong> opções pra <strong>[benefício]</strong>”</div>
+              <div class="hr"></div>
+              <ul class="list">
+                <li>“Se você usa [padrão] sempre… isso vai te ajudar.”</li>
+                <li>“Não é que [padrão] seja ruim — só ficou comum.”</li>
+                <li>“Aqui vão alternativas que mantêm legibilidade e mudam a cara do layout.”</li>
+              </ul>
+            </div>
+            <div>
+              <div class="callout"><strong>Frases de retenção (micro-CTAs):</strong><br/>“Salva pra testar depois” · “Desliza pra ver as opções” · “Qual você usaria?”</div>
+              <div class="hr"></div>
+              <div class="callout"><strong>Template da legenda (curto e direto):</strong><br/>
+                “<strong>[Padrão]</strong> funciona por [motivo]. Mas se você quer sair do óbvio, testa essas <strong>[N]</strong> alternativas 👇<br/>
+                1) [opção] — [benefício]<br/>
+                2) [opção] — [benefício]<br/>
+                …<br/>
+                Salva pra usar no próximo job. Quer a parte 2? comenta ‘<strong>[palavra]</strong>’.”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardHeader">
+          <h2>CTA</h2>
+          <span class="tag">1 principal + 1 secundário</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><strong>CTA secundário (saves):</strong> “Salve para consultar quando for criar.”</li>
+            <li><strong>CTA principal (próximo passo):</strong> “Quer aprender [tema]? link na bio / direct com ‘[palavra]’.”</li>
+            <li><strong>CTA de relação:</strong> “Qual alternativa você usaria hoje?”</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout"><strong>Onde colocar:</strong> micro-CTA na capa + reforço no slide 2 + CTA completo no último slide (em cartela destacada).</div>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Checklist de criação</h2>
+          <span class="tag">pré-publicação</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li>[ ] Definiu <strong>[PADRÃO]</strong> + <strong>[BENEFÍCIO]</strong> + <strong>N</strong> alternativas (5–7 costuma funcionar bem).</li>
+            <li>[ ] Capa com pergunta + promessa + “salve”.</li>
+            <li>[ ] Slide 2: valida o padrão + aponta a consequência (“ficou comum”) + abre o loop.</li>
+            <li>[ ] Slides de alternativas com <strong>mesmo template</strong> (rótulo, nome grande, alfabeto, nota curta).</li>
+            <li>[ ] 1 ideia por slide; sem parágrafos longos.</li>
+            <li>[ ] Legibilidade testada no celular (brilho baixo) e em foto clara/escura.</li>
+            <li>[ ] Margens seguras (80–120px) e assinatura/handle no mesmo lugar.</li>
+            <li>[ ] CTA final com salvar + próximo passo (e prova/credencial se fizer sentido).</li>
+            <li>[ ] Exportação 1080×1350, nitidez ok, compressão sem estourar grão.</li>
+          </ul>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardHeader">
+          <h2>Variações (mesma lógica)</h2>
+          <span class="tag">repita o formato, troque o tema</span>
+        </div>
+        <div class="cardBody">
+          <ul class="list">
+            <li><strong>Fontes:</strong> “Troque a Poppins” → 6 alternativas por estilo (tech, editorial, clean).</li>
+            <li><strong>Paletas:</strong> “Troque o bege + preto” → 7 paletas com contexto de uso (luxo, wellness, street).</li>
+            <li><strong>Grids:</strong> “Troque o grid óbvio” → 5 grids com mini-diagrama.</li>
+            <li><strong>Mockups:</strong> “Troque o mockup genérico” → 8 mockups por nicho (cosmético, café, SaaS).</li>
+            <li><strong>Composição:</strong> “Troque a centralização” → 6 composições (assimétrica, modular, tipográfica).</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout"><strong>Dica de escala:</strong> mantenha o template e crie “séries” (parte 1, 2, 3). Isso aumenta retorno e saves acumulados.</div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const txt = document.getElementById('roteiroText');
+      const toast = document.getElementById('toast');
+
+      async function copy(){
+        const content = txt.innerText.trim();
+        try{
+          if(navigator.clipboard && window.isSecureContext){
+            await navigator.clipboard.writeText(content);
+          }else{
+            const ta = document.createElement('textarea');
+            ta.value = content;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+          toast.classList.add('show');
+          setTimeout(()=>toast.classList.remove('show'), 1400);
+        }catch(e){
+          toast.textContent = 'Não foi possível copiar.';
+          toast.classList.add('show');
+          setTimeout(()=>{ toast.classList.remove('show'); toast.textContent = 'Roteiro copiado.'; }, 1600);
+        }
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
