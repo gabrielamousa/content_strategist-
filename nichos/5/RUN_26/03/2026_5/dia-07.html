@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 7 — Design Gráfico — Troquei Canva por Figma</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:#0E1630cc;
+    --card2:#0B132Acc;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.16);
+    --text:#EAF0FF;
+    --muted:#AAB6DA;
+    --muted2:#7E8DBB;
+    --good:#22C55E;
+    --warn:#F59E0B;
+    --info:#38BDF8;
+    --gradA:linear-gradient(90deg,#22C55E 0%, #38BDF8 45%, #F59E0B 100%);
+    --gradB:linear-gradient(135deg,rgba(34,197,94,.22),rgba(56,189,248,.18) 45%,rgba(245,158,11,.17));
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --radius: 18px;
+    --radius2: 14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:
+      radial-gradient(1200px 700px at 12% 10%, rgba(56,189,248,.18), transparent 55%),
+      radial-gradient(900px 600px at 80% 18%, rgba(34,197,94,.14), transparent 55%),
+      radial-gradient(900px 600px at 62% 88%, rgba(245,158,11,.12), transparent 55%),
+      linear-gradient(180deg,var(--bg0),var(--bg1));
+    min-height:100vh;
+  }
+  a{color:#BFE8FF; text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 56px}
+
+  header{
+    position:relative;
+    border:1px solid var(--stroke);
+    background:var(--gradB);
+    border-radius:calc(var(--radius) + 8px);
+    padding:22px 20px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background:conic-gradient(from 220deg, rgba(34,197,94,.25), rgba(56,189,248,.18), rgba(245,158,11,.20), rgba(34,197,94,.18));
+    filter:blur(18px);
+    opacity:.45;
+    z-index:0;
+  }
+  header > *{position:relative; z-index:1}
+  .topline{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+  .chips{display:flex; gap:8px; flex-wrap:wrap}
+  .chip{
+    border:1px solid var(--stroke2);
+    background:rgba(8,12,26,.55);
+    padding:7px 10px;
+    border-radius:999px;
+    font-size:12px;
+    letter-spacing:.2px;
+    color:var(--muted);
+  }
+  .chip strong{color:var(--text); font-weight:650}
+  .title{
+    margin:14px 0 6px;
+    font-weight:800;
+    line-height:1.12;
+    font-size:clamp(22px, 3.2vw, 34px);
+    letter-spacing:-.4px;
+  }
+  .subtitle{color:var(--muted); margin:0; line-height:1.5}
+  .metaRow{margin-top:14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+  .btns{display:flex; gap:10px; flex-wrap:wrap}
+  .btn{
+    border:1px solid var(--stroke2);
+    background:rgba(10,16,36,.62);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    font-weight:650;
+    font-size:13px;
+    cursor:pointer;
+    transition:transform .08s ease, border-color .2s ease, background .2s ease;
+  }
+  .btn:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.22)}
+  .btn.primary{
+    background:var(--gradA);
+    border-color:transparent;
+    color:#08101D;
+  }
+  .btn.primary:hover{filter:saturate(1.05) brightness(1.02)}
+
+  .grid{margin-top:18px; display:grid; grid-template-columns: 1fr; gap:14px}
+  @media (min-width: 920px){
+    .grid{grid-template-columns: 1.08fr .92fr}
+  }
+
+  .card{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(14,22,48,.72), rgba(9,14,30,.66));
+    border-radius:var(--radius);
+    padding:16px 16px;
+    box-shadow:0 18px 50px rgba(0,0,0,.35);
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:.16em;
+    color:rgba(234,240,255,.86);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .dot{
+    width:10px; height:10px; border-radius:99px;
+    background:var(--gradA);
+    box-shadow:0 0 0 3px rgba(255,255,255,.06);
+  }
+  .card p{margin:0 0 10px; color:var(--muted); line-height:1.6}
+  .card ul{margin:8px 0 0; padding-left:18px; color:var(--muted); line-height:1.65}
+  .card li{margin:6px 0}
+
+  .two{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  @media (min-width: 920px){
+    .two{grid-template-columns:1fr 1fr}
+  }
+
+  .panel{
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:var(--radius2);
+    background:rgba(7,10,18,.35);
+    padding:12px 12px;
+  }
+  .panel h3{margin:0 0 8px; font-size:14px; color:rgba(234,240,255,.92); letter-spacing:-.15px}
+  .kv{display:grid; grid-template-columns: 130px 1fr; gap:8px 12px; align-items:start}
+  .k{color:var(--muted2); font-size:12px; letter-spacing:.02em}
+  .v{color:var(--text); font-size:13px; line-height:1.55}
+
+  .script{
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(2,6,23,.55);
+    border-radius:var(--radius);
+    padding:14px;
+    font-family:var(--mono);
+    font-size:12.8px;
+    line-height:1.55;
+    color:rgba(234,240,255,.92);
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  .pill{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:7px 10px; border-radius:999px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(6,10,22,.55);
+    color:var(--muted);
+    font-size:12px;
+  }
+  .pill b{color:var(--text)}
+
+  .checklist{display:grid; grid-template-columns:1fr; gap:10px}
+  @media (min-width: 920px){
+    .checklist{grid-template-columns:1fr 1fr}
+  }
+  .check{
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(7,10,18,.30);
+    border-radius:14px;
+    padding:12px;
+  }
+  .check .t{display:flex; gap:10px; align-items:center; margin-bottom:8px}
+  .box{
+    width:16px; height:16px; border-radius:4px;
+    border:1px solid rgba(255,255,255,.20);
+    background:rgba(255,255,255,.04);
+  }
+  .check h4{margin:0; font-size:13px; letter-spacing:-.1px}
+  .check ul{margin:0; padding-left:18px; color:var(--muted); font-size:13px}
+
+  .footer{
+    margin-top:16px;
+    color:var(--muted2);
+    font-size:12px;
+  }
+  .hr{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <span class="chip"><strong>Nicho</strong>: Design Gráfico</span>
+          <span class="chip"><strong>Dia</strong>: 7</span>
+          <span class="chip"><strong>Formato</strong>: Carrossel</span>
+          <span class="chip"><strong>Pilar</strong>: Prova</span>
+        </div>
+        <div class="chips">
+          <span class="chip"><strong>Link</strong>: <a href="https://www.instagram.com/p/DUtl9YWkfE_/" target="_blank" rel="noopener">post original</a></span>
+        </div>
+      </div>
+      <h1 class="title">Troquei Canva por Figma: o motivo real (e o que mudou)</h1>
+      <p class="subtitle">Blueprint reproduzível para você contar uma transição, provar valor e converter com CTA claro — sem perder estética e retenção.</p>
+      <div class="metaRow">
+        <div class="pill"><b>Regra do layout</b>: 1 frase domina + 1 bloco explica (o resto é apoio)</div>
+        <div class="btns">
+          <button class="btn" id="copyBtn">Copiar roteiro</button>
+          <a class="btn primary" href="https://www.instagram.com/p/DUtl9YWkfE_/" target="_blank" rel="noopener">Abrir post original</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="dot"></span>Resumo</h2>
+        <p><b>Objetivo:</b> transformar uma troca de ferramenta/método em uma história curta que gera identificação, prova (benefícios reais) e leva para uma próxima etapa (grupo/lista/aula).</p>
+        <div class="two">
+          <div class="panel">
+            <h3>Quando usar</h3>
+            <ul>
+              <li>Transição de ferramenta (Canva → Figma, Illustrator → Affinity, etc.).</li>
+              <li>Troca de processo ("parei de fazer X e comecei Y").</li>
+              <li>Reposicionamento ("meu design mudou quando..." + prova).</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>O que faz funcionar</h3>
+            <ul>
+              <li>Loop aberto no slide 1 (curiosidade + promessa).</li>
+              <li>Validação no slide 2 (desarma quem discorda).</li>
+              <li>Virada a cada 2 slides (mas/porém/então).</li>
+              <li>1 palavra “gritante” por slide (recompensa visual).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2><span class="dot"></span>Estrutura</h2>
+        <div class="panel">
+          <h3>Macro-sequência (8 slides)</h3>
+          <div class="kv">
+            <div class="k">1. Hook</div><div class="v">Pergunta + benefício implícito (abre loop).</div>
+            <div class="k">2. Empatia</div><div class="v">“Calma…” + contexto (humaniza).</div>
+            <div class="k">3. Dor real</div><div class="v">Limite/objeção (grana/tempo/recursos/assinatura).</div>
+            <div class="k">4. Virada</div><div class="v">Descoberta da solução + início (micro-história).</div>
+            <div class="k">5. Benefício #1</div><div class="v">O maior ganho em 1 linha (com contraste).</div>
+            <div class="k">6. Benefício #2</div><div class="v">Como resolve na prática (dica/atalho).</div>
+            <div class="k">7. Autoridade</div><div class="v">“Eu vivi isso” + teaser do próximo passo.</div>
+            <div class="k">8. CTA</div><div class="v">Convite simples + benefício + direção (link/comentário).</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="panel">
+          <h3>Regra de texto por slide</h3>
+          <ul>
+            <li><b>Headline:</b> 1 linha forte (máx. 6–9 palavras).</li>
+            <li><b>Body:</b> 1 bloco curto (1–2 frases).</li>
+            <li><b>Apoio:</b> 1 callout (P.S., setinha, label) opcional.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Roteiro</h2>
+      <p>Copie, preencha os campos entre colchetes e ajuste para sua realidade. Mantém a mesma lógica do post: história → prova → próximo passo.</p>
+      <div class="script" id="scriptText">CARROSSEL (8 SLIDES) — TEMPLATE REPRODUZÍVEL
+
+SLIDE 1 — HOOK (pergunta + promessa)
+H1: “Por que eu troquei [A] por [B]?”
+Sub: “O que destravou foi: [benefício central em 5–7 palavras].”
+Visual: palavra-chave gigante + elemento/print que remeta a [B].
+
+SLIDE 2 — EMPATIA + CONTEXTO (desarme)
+H1: “Calma, time [A]!”
+Body: “Eu ainda curto [A], mas eu queria [objetivo/estilo/resultado].”
+Callout: “Sem hate. Só evolução.”
+Visual: sua foto recortada (borda branca) + sticker/label.
+
+SLIDE 3 — DOR REAL (limite/objeção)
+H1: “Eu não tinha [recurso: grana/tempo/equipe]…”
+Body: “Eu precisava de uma alternativa que [critério: escalasse / fosse flexível / parecesse ‘profissa’].”
+Visual: contraste (escuro + callout laranja) + seta para a frase.
+
+SLIDE 4 — VIRADA / DESCOBERTA
+H1: “Aí eu encontrei [B].”
+Body: “No começo eu pensei: [medo]. Depois: [aprendizado simples].”
+Callout: “Foi mais intuitivo do que parece.”
+Visual: moldura tipo ‘janela/app’ + detalhe de interface.
+
+SLIDE 5 — BENEFÍCIO #1 (o maior ganho)
+Palavra gigante: “[BENEFÍCIO FORTE]!” (ex.: “GRATUITO”, “CONSISTÊNCIA”, “ESCALA”)
+Body: “Tem pago? Sim. Mas com o gratuito eu já [prova curta: ‘entreguei trabalhos por X tempo’ / ‘criei X projetos’].”
+Visual: selo/etiqueta + textura única (ruído/halftone).
+
+SLIDE 6 — BENEFÍCIO #2 (prático/como)
+H1: “No [B] eu consigo [ação concreta].”
+Body: “Atalho: se não quiser do zero, use [biblioteca / comunidade / sistema de componentes].”
+Visual: lista curtinha + ícones + microtexto estilo UI.
+
+SLIDE 7 — AUTORIDADE + TEASER
+H1: “Eu vivi essa transição.”
+Body: “Eu sei onde você trava: [trava #1], [trava #2].”
+Teaser: “Tô preparando [aula/material/produto] pra te levar a [resultado].”
+Visual: você + ‘P.S.’ com micro-reviravolta.
+
+SLIDE 8 — OFERTA + CTA (conversão simples)
+H1: “Quer o passo a passo?”
+Body: “Vou liberar primeiro no [grupo/lista/canal] com [benefício: condições especiais / bônus / prioridade].”
+CTA: “Entra pelo link da bio” OU “Comenta [PALAVRA] que eu te mando.”
+Visual: botão fake + seta grande + cor de destaque (laranja/azul/verde).</div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Elementos visuais</h2>
+      <div class="two">
+        <div class="panel">
+          <h3>Direção de arte (reproduzível)</h3>
+          <ul>
+            <li><b>Identidade:</b> retro digital / editorial pop (ou sua versão).</li>
+            <li><b>Textura única:</b> ruído/halftone em 100% dos slides (cola tudo).</li>
+            <li><b>Colagem:</b> fotos recortadas com contorno branco + sombra sutil.</li>
+            <li><b>Interface:</b> labels, ícones, barras e “janelas” como cenário.</li>
+            <li><b>Repetição:</b> 1 elemento recorrente (seta/asterisco/selo) em todos.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Kit de peças (mini design system)</h3>
+          <ul>
+            <li>Sticker/label arredondado com sua assinatura (ex.: “Studio [nome]”).</li>
+            <li>Setas grandes (1 estilo fixo).</li>
+            <li>Post-it (caixa inclinada) para “P.S.” e observações.</li>
+            <li>Asteriscos/flores como bullet visual.</li>
+            <li>Moldura de monitor/janela para prints.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="panel">
+        <h3>Hierarquia tipográfica</h3>
+        <div class="kv">
+          <div class="k">H1 (impacto)</div><div class="v">Serif display grande (1–6 palavras). Priorize contraste.</div>
+          <div class="k">Palavra-chave</div><div class="v">Script/handwritten (1 palavra por slide).</div>
+          <div class="k">Body</div><div class="v">Sans legível (28–42 pt; menos é mais).</div>
+          <div class="k">Microtexto</div><div class="v">Labels/números/ícones para “cara de UI”.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Copy e ganchos</h2>
+      <div class="two">
+        <div class="panel">
+          <h3>Títulos prontos (substitua A/B)</h3>
+          <ul>
+            <li>“Por que eu troquei <b>[A]</b> por <b>[B]</b> (na prática)”</li>
+            <li>“O motivo real de eu parar de <b>[método antigo]</b>”</li>
+            <li>“Se você usa <b>[A]</b>, lê isso antes de <b>[decisão]</b>”</li>
+            <li>“O que ninguém te conta sobre sair do <b>[A]</b>”</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Ganchos de retenção (para espalhar)</h3>
+          <ul>
+            <li>“Eu ainda gosto do [A], mas…” (desarme)</li>
+            <li>“O problema não era a ferramenta. Era [critério].”</li>
+            <li>“No começo eu achei que [medo].”</li>
+            <li>“A virada foi quando eu entendi [insight].”</li>
+            <li>“P.S.: isso aqui me economizou [tempo/dinheiro].”</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="panel">
+        <h3>Mapa de argumentos (ordem que convence)</h3>
+        <ul>
+          <li><b>Posicionamento:</b> eu mudei (e vou te contar por quê).</li>
+          <li><b>Empatia:</b> sem hate ao antigo; eu também usei.</li>
+          <li><b>Problema:</b> limite real (assinatura, flexibilidade, escala, custo).</li>
+          <li><b>Critério:</b> precisava caber na minha realidade + não limitar potencial.</li>
+          <li><b>Solução:</b encontrei [B] e foi mais simples do que pensei.</li>
+          <li><b>Prova:</b> benefício principal + evidência curta (tempo, projetos, entregas).</li>
+          <li><b>Prática:</b> como fazer (1 dica/atalho).</li>
+          <li><b>Próximo passo:</b> grupo/lista/aula.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>CTA</h2>
+      <div class="two">
+        <div class="panel">
+          <h3>CTA principal (modelo do post)</h3>
+          <ul>
+            <li><b>Exclusividade:</b> “pré-venda só dentro do [grupo/lista]”.</li>
+            <li><b>Benefício:</b> “condições especiais / bônus / prioridade”.</li>
+            <li><b>Ação simples:</b> “link na bio” ou “comenta [palavra]”.</li>
+            <li><b>Direção visual:</b> seta + caixa inclinada + texto grande.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>3 CTAs prontos</h3>
+          <ul>
+            <li>“Quer o passo a passo? Entra no <b>[grupo/lista]</b> — link na bio.”</li>
+            <li>“Vou liberar <b>[material]</b> primeiro pra quem estiver no <b>[canal]</b>.”</li>
+            <li>“Comenta <b>[PALAVRA]</b> que eu te envio o link.”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Checklist</h2>
+      <div class="checklist">
+        <div class="check">
+          <div class="t"><div class="box"></div><h4>Roteiro & persuasão</h4></div>
+          <ul>
+            <li>Slide 1: pergunta + benefício implícito.</li>
+            <li>Slide 2: valida quem ama a opção antiga.</li>
+            <li>Slide 3: dor/limite real (sem vitimismo).</li>
+            <li>Slide 4: virada com micro-história.</li>
+            <li>Slides 5–6: 2 benefícios (1 grande + 1 prático).</li>
+            <li>Slide 7: autoridade + teaser do próximo passo.</li>
+            <li>Slide 8: CTA único (sem opções demais).</li>
+          </ul>
+        </div>
+        <div class="check">
+          <div class="t"><div class="box"></div><h4>Design & consistência</h4></div>
+          <ul>
+            <li>Textura overlay aplicada em todos os slides.</li>
+            <li>Paleta: 2–3 cores fixas + 1 cor de destaque.</li>
+            <li>1 palavra grande por slide (recompensa visual).</li>
+            <li>Margens seguras generosas (mobile-first).</li>
+            <li>Componentes repetidos: seta + post-it + selo.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <div class="t"><div class="box"></div><h4>Produção (arquivo 1080×1350)</h4></div>
+          <ul>
+            <li>Crie um frame master com grid e estilos de texto.</li>
+            <li>Deixe 1 componente “callout” e 1 “label” prontos.</li>
+            <li>Export: JPG 80–90% ou PNG (se tiver texto fininho).</li>
+            <li>Teste legibilidade em 25% de zoom.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <div class="t"><div class="box"></div><h4>Publicação</h4></div>
+          <ul>
+            <li>Legenda: 1 parágrafo curto + bullets + CTA.</li>
+            <li>Fixe 1 comentário com o CTA (link/palavra).</li>
+            <li>Stories: repost do slide 1 + caixa de perguntas.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer">Dica: mantenha a promessa do slide 1 respondida até o slide 5 no máximo. O resto aprofunda e converte.</p>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Slides sugeridos (1..8)</h2>
+      <div class="two">
+        <div class="panel">
+          <h3>Slides 1–4 (história)</h3>
+          <ul>
+            <li><b>1:</b> Hook (pergunta + promessa) + palavra gigante.</li>
+            <li><b>2:</b> Empatia (foto + “calma…”) + objetivo.</li>
+            <li><b>3:</b> Dor real (limite específico) + critério de decisão.</li>
+            <li><b>4:</b> Virada (descoberta) + medo inicial + aprendizado.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Slides 5–8 (prova → conversão)</h3>
+          <ul>
+            <li><b>5:</b> Benefício principal + evidência curta.</li>
+            <li><b>6:</b> Benefício prático + 1 dica/atalho.</li>
+            <li><b>7:</b> Autoridade + teaser do material/produto.</li>
+            <li><b>8:</b> CTA direto (grupo/lista/comentário) + direção visual.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="dot"></span>Variações</h2>
+      <div class="two">
+        <div class="panel">
+          <h3>Variação 1 — Educativo (menos “história”)</h3>
+          <ul>
+            <li>Slide 1: “Canva vs Figma: quando trocar?”</li>
+            <li>Slide 2: “Sinal #1: você precisa de [X]”</li>
+            <li>Slide 3: “Sinal #2: [Y]”</li>
+            <li>Slide 4: “Sinal #3: [Z]”</li>
+            <li>Slide 5: “O que muda na prática (exemplo)”</li>
+            <li>Slide 6: “Meu setup recomendado”</li>
+            <li>Slide 7: “Erros comuns ao migrar”</li>
+            <li>Slide 8: CTA para checklist/aula</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Variação 2 — Storytelling (mais emoção)</h3>
+          <ul>
+            <li>Inclua 1 “quase desistência” no slide 4.</li>
+            <li>Mostre 1 print “antes/depois” no slide 6.</li>
+            <li>Use P.S. no slide 7 com uma verdade inconveniente.</li>
+          </ul>
+          <div class="hr"></div>
+          <h3>Variação 3 — Venda direta (sem rodeio)</h3>
+          <ul>
+            <li>Slide 1: promessa do resultado.</li>
+            <li>Slide 2: prova rápida (números/entregas).</li>
+            <li>Slide 3–5: bullets de benefícios.</li>
+            <li>Slide 6: objeção + resposta.</li>
+            <li>Slide 7: o que a pessoa recebe.</li>
+            <li>Slide 8: CTA + prazo/bônus.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const textEl = document.getElementById('scriptText');
+
+    async function copy(){
+      const text = textEl.innerText;
+      try{
+        await navigator.clipboard.writeText(text);
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.textContent='Copiar roteiro', 1400);
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position='fixed';
+        ta.style.left='-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.textContent='Copiar roteiro', 1400);
+      }
+    }
+
+    btn.addEventListener('click', copy);
+  })();
+</script>
+</body>
+</html>
