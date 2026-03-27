@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Dia 8 — Carrossel vitrine</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.08);
+    --stroke:rgba(255,255,255,.10);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.56);
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --radius:18px;
+    --radius2:14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    --grad: linear-gradient(90deg, #22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --grad2: radial-gradient(1200px 600px at 10% 0%, rgba(56,189,248,.22), transparent 60%),
+             radial-gradient(900px 500px at 80% 10%, rgba(34,197,94,.18), transparent 55%),
+             radial-gradient(900px 500px at 60% 90%, rgba(251,146,60,.14), transparent 55%);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background: var(--grad2), linear-gradient(180deg, var(--bg0), var(--bg1));
+  }
+  a{color:#93c5fd; text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 70px}
+  header{
+    position:relative;
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+    box-shadow: var(--shadow);
+    border-radius: calc(var(--radius) + 6px);
+    padding:22px 22px;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: radial-gradient(600px 220px at 15% 0%, rgba(34,197,94,.22), transparent 60%),
+                radial-gradient(520px 240px at 55% 0%, rgba(56,189,248,.20), transparent 60%),
+                radial-gradient(520px 240px at 92% 0%, rgba(251,146,60,.16), transparent 60%);
+    filter: blur(6px);
+    opacity:.9;
+    pointer-events:none;
+  }
+  header > *{position:relative}
+  .topline{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .badges{display:flex; gap:10px; flex-wrap:wrap}
+  .badge{
+    font-family:var(--mono);
+    font-size:12px;
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    color: var(--muted);
+  }
+  .badge strong{color:var(--text); font-weight:700}
+  .title{
+    margin:14px 0 8px;
+    font-size: clamp(22px, 2.4vw, 34px);
+    line-height:1.12;
+    letter-spacing:-.02em;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    font-size:14.5px;
+    line-height:1.5;
+    max-width: 78ch;
+  }
+  .hdr-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    text-decoration:none;
+    font-size:13px;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.08)}
+  .btn.primary{
+    border-color: rgba(56,189,248,.35);
+    background: linear-gradient(180deg, rgba(56,189,248,.18), rgba(255,255,255,.04));
+  }
+  .btn .dot{
+    width:10px; height:10px; border-radius:999px;
+    background: var(--grad);
+    box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+  }
+  .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:16px}
+  @media (min-width: 980px){
+    .grid{grid-template-columns: 1.05fr .95fr}
+  }
+  .card{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius: var(--radius);
+    box-shadow: 0 10px 40px rgba(0,0,0,.35);
+    padding:18px;
+  }
+  .card h2{
+    display:flex; align-items:center; gap:10px;
+    margin:0 0 10px;
+    font-size:16px;
+    letter-spacing:.01em;
+  }
+  .pill{
+    height:10px; width:10px; border-radius:999px;
+    background: var(--grad);
+  }
+  .card p, .card li{color:var(--muted); font-size:14px; line-height:1.55}
+  .card ul{margin:10px 0 0; padding-left:18px}
+  .card li{margin:6px 0}
+  .kpi{
+    display:grid; gap:10px; grid-template-columns: repeat(2, minmax(0,1fr));
+    margin-top:12px
+  }
+  .tile{
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    border-radius: var(--radius2);
+    padding:12px 12px;
+  }
+  .tile .label{font-family:var(--mono); font-size:11.5px; color:var(--muted2)}
+  .tile .value{margin-top:6px; font-size:13.5px; color:var(--text)}
+  .divider{height:1px; background: rgba(255,255,255,.08); margin:14px 0}
+  .pre{
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.22);
+    border-radius: var(--radius);
+    padding:14px;
+    overflow:auto;
+    font-family: var(--mono);
+    font-size:12.5px;
+    line-height:1.55;
+    color: rgba(234,240,255,.86);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .tagrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .tag{
+    padding:7px 9px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.05);
+    color: rgba(234,240,255,.78);
+    font-size:12px;
+  }
+  .tag.grad{border-color: rgba(34,197,94,.22); position:relative;}
+  .tag.grad:before{
+    content:"";
+    position:absolute; inset:0;
+    border-radius:999px;
+    padding:1px;
+    background: var(--grad);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity:.85;
+    pointer-events:none;
+  }
+  footer{margin-top:16px; color:var(--muted2); font-size:12.5px}
+  .twoCol{display:grid; gap:12px; grid-template-columns: 1fr}
+  @media (min-width: 980px){
+    .twoCol{grid-template-columns: 1fr 1fr}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badges">
+          <span class="badge"><strong>Nicho</strong>: Design Gráfico</span>
+          <span class="badge"><strong>Dia</strong>: 8</span>
+          <span class="badge"><strong>Formato</strong>: Carrossel</span>
+          <span class="badge"><strong>Pilar</strong>: Prova</span>
+        </div>
+        <a class="btn" href="https://www.instagram.com/p/DTsheH5DTe1/" target="_blank" rel="noreferrer">
+          Ver post original
+        </a>
+      </div>
+
+      <h1 class="title">Carrossel vitrine: seus melhores projetos do ano</h1>
+      <p class="sub">Modelo reproduzível de curadoria/portfólio: capa que abre loop + mosaicos 3×2 de miniaturas por projeto + fechamento com CTA de DM. Feito para gerar retenção, prova social e demanda de orçamento.</p>
+
+      <div class="hdr-actions">
+        <button class="btn primary" id="copyBtn"><span class="dot"></span>Copiar roteiro</button>
+        <button class="btn" id="copyCaptionBtn">Copiar copy sugerida</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="pill"></span>Resumo</h2>
+        <p><strong>O que este post faz:</strong> vende repertório + consistência + capacidade de adaptar estilo para clientes diferentes (prova + autoridade leve).</p>
+        <div class="kpi">
+          <div class="tile">
+            <div class="label">Objetivo</div>
+            <div class="value">Portfólio rápido → DM/orçamento</div>
+          </div>
+          <div class="tile">
+            <div class="label">Mecânica de retenção</div>
+            <div class="value">Padrão repetível + variedade visual</div>
+          </div>
+          <div class="tile">
+            <div class="label">Tempo de produção</div>
+            <div class="value">60–90 min (com assets prontos)</div>
+          </div>
+          <div class="tile">
+            <div class="label">Quantidade ideal</div>
+            <div class="value">8–12 slides</div>
+          </div>
+        </div>
+        <div class="tagrow">
+          <span class="tag grad">Curadoria</span>
+          <span class="tag">Portfólio</span>
+          <span class="tag">Mosaico 3×2</span>
+          <span class="tag">Branding consistente</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="pill"></span>Estrutura (sequência fixa)</h2>
+        <ul>
+          <li><strong>Slide 1 — Capa (hook):</strong> “Meus [FORMATOS] favoritos de [ANO]” + palavra-âncora grande + elemento de cor + sua foto/recorte.</li>
+          <li><strong>Slides 2–N-1 — Mosaicos:</strong> topo “Carrossel para [Cliente/Projeto]” + grade 3×2 com 6 miniaturas do projeto.</li>
+          <li><strong>Último slide — Fechamento:</strong> pergunta (“qual foi seu favorito?”) + CTA principal (DM com palavra) + CTA secundário (salvar).</li>
+        </ul>
+        <div class="divider"></div>
+        <p><strong>Regra de ouro:</strong> repete o layout para dar leitura rápida e muda o visual de cada projeto para manter novidade.</p>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2><span class="pill"></span>Roteiro (reproduzível)</h2>
+      <div class="twoCol">
+        <div>
+          <p><strong>Pré-produção (10–15 min)</strong></p>
+          <ul>
+            <li>Selecione <strong>6–10 projetos</strong> com variedade (cor, tipografia, nicho, objetivo).</li>
+            <li>Para cada projeto, escolha <strong>6 telas</strong> (as mais fortes/representativas).</li>
+            <li>Defina a <strong>palavra-âncora</strong>: “favoritos”, “melhores”, “mais pedidos”, “top”.</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Montagem (40–60 min)</strong></p>
+          <ul>
+            <li>Crie a <strong>capa</strong> com hierarquia em camadas (serif + sans + script).</li>
+            <li>Monte 1 slide-mãe de <strong>mosaico 3×2</strong> e duplique para o resto.</li>
+            <li>Em cada slide: troque só <strong>título + miniaturas</strong> (padrão constante).</li>
+            <li>Finalize com slide de <strong>CTA em 2 passos</strong> (DM + comentário/salvar).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <p><strong>Revisão final (10 min)</strong></p>
+      <ul>
+        <li>Cheque legibilidade em <strong>30% de zoom</strong> (mobile).</li>
+        <li>Consistência de margens/alinhamentos entre slides.</li>
+        <li>Miniaturas com borda/sombra leve para separar do fundo.</li>
+      </ul>
+
+      <div class="divider"></div>
+      <div class="pre" id="roteiroTxt">ROTEIRO (texto para produção)
+
+1) Defina o tema do post
+- Formato: “Meus [TIPO DE PEÇA] favoritos de [ANO]”
+- Palavra-âncora: [favoritos | melhores | mais pedidos | top]
+- Meta: provar repertório e puxar DM
+
+2) Selecione materiais
+- 6 a 10 projetos
+- 6 miniaturas por projeto (prints/telas)
+- (Opcional) microinfo: Tema + Objetivo em 1 linha
+
+3) Slide 1 — CAPA (Hook + identidade)
+- Linha 1 (serif): “Meus [X]”
+- Linha 2 (script grande): “[PALAVRA-ÂNCORA]”
+- Selo: “de [ANO]”
+- Foto/recorte autoral (40–60% da área)
+
+4) Slides 2…N-1 — MOSAICO (padrão repetível)
+- Header: “Carrossel para [Cliente/Projeto]”
+- Grade: 3×2 (6 miniaturas)
+- Rodapé: @seuuser (baixa opacidade)
+- (Opcional) Microinfo: “Tema: [X] | Objetivo: [Y]”
+
+5) Último slide — CTA (conversão)
+- Headline: “Quer um carrossel com essa estética?”
+- Instrução: “Me chama no direct com a palavra: [CARROSSEL]”
+- Secundário: “Comenta o seu favorito (número) + salva para referência”
+
+6) Legenda (curta e objetiva)
+- 1 linha de contexto + 1 linha de prova + CTA duplo (DM + salvar/comentar)</div>
+    </section>
+
+    <section class="card">
+      <h2><span class="pill"></span>Slides sugeridos (1..10)</h2>
+      <ul>
+        <li><strong>1 — Capa:</strong> “Meus carrosséis favoritos de 2026” + sua foto + acento forte.</li>
+        <li><strong>2 — Projeto 01:</strong> “Carrossel para [Cliente]” + mosaico 3×2.</li>
+        <li><strong>3 — Projeto 02:</strong> mesmo layout + novo cliente.</li>
+        <li><strong>4 — Projeto 03:</strong> mesmo layout + novo cliente.</li>
+        <li><strong>5 — Projeto 04:</strong> mesmo layout + novo cliente.</li>
+        <li><strong>6 — Projeto 05:</strong> mesmo layout + novo cliente.</li>
+        <li><strong>7 — Projeto 06:</strong> mesmo layout + novo cliente.</li>
+        <li><strong>8 — Bônus (opcional):</strong> “Antes/depois” (1 mini comparativo) ou “o que mudou no design”.</li>
+        <li><strong>9 — Micro-prova (opcional):</strong> 1 frase de resultado/feedback + miniaturas pequenas.</li>
+        <li><strong>10 — CTA:</strong> DM com palavra + “qual foi seu favorito?”</li>
+      </ul>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="pill"></span>Elementos visuais (DNA do layout)</h2>
+        <ul>
+          <li><strong>Formato:</strong> 1080×1350 (4:5).</li>
+          <li><strong>Respiro:</strong> margens externas 7–10% (consistentes).</li>
+          <li><strong>Topo fixo:</strong> 15–20% da altura (título do projeto).</li>
+          <li><strong>Grade:</strong> 3×2 ocupando 70–75% da altura; gap 2–4%.</li>
+          <li><strong>Separação:</strong> borda 1px ou sombra sutil nas miniaturas.</li>
+          <li><strong>Acabamento:</strong> textura/grain (10–25%) para unificar.</li>
+          <li><strong>Branding:</strong> @ no rodapé com baixa opacidade (sempre no mesmo lugar).</li>
+        </ul>
+        <div class="divider"></div>
+        <p><strong>Tipografia (3 famílias):</strong> serif editorial (autoridade) + sans neutra (funcional) + script/brush (ênfase emocional).</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="pill"></span>Copy e ganchos</h2>
+        <p><strong>Ganchos de capa (escolha 1):</strong></p>
+        <ul>
+          <li>“Meus carrosséis favoritos de 2026 (em 10 slides)”</li>
+          <li>“Os 7 carrosséis que mais geraram pedido de orçamento”</li>
+          <li>“Top 8 layouts que eu repetiria hoje sem mudar nada”</li>
+          <li>“O meu estilo em 10 projetos (pra você ‘ver’ em 30s)”</li>
+        </ul>
+        <div class="divider"></div>
+        <p><strong>Legenda sugerida (pronta para postar):</strong></p>
+        <div class="pre" id="copyTxt">Meus carrosséis favoritos do ano — pra você ver meu estilo em poucos slides.
+
+Quer que eu crie um carrossel nesse nível pro seu perfil/marca?
+Me chama no direct com a palavra: CARROSSEL.
+
+Agora me diz: qual projeto foi seu favorito? (comenta o número) 
+E salva esse post pra usar como referência ✦</div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2><span class="pill"></span>CTA (modelo de 2 passos)</h2>
+      <ul>
+        <li><strong>CTA principal (conversão):</strong> “Me chama no direct com a palavra <strong>CARROSSEL</strong>.”</li>
+        <li><strong>CTA secundário (alcance):</strong> “Salva pra usar de referência.”</li>
+        <li><strong>Engajamento (fácil):</strong> “Comenta o número do seu favorito.”</li>
+        <li><strong>Opção ‘link completo’:</strong> “Comenta <strong>QUERO</strong> que eu te mando o carrossel inteiro.”</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="pill"></span>Checklist de criação (produção sem erro)</h2>
+      <div class="twoCol">
+        <div>
+          <p><strong>Conteúdo</strong></p>
+          <ul>
+            <li>[ ] 6–10 projetos selecionados (variedade real)</li>
+            <li>[ ] 6 miniaturas por projeto (coerentes e legíveis)</li>
+            <li>[ ] Títulos padronizados: “Carrossel para ___”</li>
+            <li>[ ] CTA final com palavra-chave de DM</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Design</strong></p>
+          <ul>
+            <li>[ ] 1080×1350, margens 7–10%</li>
+            <li>[ ] Header fixo (altura consistente)</li>
+            <li>[ ] Grade 3×2 com gaps iguais</li>
+            <li>[ ] Borda/sombra leve nas miniaturas</li>
+            <li>[ ] Textura/grain constante (10–25%)</li>
+            <li>[ ] @ no rodapé (mesma posição e opacidade)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <p><strong>Qualidade (antes de publicar)</strong></p>
+      <ul>
+        <li>[ ] Teste de leitura em miniatura (tela do celular afastada).</li>
+        <li>[ ] Contraste suficiente (título e labels).</li>
+        <li>[ ] Consistência: alinhamentos idênticos entre slides.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="pill"></span>Variações (mesmo formato, novos temas)</h2>
+      <ul>
+        <li><strong>Educa + prova:</strong> “O que eu aprendi criando 30 carrosséis” (cada mosaico vira um ‘aprendizado + exemplo’).</li>
+        <li><strong>Segmentado:</strong> “Meus melhores carrosséis para [nicho]” (ex.: saúde, moda, infoprodutor).</li>
+        <li><strong>Before/After:</strong> cada slide mostra 1 mini “antes” + mosaico “depois”.</li>
+        <li><strong>Metodologia:</strong> “Meu processo em 6 projetos” (briefing → wireframe → layout final).</li>
+        <li><strong>Oferta suave:</strong> “Abrindo 3 vagas do mês: carrossel + identidade visual” (último slide com datas).</li>
+      </ul>
+    </section>
+
+    <footer>
+      <div>Identidade sugerida: fundo escuro + cards com borda suave + destaques em degradê (verde/azul/laranja) + layout limpo high-tech. Botão de copiar incluso.</div>
+    </footer>
+  </div>
+
+<script>
+  function copyFromEl(id){
+    const el = document.getElementById(id);
+    const text = el ? (el.innerText || el.textContent || "") : "";
+    if(!text) return;
+    navigator.clipboard.writeText(text);
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    copyFromEl('roteiroTxt');
+    const btn = this;
+    const old = btn.textContent;
+    btn.textContent = 'Roteiro copiado';
+    setTimeout(()=>btn.textContent = old, 1200);
+  });
+
+  document.getElementById('copyCaptionBtn').addEventListener('click', function(){
+    copyFromEl('copyTxt');
+    const btn = this;
+    const old = btn.textContent;
+    btn.textContent = 'Copy copiada';
+    setTimeout(()=>btn.textContent = old, 1200);
+  });
+</script>
+</body>
+</html>
