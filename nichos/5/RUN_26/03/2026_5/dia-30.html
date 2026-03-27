@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Dia 30 — Roteiro Reproduzível (Design Gráfico)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.04);
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.14);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.55);
+    --good:#49FFB0;
+    --blue:#63B3FF;
+    --orange:#FF9A4A;
+    --shadow:0 18px 50px rgba(0,0,0,.45);
+    --radius:18px;
+    --radius2:14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:
+      radial-gradient(900px 500px at 15% 10%, rgba(99,179,255,.18), transparent 60%),
+      radial-gradient(800px 600px at 85% 20%, rgba(73,255,176,.14), transparent 60%),
+      radial-gradient(900px 700px at 60% 90%, rgba(255,154,74,.12), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 70px;}
+
+  header{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .hdrTop{
+    padding:18px 18px 0;
+    display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  }
+  .badgeRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .badge{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.3px;
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background:rgba(255,255,255,.04);
+    color:var(--muted);
+  }
+  .badge strong{color:var(--text);font-weight:650}
+
+  .titleArea{padding:10px 18px 18px;}
+  h1{margin:8px 0 6px;font-size:22px;line-height:1.15}
+  .sub{
+    margin:0;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.4;
+  }
+  .link{
+    color:var(--text);
+    text-decoration:none;
+    border-bottom:1px dashed rgba(234,240,255,.35);
+  }
+  .link:hover{border-bottom-color:rgba(234,240,255,.75)}
+
+  .hdrActions{
+    padding:0 18px 18px;
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  }
+  .btn{
+    cursor:pointer;
+    border:1px solid var(--stroke2);
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    font-weight:650;
+    font-size:13px;
+    display:inline-flex; align-items:center; gap:10px;
+    transition:transform .08s ease, border-color .2s ease, background .2s ease;
+    user-select:none;
+  }
+  .btn:hover{border-color:rgba(255,255,255,.22)}
+  .btn:active{transform:translateY(1px)}
+  .btn .dot{
+    width:10px;height:10px;border-radius:99px;
+    background:linear-gradient(90deg, var(--good), var(--blue), var(--orange));
+    box-shadow:0 0 0 3px rgba(255,255,255,.06);
+  }
+  .btn.secondary{font-weight:600;color:var(--muted)}
+
+  .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px;}
+  @media (min-width: 960px){
+    .grid{grid-template-columns:1.05fr .95fr; align-items:start;}
+  }
+
+  section{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .secHd{
+    padding:14px 16px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .secHd h2{margin:0;font-size:14px;letter-spacing:.3px;text-transform:uppercase;color:var(--muted)}
+  .pill{
+    font-family:var(--mono);
+    font-size:12px;
+    padding:7px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.10);
+    background:
+      linear-gradient(90deg, rgba(73,255,176,.18), rgba(99,179,255,.14), rgba(255,154,74,.14));
+    color:var(--text);
+  }
+
+  .secBody{padding:14px 16px 16px;}
+  .secBody p{margin:0 0 10px;color:var(--muted);line-height:1.55;font-size:14px}
+  .secBody p:last-child{margin-bottom:0}
+  ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.55;font-size:14px}
+  li{margin:7px 0}
+
+  .kpi{
+    display:grid;grid-template-columns:1fr;gap:10px;
+  }
+  @media (min-width: 560px){
+    .kpi{grid-template-columns:repeat(3,1fr)}
+  }
+  .kpi .box{
+    padding:12px;
+    border-radius:var(--radius2);
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.03);
+  }
+  .kpi .label{font-size:12px;color:var(--muted2);text-transform:uppercase;letter-spacing:.35px}
+  .kpi .value{margin-top:6px;font-weight:750;color:var(--text);font-size:14px}
+
+  .code{
+    border-radius:var(--radius2);
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(0,0,0,.22);
+    padding:12px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.6;
+    color:rgba(234,240,255,.84);
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+
+  .twoCol{display:grid;grid-template-columns:1fr;gap:12px}
+  @media (min-width: 960px){
+    .twoCol{grid-template-columns:1fr 1fr}
+  }
+  .hint{color:var(--muted2);font-size:13px}
+
+  .miniCards{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+  @media (min-width: 560px){
+    .miniCards{grid-template-columns:1fr 1fr}
+  }
+  .mini{
+    border:1px solid rgba(255,255,255,.10);
+    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border-radius:var(--radius2);
+    padding:12px;
+  }
+  .mini h3{margin:0 0 8px;font-size:13px;color:var(--text);letter-spacing:.2px}
+  .mini p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5}
+
+  .toast{
+    position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
+    background:rgba(0,0,0,.65);
+    border:1px solid rgba(255,255,255,.14);
+    color:rgba(234,240,255,.9);
+    padding:10px 12px;
+    border-radius:999px;
+    font-size:13px;
+    opacity:0;pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease;
+    backdrop-filter: blur(8px);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-2px)}
+
+  .gradLine{height:1px;background:linear-gradient(90deg, transparent, rgba(73,255,176,.75), rgba(99,179,255,.65), rgba(255,154,74,.65), transparent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="hdrTop">
+      <div class="badgeRow">
+        <div class="badge"><strong>Nicho</strong>: Design Gráfico</div>
+        <div class="badge"><strong>Dia</strong>: 30</div>
+        <div class="badge"><strong>Formato</strong>: Carrossel</div>
+        <div class="badge"><strong>Pilar</strong>: Erro comum</div>
+      </div>
+      <div class="badgeRow">
+        <div class="badge"><strong>Original</strong>: <a class="link" href="https://www.instagram.com/p/DVgbdCujls3/" target="_blank" rel="noopener">abrir post</a></div>
+      </div>
+    </div>
+    <div class="titleArea">
+      <h1>Eu tava quase comprando de você (mas aí eu percebi...)</h1>
+      <p class="sub">Roteiro reproduzível em 10 slides: conversa curta em tom de DM, tensão crescente e fecho irônico — ideal para apontar um erro comum sem parecer palestra.</p>
+    </div>
+    <div class="hdrActions">
+      <button class="btn" id="copyBtn" type="button"><span class="dot"></span>Copiar roteiro</button>
+      <button class="btn secondary" id="copyHooksBtn" type="button">Copiar ganchos</button>
+      <button class="btn secondary" id="copyChecklistBtn" type="button">Copiar checklist</button>
+    </div>
+    <div class="gradLine"></div>
+  </header>
+
+  <div class="grid">
+    <section>
+      <div class="secHd">
+        <h2>Resumo</h2>
+        <span class="pill">Storytelling + retenção por micro-viradas</span>
+      </div>
+      <div class="secBody">
+        <div class="kpi">
+          <div class="box"><div class="label">Objetivo</div><div class="value">Gerar autoidentificação + ajuste de postura</div></div>
+          <div class="box"><div class="label">Promessa</div><div class="value">“Você estava quase convertendo — e perdeu por um detalhe”</div></div>
+          <div class="box"><div class="label">Mecânica</div><div class="value">1 ideia/slide + reticências + punchline</div></div>
+        </div>
+        <p style="margin-top:12px">Use quando você quer: (1) criticar um comportamento do mercado, (2) posicionar seu padrão de atendimento/venda, (3) ensinar sem parecer tutorial.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="secHd">
+        <h2>Estrutura</h2>
+        <span class="pill">Quase → Percebi → Me senti → Decidi</span>
+      </div>
+      <div class="secBody">
+        <ul>
+          <li><strong>Slide 1:</strong> Hook (confissão + quase-ação + pergunta)</li>
+          <li><strong>Slide 2:</strong> Virada rápida (“mas aí eu percebi...”) + tema</li>
+          <li><strong>Slides 3–4:</strong> Diagnóstico (2 provas do padrão/erro)</li>
+          <li><strong>Slide 5:</strong> Insight (muda o sentimento)</li>
+          <li><strong>Slide 6:</strong> Desejo humano (valor que o público quer)</li>
+          <li><strong>Slides 7–8:</strong> Confronto + limite (posicionamento)</li>
+          <li><strong>Slide 9:</strong> Decisão/ação (CTA narrativo)</li>
+          <li><strong>Slide 10:</strong> Punchline memorável (frase “printável”)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="secHd">
+        <h2>Slides sugeridos (1..10)</h2>
+        <span class="pill">Texto curto + ritmo</span>
+      </div>
+      <div class="secBody">
+        <p class="hint">Modelo pronto para copiar e substituir os trechos entre colchetes. Mantenha o tom de conversa (como se fosse DM).</p>
+        <div class="code" id="roteiro">
+SLIDE 1 — HOOK
+"Eu tava quase [COMPRANDO/CONTRATANDO/FECHANDO] com você, sabia?"
+
+SLIDE 2 — PONTE (RETENÇÃO)
+"mas aí eu percebi..."
+"[SINAL/PADRÃO] no seu [MARKETING/ATENDIMENTO/PROPOSTA]"
+
+SLIDE 3 — DIAGNÓSTICO 1 (FRIEZA)
+"eu seria só um(a) [LEAD/NÚMERO/CASE] na sua [PLANILHA/CRM/ROTINA]"
+
+SLIDE 4 — DIAGNÓSTICO 2 (CUSTO)
+"e eu ainda teria que [INSISTIR/ME PROVAR/IMPLORAR] pra você me mostrar que [SUA SOLUÇÃO] vale"
+
+SLIDE 5 — INSIGHT (VIRADA EMOCIONAL)
+"e isso me mostrou..."
+"que talvez não valha tanto a pena"
+
+SLIDE 6 — DESEJO HUMANO (VALOR)
+"eu só queria ser visto como [PESSOA/CLIENTE/PARCEIRO]"
+(ghost text opcional): "talvez até como [AMIGO/ALGUÉM DO LADO DE CÁ]"
+
+SLIDE 7 — CONFRONTO (VERDADE DURA)
+"mas você deixou claro que isso era só sobre [FATURAMENTO/VOLUME/ESCALA]"
+
+SLIDE 8 — LIMITE (POSICIONAMENTO)
+"e eu não quero ser só [MÉTRICA]"
+"nem só [ESTATÍSTICA/PRINT/PROVA SOCIAL] pra você usar"
+
+SLIDE 9 — DECISÃO (CTA NARRATIVO)
+"então eu vou dar uma olhadinha em [OUTRAS OPÇÕES/OUTROS PROFISSIONAIS]..."
+"qualquer coisa eu volto, tá?"
+
+SLIDE 10 — PUNCHLINE (MEME/IRONIA)
+Texto grande: "qualquer coisa eu volto, tá?"
+Subtexto (ghost): "[ATÉ NUNCA MAIS/BOA SORTE/ENFIM...]"
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="secHd">
+        <h2>Elementos visuais</h2>
+        <span class="pill">Minimal + alto contraste</span>
+      </div>
+      <div class="secBody">
+        <div class="twoCol">
+          <div>
+            <p><strong>Sistema visual (para repetir em série):</strong></p>
+            <ul>
+              <li><strong>Fundo sólido chamativo</strong> (1 cor por carrossel) + texto escuro para legibilidade máxima.</li>
+              <li><strong>Topo fixo:</strong> símbolo pequeno (✳︎ ou X) sempre no mesmo lugar.</li>
+              <li><strong>Rodapé fixo:</strong> assinatura/handle (corpo pequeno) para consistência.</li>
+              <li><strong>Ritmo:</strong> alternar 2–3 slides “gritão” (texto enorme) com slides de respiro.</li>
+              <li><strong>Ghost text</strong> em 1–2 slides: subtexto em baixa opacidade (ironia/pensamento interno).</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Tipografia (reproduzível):</strong></p>
+            <ul>
+              <li>1 família com pesos (Inter / Helvetica / SF Pro / Söhne / Neue Haas).</li>
+              <li><strong>Display:</strong> ExtraBold, entrelinha curta.</li>
+              <li><strong>Body:</strong> SemiBold/Bold para “presença”.</li>
+              <li><strong>Ghost:</strong> Regular/Medium, 20–35% de opacidade.</li>
+              <li>Limite de largura do texto: evite linhas longas (melhor 3–6 palavras por linha).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="miniCards">
+          <div class="mini">
+            <h3>Paleta (base)</h3>
+            <p>Fundo: neon/forte (ex.: lima, ciano, laranja). Texto: #111. Ghost: #111 com 25%.</p>
+          </div>
+          <div class="mini">
+            <h3>Formato</h3>
+            <p>1080×1350 (4:5). Margens: 8–12%. Centralização como padrão, quebras pontuais para variar.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="secHd">
+        <h2>Copy e ganchos</h2>
+        <span class="pill">Confissão → suspense → corte</span>
+      </div>
+      <div class="secBody">
+        <p><strong>Fórmulas que mantêm o mesmo impacto (substituíveis por qualquer tema):</strong></p>
+        <div class="code" id="hooks">
+HOOKS (SLIDE 1)
+- "Eu tava quase [AÇÃO] com você, sabia?"
+- "Eu quase fechei com você. Sabe por que eu não fechei?"
+- "Você me convenceu... até eu perceber uma coisa."
+- "Eu tava pronto pra [AÇÃO]. Aí aconteceu isso."
+
+PONTES DE RETENÇÃO (SLIDE 2 / 5)
+- "mas aí eu percebi..."
+- "só que tinha um detalhe..."
+- "e foi aí que eu entendi..."
+- "isso me mostrou uma coisa:"
+
+CONFRONTO (SLIDE 7)
+- "no fim, parecia ser só sobre [MÉTRICA]."
+- "em nenhum momento eu senti que era sobre [PESSOA/RESULTADO/CONTEXTO]."
+
+PUNCHLINES (SLIDE 10)
+- "qualquer coisa eu volto, tá?" (ghost: "até nunca mais")
+- "depois eu te aviso." (ghost: "spoiler: não aviso")
+- "vou pensar." (ghost: "em outra pessoa")
+        </div>
+        <p class="hint">Dica de ritmo: coloque reticências em pelo menos 2 slides (2 e 9) para “empurrar” o swipe.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="secHd">
+        <h2>CTA</h2>
+        <span class="pill">Narrativo + opcional explícito</span>
+      </div>
+      <div class="secBody">
+        <p><strong>CTA 1 (fiel ao estilo):</strong> deixe o CTA acontecer dentro da história (slide 9). Resultado: a pessoa pensa “não quero perder cliente assim”.</p>
+        <p><strong>CTA 2 (explícito sem quebrar a estética):</strong></p>
+        <ul>
+          <li>“Quer o checklist pra revisar seu atendimento? Comenta <strong>CHECK</strong>.”</li>
+          <li>“Salva pra ler antes de mandar proposta.”</li>
+          <li>“Marca alguém que vende bem, mas pode estar escorregando nisso.”</li>
+        </ul>
+        <p class="hint">Escolha <strong>1</strong> CTA. Se usar explícito, coloque apenas na legenda (para manter os slides limpos).</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="secHd">
+        <h2>Checklist</h2>
+        <span class="pill">Controle de qualidade</span>
+      </div>
+      <div class="secBody">
+        <div class="code" id="checklist">CHECKLIST DE CRIAÇÃO (ANTES DE POSTAR)
+[ ] Slide 1 dá pra entender em 1 segundo?
+[ ] Existe virada clara no slide 2 ("mas aí...")?
+[ ] 1 ideia por slide (no máximo 2 frases curtas)?
+[ ] Você mostrou 2 evidências do erro (slides 3 e 4) sem explicar demais?
+[ ] Há pelo menos 2 pontes com reticências (ex.: 2 e 9)?
+[ ] Tem 2–3 slides com escala bem maior (impacto)?
+[ ] O desejo humano (slide 6) está simples e universal?
+[ ] O limite/posicionamento (slide 8) é específico?
+[ ] O final é "printável" (punchline) e dá vontade de compartilhar?
+[ ] Elementos fixos (símbolo no topo + assinatura no rodapé) estão consistentes?
+[ ] Revisou ortografia + quebras de linha para ritmo?</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="secHd">
+        <h2>Variações</h2>
+        <span class="pill">Adapte para qualquer tema</span>
+      </div>
+      <div class="secBody">
+        <p><strong>Trocas rápidas (mantêm a mesma estrutura e impacto):</strong></p>
+        <ul>
+          <li><strong>[AÇÃO]</strong> → contratar / assinar / entrar / clicar / indicar / fechar</li>
+          <li><strong>[SINAL/PADRÃO]</strong> → pressa / automação fria / excesso de gatilho / proposta genérica / falta de perguntas</li>
+          <li><strong>[MÉTRICA]</strong> → faturamento / seguidores / LTV / volume / “escala” / produtividade</li>
+          <li><strong>[DESEJO HUMANO]</strong> → ser ouvido / ser respeitado / ter clareza / ter segurança / ser bem atendido</li>
+          <li><strong>[DECISÃO]</strong> → pausar / comparar / pedir indicação / procurar alguém que entenda / fazer sozinho</li>
+        </ul>
+        <div class="miniCards">
+          <div class="mini">
+            <h3>Variação por objetivo: captar clientes</h3>
+            <p>Slide 8 vira seu padrão: “Eu não quero ser só [métrica]. Eu quero [processo: briefing de verdade / estratégia / acompanhamento].” Na legenda, CTA: “Se você quer ser atendido assim, manda ‘PROJETO’.”</p>
+          </div>
+          <div class="mini">
+            <h3>Variação por objetivo: educar (sem confronto)</h3>
+            <p>Troque “você deixou claro que…” por “eu entendi que…”. Mantém tensão, reduz ataque direto. Final: punchline mais leve.</p>
+          </div>
+          <div class="mini">
+            <h3>Variação para outro nicho (ex.: fitness)</h3>
+            <p>[AÇÃO]=“assinar seu treino”; [planilha]=“app”; [métrica]=“resultado rápido”; desejo=“ser acompanhado”. Mesmo esqueleto, mesmo efeito.</p>
+          </div>
+          <div class="mini">
+            <h3>Variação para produto digital</h3>
+            <p>[AÇÃO]=“entrar na mentoria”; sinal=“urgência artificial”; desejo=“clareza do método”; limite=“não quero comprar ansiedade”.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copiado.</div>
+
+<script>
+  const toast = document.getElementById('toast');
+  function showToast(msg){
+    toast.textContent = msg || 'Copiado.';
+    toast.classList.add('show');
+    window.clearTimeout(window.__t);
+    window.__t = window.setTimeout(()=>toast.classList.remove('show'), 1200);
+  }
+
+  async function copyFrom(elId, label){
+    const el = document.getElementById(elId);
+    const text = el ? el.innerText.trim() : '';
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast(label ? (label + ' copiado.') : 'Copiado.');
+    }catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast(label ? (label + ' copiado.') : 'Copiado.');
+    }
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', ()=>copyFrom('roteiro','Roteiro'));
+  document.getElementById('copyHooksBtn').addEventListener('click', ()=>copyFrom('hooks','Ganchos'));
+  document.getElementById('copyChecklistBtn').addEventListener('click', ()=>copyFrom('checklist','Checklist'));
+</script>
+</body>
+</html>
