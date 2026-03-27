@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 17 — Design Gráfico — Roteiro Reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.70);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --gradA: linear-gradient(90deg, #22C55E 0%, #3B82F6 45%, #F59E0B 100%);
+      --gradB: radial-gradient(1200px 500px at 20% 0%, rgba(59,130,246,.32), transparent 60%),
+              radial-gradient(900px 500px at 80% 10%, rgba(34,197,94,.25), transparent 55%),
+              radial-gradient(1000px 700px at 60% 90%, rgba(245,158,11,.18), transparent 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--gradB), linear-gradient(180deg, var(--bg0), var(--bg1) 65%, #060916);
+      min-height:100vh;
+    }
+
+    a{color:inherit}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 44px;}
+
+    header{
+      position:relative;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      border-radius: var(--r20);
+      padding:18px 18px 16px;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--gradA);
+      opacity:.20;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+
+    .toprow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;position:relative;}
+
+    .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:12px;letter-spacing:.3px;
+      padding:7px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+      color: var(--muted);
+      backdrop-filter: blur(6px);
+    }
+    .dot{width:7px;height:7px;border-radius:999px;background:var(--gradA);}
+
+    h1{margin:10px 0 6px;font-size:20px;line-height:1.25;position:relative;}
+    .subtitle{margin:0;color:var(--muted);font-size:13px;position:relative;}
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;position:relative;}
+    .btn{
+      appearance:none;border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;border-radius:12px;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.22)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      border-color: transparent;
+      background: linear-gradient(90deg, rgba(34,197,94,.22), rgba(59,130,246,.20), rgba(245,158,11,.18));
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.08fr .92fr;}
+      .span2{grid-column: 1 / -1;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card .hd{
+      padding:14px 16px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+    .card .hd h2{margin:0;font-size:14px;letter-spacing:.2px;}
+    .badge{
+      font-family:var(--mono);
+      font-size:11px;
+      color:rgba(234,240,255,.75);
+      border:1px solid rgba(255,255,255,.12);
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+    }
+    .card .bd{padding:14px 16px 16px;}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    @media (min-width: 560px){
+      .kpi{grid-template-columns: 1fr 1fr;}
+    }
+    .mini{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding:10px 12px;
+    }
+    .mini .t{font-size:11px;color:var(--muted);letter-spacing:.25px;text-transform:uppercase;}
+    .mini .v{margin-top:6px;font-size:13px;line-height:1.35;color:rgba(234,240,255,.88)}
+
+    ul{margin:10px 0 0 18px; padding:0;}
+    li{margin:7px 0; color:rgba(234,240,255,.86); line-height:1.45;}
+
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px dashed rgba(255,255,255,.16);
+      background: rgba(0,0,0,.16);
+      color:rgba(234,240,255,.80);
+      font-size:13px;
+    }
+
+    .copybox{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      border-radius: 14px;
+      padding:12px;
+      font-family: var(--mono);
+      font-size:12px;
+      color: rgba(234,240,255,.84);
+      white-space: pre-wrap;
+      line-height:1.45;
+    }
+
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      margin:12px 0;
+    }
+
+    .accent{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .gradText{
+      background: var(--gradA);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight: 700;
+    }
+
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      padding:10px 12px; border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.55);
+      color: rgba(234,240,255,.88);
+      font-size:13px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      opacity:0; pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.on{opacity:1; transform:translateX(-50%) translateY(-4px)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="chips">
+          <div class="chip"><span class="dot"></span><strong>Nicho</strong>: Design Gráfico</div>
+          <div class="chip"><span class="dot"></span><strong>Dia</strong>: 17</div>
+          <div class="chip"><span class="dot"></span><strong>Formato</strong>: Carrossel</div>
+          <div class="chip"><span class="dot"></span><strong>Pilar</strong>: Checklist</div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DVzKl_DkVtE/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <h1><span class="gradText">Curadoria que prende</span>: 1 item por slide (modelo pronto)</h1>
+      <p class="subtitle">Capa editorial + sequência fotográfica padronizada + fechamento com CTA de “salvar + comentar palavra-chave” para pedir links/parte 2.</p>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge">Visão geral</span>
+        </div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="mini">
+              <div class="t">O que entrega</div>
+              <div class="v">Curadoria rápida: uma lista visual (quase sem texto) que dá vontade de deslizar até o fim.</div>
+            </div>
+            <div class="mini">
+              <div class="t">Por que funciona</div>
+              <div class="v">Repetição + variedade: mesma “assinatura” de foto/edição, mas cada item muda (capas/cores), gerando micro-recompensas.</div>
+            </div>
+            <div class="mini">
+              <div class="t">Promessa (template)</div>
+              <div class="v">“Uma seleção de <span class="accent">[X]</span> que vai te ajudar a <span class="accent">[resultado]</span>.”</div>
+            </div>
+            <div class="mini">
+              <div class="t">Melhor uso</div>
+              <div class="v">Posts de referência: livros, fontes, ferramentas, sites, cases, inspirações, checklists, presets.</div>
+            </div>
+          </div>
+          <div class="note"><strong>Meta de retenção:</strong> reduzir atrito cognitivo. Se o conteúdo “se explica” pela imagem, o usuário só quer ver o próximo.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="badge">Mapa do carrossel</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>S1 — Capa/Hook:</strong> promessa + origem pessoal (“do meu acervo/processo”).</li>
+            <li><strong>S2..S(N-1) — Itens:</strong> 1 item por slide, foto padronizada, texto mínimo (opcional: chip “#1” + “Melhor para: …”).</li>
+            <li><strong>SN — Fechamento/CTA:</strong> pedir ação clara (salvar + comentar palavra-chave) e sugerir “parte 2”.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="mini">
+            <div class="t">Quantidade recomendada</div>
+            <div class="v"><strong>8 a 12 slides</strong> (1 capa + 6–10 itens + 1 CTA). Escolha um número e mantenha como <em>série</em>.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd">
+          <h2>Slides sugeridos (1..10)</h2>
+          <span class="badge">Pronto para adaptar</span>
+        </div>
+        <div class="bd">
+          <div class="copybox" id="slides">
+S1 (Capa)
+- Headline: “[Itens] de [Tema A] & [Tema B] do meu/minha [fonte]”
+- Sub: “Salve pra consultar quando precisar.”
+
+S2 (Item #1)
+- Foto do item no mesmo cenário.
+- Chip opcional: “#1”
+- Microlinha opcional: “Melhor para: [uso/resultado]”
+
+S3 (Item #2)
+- Mesmo enquadramento + edição.
+
+S4 (Item #3)
+- Mesmo padrão.
+
+S5 (Item #4)
+- Mesmo padrão.
+
+S6 (Item #5)
+- Mesmo padrão.
+
+S7 (Item #6)
+- Mesmo padrão.
+
+S8 (Item #7) (opcional)
+- Se tiver 12 slides, siga até #10.
+
+S9 (Bônus) (opcional)
+- “Se você gosta de [subtema], adiciona este na lista.”
+
+S10 (Fechamento/CTA)
+- Texto: “Quer os links / a lista completa?”
+- CTA: “Salva + comenta ‘LISTA’ (eu te mando)”
+- Extra: “Comenta qual você recomenda / quer parte 2 de [tema]?”
+          </div>
+          <div class="note"><strong>Dica de velocidade:</strong> se você tiver pouco tempo, faça <span class="accent">S2..S(N-1) 100% foto</span>. O texto vai na legenda.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Roteiro</h2>
+          <span class="badge">Slide a slide + legenda</span>
+        </div>
+        <div class="bd">
+          <div class="copybox" id="roteiro">
+OBJETIVO DO POST
+- Entregar curadoria rápida e gerar interação (salvar + comentário com palavra-chave).
+
+PREMISSAS
+- 1 item por slide.
+- Mesma estética em todas as fotos.
+- Capa com “cara editorial” (autoridade).
+
+SCRIPT (conteúdo)
+1) Defina a curadoria
+- Tema central: [ex.: tipografia / branding / criatividade]
+- Itens: [8–12 itens]
+- Critério: [iniciante / avançado / barato / gratuito / meu top 10 / os que mais uso]
+
+2) Escreva a promessa (1 frase)
+- “Aqui vai uma seleção de [X] pra te ajudar a [resultado].”
+
+3) Capa (texto pronto)
+- Linha 1: “[X] de”
+- Linha 2: “[Tema A] & [Tema B]”
+- Palavra-chave gigante (tarja): “[palavra de impacto]”
+- Linha 3: “do meu/minha [estante/acervo/rotina/arquivos]”
+
+4) Slides de itens (padrão)
+- Visual: foto consistente.
+- Texto opcional (máx. 6 palavras): “Melhor para: [uso]”
+
+5) Slide final (texto pronto)
+- “Quer a lista com links?”
+- “Salva + comenta ‘LISTA’”
+- “Qual desses você já usou/leu? Qual recomenda?”
+
+LEGENDA (modelo)
+- Começo (gancho): “Se você quer evoluir em [tema], salva isso.”
+- Contexto: “Separei [N] [itens] que eu realmente uso/indico.”
+- Reforço de prova: “Todos são da minha [coleção/processo] e aparecem por um motivo.”
+- CTA principal: “Comenta ‘LISTA’ que eu te mando os links.”
+- CTA secundário: “Quer parte 2 (sobre [subtema])? Comenta o tema.”
+- Hashtags (opcional): 3–8 específicas do nicho.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="badge">Identidade + consistência</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Ritmo:</strong> capa “arte” + sequência “foto full”.</li>
+            <li><strong>Assinatura visual:</strong> mesmo cenário (parede/mesa/estante) + mesmo ângulo + mesma distância.</li>
+            <li><strong>Textura:</strong> grain/noise leve (5–12%) em fundo/elementos.</li>
+            <li><strong>Tipografia da capa:</strong> sans condensada para impacto + sans regular para complemento.</li>
+            <li><strong>Hierarquia:</strong> 1 palavra gigante (resultado/tema) + contexto + origem (“meu acervo”).</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="mini">
+            <div class="t">Kit de design (substituível)</div>
+            <div class="v">
+              Elemento lateral (estrela/raio) → pode virar <span class="accent">setas</span>, <span class="accent">grid</span>, <span class="accent">faixas diagonais</span> ou <span class="accent">blur geométrico</span> mantendo o mesmo “impacto editorial”.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">Opções prontas</span>
+        </div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="mini">
+              <div class="t">Headline (capa) — fórmula</div>
+              <div class="v"><strong>“[Itens] de [Tema A] & [Tema B] do meu/minha [fonte]”</strong></div>
+            </div>
+            <div class="mini">
+              <div class="t">Variações equivalentes</div>
+              <div class="v">
+                “Referências de [tema] que eu uso em projetos”<br/>
+                “Meu kit de [itens] pra [resultado]”<br/>
+                “A lista que eu queria ter quando comecei em [tema]”
+              </div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="copybox" id="ganchos">GANCHOS (primeira linha da legenda)
+- “Você não precisa de mais conteúdo. Precisa de uma lista boa.”
+- “Aqui estão [N] [itens] que realmente valem seu tempo.”
+- “Se você trava em [dor], começa por esses [itens].”
+- “Se eu tivesse que recomeçar no design hoje, eu usaria isso aqui.”
+
+MICRO-COPYS (chips opcionais nos slides)
+- “Melhor para: [uso]”
+- “Nível: iniciante/avançado”
+- “Preço: grátis/pago”
+- “Uso em: [tipo de projeto]”
+
+FECHAMENTOS (último slide/legenda)
+- “Quer parte 2? Comenta: [A / B / C]”
+- “Qual item faltou aqui? Vou atualizar a lista.”
+- “Comenta ‘LISTA’ que mando os links.”
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="badge">Principal + secundário</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>CTA principal (curadoria):</strong> “Salve pra consultar depois.”</li>
+            <li><strong>CTA de comentário (alta conversão):</strong> “Comenta <span class="accent">‘LISTA’</span> que eu te mando os links.”</li>
+            <li><strong>CTA social:</strong> “Compartilha com alguém que está estudando/começando.”</li>
+            <li><strong>CTA de continuidade:</strong> “Quer parte 2? Comenta o tema (ex.: tipografia / branding / grid).”</li>
+          </ul>
+          <div class="note"><strong>Regra:</strong> use <span class="accent">1 CTA principal</span> + <span class="accent">1 CTA secundário</span>. Mais do que isso dilui a ação.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist</h2>
+          <span class="badge">Criação + postagem</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li>[ ] Definir tema + critério da curadoria (por que esses itens?).</li>
+            <li>[ ] Escolher <strong>N fixo</strong> de slides (ex.: 10) para virar série.</li>
+            <li>[ ] Fotografar todos os itens no mesmo setup (ângulo, distância, luz).</li>
+            <li>[ ] Aplicar a mesma edição/preset (temperatura, contraste, saturação).</li>
+            <li>[ ] Criar capa editorial: 1 palavra gigante + contexto + origem pessoal.</li>
+            <li>[ ] Decidir: slides internos <strong>100% foto</strong> ou <strong>híbridos</strong> (chip + 1 linha).</li>
+            <li>[ ] Último slide com CTA explícito (salvar + comentar palavra-chave).</li>
+            <li>[ ] Legenda: gancho na primeira linha + promessa + CTA + pergunta final.</li>
+            <li>[ ] Fixar comentário com “links/como receber” (se aplicável).</li>
+            <li>[ ] (Opcional) Responder comentários com padrão rápido + salvar FAQ.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="badge">Adaptações com o mesmo impacto</span>
+        </div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="mini">
+              <div class="t">Troque “livros” por</div>
+              <div class="v">Fontes • Plugins • Packs de textura • Sites • Canais • Cursos • Paletas • Mockups • Templates • Ferramentas IA</div>
+            </div>
+            <div class="mini">
+              <div class="t">Troque “da minha estante” por</div>
+              <div class="v">“do meu workflow” • “do meu kit” • “do meu drive” • “do meu processo” • “do meu checklist”</div>
+            </div>
+            <div class="mini">
+              <div class="t">Mesma estrutura, outro pilar</div>
+              <div class="v">Em vez de curadoria, use “<strong>erros</strong>” (1 erro por slide) ou “<strong>antes/depois</strong>” (1 transformação por slide).</div>
+            </div>
+            <div class="mini">
+              <div class="t">Substituições de copy (equivalentes)</div>
+              <div class="v">“Seleção” → “Kit” / “Top” / “Favoritos”<br/>“Parte 2” → “Série” / “Edição #2” / “Volume 2”</div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="copybox" id="variacoes">MODELOS PRONTOS (preenchíveis)
+
+1) Curadoria (clássico)
+- Capa: “Top [N] [itens] de [tema] do meu [kit]”
+- CTA: “Comenta ‘LISTA’ que mando os links.”
+
+2) Curadoria por cenário (alta utilidade)
+- Capa: “[N] [itens] para [situação]”
+- Chips: “Uso: [logo]/[social]/[editorial]”
+- CTA: “Qual cenário você quer que eu faça depois?”
+
+3) Curadoria com ranking (mais polêmico)
+- Capa: “Os [N] [itens] que eu mais uso (do #1 ao #N)”
+- CTA: “Você concorda com o #1?”
+
+4) Curadoria com ‘bônus escondido’ (retenção)
+- Capa: “Salva: [N] [itens] + um bônus no final”
+- Último slide: revelar bônus + CTA
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast">Roteiro copiado.</div>
+  </div>
+
+  <script>
+    const copyBtn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('on');
+      window.clearTimeout(window.__t);
+      window.__t = window.setTimeout(()=> toast.classList.remove('on'), 1600);
+    }
+
+    function buildText(){
+      const parts = [];
+      parts.push('TÍTULO: Curadoria que prende: 1 item por slide (modelo pronto)');
+      parts.push('NICHO: Design Gráfico | DIA: 17 | FORMATO: Carrossel | PILAR: Checklist');
+      parts.push('POST ORIGINAL: https://www.instagram.com/p/DVzKl_DkVtE/');
+      parts.push('\n=== ESTRUTURA ===\nS1 Capa/Hook\nS2..S(N-1) Itens (1 por slide, foto padronizada)\nSN Fechamento/CTA');
+      parts.push('\n=== SLIDES (1..10) ===\n' + document.getElementById('slides').innerText.trim());
+      parts.push('\n=== ROTEIRO ===\n' + document.getElementById('roteiro').innerText.trim());
+      parts.push('\n=== GANHOS/COPY ===\n' + document.getElementById('ganchos').innerText.trim());
+      parts.push('\n=== VARIAÇÕES ===\n' + document.getElementById('variacoes').innerText.trim());
+      return parts.join('\n');
+    }
+
+    copyBtn.addEventListener('click', async ()=>{
+      const text = buildText();
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Roteiro copiado.');
+      } catch(e) {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        showToast('Roteiro copiado (modo compatível).');
+      }
+    });
+  </script>
+</body>
+</html>
