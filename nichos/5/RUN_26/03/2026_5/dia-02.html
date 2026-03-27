@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Roteiro Reproduzível — Dia 2</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.08);
+    --stroke: rgba(255,255,255,.12);
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,.72);
+    --muted2: rgba(234,240,255,.55);
+    --shadow: 0 18px 50px rgba(0,0,0,.55);
+    --r: 18px;
+    --g1: linear-gradient(90deg,#22c55e 0%,#38bdf8 45%,#fb923c 100%);
+    --g2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.16), rgba(251,146,60,.14));
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(56,189,248,.18), transparent 55%),
+      radial-gradient(1000px 700px at 110% 10%, rgba(34,197,94,.14), transparent 55%),
+      radial-gradient(900px 700px at 60% 120%, rgba(251,146,60,.12), transparent 55%),
+      linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+    min-height:100vh;
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1080px; margin:0 auto; padding:28px 18px 80px}
+  .topbar{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+    padding:18px;
+    border:1px solid var(--stroke);
+    background:var(--g2);
+    border-radius:calc(var(--r) + 6px);
+    box-shadow: var(--shadow);
+    position:sticky; top:12px; backdrop-filter: blur(10px);
+    z-index:10;
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:8px 12px;
+    border:1px solid var(--stroke);
+    border-radius:999px;
+    background: rgba(0,0,0,.25);
+    font-family:var(--mono);
+    font-size:12px;
+    color: var(--muted);
+  }
+  .title{
+    margin:10px 0 6px;
+    font-size:20px;
+    line-height:1.2;
+    letter-spacing:-.02em;
+  }
+  .subtitle{margin:0; color:var(--muted); font-size:14px; line-height:1.5}
+  .meta{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 12px;
+    border:1px solid var(--stroke);
+    border-radius:999px;
+    background: rgba(255,255,255,.05);
+    font-size:12px;
+    color: var(--muted);
+  }
+  .pill strong{color:var(--text); font-weight:650}
+  .btns{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
+  .btn{
+    cursor:pointer;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    font-size:13px;
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    user-select:none;
+  }
+  .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.085); border-color: rgba(255,255,255,.18)}
+  .btn.primary{
+    background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.16), rgba(251,146,60,.14));
+  }
+  .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:18px}
+  @media (min-width: 920px){
+    .grid{grid-template-columns: 1.35fr .65fr}
+  }
+  .card{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.05);
+    border-radius: var(--r);
+    padding:18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size:14px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color: var(--muted);
+  }
+  .card h3{margin:0 0 10px; font-size:18px; letter-spacing:-.01em}
+  .card p{margin:0 0 10px; color: var(--muted); line-height:1.6}
+  .hl{
+    background: var(--g1);
+    -webkit-background-clip:text; background-clip:text;
+    color: transparent;
+    font-weight:800;
+  }
+  .list{margin:0; padding:0; list-style:none; display:grid; gap:10px}
+  .li{
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.22);
+    border-radius: 14px;
+    padding:12px;
+  }
+  .li .k{font-family:var(--mono); font-size:12px; color: var(--muted2)}
+  .li .v{margin-top:6px; color:var(--text); line-height:1.45}
+  .twoCol{display:grid; gap:12px}
+  @media (min-width: 920px){
+    .twoCol{grid-template-columns: 1fr 1fr}
+  }
+  .codebox{
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.35);
+    border-radius: 16px;
+    overflow:hidden;
+  }
+  .codehead{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 12px;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    color: var(--muted);
+    font-size:12px;
+    font-family:var(--mono);
+  }
+  pre{
+    margin:0;
+    padding:14px 12px;
+    white-space:pre-wrap;
+    word-break:break-word;
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.55;
+    color: rgba(234,240,255,.9);
+  }
+  .small{font-size:12px; color: var(--muted2); line-height:1.55}
+  .divider{height:1px; background: rgba(255,255,255,.1); margin:14px 0}
+  .flag{display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.22); font-size:12px; color: var(--muted)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div>
+        <div class="badge">Nicho: <strong style="color:var(--text); font-weight:700">Design Gráfico</strong> · Dia: <strong style="color:var(--text); font-weight:700">2</strong></div>
+        <h1 class="title">Carrossel <span class="hl">“Pode ou não pode?”</span> (7 slides) para designers</h1>
+        <p class="subtitle">Link do post original: <a href="https://www.instagram.com/p/DVZbG7pjn8I/" target="_blank" rel="noreferrer" style="text-decoration:underline; text-decoration-color: rgba(255,255,255,.25)">https://www.instagram.com/p/DVZbG7pjn8I/</a></p>
+        <div class="meta">
+          <span class="pill"><strong>Pilar</strong>: Passo a passo</span>
+          <span class="pill"><strong>Formato</strong>: Carrossel</span>
+          <span class="pill"><strong>Objetivo</strong>: salvamentos + compartilhamentos</span>
+        </div>
+      </div>
+      <div class="btns">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <a class="btn" href="#slides">Ver slides</a>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <p>Template reproduzível para carrossel em <span class="hl">7 slides</span> com estrutura: <strong>Hook binário</strong> → <strong>tensão (“depende”)</strong> → <strong>regra</strong> → <strong>quando é mais seguro</strong> → <strong>quando evitar</strong> → <strong>recursos</strong> → <strong>CTA</strong>. Ideal para temas de design (direitos, ferramentas, práticas, tendências) que geram dúvidas recorrentes.</p>
+        <div class="divider"></div>
+        <div class="twoCol">
+          <div class="li">
+            <div class="k">Promessa (1 linha)</div>
+            <div class="v">Você vai entender <strong>[X]</strong> e decidir rápido <strong>o que fazer</strong> sem cair em armadilhas comuns.</div>
+          </div>
+          <div class="li">
+            <div class="k">Ação final desejada</div>
+            <div class="v"><strong>Salvar</strong> (guia) + <strong>compartilhar</strong> (amigo designer/cliente).</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Metas e notas</h2>
+        <ul class="list">
+          <li class="li"><div class="k">Tempo de produção</div><div class="v">45–90 min (com componentes prontos).</div></li>
+          <li class="li"><div class="k">Densidade</div><div class="v">1 ideia por slide + exemplos em etiquetas.</div></li>
+          <li class="li"><div class="k">Regra de ouro</div><div class="v">Frase forte + nuance (“ponto final” → “mas…”).</div></li>
+        </ul>
+      </aside>
+
+      <section class="card">
+        <h2>Estrutura</h2>
+        <div class="twoCol">
+          <div class="li">
+            <div class="k">Macro-sequência</div>
+            <div class="v">1) Capa/Hook → 2) Zona cinzenta → 3) Regra + virada → 4) Quando é mais seguro → 5) Quando evitar → 6) Recursos → 7) CTA.</div>
+          </div>
+          <div class="li">
+            <div class="k">Por que retém</div>
+            <div class="v">Pergunta binária + “depende” + critérios práticos + lista de recursos (salvável).</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="slides">
+        <h2>Slides sugeridos (1..7)</h2>
+        <ul class="list">
+          <li class="li"><div class="k">Slide 1 — CAPA</div><div class="v"><strong>H1:</strong> “Usar <strong>[X]</strong> em <strong>[Y]</strong> no Instagram.”<br><strong>Callout:</strong> “pode ou não pode?”<br><strong>Selo opcional:</strong> “feito no [Ferramenta]” | “pra você compartilhar”.</div></li>
+          <li class="li"><div class="k">Slide 2 — TENSÃO</div><div class="v">“Aqui entra uma <strong>ZONA CINZENTA</strong>.”<br>“A resposta é… <strong>sim e não</strong>.”<br><strong>Micro-promessa:</strong> “explico em 30s/6 slides”.</div></li>
+          <li class="li"><div class="k">Slide 3 — REGRA + NUANCE</div><div class="v">“Fato: <strong>[regra/princípio]</strong>, ponto final.”<br>“Mas… se fosse só isso, <strong>[consequência absurda]</strong>, concorda?”<br><strong>Ponte:</strong> “Então usa estes critérios:”.</div></li>
+          <li class="li"><div class="k">Slide 4 — QUANDO É MAIS SEGURO</div><div class="v"><strong>Título:</strong> “Quando é mais seguro usar?”<br><strong>Resposta curta:</strong> “Quando é <strong>[educativo/informativo/opinativo]</strong> e não compete com o original.”<br><strong>Etiquetas (2–3):</strong> “Ex.: [ex1]” “Ex.: [ex2]” “Ex.: [ex3]”.</div></li>
+          <li class="li"><div class="k">Slide 5 — QUANDO EVITAR</div><div class="v"><strong>Título:</strong> “Quando não é recomendado?”<br><strong>Sub:</strong> “Quando vira <strong>[comercial/associação de marca/uso direto do ativo]</strong>.”<br><strong>3 caixas:</strong> (1) “[caso 1]” (2) “[caso 2]” (3) “[caso 3]”.</div></li>
+          <li class="li"><div class="k">Slide 6 — RECURSOS</div><div class="v"><strong>Título:</strong> “Onde pegar/fazer <strong>[X]</strong> do jeito certo?”<br><strong>3–4 indicações:</strong> [recurso1], [recurso2], [recurso3], [recurso4].<br><strong>Nota ‘evite’:</strong> “[atalho ruim] porque [motivo]”.</div></li>
+          <li class="li"><div class="k">Slide 7 — CTA</div><div class="v">“Foi útil?”<br><strong>CTA 1:</strong> “Salve pra consultar quando for criar <strong>[Y]</strong>.”<br><strong>CTA 2:</strong> “Compartilhe com <strong>[persona]</strong>.”<br><strong>Opcional:</strong> “Quer parte 2 sobre [tema]? Comenta ‘2’.”</div></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro</h2>
+        <p class="small">Copie e preencha os colchetes. Mantém ritmo “frase forte → nuance → critérios → exemplos → recursos → CTA”.</p>
+        <div class="codebox">
+          <div class="codehead">
+            <span>ROTEIRO (7 slides) — plug-and-play</span>
+            <span class="flag">1080×1350 · 7 telas</span>
+          </div>
+          <pre id="roteiroText">SLIDE 1 (CAPA)
+H1: Usar [X] em [Y] no Instagram.
+Callout: pode ou não pode?
+Selo (opcional): feito no [Ferramenta] | pra você compartilhar
+
+SLIDE 2 (TENSÃO)
+Texto: Aqui entra uma ZONA CINZENTA.
+Texto 2: A resposta é… sim e não.
+Callout: explico
+
+SLIDE 3 (REGRA GERAL + VIRADA)
+Fato: [regra/princípio], ponto final.
+Mas… se fosse só isso, [consequência absurda].
+Ponte: Então decide usando estes critérios:
+
+SLIDE 4 (QUANDO É MAIS SEGURO)
+Título: Quando é mais seguro usar?
+Resposta curta: Quando é [educativo/informativo/opinativo] e não substitui o original.
+Etiquetas:
+- Ex.: [exemplo 1]
+- Ex.: [exemplo 2]
+- Ex.: [exemplo 3]
+Nota (1 linha): [disclaimer curto]
+
+SLIDE 5 (QUANDO EVITAR)
+Título: Quando não é recomendado?
+Sub: Quando está ligado a [uso comercial/associação de marca/uso direto do ativo].
+Caixas:
+1) [caso 1]
+2) [caso 2]
+3) [caso 3]
+
+SLIDE 6 (RECURSOS)
+Título: Onde pegar/fazer [X] do jeito certo?
+Lista: [recurso 1] | [recurso 2] | [recurso 3] | [recurso 4]
+Evite: [atalho ruim] porque [motivo].
+
+SLIDE 7 (FECHAMENTO + CTA)
+Pergunta: Foi útil?
+CTA: Salve para consultar quando for criar [Y].
+CTA 2: Compartilhe com [persona].
+Opcional: Quer parte 2 sobre [tema]? Comenta “2”.</pre>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <ul class="list">
+          <li class="li"><div class="k">Direção de arte</div><div class="v">Fundo escuro + estética editorial/colagem. Use 1 imagem forte por slide e deixe o texto “mandar” na hierarquia.</div></li>
+          <li class="li"><div class="k">Componentes (sistema)</div><div class="v">Etiquetas (tags), callouts desenhados (círculo/seta), sublinhado marker, header/rodapé fixos, micro-disclaimer.</div></li>
+          <li class="li"><div class="k">Paleta sugerida</div><div class="v">Base: preto/azul petróleo + off-white. Destaques: verde/azul/laranja (em pontos de atenção: pergunta, “depende”, “evite”).</div></li>
+          <li class="li"><div class="k">Tipografia (guia rápido)</div><div class="v"><strong>H1:</strong> bold/black (90–140pt). <strong>H2:</strong> 55–80pt. <strong>Body:</strong> 32–42pt. <strong>Micro:</strong> 20–26pt. Linhas curtas e respiro.</div></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos</h2>
+        <div class="twoCol">
+          <div class="li"><div class="k">Hooks de capa (escolha 1)</div><div class="v">• “Usar [X] em [Y] dá problema?”<br>• “Posso usar [X] em trabalho de cliente?”<br>• “[X] é permitido no Instagram?”</div></div>
+          <div class="li"><div class="k">Frases de retenção (meio do post)</div><div class="v">• “A resposta é… sim e não.”<br>• “Ponto final. Mas…”<br>• “Três critérios e você nunca mais fica na dúvida.”</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="li">
+          <div class="k">Modelo de promessa (1 frase)</div>
+          <div class="v">“Em 7 slides você vai entender <strong>[X]</strong> e aplicar com segurança em <strong>[Y]</strong> sem <strong>[dor/risco]</strong>.”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <ul class="list">
+          <li class="li"><div class="k">CTA principal (baixo esforço)</div><div class="v">“Salve pra consultar quando estiver criando <strong>[Y]</strong>.”</div></li>
+          <li class="li"><div class="k">CTA social (compartilhamento)</div><div class="v">“Compartilhe com um(a) <strong>designer/freela/social media</strong> que vive perguntando isso.”</div></li>
+          <li class="li"><div class="k">CTA de comentário (engajamento)</div><div class="v">“Comenta <strong>‘CHECKLIST’</strong> que eu mando um modelo.”</div></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Checklist</h2>
+        <ul class="list">
+          <li class="li"><div class="k">Antes de criar</div><div class="v">Defina: Tema [X] · Público · Promessa · Prova/autoridade (fonte/experiência) · Ação final (salvar/compartilhar/comentar).</div></li>
+          <li class="li"><div class="k">Durante o design</div><div class="v">1 ideia por slide · contraste alto · etiquetas para exemplos · padrão fixo de header/rodapé · microtexto de contexto/nota.</div></li>
+          <li class="li"><div class="k">Revisão final</div><div class="v">Ortografia · consistência de termos · “depende” bem explicado · exemplos reais/claros · CTA único e explícito · capa com pergunta binária.</div></li>
+          <li class="li"><div class="k">Publicação</div><div class="v">Legenda curta: resumo + 1 frase de reforço + CTA. Hashtags: 3–8 específicas (ex.: #designgrafico #direitosautorais #branding #freelancerdesign).</div></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Variações</h2>
+        <ul class="list">
+          <li class="li"><div class="k">Variação 1 — “Erro comum”</div><div class="v">Troque o Slide 2 por: “O erro que mais dá ruim é <strong>[erro]</strong>.” Depois entrou no “depende”.</div></li>
+          <li class="li"><div class="k">Variação 2 — “Checklist”</div><div class="v">Faça Slide 4 e 5 virarem um checklist de 6 itens (3 OK / 3 Evite) e reduza recursos para 2 indicações.</div></li>
+          <li class="li"><div class="k">Variação 3 — “Prova”</div><div class="v">Adicione no Slide 3 um mini “exemplo real”: “Já vi cliente pedir [caso] e isso costuma dar [resultado]”.</div></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const textEl = document.getElementById('roteiroText');
+
+    async function copy(){
+      const t = textEl.innerText;
+      try{
+        await navigator.clipboard.writeText(t);
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = t;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+      }
+    }
+
+    btn.addEventListener('click', copy);
+  })();
+</script>
+</body>
+</html>
