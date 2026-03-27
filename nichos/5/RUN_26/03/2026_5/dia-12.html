@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 12 — Design Gráfico | Antes e Depois: o carrossel que prova seu design</title>
+<style>
+  :root{
+    --bg:#0b0f14;
+    --panel:rgba(255,255,255,0.06);
+    --panel2:rgba(255,255,255,0.08);
+    --stroke:rgba(255,255,255,0.10);
+    --text:#eaf0ff;
+    --muted:rgba(234,240,255,0.72);
+    --muted2:rgba(234,240,255,0.55);
+    --shadow: 0 18px 60px rgba(0,0,0,.45);
+    --r12:12px;
+    --r16:16px;
+    --r20:20px;
+    --g1: linear-gradient(90deg, #19ffa0 0%, #2aa8ff 45%, #ff9a1f 100%);
+    --g2: radial-gradient(1200px 800px at 12% 8%, rgba(42,168,255,0.20) 0%, rgba(11,15,20,0) 55%),
+         radial-gradient(900px 900px at 88% 12%, rgba(25,255,160,0.16) 0%, rgba(11,15,20,0) 60%),
+         radial-gradient(900px 900px at 70% 90%, rgba(255,154,31,0.14) 0%, rgba(11,15,20,0) 55%);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    background: var(--bg);
+    color: var(--text);
+    line-height:1.45;
+    letter-spacing: .2px;
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{
+    min-height:100vh;
+    background: var(--g2);
+  }
+  .container{
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 18px 56px;
+  }
+  header{
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+    justify-content:space-between;
+    margin-bottom: 18px;
+  }
+  .brand{
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .kicker{
+    display:flex; flex-wrap:wrap; gap:10px;
+    align-items:center;
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding: 8px 10px;
+    border: 1px solid var(--stroke);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .dot{width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,0.35)}
+  .dot.g{background:#19ffa0}
+  .dot.b{background:#2aa8ff}
+  .dot.o{background:#ff9a1f}
+  h1{
+    margin:0;
+    font-size: clamp(22px, 2.6vw, 34px);
+    line-height:1.12;
+    letter-spacing:-.6px;
+  }
+  .sub{
+    margin:0;
+    color: var(--muted);
+    max-width: 78ch;
+    font-size: 14px;
+  }
+  .actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .btn{
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor:pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: .18s ease;
+  }
+  .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.07)}
+  .btn.primary{
+    border: 0;
+    background: var(--g1);
+    color: #071018;
+  }
+  .btn.primary:hover{filter:saturate(1.05); transform: translateY(-1px)}
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  @media (max-width: 980px){
+    .grid{grid-template-columns:1fr;}
+    header{flex-direction:column; align-items:stretch;}
+    .actions{justify-content:flex-start}
+  }
+
+  .card{
+    border: 1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.035));
+    box-shadow: var(--shadow);
+    border-radius: var(--r20);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .card .hd h2{
+    margin:0;
+    font-size: 14px;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    color: rgba(234,240,255,0.86);
+  }
+  .badge{
+    font-size: 12px;
+    color: rgba(7,16,24,0.95);
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--g1);
+    font-weight:800;
+  }
+  .card .bd{padding: 14px 16px 16px;}
+  .card p{margin:0 0 10px; color: var(--muted); font-size: 14px}
+  .card ul{margin: 8px 0 0 18px; color: var(--muted); padding:0}
+  .card li{margin: 6px 0;}
+  .hr{
+    height:1px;
+    background: rgba(255,255,255,0.08);
+    margin: 12px 0;
+  }
+
+  .mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12.6px;
+    color: rgba(234,240,255,0.78);
+    background: rgba(0,0,0,0.22);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 12px;
+    overflow:auto;
+    white-space: pre-wrap;
+    line-height:1.5;
+  }
+
+  .twoCol{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 640px){
+    .twoCol{grid-template-columns:1fr;}
+  }
+
+  .callout{
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.04);
+    border-radius: var(--r16);
+    padding: 12px;
+  }
+  .callout strong{color: rgba(234,240,255,0.92)}
+  .linkRow{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .link{
+    display:inline-flex; gap:10px; align-items:center;
+    padding: 8px 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.03);
+  }
+  .link code{font-size:12px; color: rgba(234,240,255,0.82)}
+
+  .footer{
+    margin-top: 16px;
+    color: var(--muted2);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="kicker">
+          <span class="pill"><span class="dot g"></span><span>Nicho: <strong style="color:rgba(234,240,255,.92)">Design Gráfico</strong></span></span>
+          <span class="pill"><span class="dot b"></span><span>Dia: <strong style="color:rgba(234,240,255,.92)">12</strong></span></span>
+          <span class="pill"><span class="dot o"></span><span>Formato: <strong style="color:rgba(234,240,255,.92)">Carrossel 4:5</strong></span></span>
+          <span class="pill"><span class="dot"></span><span>Pilar: <strong style="color:rgba(234,240,255,.92)">Passo a passo</strong></span></span>
+        </div>
+        <h1>Antes e Depois: o carrossel que prova seu design</h1>
+        <p class="sub">Roteiro reproduzível no estilo editorial + “UI window” para mostrar evolução com prova visual, aprendizados e CTA por DM.</p>
+        <div class="linkRow">
+          <a class="link" href="https://www.instagram.com/p/DTfphb9jSOX/" target="_blank" rel="noopener noreferrer">Post original <code>instagram.com/p/DTfphb9jSOX</code></a>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="copyBtn" type="button">Copiar roteiro</button>
+        <a class="btn primary" href="#cta">Ir para CTA</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge">Template</span>
+        </div>
+        <div class="bd">
+          <p><strong>Ideia central:</strong> usar narrativa binária (antes/depois) + uma “janela de interface” constante para transformar seu carrossel em <strong>prova de habilidade</strong> (portfólio em formato de conteúdo).</p>
+          <div class="twoCol">
+            <div class="callout">
+              <p><strong>Quando usar</strong><br/>• Evolução de peças (posts, identidades, thumbnails)<br/>• Rebrand / melhorias de layout<br/>• Portfólio/estudo de caso curto</p>
+            </div>
+            <div class="callout">
+              <p><strong>Resultado esperado</strong><br/>• Retenção (curiosidade do “depois”)<br/>• Autoridade (prova visual rápida)<br/>• Conversão (DM com palavra-chave)</p>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p><strong>Regra de ouro:</strong> 1 palavra gigante por slide + 1 acento de cor (no máximo) para guiar o olhar.</p>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Metadados (calendário)</h2>
+          <span class="badge">Dia 12</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Título:</strong> Antes e Depois: o carrossel que prova seu design</li>
+            <li><strong>Instrução curta:</strong> Crie um carrossel 4:5 com narrativa antes/depois + “janela UI” para mostrar evolução e prova visual. Finalize com aprendizados + CTA por DM com palavra-chave.</li>
+            <li><strong>Pilar:</strong> Passo a passo</li>
+            <li><strong>Formato:</strong> carrossel</li>
+          </ul>
+          <div class="hr"></div>
+          <p style="margin:0;color:var(--muted2)">Dica: mantenha o mesmo componente de “janela UI” em todos os slides para criar consistência de sistema.</p>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Estrutura (sequência)</h2>
+          <span class="badge">6–10 slides</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Slide 1 — Capa:</strong> hook em 2 linhas + 1 palavra gigante (promessa).</li>
+            <li><strong>Slide 2 — Virada:</strong> “Depois você…” + palavra gigante (resultado).</li>
+            <li><strong>Slides 3–6 — Prova:</strong> 3–4 exemplos dentro do frame (janela/app) com miniaturas + labels.</li>
+            <li><strong>Slide 7 — Síntese:</strong> 3 bullets do que mudou e por que funciona.</li>
+            <li><strong>Slide 8 — Processo:</strong> 3–5 etapas (do briefing à entrega).</li>
+            <li><strong>Slide 9 — Oferta leve:</strong> o que você faz + entregáveis.</li>
+            <li><strong>Slide 10 — CTA:</strong> salvar/comentar + DM com palavra-chave.</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Versão curta (5 slides):</strong> Capa → Virada → Prova → Síntese → CTA.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Slides sugeridos (1..9) — pronto para preencher</h2>
+          <span class="badge">Carrossel</span>
+        </div>
+        <div class="bd">
+<pre class="mono" id="roteiroText">SLIDE 1 (CAPA)
+H2 (editorial): “Primeiro você…”
+H1 (gigante): [VERBO/ERRO EM 1 PALAVRA]
+Microcopy: PORTFÓLIO / [TEMA] / [CATEGORIA]
+Rodapé: @seuperfil
+
+SLIDE 2 (VIRADA)
+H2: “Depois você…”
+H1: [RESULTADO EM 1 PALAVRA]
+Sub: “quando faz [AJUSTE-CHAVE]” (opcional)
+
+SLIDE 3 (PROVA 01)
+Título: “Exemplo 01”
+Frase (1 linha): “[o que mudou + benefício]”
+UI window: miniaturas + imagem principal + label “arquivo_01.jpg”
+
+SLIDE 4 (PROVA 02)
+Título: “Exemplo 02”
+Frase: “[o que mudou + benefício]”
+Label: “arquivo_02.jpg”
+
+SLIDE 5 (PROVA 03)
+Título: “Exemplo 03”
+Frase: “[o que mudou + benefício]”
+Label: “arquivo_03.jpg”
+
+SLIDE 6 (SÍNTESE)
+Headline: “3 ajustes que fizeram diferença:”
+• [Ajuste 1: contraste / hierarquia]
+• [Ajuste 2: grid / respiro]
+• [Ajuste 3: sistema / consistência]
+
+SLIDE 7 (PROCESSO)
+Headline: “Meu processo em 4 passos”
+1) Briefing (objetivo + público)
+2) Referências (2–3 direções)
+3) Composição (grid + tipografia)
+4) Revisão (variações + refinamento)
+
+SLIDE 8 (OFERTA LEVE)
+“Quer aplicar isso no seu conteúdo?”
+Entregáveis (2–3):
+• Kit de posts (X templates)
+• Direção de arte (estilo + sistema)
+• Adaptação pro seu nicho
+
+SLIDE 9 (CTA)
+CTA primário: “Me chama no DM com a palavra ‘TEMPLATE’.”
+CTA secundário: “Salva pra usar como referência + envia pra um designer.”
+Pergunta: “Você quer ver mais antes/depois de [tema]?”</pre>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais (look &amp; feel)</h2>
+          <span class="badge">High-tech</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Formato:</strong> 1080×1350 (4:5).</li>
+            <li><strong>Conceito:</strong> editorial minimalista + mock de janela (browser/app) + estética de arquivo/portfólio.</li>
+            <li><strong>Componentes fixos:</strong> barra superior (bolinhas), search, coluna de miniaturas, imagem central, cards flutuantes com <span style="background:rgba(255,255,255,.06);padding:2px 6px;border-radius:8px;border:1px solid rgba(255,255,255,.1)">nome_de_arquivo.jpg</span>.</li>
+            <li><strong>Hierarquia:</strong> H2 curto (serif/editorial) + H1 gigante (sans black) + microcopy (UI sans).</li>
+            <li><strong>Cores:</strong> base preto/quase branco + <strong>1 acento</strong> por slide (use verde/azul/laranja em detalhes de UI).</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Medidas práticas (guia rápido):</strong> margens 80–110 px; H1 ocupando ~40–55% da altura do topo; sombra suave (blur alto, opacidade baixa) para sensação de camada.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">Hook</span>
+        </div>
+        <div class="bd">
+          <p><strong>Fórmula de capa (alta retenção):</strong></p>
+          <ul>
+            <li>“Primeiro você <strong>[AÇÃO/ERRO]</strong>”</li>
+            <li>“Depois você <strong>[RESULTADO]</strong>”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Variações prontas:</strong></p>
+          <ul>
+            <li>“Antes: [situação] // Depois: [mudança]”</li>
+            <li>“O design só melhora quando você [ajuste-chave]”</li>
+            <li>“Você acha que é [mito]… mas é [verdade prática]” (se quiser adaptar para outro pilar)</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Microcopy (tags editoriais):</strong> “PORTFÓLIO / [TEMA] / [TIPO]” • “EVOLUÇÃO DO [PROJETO]” • assinatura @perfil no rodapé.</p>
+        </div>
+      </section>
+
+      <section class="card" id="cta">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="badge">Conversão</span>
+        </div>
+        <div class="bd">
+          <p><strong>Escolha 1 CTA primário + 1 secundário:</strong></p>
+          <ul>
+            <li><strong>Primário (DM):</strong> “Quer um kit de posts nesse estilo? Me chama no DM com a palavra <strong>TEMPLATE</strong>.”</li>
+            <li><strong>Secundário (engajamento):</strong> “Salva esse post pra usar como referência.”</li>
+            <li><strong>Comentário-guia:</strong> “Qual exemplo você gostou mais: 1, 2 ou 3?”</li>
+          </ul>
+          <div class="hr"></div>
+          <p style="margin:0"><strong>Dica de conversão:</strong> prometa um retorno claro no DM (ex.: “te mando o grid + lista de fontes”).</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Checklist de criação (reproduzível)</h2>
+          <span class="badge">Pronto</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div>
+              <p><strong>Antes de abrir o arquivo</strong></p>
+              <ul>
+                <li>Tema do carrossel: ______</li>
+                <li>Antes (erro/ação inicial): ______</li>
+                <li>Depois (resultado/virada): ______</li>
+                <li>Provas (3–4 prints/peças): ______</li>
+                <li>3 aprendizados (bullets): ______</li>
+                <li>Palavra-chave do DM: ______</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Durante o layout</strong></p>
+              <ul>
+                <li>Manter 1 componente mestre (janela UI) em todos os slides</li>
+                <li>1 palavra gigante por slide (sem frase longa no H1)</li>
+                <li>1 acento de cor por slide (verde/azul/laranja)</li>
+                <li>Labels tipo arquivo (.jpg/.png) para “easter eggs”</li>
+                <li>Repetir assinatura @perfil no rodapé</li>
+                <li>Checar legibilidade no zoom 25%</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p><strong>Finalização</strong></p>
+          <ul>
+            <li>Exportar em 1080×1350, PNG (ou JPG alta qualidade).</li>
+            <li>Revisar consistência: margens, grid, alinhamentos, contraste.</li>
+            <li>Escrever legenda com: contexto + 3 aprendizados + CTA (DM + salvar).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Variações (para repetir sem ficar igual)</h2>
+          <span class="badge">Reutilizável</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Variação A (foco em tipografia):</strong> antes/depois mostrando apenas troca de fonte, pesos e escala; prova com 3 peças.</li>
+            <li><strong>Variação B (foco em grid):</strong> antes desalinhado → depois com grid 12 colunas + respiro; bullets explicando o grid.</li>
+            <li><strong>Variação C (foco em cor):</strong> antes “tudo colorido” → depois 1 acento cromático + neutros; mostrar paleta e exemplos.</li>
+            <li><strong>Variação D (mini case):</strong> inserir um slide extra: “Objetivo do cliente + restrições” antes da prova.</li>
+          </ul>
+          <div class="hr"></div>
+          <p style="margin:0;color:var(--muted2)">Sugestão: alterne o acento principal por série (verde/azul/laranja) mantendo o sistema de UI constante.</p>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="footer">
+      <div class="hr" style="margin:18px 0 12px;"></div>
+      <div>Documento de produção (Dia 12) — use como padrão para séries semanais de “evolução/antes-depois”.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const textEl = document.getElementById('roteiroText');
+
+    async function copy(){
+      const txt = textEl ? textEl.innerText : '';
+      try{
+        await navigator.clipboard.writeText(txt);
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+      }catch(e){
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+      }
+    }
+
+    btn.addEventListener('click', copy);
+  })();
+</script>
+</body>
+</html>
