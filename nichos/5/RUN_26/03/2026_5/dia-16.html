@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha reproduzível — Guia do #FFFFFF</title>
+  <style>
+    :root{
+      --bg0:#070A10;
+      --bg1:#0B1020;
+      --card:#0D1426CC;
+      --card2:#0B1224E6;
+      --stroke:#1B2A46;
+      --stroke2:#223455;
+      --text:#EAF0FF;
+      --muted:#A9B6D3;
+      --muted2:#7F91B8;
+      --green:#27F59A;
+      --blue:#30A2FF;
+      --orange:#FF8A2A;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --grad: linear-gradient(90deg, rgba(39,245,154,.95), rgba(48,162,255,.95), rgba(255,138,42,.95));
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 12% 10%, rgba(48,162,255,.18), transparent 55%),
+        radial-gradient(1000px 600px at 88% 20%, rgba(39,245,154,.12), transparent 55%),
+        radial-gradient(900px 550px at 70% 90%, rgba(255,138,42,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+
+    header{
+      display:flex;
+      align-items:stretch;
+      justify-content:space-between;
+      gap:14px;
+      padding: 18px;
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(13,20,38,.72), rgba(11,18,36,.55));
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(900px 120px at 30% 0%, rgba(48,162,255,.22), transparent 60%),
+                  radial-gradient(900px 120px at 70% 0%, rgba(255,138,42,.20), transparent 60%),
+                  radial-gradient(900px 120px at 50% 0%, rgba(39,245,154,.18), transparent 60%);
+      pointer-events:none;
+      filter: blur(0px);
+      opacity:.9;
+    }
+    header > *{position:relative; z-index:1;}
+
+    .h-left{flex:1; min-width: 260px;}
+    .kicker{
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+    .pill{
+      padding: 7px 10px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+    }
+    .pill strong{color: var(--text); font-weight:650;}
+
+    h1{
+      margin: 10px 0 8px;
+      font-size: 22px;
+      line-height:1.15;
+      font-weight: 780;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size: 14px;
+      line-height:1.45;
+      max-width: 64ch;
+    }
+
+    .h-right{
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      min-width: 250px;
+      gap:12px;
+      align-items:flex-end;
+    }
+
+    a.link{
+      color: var(--text);
+      text-decoration:none;
+      border-bottom: 1px solid rgba(234,240,255,.25);
+      padding-bottom:2px;
+      font-size: 13px;
+      opacity:.92;
+    }
+    a.link:hover{opacity:1}
+
+    .btns{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
+    button{
+      appearance:none;
+      border: 1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 650;
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    button:hover{transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(48,162,255,.45)}
+
+    .primary{
+      border: 0;
+      background: var(--grad);
+      color: #061018;
+      box-shadow: 0 12px 34px rgba(0,0,0,.35);
+    }
+
+    .grid{
+      margin-top: 16px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 920px){
+      .grid{grid-template-columns: 1fr;}
+      .h-right{align-items:flex-start;}
+      .btns{justify-content:flex-start;}
+    }
+
+    section{
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(13,20,38,.68), rgba(11,18,36,.48));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .sec-h{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom: 1px solid rgba(27,42,70,.7);
+      background: rgba(255,255,255,.02);
+    }
+
+    .sec-h h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .tag{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+    }
+
+    .sec-b{padding: 14px 16px 16px;}
+
+    .sec-b p{margin: 0 0 10px; color: var(--muted); line-height:1.55; font-size: 14px;}
+    .sec-b p strong{color: var(--text)}
+
+    .list{margin:0; padding-left: 18px; color: var(--muted); font-size:14px; line-height:1.6;}
+    .list li{margin: 6px 0;}
+
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 720px){
+      .cols{grid-template-columns: 1fr;}
+    }
+
+    .card{
+      border: 1px solid rgba(34,52,85,.85);
+      background: rgba(5,10,20,.25);
+      border-radius: var(--radius2);
+      padding: 12px 12px;
+    }
+
+    .card h3{
+      margin:0 0 8px;
+      font-size: 14px;
+      letter-spacing:.02em;
+    }
+
+    .mono{font-family: var(--mono);}
+
+    .hr{
+      height:1px;
+      margin: 12px 0;
+      background: linear-gradient(90deg, transparent, rgba(48,162,255,.35), rgba(39,245,154,.28), rgba(255,138,42,.28), transparent);
+      opacity:.9;
+    }
+
+    .script{
+      user-select: none;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted2);
+    }
+
+    textarea{
+      width:100%;
+      min-height: 380px;
+      resize: vertical;
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      padding: 12px 12px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.5;
+      outline: none;
+    }
+
+    .note{
+      font-size: 12px;
+      color: var(--muted2);
+      margin-top: 10px;
+    }
+
+    .ok{
+      display:none;
+      margin-left: 10px;
+      font-size: 12px;
+      color: rgba(39,245,154,.95);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="h-left">
+        <div class="kicker">
+          <span class="pill">Nicho: <strong>Design Gráfico</strong></span>
+          <span class="pill">Dia: <strong>16</strong></span>
+          <span class="pill">Formato: <strong>Carrossel</strong></span>
+          <span class="pill">Pilar: <strong>Checklist</strong></span>
+        </div>
+        <h1>Guia do <span class="mono">#FFFFFF</span>: substituições inteligentes para o branco puro</h1>
+        <p class="sub">Crie um “conteúdo de referência” com problema claro + 5–7 alternativas prontas (dado objetivo + benefício). Ideal para gerar <strong>salvamentos</strong> e virar série.</p>
+      </div>
+      <div class="h-right">
+        <a class="link" href="https://www.instagram.com/p/DUiV1V4jg2C/" target="_blank" rel="noreferrer">Ver post original ↗</a>
+        <div class="btns">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="selectBtn">Selecionar texto</button>
+          <span class="ok" id="ok">Copiado.</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section>
+        <div class="sec-h">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo: salvável + repetível</span>
+        </div>
+        <div class="sec-b">
+          <p><strong>Ideia central:</strong> um padrão “muito usado” parece correto, mas tem um custo. Você entrega substituições melhores em um molde fixo, com <strong>lista aplicável</strong> e fechamento memorável.</p>
+          <div class="cols">
+            <div class="card">
+              <h3>O que faz funcionar</h3>
+              <ul class="list">
+                <li><strong>Promessa de guia</strong> (conteúdo de consulta).</li>
+                <li><strong>Problema em 1 slide</strong> (tensão + motivo para continuar).</li>
+                <li><strong>Repetição visual</strong> (mesmo layout; muda só a alternativa).</li>
+                <li><strong>Dado + benefício</strong> (ex.: HEX + sensação/uso).</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Quando usar</h3>
+              <ul class="list">
+                <li>Para ensinar <strong>opções</strong> (cores, fontes, grids, espaçamentos, presets).</li>
+                <li>Quando você quer <strong>salvamento</strong> como métrica principal.</li>
+                <li>Como início de <strong>série</strong> (Parte 1/2/3).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-h">
+          <h2>Estrutura</h2>
+          <span class="tag">8–10 slides</span>
+        </div>
+        <div class="sec-b">
+          <ul class="list">
+            <li><strong>Slide 1 (Capa):</strong> “Guia do [ITEM]” + subtítulo “Substituições inteligentes para [PADRÃO]”.</li>
+            <li><strong>Slide 2 (Problema):</strong> por que o padrão é ruim + consequência + micro-CTA “salva e arrasta”.</li>
+            <li><strong>Slides 3–(N-1) (Lista):</strong> 5–7 alternativas no mesmo molde (❌ padrão + ✅ alternativa + 1–2 linhas).</li>
+            <li><strong>Slide final (Fechamento):</strong> frase-memória + reforço de marca + CTA (salvar/compartilhar/comentar).</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="script"><strong>Molde fixo por slide de opção:</strong> ❌ [padrão ruim] (riscado) → seta/linha → ✅ [alternativa] + [dado] + “benefício em 7–12 palavras”.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-h">
+          <h2>Roteiro</h2>
+          <span class="tag mono">pronto para copiar</span>
+        </div>
+        <div class="sec-b">
+          <textarea id="roteiro" spellcheck="false">CARROSSEL — “GUIA DO [ITEM] (substituições inteligentes)”
+
+SLIDE 1 — CAPA (hook)
+Título: “Guia do [ITEM]”
+Subtítulo: “Substituições inteligentes para [PADRÃO COMUM]”
+Selos (opcional): “pra salvar” | “feito em [FERRAMENTA]” | “parte [X]”
+Assinatura: “série: [NOME] | @seuperfil”
+
+SLIDE 2 — PROBLEMA (contexto + tensão)
+Frase 1: “O [PADRÃO] parece [QUALIDADE POSITIVA], mas…”
+Frase 2: “Na prática, ele causa [CONSEQUÊNCIA 1] e [CONSEQUÊNCIA 2].”
+Fecho: “Aqui vão [5–7] alternativas melhores (salva e arrasta →)”
+
+SLIDES 3–7 — OPÇÕES (repita o molde)
+Slide [n]:
+❌ [PADRÃO RUIM] — [DADO OBJETIVO] (ex.: HEX / tamanho / configuração)
+➡️ ✅ [ALTERNATIVA] — [DADO OBJETIVO]
+Descrição (1–2 linhas): “[sensação/benefício] + melhor para [contexto de uso]”
+
+(Repita até completar 5–7 opções. Mantenha sempre o mesmo layout.)
+
+SLIDE FINAL — FECHAMENTO (frase-memória + CTA)
+Frase-memória: “Design é escolha. Boas escolhas comunicam a mensagem certa.”
+Reforço: “Se isso te ajuda no dia a dia, salva pra consultar.”
+CTA 1: “Comenta: qual você mais usa?”
+CTA 2 (série): “Quer a parte [X+1] com [TEMA]? escreve ‘QUERO’.”
+CTA 3 (compartilhar): “Manda pra quem sempre usa [PADRÃO RUIM].”
+</textarea>
+          <div class="note">Dica: troque [DADO OBJETIVO] por algo “copiável” (HEX, presets, medidas, shortcuts). Isso aumenta salvamentos.</div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-h">
+          <h2>Slides sugeridos (1..9)</h2>
+          <span class="tag">modelo editável</span>
+        </div>
+        <div class="sec-b">
+          <ol class="list">
+            <li><strong>Capa:</strong> Guia do [ITEM] + subtítulo + selo “pra salvar”.</li>
+            <li><strong>Problema:</strong> “parece X, mas dá Y” + micro-CTA.</li>
+            <li><strong>Opção 1:</strong> ❌ padrão → ✅ alternativa (dado + uso).</li>
+            <li><strong>Opção 2</strong></li>
+            <li><strong>Opção 3</strong></li>
+            <li><strong>Opção 4</strong></li>
+            <li><strong>Opção 5</strong> (ou 6/7 se quiser mais).</li>
+            <li><strong>Resumo rápido:</strong> “Regra prática” (quando usar cada alternativa) ou “3 erros ao aplicar”.</li>
+            <li><strong>Fechamento:</strong> frase-memória + CTA (salvar/comentar/pedir parte 2).</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-h">
+          <h2>Elementos visuais</h2>
+          <span class="tag">high-tech no escuro</span>
+        </div>
+        <div class="sec-b">
+          <div class="cols">
+            <div class="card">
+              <h3>Componentes (biblioteca)</h3>
+              <ul class="list">
+                <li><strong>Card central</strong> com cantos arredondados + sombra suave.</li>
+                <li><strong>Divisão 40/60</strong>: esquerda “errado”, direita “certo”.</li>
+                <li><strong>Risco / X</strong> sobre o item ruim (comunica sem ler).</li>
+                <li><strong>Seta/linha curva</strong> conectando errado → certo.</li>
+                <li><strong>Selos em pílula</strong>: “pra salvar”, “parte 2”, “feito em…”.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Regras de consistência</h3>
+              <ul class="list">
+                <li>Mesmo grid e mesma posição do card em todos os slides.</li>
+                <li>Mesma espessura de traço nos doodles / setas.</li>
+                <li>1 acento de cor por slide (não competir com o dado).</li>
+                <li>Textura/ruído uniforme (se usar, use em tudo).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p><strong>Tipografia (fórmula):</strong> 1 fonte display/serif (acentos) + 1 sans bold (títulos/termos) + 1 sans regular (explicações).</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-h">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">plug & play</span>
+        </div>
+        <div class="sec-b">
+          <div class="cols">
+            <div class="card">
+              <h3>Ganchos de capa (escolha 1)</h3>
+              <ul class="list">
+                <li>“Guia do [ITEM]” (referência rápida, salvável).</li>
+                <li>“Pare de usar [PADRÃO] assim” (mais agressivo).</li>
+                <li>“Se você só usa [PADRÃO], seu design sofre” (dor + curiosidade).</li>
+                <li>“[NÚMERO] alternativas para [PADRÃO] (com exemplos)” (promessa objetiva).</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Frases de problema (modelos)</h3>
+              <ul class="list">
+                <li>“Parece [qualidade], mas cria [efeito negativo].”</li>
+                <li>“O erro não é usar [padrão]. É usar <strong>sempre</strong>.”</li>
+                <li>“Se o seu objetivo é [meta], [padrão] pode atrapalhar por [razão].”</li>
+                <li>“A diferença entre amador e pro aqui é [critério].”</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="card">
+            <h3>Texto das opções (mantenha curto)</h3>
+            <ul class="list">
+              <li><strong>Formato recomendado:</strong> “✅ [nome] — [dado]. [benefício]. Melhor em [contexto].”</li>
+              <li><strong>Banco de benefícios:</strong> “mais suave”, “melhor leitura”, “mais contraste controlado”, “menos fadiga”, “aparência premium”, “mais moderno”, “mais acessível”, “mais editorial”.</li>
+              <li><strong>Banco de contextos:</strong> “UI”, “apresentações”, “posts com muito texto”, “landing page”, “marca minimalista”, “portfólio”, “dashboard”, “impressos”.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-h">
+          <h2>CTA</h2>
+          <span class="tag">foco em salvar</span>
+        </div>
+        <div class="sec-b">
+          <div class="cols">
+            <div class="card">
+              <h3>CTA por objetivo</h3>
+              <ul class="list">
+                <li><strong>Salvar:</strong> “Salva pra consultar no próximo layout.”</li>
+                <li><strong>Comentário:</strong> “Qual desses você mais usa?”</li>
+                <li><strong>Série:</strong> “Quer parte 2 com [tema]? comenta ‘QUERO’.”</li>
+                <li><strong>Compartilhar:</strong> “Manda pra quem sempre usa [padrão].”</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Onde colocar</h3>
+              <ul class="list">
+                <li><strong>Slide 2:</strong> micro-CTA (retenção): “salva e arrasta →”.</li>
+                <li><strong>Slide final:</strong> 1 CTA principal + 1 CTA secundário (no máximo).</li>
+                <li><strong>Legenda:</strong> repetir o CTA de salvar + pergunta simples.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-h">
+          <h2>Checklist</h2>
+          <span class="tag">produção sem travar</span>
+        </div>
+        <div class="sec-b">
+          <div class="cols">
+            <div class="card">
+              <h3>Antes de criar (clareza)</h3>
+              <ul class="list">
+                <li>[ ] Tema = <strong>padrão comum</strong> que tem custo/limitação.</li>
+                <li>[ ] Entrega = <strong>5–7 alternativas</strong> “copiáveis”.</li>
+                <li>[ ] Dado objetivo definido (HEX / tamanho / preset / regra).</li>
+                <li>[ ] Critério de escolha (quando usar cada alternativa).</li>
+                <li>[ ] CTA principal decidido (salvar).</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>No design (consistência)</h3>
+              <ul class="list">
+                <li>[ ] 1 grid fixo (margens grandes; card central).</li>
+                <li>[ ] Um molde repetido para as opções (alterar só conteúdo).</li>
+                <li>[ ] Contraste ok e leitura rápida (teste em 25% zoom).</li>
+                <li>[ ] Elementos de guia do olhar (seta/linha/risco) padronizados.</li>
+                <li>[ ] Selo “pra salvar” presente (capa e/ou final).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="cols">
+            <div class="card">
+              <h3>Na revisão (publicável)</h3>
+              <ul class="list">
+                <li>[ ] Slide 1 explica o benefício em 2 segundos.</li>
+                <li>[ ] Slide 2 tem “por que isso importa” em 2–3 linhas.</li>
+                <li>[ ] Cada opção tem <strong>nome + dado + uso</strong>.</li>
+                <li>[ ] Fechamento tem frase-memória + CTA.</li>
+                <li>[ ] Legenda curta com 1 instrução (salvar) + 1 pergunta (comentar).</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Legenda (template)</h3>
+              <p class="mono">“O [PADRÃO] é comum porque parece [QUALIDADE], mas pode causar [CONSEQUÊNCIA].
+
+Aqui estão [N] substituições que eu uso pra [OBJETIVO].
+
+Salva pra consultar e comenta: qual você mais usa?”</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-h">
+          <h2>Variações</h2>
+          <span class="tag">adapte sem perder impacto</span>
+        </div>
+        <div class="sec-b">
+          <div class="card">
+            <h3>Substituições de tema (mesma estrutura, mesma “vontade de salvar”)</h3>
+            <ul class="list">
+              <li><strong>Guia do Preto</strong> (<span class="mono">#000000</span>) — alternativas para fundos chapados (ex.: carvão, grafite, navy).</li>
+              <li><strong>Guia de Espaçamento</strong> — valores de padding/margin que deixam layout “respirar”.</li>
+              <li><strong>Guia de Tipografia</strong> — pares de fontes (título + texto) por estilo (tech/editorial/minimal).</li>
+              <li><strong>Guia de Sombras</strong> — presets por profundidade (sutil/moderado/hero) + quando usar.</li>
+              <li><strong>Guia de Grid</strong> — estruturas prontas (1/2/3 colunas) + casos comuns.</li>
+            </ul>
+          </div>
+          <div class="hr"></div>
+          <div class="cols">
+            <div class="card">
+              <h3>Trocas que mantêm o efeito</h3>
+              <ul class="list">
+                <li><strong>HEX</strong> → troque por: “preset”, “regra”, “atalho”, “medida”, “parâmetro”.</li>
+                <li><strong>Nome do tom</strong> → troque por: “nome do padrão” (ex.: “Grid 12”, “Sombra S1”).</li>
+                <li><strong>Sensação/uso</strong> → troque por: “benefício + contexto” (ex.: “melhor leitura em mobile”).</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Variação de estrutura (para conteúdos mais complexos)</h3>
+              <ul class="list">
+                <li>Adicionar <strong>Slide 8</strong> com “quando NÃO usar” (reduz objeção e aumenta credibilidade).</li>
+                <li>Adicionar <strong>um mini antes/depois</strong> por opção (aumenta prova visual).</li>
+                <li>Transformar o último slide em <strong>tabela-resumo</strong>: alternativa × melhor caso.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const copyBtn = document.getElementById('copyBtn');
+    const selectBtn = document.getElementById('selectBtn');
+    const roteiro = document.getElementById('roteiro');
+    const ok = document.getElementById('ok');
+
+    function showOk(){
+      ok.style.display = 'inline';
+      clearTimeout(window.__okT);
+      window.__okT = setTimeout(()=> ok.style.display='none', 1400);
+    }
+
+    copyBtn.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(roteiro.value);
+        showOk();
+      }catch(e){
+        roteiro.focus();
+        roteiro.select();
+        document.execCommand('copy');
+        showOk();
+      }
+    });
+
+    selectBtn.addEventListener('click', () => {
+      roteiro.focus();
+      roteiro.select();
+    });
+  </script>
+</body>
+</html>
