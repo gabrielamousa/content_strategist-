@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 3 — Design Gráfico — Troque a fonte padrão</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:#0E1630cc;
+    --card2:#0B1228cc;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.16);
+    --text:rgba(255,255,255,.92);
+    --muted:rgba(255,255,255,.72);
+    --muted2:rgba(255,255,255,.58);
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --r:18px;
+    --r2:14px;
+    --g1: linear-gradient(135deg, #21E6A1 0%, #2F7BFF 45%, #FF8A1E 100%);
+    --g2: linear-gradient(135deg, rgba(33,230,161,.14), rgba(47,123,255,.14), rgba(255,138,30,.14));
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:
+      radial-gradient(900px 500px at 15% 10%, rgba(47,123,255,.25), transparent 55%),
+      radial-gradient(700px 480px at 85% 15%, rgba(255,138,30,.22), transparent 55%),
+      radial-gradient(900px 600px at 50% 90%, rgba(33,230,161,.20), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 46px;}
+
+  header{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius:22px;
+    padding:18px 18px 16px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g2);
+    filter: blur(18px);
+    opacity:.9;
+    pointer-events:none;
+  }
+  header > *{position:relative; z-index:1}
+
+  .toprow{display:flex; gap:12px; flex-wrap:wrap; justify-content:space-between; align-items:flex-start;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    border:1px solid var(--stroke);
+    background:rgba(10,14,30,.55);
+    padding:7px 10px;
+    border-radius:999px;
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:.2px;
+  }
+  .chip strong{color:var(--text); font-weight:650}
+
+  .title{
+    margin:10px 0 6px;
+    font-size:26px;
+    line-height:1.08;
+    letter-spacing:-.4px;
+    font-weight:760;
+  }
+  .subtitle{margin:0; color:var(--muted); font-size:14px; line-height:1.45}
+
+  .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+  .btn{
+    border:1px solid var(--stroke2);
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    font-size:13px;
+    cursor:pointer;
+    transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    user-select:none;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+  }
+  .btn:hover{background:rgba(255,255,255,.085)}
+  .btn:active{transform: translateY(1px)}
+  .btn.primary{
+    border-color:transparent;
+    background: var(--g1);
+    color:#061018;
+    font-weight:750;
+  }
+  .btn.primary:hover{filter:saturate(1.05) contrast(1.02)}
+
+  .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:16px;}
+  @media (min-width: 920px){
+    .grid{grid-template-columns: 1.15fr .85fr;}
+  }
+
+  .card{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02));
+    border-radius:var(--r);
+    padding:16px;
+    box-shadow:var(--shadow);
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size:15px;
+    letter-spacing:.18px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.86);
+    font-weight:800;
+  }
+  .card h2 .bar{
+    display:inline-block;
+    width:10px; height:10px;
+    border-radius:3px;
+    background: var(--g1);
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .card p{margin:0 0 10px; color:var(--muted); line-height:1.5; font-size:14px;}
+  .card ul{margin:0; padding-left:18px; color:var(--muted); font-size:14px; line-height:1.55;}
+  .card li{margin:6px 0;}
+
+  .split{display:grid; grid-template-columns: 1fr; gap:14px;}
+  @media (min-width: 920px){
+    .split{grid-template-columns: 1fr;}
+  }
+
+  .kpi{
+    display:grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap:10px;
+    margin-top:12px;
+  }
+  .mini{
+    border:1px solid var(--stroke);
+    background:rgba(5,8,18,.42);
+    border-radius:14px;
+    padding:12px;
+  }
+  .mini .label{font-size:12px; color:var(--muted2); margin-bottom:6px; letter-spacing:.2px}
+  .mini .value{font-family:var(--mono); font-size:13px; color:var(--text); line-height:1.35}
+
+  .mono{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:rgba(255,255,255,.80);
+    line-height:1.55;
+    white-space:pre-wrap;
+    border:1px solid var(--stroke);
+    background:rgba(6,9,18,.55);
+    border-radius:var(--r2);
+    padding:12px;
+  }
+
+  .tagrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .tag{
+    font-size:12px;
+    padding:6px 9px;
+    border-radius:999px;
+    background:rgba(255,255,255,.05);
+    border:1px solid var(--stroke);
+    color:rgba(255,255,255,.78);
+  }
+  .tag strong{color:rgba(255,255,255,.92)}
+
+  .footer{
+    margin-top:16px;
+    color:var(--muted2);
+    font-size:12px;
+  }
+
+  .hr{
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+    margin:12px 0;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="chips">
+          <div class="chip"><strong>Nicho</strong>: Design Gráfico</div>
+          <div class="chip"><strong>Dia</strong>: 3</div>
+          <div class="chip"><strong>Formato</strong>: Carrossel</div>
+          <div class="chip"><strong>Pilar</strong>: Checklist</div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DV--zz8jlb4/" target="_blank" rel="noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+
+      <h1 class="title">Troque a fonte padrão: 6 alternativas à Montserrat</h1>
+      <p class="subtitle">Carrossel reproduzível para designers: hook em pergunta + validação do popular + virada “popular vira comum” + lista com prova visual + CTA de salvar/comentar.</p>
+
+      <div class="kpi">
+        <div class="mini">
+          <div class="label">Objetivo</div>
+          <div class="value">Sair do óbvio sem demonizar (curadoria prática)</div>
+        </div>
+        <div class="mini">
+          <div class="label">Métrica-alvo</div>
+          <div class="value">Salvamentos ↑ + comentários ("parte 2")</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="bar"></span>Resumo</h2>
+        <p><strong>Ideia central:</strong> pegar um padrão muito usado (ex.: Montserrat) e oferecer alternativas equivalentes para manter legibilidade, mas ganhar personalidade.</p>
+        <ul>
+          <li><strong>Promessa:</strong> “saia do óbvio” com opções fáceis de aplicar.</li>
+          <li><strong>Estratégia:</strong> valida o padrão (sem ataque) e aponta o risco (ficar comum).</li>
+          <li><strong>Entrega:</strong> 1 alternativa por slide com “prova” (alfabeto + pesos).</li>
+          <li><strong>Fechamento:</strong> CTA de salvar + pergunta de opinião/uso.</li>
+        </ul>
+        <div class="tagrow">
+          <div class="tag"><strong>Promessa</strong>: alternativas equivalentes</div>
+          <div class="tag"><strong>Tensão</strong>: popular → comum</div>
+          <div class="tag"><strong>Prova</strong>: alfabeto + pesos</div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2><span class="bar"></span>Metadados para calendário</h2>
+        <div class="mono" id="metaBlock">titulo: Troque a fonte padrão: 6 alternativas à Montserrat
+instrucao_curta: Crie um carrossel 4:5 com hook em pergunta + contexto curto + 6 alternativas com prova visual. Finalize com CTA forte para salvar e comentar.
+pilar: Checklist
+formato: carrossel
+url: https://www.instagram.com/p/DV--zz8jlb4/</div>
+        <div class="footer">Dica: transforme em série semanal (“Troque X por Y”).</div>
+      </aside>
+
+      <section class="card">
+        <h2><span class="bar"></span>Estrutura (sequência lógica)</h2>
+        <ul>
+          <li><strong>Hook (slide 1):</strong> pergunta hipotética + promessa + “pra salvar”.</li>
+          <li><strong>Contexto (slide 2):</strong> fato curto (por que é tão usada) + 2–3 microprovas.</li>
+          <li><strong>Validação + virada (slide 3):</strong> “funciona por motivos X” → “mas pode ficar comum”.</li>
+          <li><strong>Lista (slides 4–9):</strong> 6 alternativas; cada uma com: nome + variações + prova visual + nota de uso.</li>
+          <li><strong>Fechamento (slide 10):</strong> utilidade + CTA salvar + pergunta de comentário/parte 2.</li>
+        </ul>
+        <div class="hr"></div>
+        <p><strong>Regra de ouro de retenção:</strong> cada slide da lista deve “pagar” um microbenefício em 1–2 segundos (nome + por que usar).</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Slides sugeridos (1..10)</h2>
+        <div class="mono">SLIDE 1 — CAPA (hook)
+Título: “E se você trocar a Montserrat?”
+Sub: “6 alternativas sem serifa pra sair do óbvio”
+Selos: “pra você salvar” + (opcional) “não é ataque, é informativo”
+
+SLIDE 2 — CONTEXTO (autoridade)
+Headline: “Montserrat é uma das sans mais usadas do mundo”
+Bullets (curtos): onde aparece / por que virou padrão / pontos fortes
+Visual: recortes tipo editorial/polaroid (2–3 cards)
+
+SLIDE 3 — VALIDAÇÃO + VIRADA
+“E não é à toa…” + 3 motivos objetivos (gratis/versátil/muitos pesos)
+Virada: “Só que quando todo mundo usa… pode ficar comum.”
+Ponte: “Então salva estas opções 👇 (texto)”
+
+SLIDE 4 — ALTERNATIVA 1
+Nome da fonte (grande)
+Prova: Regular vs Bold + A–Z/a–z
+Nota (manuscrita): “boa para…”
+
+SLIDE 5 — ALTERNATIVA 2
+Mesmo template
+
+SLIDE 6 — ALTERNATIVA 3
+Mesmo template
+
+SLIDE 7 — ALTERNATIVA 4
+Mesmo template
+
+SLIDE 8 — ALTERNATIVA 5
+Mesmo template
+
+SLIDE 9 — ALTERNATIVA 6
+Mesmo template
+
+SLIDE 10 — FECHAMENTO (CTA)
+Headline: “Foi útil?”
+CTA: “Salva pra usar no próximo layout”
+Pergunta: “Qual você usaria e em que tipo de projeto?”
+Gancho: “Quer parte 2? Comenta: PARTE 2”</div>
+        <p class="footer">Observação: você pode trocar “Montserrat” por qualquer padrão do nicho (cores, grids, ferramentas, estilos de logo).</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Roteiro (texto pronto para produzir)</h2>
+        <div class="mono" id="scriptBlock">ROTEIRO — CARROSSEL (10 SLIDES)
+
+[SLIDE 1 — CAPA]
+E se você trocar a Montserrat?
+6 alternativas sem serifa pra sair do óbvio.
+Selo: “pra você salvar”
+Rodapé (opcional): “não é ataque, é informativo”
+
+[SLIDE 2 — CONTEXTO]
+Montserrat é uma das fontes sem serifa mais usadas do mundo.
+• Funciona em redes, marcas e apresentações
+• Tem boa legibilidade em tamanhos diferentes
+• Virou “padrão seguro” pra muita gente
+
+[SLIDE 3 — VALIDAÇÃO + VIRADA]
+E não é à toa que ela é tão utilizada:
+• versátil
+• muitos pesos/estilos
+• fácil de combinar
+Mas quando todo mundo usa… o resultado pode ficar comum.
+Então salva estas opções:
+
+[SLIDES 4–9 — LISTA]
+Template por slide:
+NOME DA FONTE
+Regular / Bold (ou Thin / Black)
+A B C D E F G… / a b c d e f g…
+Nota rápida: “boa pra [tipo de projeto]”
+
+[SLIDE 10 — FECHAMENTO]
+Esse post foi útil?
+Salva pra consultar no próximo layout.
+Agora me diz: qual você usaria e em que tipo de projeto?
+Quer parte 2? Comenta: PARTE 2</div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Elementos visuais (padrão reproduzível)</h2>
+        <ul>
+          <li><strong>Formato:</strong> 1080×1350 (4:5). Margens amplas (80–120px).</li>
+          <li><strong>Fundo:</strong> 1 foto por slide com tratamento consistente (leve granulação + leve calor + contraste suave).</li>
+          <li><strong>Overlay:</strong> camada clara a 10–25% para legibilidade do texto.</li>
+          <li><strong>Assinatura:</strong> handle discreto sempre no mesmo lugar.</li>
+          <li><strong>Elementos de retenção:</strong> rabiscos/sublinhos/setas (1 intervenção por slide, no máximo).</li>
+          <li><strong>Sistema da lista:</strong> mesma composição nos slides 4–9 (muda só a fonte exibida).</li>
+        </ul>
+        <div class="hr"></div>
+        <p><strong>Hierarquia tipográfica (regra):</strong> 1 Headline (bold) + 1 bloco curto + 1 nota manuscrita (opcional) + microinfos.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Copy e ganchos (plug & play)</h2>
+        <ul>
+          <li><strong>Hook capa (pergunta):</strong> “E se você trocar [padrão]?”</li>
+          <li><strong>Validação:</strong> “Isso é popular por um motivo: [motivo 1], [motivo 2]…”</li>
+          <li><strong>Virada:</strong> “O problema é que quando todo mundo usa, [efeito: fica genérico/sem personalidade].”</li>
+          <li><strong>Promessa da lista:</strong> “Se você quer [objetivo], testa estas opções.”</li>
+          <li><strong>Engajamento:</strong> “Qual você usaria e em que projeto?”</li>
+          <li><strong>Série:</strong> “Quer parte 2 com mais opções? Comenta: PARTE 2.”</li>
+        </ul>
+        <div class="tagrow">
+          <div class="tag"><strong>Tom</strong>: informativo, sem atacar</div>
+          <div class="tag"><strong>Foco</strong>: utilidade + comparação implícita</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>CTA (escolha 1 primário + 1 secundário)</h2>
+        <ul>
+          <li><strong>Primário (salvar):</strong> “Salva pra usar no próximo layout.”</li>
+          <li><strong>Secundário (comentar):</strong> “Qual alternativa você usaria e em que tipo de projeto?”</li>
+          <li><strong>Compartilhar:</strong> “Manda pra quem sempre usa a mesma fonte.”</li>
+          <li><strong>Próximo post:</strong> “Comenta ‘PARTE 2’ que eu trago mais 6 opções.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Checklist de criação (produção rápida)</h2>
+        <ul>
+          <li><strong>Definir o “padrão”:</strong> fonte/cor/grid/ferramenta que o público usa demais.</li>
+          <li><strong>Escolher 6 alternativas:</strong> mesma categoria (ex.: sans geométrica), nível similar, fáceis de encontrar.</li>
+          <li><strong>Montar template dos slides 4–9:</strong> nome + 2 pesos + alfabeto + nota “boa para”.</li>
+          <li><strong>Manter consistência:</strong> mesma posição de título, prova e assinatura em todos os slides.</li>
+          <li><strong>Tratamento de imagem:</strong> aplicar preset único no carrossel (grão + temperatura + overlay).</li>
+          <li><strong>Texto minimalista:</strong> corte tudo que não ajuda a decidir/usar.</li>
+          <li><strong>Revisão final:</strong> contraste/legibilidade, alinhamentos, margens, ortografia.</li>
+          <li><strong>CTA:</strong> 1 comando de salvar + 1 pergunta específica.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="bar"></span>Variações (para repetir sem cansar)</h2>
+        <ul>
+          <li><strong>Variação 1 (cores):</strong> “E se você parar de usar #000000?” → alternativas de preto suave + exemplos.</li>
+          <li><strong>Variação 2 (layout):</strong> “E se você sair do centralizado?” → 6 composições (grid) com mini-wireframes.</li>
+          <li><strong>Variação 3 (ferramentas):</strong> “E se você trocar [tool] por…” → prós/contras + para quem serve.</li>
+          <li><strong>Variação 4 (logo):</strong> “E se seu logo não fosse ícone + nome?” → 6 direções (wordmark, monograma etc.).</li>
+          <li><strong>Variação 5 (tipografia avançada):</strong> “E se você combinar sans + serif?” → 6 duplas e onde usar.</li>
+        </ul>
+      </section>
+    </div>
+
+    <p class="footer">Sugestão de consistência: transforme isso em quadro fixo (ex.: “Trocas inteligentes do design”) e mantenha o mesmo template, mudando apenas o tema.</p>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const script = document.getElementById('scriptBlock');
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        ta.style.top = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        let ok = false;
+        try{ ok = document.execCommand('copy'); }catch(err){ ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+      }
+    }
+
+    btn.addEventListener('click', async function(){
+      const text = script.innerText.trim();
+      const ok = await copyText(text);
+      const original = btn.innerText;
+      btn.innerText = ok ? 'Roteiro copiado' : 'Não foi possível copiar';
+      setTimeout(()=> btn.innerText = original, 1400);
+    });
+  })();
+</script>
+</body>
+</html>
