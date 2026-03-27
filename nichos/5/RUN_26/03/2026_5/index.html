@@ -1,0 +1,761 @@
+```html
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calendário 30 dias — Design Gráfico</title>
+  <style>
+:root{
+  --bg:#070A12;
+  --panel:#0B1020;
+  --card:#0F1731;
+  --stroke:rgba(255,255,255,.08);
+  --text:#EAF0FF;
+  --muted:rgba(234,240,255,.68);
+  --shadow:0 18px 45px rgba(0,0,0,.45);
+  --r:18px;
+  --pad:18px;
+  --max:1120px;
+  --grad:linear-gradient(90deg,#22C55E 0%,#3B82F6 52%,#F59E0B 100%);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--text);
+  background:
+    radial-gradient(900px 500px at 15% -10%, rgba(59,130,246,.22), transparent 60%),
+    radial-gradient(900px 500px at 85% 0%, rgba(34,197,94,.18), transparent 60%),
+    radial-gradient(900px 650px at 70% 110%, rgba(245,158,11,.16), transparent 55%),
+    var(--bg);
+}
+a{color:inherit; text-decoration:none}
+.wrap{max-width:var(--max); margin:0 auto; padding:28px 16px 56px}
+.topbar{
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border:1px solid var(--stroke);
+  border-radius:calc(var(--r) + 6px);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.hero{
+  padding:22px 18px 18px;
+  position:relative;
+}
+.hero::before{
+  content:"";
+  position:absolute; inset:0 0 auto 0;
+  height:6px;
+  background:var(--grad);
+}
+.hrow{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; justify-content:space-between}
+.hleft{min-width:260px}
+.kicker{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.title{margin:6px 0 0; font-size:28px; line-height:1.15}
+.chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+.chip{
+  font-family:var(--mono);
+  font-size:12px;
+  padding:7px 10px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--stroke);
+  border-radius:999px;
+  color:var(--muted);
+}
+.nav{
+  display:flex; gap:10px; flex-wrap:wrap;
+  padding:14px 18px 18px;
+  border-top:1px solid var(--stroke);
+  background:rgba(0,0,0,.16);
+}
+.nav a{
+  font-family:var(--mono);
+  font-size:12px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.03);
+}
+.section{
+  margin-top:18px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--stroke);
+  border-radius:calc(var(--r) + 6px);
+  overflow:hidden;
+}
+.shead{
+  padding:16px 18px;
+  border-bottom:1px solid var(--stroke);
+  display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+.shead h2{margin:0; font-size:16px}
+.sbody{padding:18px}
+.grid2{display:grid; grid-template-columns:1.2fr .8fr; gap:14px}
+@media (max-width: 980px){ .grid2{grid-template-columns:1fr} .title{font-size:24px} }
+.card{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:var(--r);
+  padding:var(--pad);
+}
+.card h3{margin:0 0 10px; font-size:14px}
+.card p, .card li{color:var(--muted); line-height:1.55}
+.list{margin:0; padding-left:18px}
+.filters{display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-bottom:12px;}
+.group{display:flex; gap:8px; flex-wrap:wrap}
+.btn{
+  font-family:var(--mono);
+  font-size:12px;
+  padding:9px 11px;
+  border-radius:12px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.03);
+  color:var(--text);
+  cursor:pointer;
+}
+.btn.active{outline:2px solid rgba(59,130,246,.55); background:rgba(59,130,246,.10)}
+.count{font-family:var(--mono); font-size:12px; color:var(--muted)}
+.calgrid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:12px;
+}
+@media (max-width: 980px){ .calgrid{grid-template-columns:repeat(2, minmax(0,1fr))} }
+@media (max-width: 640px){ .calgrid{grid-template-columns:1fr} }
+.day{
+  display:block;
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:var(--r);
+  padding:16px;
+  transition:transform .12s ease, border-color .12s ease;
+}
+.day:hover{transform:translateY(-2px); border-color:rgba(255,255,255,.14)}
+.daytop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.dnum{
+  font-family:var(--mono);
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+}
+.badge{
+  font-family:var(--mono);
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--stroke);
+  color:var(--muted);
+}
+.dtitle{margin:10px 0 8px; font-size:14px; line-height:1.25}
+.meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+.small{font-size:12px; color:var(--muted); line-height:1.45}
+.footer{
+  margin-top:18px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:rgba(234,240,255,.55);
+  text-align:center;
+}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="hero">
+        <div class="hrow">
+          <div class="hleft">
+            <div class="kicker">Calendário de Conteúdo • 30 dias</div>
+            <h1 class="title">Design Gráfico</h1>
+            <div class="chips">
+              <span class="chip">Nicho: Design Gráfico</span>
+              <span class="chip">Run ID: DG-30D</span>
+            </div>
+          </div>
+          <div class="chips">
+            <span class="chip">Foco: Carrossel</span>
+            <span class="chip">Pilares: Passo a passo, Checklist, Prova, Desejo, Dor, Mito vs Verdade, Erro comum</span>
+          </div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#framework">#framework</a>
+        <a href="#calendario">#calendario</a>
+        <a href="#como-usar">#como-usar</a>
+      </nav>
+    </header>
+
+    <section id="framework" class="section">
+      <div class="shead">
+        <h2>Framework prático (Design Gráfico)</h2>
+        <div class="count" id="fwHint">Use como guia para planejar, escrever e diagramar</div>
+      </div>
+      <div class="sbody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Pilares e objetivo editorial</h3>
+            <ul class="list">
+              <li><strong>Passo a passo</strong>: ensinar decisões (processo, critérios, “quando usar/evitar”).</li>
+              <li><strong>Checklist</strong>: reduzir erro e aumentar velocidade (listas copiáveis e curadorias).</li>
+              <li><strong>Prova</strong>: validar competência (mini-cases, antes/depois, portfólio com contexto).</li>
+              <li><strong>Mito vs Verdade</strong>: reposicionar crenças do público (tese curta + reframe).</li>
+              <li><strong>Dor</strong>: nomear o incômodo (termo memorável + limite + próximo passo).</li>
+              <li><strong>Desejo</strong>: estética aspiracional (editorial, frases, consistência visual).</li>
+              <li><strong>Erro comum</strong>: storytelling de aprendizado (virada, punchline, lição prática).</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Ganchos que funcionam</h3>
+            <ul class="list">
+              <li>Contrarian: “Pare de usar X do jeito que te ensinaram”.</li>
+              <li>Negação: “Não é sobre Y — é sobre Z”.</li>
+              <li>Binário → “depende”: “Sempre faça A? Depende…”.</li>
+              <li>Rótulo: “O erro ‘____’ que entrega amadorismo”.</li>
+              <li>Promessa: “5 ajustes que elevam seu layout hoje”.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Estruturas de carrossel (copiáveis)</h3>
+            <ul class="list">
+              <li><strong>Lista padronizada</strong>: capa promessa → itens 1 por slide → quebra de padrão “salvar” → CTA.</li>
+              <li><strong>Antes/Depois</strong>: contexto curto → janela UI → comparativo → aprendizados → CTA por palavra-chave.</li>
+              <li><strong>Mini-case</strong>: para quem → problema → decisão → entregáveis → resultado → CTA.</li>
+              <li><strong>Manifesto</strong>: limite/posicionamento → justificativa → alternativa → convite ao DM.</li>
+              <li><strong>Brutalista</strong>: hook provocativo → diagnóstico em lista → punchline memeável.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Checklist de execução</h3>
+            <ul class="list">
+              <li>Capa: 6–10 palavras, contraste alto, promessa específica.</li>
+              <li>Ritmo: 1 ideia por slide; variação visual a cada 2–3 slides.</li>
+              <li>Legibilidade: hierarquia (título grande, apoio curto), respiro e alinhamento consistente.</li>
+              <li>Prova: inclua “por quê” (critério) ou exemplo (visual/dado) quando possível.</li>
+              <li>CTA: 1 ação por vez (salvar, comentar, DM com palavra-chave).</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Erros a evitar</h3>
+            <ul class="list">
+              <li>Texto longo por slide e ausência de hierarquia.</li>
+              <li>Promessa genérica sem critério (o “como” some).</li>
+              <li>Falta de padrão: cada slide parece um post diferente.</li>
+              <li>CTA disperso: pedir 3 ações diferentes no mesmo final.</li>
+              <li>Excesso de elementos fixos (poluição visual) sem propósito.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Atalhos de produção</h3>
+            <ul class="list">
+              <li>Crie 1 template base com variações de “clima” (claro/escuro/acento).</li>
+              <li>Defina 1 kit fixo: grid, margens, estilos tipográficos, labels.</li>
+              <li>Reaproveite séries: mesmo layout + novo tema (ex.: “5 alternativas para ___”).</li>
+              <li>Mantenha uma biblioteca de capas: promessa, pergunta, negação, contrarian.</li>
+              <li>Padronize palavras-chave de DM por pilar (ex.: “HEX”, “PORTFOLIO”, “LISTA”).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="calendario" class="section">
+      <div class="shead">
+        <h2>Calendário (30 dias)</h2>
+        <div class="count"><span id="countVisible">0</span> visíveis</div>
+      </div>
+      <div class="sbody">
+        <div class="filters">
+          <div class="group" aria-label="Formato">
+            <button class="btn active" type="button" data-filter-formato="Todos">Formato: Todos</button>
+            <button class="btn" type="button" data-filter-formato="Reels">Reels</button>
+            <button class="btn" type="button" data-filter-formato="Carrossel">Carrossel</button>
+          </div>
+          <div class="group" id="pilarGroup" aria-label="Pilar">
+            <button class="btn active" type="button" data-filter-pilar="Todos">Pilar: Todos</button>
+          </div>
+        </div>
+
+        <div class="calgrid" id="calGrid">
+          <a class="day" href="./dia-01.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 01</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">O problema do preto puro: 5 alternativas com HEX + quando usar</div>
+            <div class="small">Crie um carrossel de 8 slides com hook contrarian, explique o problema do preto puro e entregue 5 alternativas com HEX + quando usar. Reforce “salvar” no slide 1/2 e feche com pergunta + CTA.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-02.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 02</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Sempre fazer X no design? Depende: regra, quando pode e quando evitar</div>
+            <div class="small">Crie um carrossel de 7 slides: Hook binário → “depende” → regra → quando pode → quando evitar → recursos → CTA de salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-03.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 03</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">6 alternativas (com prova visual) para resolver ___ no layout</div>
+            <div class="small">Crie um carrossel 4:5 com hook em pergunta + contexto curto + 6 alternativas com prova visual. Finalize com CTA forte para salvar e comentar.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-04.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 04</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Checklist de consistência visual: padrões que deixam o design “coeso”</div>
+            <div class="small">Monte um carrossel 8 slides com capa de promessa, 5 itens em pôster tipográfico, slide de “salvar” e CTA por palavra-chave para DM.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-05.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 05</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">N alternativas em série: do problema ao próximo passo</div>
+            <div class="small">Crie um carrossel 10–11 slides: capa provocativa + contexto + N alternativas em série + fechamento com CTA de salvar e próximo passo.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-06.html" data-formato="Carrossel" data-pilar="Desejo">
+            <div class="daytop">
+              <span class="dnum">Dia 06</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Editorial: 6 variações da mesma frase (trocando 1 palavra)</div>
+            <div class="small">Crie um carrossel editorial com 6 variações da mesma frase (trocando 1 palavra por slide) e feche com síntese + CTA de salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Desejo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-07.html" data-formato="Carrossel" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 07</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Prova em arco: dor → virada → benefícios → CTA</div>
+            <div class="small">Produza um carrossel de 8 slides com arco narrativo (dor→virada→benefícios→CTA). Use 1 frase dominante por slide + 1 bloco curto de apoio e um kit visual fixo.</div>
+            <div class="meta">
+              <span class="badge">Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-08.html" data-formato="Carrossel" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 08</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Curadoria de projetos: mosaicos 3×2 com padrão repetível</div>
+            <div class="small">Monte um carrossel de curadoria com capa forte + mosaicos 3×2 dos seus projetos e feche com CTA para DM. Use padrão repetível (título + grade) e variedade visual entre slides para aumentar retenção.</div>
+            <div class="meta">
+              <span class="badge">Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-09.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 09</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Limite da marca: manifesto com empatia + alternativa</div>
+            <div class="small">Crie um carrossel (7–9 slides) anunciando um limite claro da sua marca com empatia + justificativa + alternativa. Use estética pôster/manifesto com alto contraste e tipografia em camadas.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-10.html" data-formato="Carrossel" data-pilar="Prova">
+            <div class="daytop">
+              <span class="dnum">Dia 10</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Carrossel-portfólio: capa forte + provas + mini-cases por nicho</div>
+            <div class="small">Monte um carrossel-portfólio com capa forte, mosaico de provas, mini-cases por nicho e CTA com palavra-chave no Direct.</div>
+            <div class="meta">
+              <span class="badge">Prova</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-11.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 11</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Editorial de cases (template único): para + entregáveis + grid + tags</div>
+            <div class="small">Monte um carrossel editorial com 4–8 cases usando o mesmo template (Para + entregáveis + grid + 4 tags) e feche com CTA no Direct.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-12.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 12</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Antes/depois com “janela UI”: evidencie evolução e aprendizados</div>
+            <div class="small">Crie um carrossel 4:5 com narrativa antes/depois + “janela UI” para mostrar evolução e prova visual. Finalize com aprendizados + CTA por DM com palavra-chave.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-13.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 13</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">“Diva que…”: lista com refrão fixo e estética nostálgica</div>
+            <div class="small">Crie um carrossel de 6–8 slides com a frase “diva que…” no topo + imagem nostálgica + refrão fixo no rodapé. Feche com CTA de comentário e marcação.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-14.html" data-formato="Carrossel" data-pilar="Passo a passo">
+            <div class="daytop">
+              <span class="dnum">Dia 14</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">5 decisões de design (1 frase cada) + variação de clima visual</div>
+            <div class="small">Crie um carrossel 7 slides com capa forte + 5 decisões em 1 frase cada + fecho com pergunta para comentários. Use variação de “clima” visual a cada 2–3 slides para retenção.</div>
+            <div class="meta">
+              <span class="badge">Passo a passo</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-15.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 15</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Humor + alerta + lista compartilhável (com 1 cor no “pico”)</div>
+            <div class="small">Crie um carrossel 1:1 com humor + slide de alerta e feche com lista compartilhável. Use 1 cor forte só no “pico” e CTA soft no último slide.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-16.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 16</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Guia de substituições prontas: dado + benefício + frase-memória</div>
+            <div class="small">Crie um carrossel “guia” com capa forte, 1 slide de problema e 5–7 substituições prontas (com dado + benefício). Feche com frase-memória e CTA de salvar/compartilhar.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-17.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 17</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Curadoria quase só foto: editorial enxuto com CTA por palavra-chave</div>
+            <div class="small">Monte um carrossel de curadoria com capa editorial + slides de itens quase só foto. Feche com CTA de “salvar + comentar palavra-chave” para gerar pedido de links/parte 2.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-18.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 18</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Lista alternada: slides cheios vs tipográficos (com exemplos) + escolha final</div>
+            <div class="small">Crie um carrossel em lista (5 itens) alternando slides cheios e tipográficos, com exemplos visuais e CTA de escolha no final.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-19.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 19</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Curadoria 1 item por slide: promessa forte + entrega no DM</div>
+            <div class="small">Crie um carrossel de curadoria: capa com promessa forte, 5–8 slides com 1 item por tela e fechamento com CTA de comentário + entrega no DM.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-20.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 20</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Lista padronizada 8–10 slides + quebra de padrão “salvar” + CTA seguir/link</div>
+            <div class="small">Crie um carrossel 8–10 slides com capa-promessa, lista padronizada (1 item/slide), quebra de padrão para “salvar” e fechamento com CTA de seguir/link.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-21.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 21</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Pôster tipográfico: 5 itens + slide de “salvar” + CTA por palavra-chave</div>
+            <div class="small">Monte um carrossel 8 slides com capa de promessa, 5 itens em pôster tipográfico, slide de “salvar” e CTA por palavra-chave para DM.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-22.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 22</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Layout repetível: 1 ideia por slide + 1 quebra no meio + CTA curto</div>
+            <div class="small">Crie um carrossel de lista com layout repetível (1 ideia por slide) + 1 quebra de padrão no meio + CTA curto no fim. Use tipografia grande, alto respiro e poucos elementos fixos (logo + seta).</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-23.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 23</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Curadoria tipografia gigante: 5 itens + “salva” + CTA por palavra-chave</div>
+            <div class="small">Crie um carrossel de curadoria com 8 slides: capa forte, 5 itens em tipografia gigante, um slide “salva” e um CTA por palavra-chave no final.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-24.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 24</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Série replicável: 1 item por slide + retenção “salva” + CTA seguir/link</div>
+            <div class="small">Monte um carrossel 9 slides: capa forte + 5–7 itens (1 por slide) + slide de retenção “salva” + CTA final para seguir/link. Replique o mesmo layout para criar série.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-25.html" data-formato="Carrossel" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 25</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Brutalista minimalista: hook provocativo + diagnóstico + punchline memeável</div>
+            <div class="small">Crie um carrossel brutalista minimalista com hook provocativo, diagnóstico em lista e punchline final memeável. Use 1 cor chapada, tipografia pesada e ritmo de slides 1–5.</div>
+            <div class="meta">
+              <span class="badge">Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-26.html" data-formato="Carrossel" data-pilar="Dor">
+            <div class="daytop">
+              <span class="dnum">Dia 26</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Hook-rótulo + escalada de incômodo + termo memorável + limite</div>
+            <div class="small">Crie um carrossel 7–12 slides com hook-rotulo, escalada de incômodo, termo memorável e limite/CTA no final. Use contraste (base suave vs preto) e 1 palavra em destaque por slide.</div>
+            <div class="meta">
+              <span class="badge">Dor</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-27.html" data-formato="Carrossel" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 27</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Negação + confissão + reframe: 1 frase por slide (ritmo neon)</div>
+            <div class="small">Crie um carrossel de 10 slides com hook por negação, confissão curta, reframe e CTA direto. Use frase única por slide, alternando fundo escuro e destaque neon para ritmo.</div>
+            <div class="meta">
+              <span class="badge">Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-28.html" data-formato="Carrossel" data-pilar="Mito vs Verdade">
+            <div class="daytop">
+              <span class="dnum">Dia 28</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Gancho provocativo + tese curta (acento neon em 1–3 palavras) + CTA</div>
+            <div class="small">Crie um carrossel em 10 slides com gancho provocativo, reframe e tese curta. Use fundo escuro, acento neon em 1–3 palavras por slide e feche com CTA imperativo + opção de comentário/salvar.</div>
+            <div class="meta">
+              <span class="badge">Mito vs Verdade</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-29.html" data-formato="Carrossel" data-pilar="Checklist">
+            <div class="daytop">
+              <span class="dnum">Dia 29</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Minimalista 4:5: 1 ideia por slide + palavra destacada “handwritten”</div>
+            <div class="small">Crie um carrossel 4:5 minimalista com 1 ideia por slide e 1 palavra destacada em “handwritten”. Finalize com uma quebra de padrão (fundo escuro) e CTA humano.</div>
+            <div class="meta">
+              <span class="badge">Checklist</span>
+            </div>
+          </a>
+
+          <a class="day" href="./dia-30.html" data-formato="Carrossel" data-pilar="Erro comum">
+            <div class="daytop">
+              <span class="dnum">Dia 30</span>
+              <span class="badge">Carrossel</span>
+            </div>
+            <div class="dtitle">Storytelling: virada no slide 2 + punchline irônica (layout minimalista)</div>
+            <div class="small">Crie um carrossel storytelling em 10 slides (1 ideia por slide) com virada no slide 2 e punchline irônica no final. Mantenha layout minimalista, alto contraste e ritmo de frases curtas.</div>
+            <div class="meta">
+              <span class="badge">Erro comum</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="como-usar" class="section">
+      <div class="shead">
+        <h2>Como usar (5 passos)</h2>
+        <div class="count">Ritmo de produção para 30 dias</div>
+      </div>
+      <div class="sbody">
+        <div class="grid2">
+          <div class="card">
+            <h3>Passos</h3>
+            <ol class="list">
+              <li>Escolha 1 dia e escreva a capa (promessa curta + específica) antes do resto.</li>
+              <li>Rascunhe a sequência em bullets (1 ideia por slide) e defina a quebra de padrão.</li>
+              <li>Separe 1 prova por post (exemplo visual, critério, mini-case ou dado simples).</li>
+              <li>Diagrama com um template repetível e ajuste o ritmo (variação a cada 2–3 slides).</li>
+              <li>Publique com 1 CTA final e registre o resultado (salvos, comentários, DMs) para iterar.</li>
+            </ol>
+          </div>
+          <div class="card">
+            <h3>Rotina semanal sugerida</h3>
+            <ul class="list">
+              <li>1 dia para roteiros (7 posts), 1 dia para design (7 posts), 1 bloco para revisão e agendamento.</li>
+              <li>Reaproveite: transforme um “Passo a passo” em “Checklist” na semana seguinte.</li>
+              <li>Atualize o portfólio (pilar Prova) com os melhores comentários e perguntas reais.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">© 2026</footer>
+  </div>
+
+  <script>
+    (function(){
+      const cards = Array.from(document.querySelectorAll('.day'));
+      const pilarGroup = document.getElementById('pilarGroup');
+      const countVisible = document.getElementById('countVisible');
+
+      const formatoButtons = Array.from(document.querySelectorAll('[data-filter-formato]'));
+      let pilarButtons = Array.from(document.querySelectorAll('[data-filter-pilar]'));
+
+      const uniquePilars = Array.from(new Set(cards.map(c => (c.getAttribute('data-pilar')||'').trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+
+      uniquePilars.forEach(p => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.type = 'button';
+        btn.setAttribute('data-filter-pilar', p);
+        btn.textContent = p;
+        pilarGroup.appendChild(btn);
+      });
+
+      pilarButtons = Array.from(document.querySelectorAll('[data-filter-pilar]'));
+
+      function getActiveFormato(){
+        const b = formatoButtons.find(x => x.classList.contains('active'));
+        return b ? b.getAttribute('data-filter-formato') : 'Todos';
+      }
+      function getActivePilar(){
+        const b = pilarButtons.find(x => x.classList.contains('active'));
+        return b ? b.getAttribute('data-filter-pilar') : 'Todos';
+      }
+
+      function applyFilters(){
+        const f = getActiveFormato();
+        const p = getActivePilar();
+        let visible = 0;
+
+        cards.forEach(card => {
+          const cf = (card.getAttribute('data-formato')||'').trim();
+          const cp = (card.getAttribute('data-pilar')||'').trim();
+
+          const okF = (f === 'Todos') || (cf.toLowerCase() === f.toLowerCase());
+          const okP = (p === 'Todos') || (cp === p);
+
+          const show = okF && okP;
+          card.style.display = show ? '' : 'none';
+          if(show) visible += 1;
+        });
+
+        countVisible.textContent = String(visible);
+      }
+
+      formatoButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          formatoButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          applyFilters();
+        });
+      });
+
+      pilarButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          pilarButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          applyFilters();
+        });
+      });
+
+      applyFilters();
+    })();
+  </script>
+</body>
+</html>
+```
