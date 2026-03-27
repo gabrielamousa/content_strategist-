@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dia 11 — Carrossel de portfólio (template)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.085);
+    --stroke: rgba(255,255,255,.12);
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,.72);
+    --muted2: rgba(234,240,255,.55);
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --r12: 14px;
+    --r16: 18px;
+    --r20: 22px;
+    --gradA: linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --gradB: linear-gradient(135deg, rgba(34,197,94,.25), rgba(56,189,248,.22), rgba(251,146,60,.18));
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background:
+      radial-gradient(900px 500px at 18% 8%, rgba(56,189,248,.14) 0%, rgba(56,189,248,0) 55%),
+      radial-gradient(900px 520px at 78% 12%, rgba(34,197,94,.12) 0%, rgba(34,197,94,0) 55%),
+      radial-gradient(900px 520px at 55% 92%, rgba(251,146,60,.10) 0%, rgba(251,146,60,0) 60%),
+      linear-gradient(180deg,var(--bg0),var(--bg1));
+    min-height:100vh;
+    line-height:1.45;
+  }
+  a{color:inherit}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 48px}
+  .topbar{
+    display:flex;gap:14px;align-items:flex-start;justify-content:space-between;
+    padding:16px 16px;
+    border:1px solid var(--stroke);
+    border-radius: var(--r20);
+    background: var(--gradB);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+  .topbar:before{
+    content:"";
+    position:absolute;inset:-2px;
+    background: radial-gradient(600px 240px at 30% 0%, rgba(255,255,255,.10), transparent 60%),
+                radial-gradient(420px 260px at 80% 25%, rgba(255,255,255,.08), transparent 60%);
+    pointer-events:none;
+  }
+  .meta{position:relative;display:flex;flex-direction:column;gap:8px;min-width:260px}
+  .kickers{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .pill{
+    font-family: var(--mono);
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    color: var(--muted);
+  }
+  .pill strong{color:var(--text);font-weight:700}
+  .title{
+    margin:0;
+    font-size: clamp(20px, 2.2vw, 28px);
+    letter-spacing:-.02em;
+  }
+  .subtitle{margin:0;color:var(--muted);max-width:70ch}
+  .actions{position:relative;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+  .btn{
+    appearance:none;border:1px solid var(--stroke);
+    border-radius: 12px;
+    padding:10px 12px;
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    cursor:pointer;
+    font-weight:650;
+    letter-spacing:.01em;
+  }
+  .btn:hover{background: rgba(255,255,255,.09)}
+  .btn.primary{
+    border-color: rgba(56,189,248,.35);
+    background: linear-gradient(180deg, rgba(56,189,248,.20), rgba(34,197,94,.12));
+  }
+  .btn.link{display:inline-flex;gap:8px;align-items:center;text-decoration:none}
+  .grid{display:grid;grid-template-columns: 1.1fr .9fr;gap:16px;margin-top:16px}
+  @media (max-width: 960px){.grid{grid-template-columns:1fr}}
+  .card{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.06);
+    border-radius: var(--r20);
+    box-shadow: var(--shadow);
+    padding:16px;
+  }
+  .card h2{
+    margin:0 0 10px 0;
+    font-size: 16px;
+    letter-spacing:.02em;
+  }
+  .card h2 .accent{
+    background: var(--gradA);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .card p{margin:10px 0;color:var(--muted)}
+  .list{margin:10px 0 0 0;padding:0;list-style:none;display:grid;gap:10px}
+  .li{
+    padding:12px 12px;
+    border-radius: var(--r16);
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.16);
+  }
+  .li b{color:var(--text)}
+  .small{font-size:12px;color:var(--muted2)}
+  .hr{height:1px;background: rgba(255,255,255,.10);margin:12px 0}
+  .code{
+    font-family: var(--mono);
+    font-size:12px;
+    line-height:1.55;
+    color: rgba(234,240,255,.80);
+    background: rgba(0,0,0,.28);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius: var(--r16);
+    padding:12px;
+    white-space:pre-wrap;
+  }
+  .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width: 700px){.twoCol{grid-template-columns:1fr}}
+  .tagrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .tag{
+    padding:7px 10px;border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.05);
+    color: rgba(234,240,255,.78);
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .callout{
+    border:1px solid rgba(56,189,248,.25);
+    background: linear-gradient(180deg, rgba(56,189,248,.13), rgba(0,0,0,.18));
+    border-radius: var(--r20);
+    padding:14px;
+  }
+  .footerNote{margin-top:12px;color:var(--muted2);font-size:12px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="meta">
+        <div class="kickers">
+          <span class="pill"><strong>Nicho</strong>: Design Gráfico</span>
+          <span class="pill"><strong>Dia</strong>: 11</span>
+          <span class="pill"><strong>Formato</strong>: Carrossel</span>
+          <span class="pill"><strong>Pilar</strong>: Passo a passo</span>
+        </div>
+        <h1 class="title">Carrossel de portfólio: template de cases “favoritos do ano”</h1>
+        <p class="subtitle">Roteiro reproduzível para apresentar 4–8 projetos com consistência visual, prova de habilidade e fechamento por DM (sem parecer “venda”).</p>
+      </div>
+      <div class="actions">
+        <a class="btn link" href="https://www.instagram.com/p/DTxrEGVjXNs/" target="_blank" rel="noreferrer">Ver post original</a>
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2><span class="accent">Resumo</span></h2>
+        <ul class="list">
+          <li class="li"><b>Ideia central:</b> “Meus [X] favoritos de [ANO]” + sequência de cases com o mesmo layout.</li>
+          <li class="li"><b>Por que funciona:</b> padrão repetível (fácil de escanear) + variedade (curiosidade) + clareza do que você entrega (reduz objeções).</li>
+          <li class="li"><b>Objetivo oculto:</b> portfólio + autoridade + convite para orçamento via Direct/link.</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="callout">
+          <div class="small"><b>Regra de ouro:</b> 1 template, N cases. A consistência é a “moldura” que valoriza seus trabalhos.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent">Estrutura</span></h2>
+        <ul class="list">
+          <li class="li"><b>Canvas:</b> 1080×1350 (4:5), margens 80–120px, corners 24–40px.</li>
+          <li class="li"><b>Sequência:</b> Capa → (4 a 8) slides de case → slide final com CTA.</li>
+          <li class="li"><b>Template do case:</b> “Para:” + bloco “O que é entregue” (2 colunas) + grid 2×2 + hero vertical + 4 tags.</li>
+          <li class="li"><b>Ritmo:</b> 1 case por slide (evita poluição) e mantém previsibilidade.</li>
+        </ul>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2><span class="accent">Slides sugeridos (1..10)</span></h2>
+        <div class="twoCol">
+          <div class="li">
+            <b>Slide 1 — Capa (hook + curadoria)</b>
+            <div class="small">Título: “Meus [X] favoritos de [ANO]” + microtexto “Portfólio de [categoria]”. Imagem lifestyle/bastidor + sua assinatura.</div>
+          </div>
+          <div class="li">
+            <b>Slide 2 — Case 01</b>
+            <div class="small">Para: [Cliente/Projeto] + entregáveis + grid + 4 tags.</div>
+          </div>
+          <div class="li">
+            <b>Slide 3 — Case 02</b>
+            <div class="small">Mesmo layout; mude paleta e imagens para reforçar variedade.</div>
+          </div>
+          <div class="li">
+            <b>Slide 4 — Case 03</b>
+            <div class="small">Repetição = retenção. Evite alterar hierarquia do template.</div>
+          </div>
+          <div class="li">
+            <b>Slide 5 — Case 04</b>
+            <div class="small">Se o projeto for forte, use hero vertical maior (ainda consistente).</div>
+          </div>
+          <div class="li">
+            <b>Slide 6 — Case 05 (opcional)</b>
+            <div class="small">Só inclua se sustentar qualidade e variedade.</div>
+          </div>
+          <div class="li">
+            <b>Slide 7 — Case 06 (opcional)</b>
+            <div class="small">Mantenha o “Para:” no mesmo lugar (âncora visual).</div>
+          </div>
+          <div class="li">
+            <b>Slide 8 — Case 07 (opcional)</b>
+            <div class="small">Feche a série no pico (seu melhor case por último funciona bem).</div>
+          </div>
+          <div class="li">
+            <b>Slide 9 — Case 08 (opcional)</b>
+            <div class="small">Se tiver 8+, enxugue texto para não cansar.</div>
+          </div>
+          <div class="li">
+            <b>Slide 10 — Fechamento (CTA editorial)</b>
+            <div class="small">Pergunta + instrução simples (palavra-chave no direct) + incentivo de salvar/compartilhar.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent">Roteiro</span> (reproduzível)</h2>
+        <div class="code" id="scriptText">CARROSSEL — “MEUS [X] FAVORITOS DE [ANO]”
+
+SLIDE 1 — CAPA
+Título (3 linhas):
+• Meus [X]
+• favoritos
+• de [ANO]
+Microtexto: PORTFÓLIO DE [CATEGORIA]
+Rodapé: @SEUUSER
+
+SLIDES 2..(N-1) — CASE (repita o mesmo template)
+Cabeçalho: Para: [CLIENTE/PROJETO]
+Bloco 2 colunas:
+• Esquerda (título): O QUE É ENTREGUE EM CADA PROJETO:
+• Direita (texto curto, 1–2 linhas):
+  Paleta de cores, combinações tipográficas, moodboard do universo visual,
+  assinatura gráfica e [N] templates editáveis no [FERRAMENTA].
+
+Grid central:
+• 4 miniaturas (2×2) + 1 hero vertical (mockup de celular/cartaz/aplicação)
+
+Rodapé (tags em cápsulas):
+[ADJETIVO 1]  [ADJETIVO 2]  [ADJETIVO 3]  [ADJETIVO 4]
+Assinatura: @SEUUSER
+
+SLIDE N — CTA (fechamento)
+Título: Quer um alinhamento visual assim?
+Sub: Me conte: nicho + objetivo + referência de estética.
+Linhas/ações:
+• → Envie “ALINHAMENTO” no direct
+• → Ou peça orçamento no link da bio
+Extra: Salve este carrossel para se inspirar + compartilhe com alguém que precisa.</div>
+        <div class="footerNote">Dica: deixe o texto do bloco “O que é entregue…” praticamente igual em todos os cases (muda apenas o número de templates ou a ferramenta). Isso comunica método.</div>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent">Elementos visuais</span></h2>
+        <ul class="list">
+          <li class="li"><b>Direção de arte:</b> editorial minimalista, bastante respiro, composição centralizada.</li>
+          <li class="li"><b>Hierarquia tipográfica (60/30/10):</b> 60% Sans (info), 30% Serif (autoridade), 10% Script (picos de atenção na capa).</li>
+          <li class="li"><b>Componentes fixos:</b> “Para:”, bloco 2 colunas, grid 2×2 + hero, tags cápsula, @ discreto.</li>
+          <li class="li"><b>Imagens:</b> mockups e aplicações reais; miniaturas com cantos arredondados; sombra mínima.</li>
+        </ul>
+        <div class="tagrow">
+          <span class="tag">margens 80–120</span>
+          <span class="tag">grid 2×2 + hero</span>
+          <span class="tag">tags em cápsulas</span>
+          <span class="tag">padrão repetível</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent">Copy e ganchos</span></h2>
+        <ul class="list">
+          <li class="li"><b>Hook de capa (curadoria + novidade):</b> “Meus [X] favoritos de [ANO]”.</li>
+          <li class="li"><b>Hook por case (prova social):</b> “Para: [Cliente/Projeto]”.</li>
+          <li class="li"><b>Hook de valor (clareza):</b> “O que é entregue em cada projeto: …”.</li>
+          <li class="li"><b>Hook de comparação (rápido):</b> 4 adjetivos resumindo posicionamento.</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="li">
+          <b>Banco rápido de “4 adjetivos” (copiar e escolher)</b>
+          <div class="small">Técnico/negócio: estratégica, clara, objetiva, premium. • Emocional: acolhedora, leve, confiante. • Estética: clean, sofisticada, moderna, editorial, orgânica, vibrante. • Tom: jovem, autêntica, criativa, minimalista, ousada.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent">CTA</span></h2>
+        <ul class="list">
+          <li class="li"><b>Principal (DM):</b> “Envie ‘ALINHAMENTO’ no direct”.</li>
+          <li class="li"><b>Alternativa (link):</b> “Peça orçamento no link da bio”.</li>
+          <li class="li"><b>Retenção:</b> “Salve para usar como referência” + “Compartilhe com alguém que precisa”.</li>
+        </ul>
+        <div class="callout" style="margin-top:12px">
+          <div class="small"><b>Micro-roteiro de DM (opcional):</b> “Me diz seu nicho + o que você vende + 2 referências de estética. Eu te respondo com prazos e próximo passo.”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="accent">Checklist</span> de criação</h2>
+        <ul class="list">
+          <li class="li"><b>Antes:</b> definir tema ([X] favoritos), ano, e 4–8 cases.</li>
+          <li class="li"><b>Por case:</b> nome do projeto + 4–6 imagens + 4 adjetivos + texto padrão de entregáveis.</li>
+          <li class="li"><b>Design:</b> montar 1 template (master) e duplicar para todos os slides.</li>
+          <li class="li"><b>Consistência:</b> mesma posição para “Para:”, bloco 2 colunas e tags.</li>
+          <li class="li"><b>Finalização:</b> revisar legibilidade (tamanho de fonte, contraste), padronizar bordas, exportar em 1080×1350.</li>
+          <li class="li"><b>Publicação:</b> legenda curta + CTA, fixar nos destaques/portfólio, responder DMs com perguntas padrão.</li>
+        </ul>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2><span class="accent">Variações</span> (mesmo template, novos temas)</h2>
+        <div class="twoCol">
+          <div class="li"><b>Variação 1 — “Rebrands favoritos”</b><div class="small">Troque o bloco “entregáveis” por “o que mudou” (Antes/Depois em 1 linha).</div></div>
+          <div class="li"><b>Variação 2 — “Capas favoritas”</b><div class="small">Grid vira 6 miniaturas + 1 hero; tags viram “gênero / clima / cor / referência”.</div></div>
+          <div class="li"><b>Variação 3 — “Identidades por nicho”</b><div class="small">Organize cases por categoria (ex.: saúde, beleza, tech) e use cor de destaque por nicho.</div></div>
+          <div class="li"><b>Variação 4 — “Processo”</b><div class="small">Em cada case, troque 2 miniaturas por: briefing, moodboard, tipografia.</div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const el = document.getElementById('scriptText');
+    btn.addEventListener('click', async () => {
+      const text = el.innerText;
+      try{
+        await navigator.clipboard.writeText(text);
+        const prev = btn.textContent;
+        btn.textContent = 'Copiado!';
+        setTimeout(()=>btn.textContent = prev, 1200);
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const prev = btn.textContent;
+        btn.textContent = 'Copiado!';
+        setTimeout(()=>btn.textContent = prev, 1200);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
