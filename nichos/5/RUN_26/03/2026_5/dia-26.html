@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dia 26 — Carrossel “Cliente curioso” (Roteiro reproduzível)</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel: rgba(255,255,255,.04);
+      --panel2: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --muted2: rgba(255,255,255,.55);
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --g1: linear-gradient(135deg,#63ff97 0%,#37b6ff 55%,#ff9d2e 110%);
+      --g2: linear-gradient(135deg,rgba(99,255,151,.22),rgba(55,182,255,.18),rgba(255,157,46,.16));
+      --green:#63ff97;
+      --blue:#37b6ff;
+      --orange:#ff9d2e;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1000px 600px at 18% 10%, rgba(55,182,255,.14), transparent 55%),
+        radial-gradient(900px 520px at 85% 18%, rgba(255,157,46,.10), transparent 60%),
+        radial-gradient(900px 620px at 45% 90%, rgba(99,255,151,.10), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font-family:var(--sans);
+      line-height:1.35;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
+    header{
+      position:relative;
+      padding:22px 20px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--g2);
+      filter: blur(14px);
+      opacity:.65;
+      z-index:0;
+    }
+    header .content{position:relative; z-index:1; display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; justify-content:space-between}
+    .meta{
+      display:flex; flex-direction:column; gap:10px;
+      min-width: 280px;
+    }
+    .kicker{display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted)}
+    .pill{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background: rgba(0,0,0,.25);
+    }
+    .pill strong{font-weight:700; color:rgba(255,255,255,.88)}
+    h1{
+      margin:0;
+      font-size: clamp(20px, 2.2vw, 28px);
+      letter-spacing:-.02em;
+    }
+    .sub{
+      color:var(--muted);
+      max-width: 70ch;
+      font-size: 14px;
+    }
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.9);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:600;
+      font-size: 13px;
+      transition:.18s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09)}
+    .btn.primary{
+      border-color: rgba(99,255,151,.30);
+      background: linear-gradient(180deg, rgba(99,255,151,.16), rgba(255,255,255,.06));
+    }
+    .btn.link{
+      background: rgba(0,0,0,.25);
+    }
+
+    main{margin-top:18px; display:grid; grid-template-columns: 1fr; gap:14px}
+    @media (min-width: 980px){
+      main{grid-template-columns: 1.1fr .9fr}
+      .span2{grid-column: 1 / -1}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.04);
+      box-shadow: 0 18px 55px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+    }
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:.02em; text-transform:uppercase; color:rgba(255,255,255,.82)}
+    .tag{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(255,255,255,.7);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+    }
+    .card .bd{padding:16px}
+    .lead{color:var(--muted); margin:0 0 10px; font-size:14px}
+    ul{margin:10px 0 0 18px; color:var(--muted)}
+    li{margin:8px 0}
+    .grid2{display:grid; grid-template-columns:1fr; gap:10px}
+    @media (min-width: 700px){.grid2{grid-template-columns:1fr 1fr}}
+
+    .callout{
+      border:1px solid rgba(55,182,255,.22);
+      background: linear-gradient(135deg, rgba(55,182,255,.08), rgba(99,255,151,.06));
+      padding:12px 12px;
+      border-radius: var(--radius2);
+      color: rgba(255,255,255,.82);
+    }
+    .callout b{background:var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+    .script{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.35);
+      border-radius: 16px;
+      padding:14px;
+      font-family: var(--mono);
+      font-size: 12.8px;
+      line-height: 1.45;
+      color: rgba(255,255,255,.82);
+      white-space: pre-wrap;
+      overflow:auto;
+      max-height: 540px;
+    }
+    .mini{font-size:12px; color:var(--muted2)}
+    .hr{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
+
+    .kbd{font-family:var(--mono); font-size:12px; padding:2px 7px; border:1px solid rgba(255,255,255,.14); border-bottom-color: rgba(255,255,255,.08); border-radius:8px; background:rgba(255,255,255,.04)}
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 18px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 12px;
+      background: rgba(10,12,20,.72);
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,.86);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events:none;
+      transition: .2s ease;
+    }
+    .toast.show{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="content">
+        <div class="meta">
+          <div class="kicker">
+            <span class="pill"><strong>Nicho</strong>: Design Gráfico</span>
+            <span class="pill"><strong>Dia</strong>: 26</span>
+            <span class="pill"><strong>Formato</strong>: Carrossel</span>
+            <span class="pill"><strong>Pilar</strong>: Dor (posicionamento / filtro)</span>
+          </div>
+          <h1>Cliente curioso: o carrossel que filtra e posiciona</h1>
+          <p class="sub">Roteiro reproduzível para criar um carrossel com antagonista claro, humor ácido controlado, termo memorável, escalada e limite/CTA. Mantém retenção com contraste (base suave vs preto) e tipografia gigante.</p>
+        </div>
+        <div class="actions">
+          <a class="btn link" href="https://www.instagram.com/p/DWEZRxFDlqJ/" target="_blank" rel="noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">Objetivo: filtrar + elevar padrão</span>
+        </div>
+        <div class="bd">
+          <p class="lead">Este carrossel funciona como <b>posicionamento</b>: nomeia um comportamento indesejado, descreve a cena com precisão, cria um rótulo memorável, aumenta a fricção até um <b>limite explícito</b> e termina com CTA de exclusão (ou alternativa positiva/processual).</p>
+          <div class="grid2">
+            <div class="callout"><b>Quando usar</b><br/>Quando você precisa reduzir leads ruins, educar sobre processo e impor padrão sem textão.</div>
+            <div class="callout"><b>O que faz reter</b><br/>Contraste fofo×duro, escalada, quebra de rota (“conselho?”), slide de choque e final incomum (“não me siga”).</div>
+          </div>
+          <div class="hr"></div>
+          <div class="mini">Dica de adaptação: se sua marca não usa acidez, mantenha a estrutura e troque “expulsão” por “regra do jogo” (limite firme, sem ataque).</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="tag">Sequência (7–12 slides)</span>
+        </div>
+        <div class="bd">
+          <ol style="margin:0; padding-left:18px; color:rgba(255,255,255,.86)">
+            <li><span class="kbd">Hook + rótulo</span> (persona/comportamento nomeado).</li>
+            <li><span class="kbd">Provocação</span> (“eu sei que você…” + 1 palavra destacada).</li>
+            <li><span class="kbd">Termo memorável</span> (metáfora curta que vira “nome do crime”).</li>
+            <li><span class="kbd">Dano/ética</span> (3 verbos fortes + consequência) — fundo de choque.</li>
+            <li><span class="kbd">Pausa retórica</span> (micro-cliffhanger: “posso te dar um conselho?”).</li>
+            <li><span class="kbd">Limite</span> (CTA curto, 2–3 palavras, enorme) — fundo de choque.</li>
+            <li><span class="kbd">Filtro</span> (“esse perfil não é pra você” + incompatibilidade).</li>
+            <li><span class="kbd">Nuance</span> (não é só {tema óbvio}: reposiciona a discussão).</li>
+            <li><span class="kbd">Responsabilização</span> (ação mínima + “do seu interesse”).</li>
+            <li><span class="kbd">Fechamento</span> (pare de X / faça Y / não me siga ou siga sob condição).</li>
+            <li><span class="kbd">Encerramento</span> curto (ironia suave / “obrigado”).</li>
+          </ol>
+          <div class="hr"></div>
+          <p class="mini">Regra de ouro: <b>1 ideia por slide</b> + <b>1 destaque</b> por slide (não grife tudo).</p>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd">
+          <h2>Slides sugeridos (1..11)</h2>
+          <span class="tag">Modelo preenchível</span>
+        </div>
+        <div class="bd">
+          <div class="script" id="scriptText">TÍTULO (Slide 1)
+{qualificador} * {persona} {adjetivo forte}
+Ex.: “caro * cliente curioso”
+
+SLIDE 2 — Provocação (você...)
+“eu sei que você {verbo}...”
+Destaque: {palavra-chave}
+Aside manuscrito: “{cutucada curta}”
+
+SLIDE 3 — Nome do problema (termo memorável)
+“fazendo o seu velho {termo/metáfora}”
+Sub (irônica): “{parêntese curto}”
+
+SLIDE 4 — Dano/ética (FUNDO ESCURO)
+“buscando sempre um jeitinho de {verbo1}, {verbo2} e {verbo3}”
+“{consequência objetiva}.”
+
+SLIDE 5 — Pausa / virada
+“Então deixa eu te dar um conselho?”
+
+SLIDE 6 — Limite (FUNDO ESCURO)
+{CTA curto 2–3 palavras}
+Ex.: “SOME DAQUI” / “PARA AGORA” / “NÃO FAÇA ISSO”
+
+SLIDE 7 — Filtro (FUNDO ESCURO)
+“Esse perfil não é pra você.”
+“{frase de incompatibilidade}”
+Aside opcional: “{ironia leve}”
+
+SLIDE 8 — Nuance (não é só o óbvio)
+“E não, não tô falando só de {tema óbvio}...”
+“{contexto/valor por trás}”
+
+SLIDE 9 — Responsabilização
+“Você não é capaz de {ação mínima}...”
+Destaque: {ponto central}
+Linha final: “DO SEU INTERESSE”
+Texto fantasma: “{palavra-tema}”
+
+SLIDE 10 — Fechamento com regra
+“Então por favor…”
+“{pare de X}”
+“{e faça Y / ou não me siga}”
+
+SLIDE 11 — Encerramento
+“Obrigado.” (ironia suave) / “Fechado?” / “Combinado.”
+
+—
+BANCO DE SUBSTITUIÇÕES RÁPIDAS
+Qualificador: “atenção” | “recado” | “pra você que…” | “caro(a)”
+Persona: “cliente” | “gestor” | “marca” | “freela” | “parceiro”
+Adjetivo: “curioso” | “apressado” | “pechincheiro” | “sem briefing” | “sumiço”
+Termo/metáfora: “leilãozinho” | “caça ao menor preço” | “briefing por telepatia” | “orçamento fantasma” | “ping-pong infinito”</div>
+          <div class="hr"></div>
+          <div class="mini">Atalho mental: pensar em <span class="kbd">Antagonista → Cena → Nome do padrão → Dano → Limite → Regra</span>.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="tag">Identidade (alto contraste)</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>Paleta (receita)</b>: 1 cor base suave + 1 fundo de choque (preto) + 1 neon de destaque + branco.</li>
+            <li><b>Ritmo</b>: alternar “leve” (base suave) com “pesado” (fundo preto) nos slides de golpe/limite.</li>
+            <li><b>Imagem de entrada</b>: foto/ícone “fofo-irônico” nos 1–2 primeiros slides para baixar a guarda (depois vira manifesto tipográfico).</li>
+            <li><b>Assinatura recorrente</b>: asterisco no topo esquerdo (ou outro marcador fixo) para continuidade.</li>
+            <li><b>Camada de profundidade</b>: “texto fantasma” gigante a 5–12% de opacidade, parcialmente fora do quadro.</li>
+            <li><b>Tipografia</b>: Sans bold (H1) + Sans regular (frase) + manuscrita (aside).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">Ganchos que replicam o impacto</span>
+        </div>
+        <div class="bd">
+          <p class="lead">Use “acusação específica” (sem generalizar) + “termo novo” + “quebra de rota”. A agressividade é opcional; o essencial é o <b>limite</b>.</p>
+          <div class="grid2">
+            <div class="callout"><b>Hooks (Slide 1)</b><br/>“caro * {persona} {adjetivo}”<br/>“atenção * {persona} que {comportamento}”<br/>“recado * pra quem {comportamento}”</div>
+            <div class="callout"><b>Quebra de rota (Slide 5)</b><br/>“Posso te dar um conselho?”<br/>“Vamos encurtar isso?”<br/>“Deixa eu te poupar tempo?”</div>
+          </div>
+          <div class="hr"></div>
+          <ul>
+            <li><b>Regra do destaque</b>: destaque só 1 palavra/expressão (ex.: “LEILÃOZINHO”, “DO SEU INTERESSE”, “SOME”).</li>
+            <li><b>Três verbos</b> (Slide 4): {pechinchar, baratear, sucatear} → troque por verbos do seu tema.</li>
+            <li><b>Nuance</b> (Slide 8): “não é só {coisa óbvia}” → reposiciona para {valor/processo/ética}.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="tag">3 caminhos de final</span>
+        </div>
+        <div class="bd">
+          <div class="grid2">
+            <div class="callout"><b>1) Filtro (igual ao original)</b><br/>“Se você faz {comportamento}, não me siga.”<br/><span class="mini">Uso: proteger energia + atrair público qualificado.</span></div>
+            <div class="callout"><b>2) Convite ao oposto (positivo)</b><br/>“Se você valoriza {valor}, fica — e me chama no DM com ‘{palavra}’.”<br/><span class="mini">Uso: vender sem perder postura.</span></div>
+            <div class="callout"><b>3) CTA de processo (regras do jogo)</b><br/>“Quer orçamento? Responda: (1) {Q1} (2) {Q2} (3) {Q3}.”<br/><span class="mini">Uso: transformar atrito em qualificação.</span></div>
+            <div class="callout"><b>CTA curto (Slide 6) — opções</b><br/>“SOME DAQUI” | “PARA COM ISSO” | “NÃO ROLA” | “NÃO INSISTA” | “SEM DESCONTO”<br/><span class="mini">Escolha 1 que combine com sua marca.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd">
+          <h2>Checklist</h2>
+          <span class="tag">Criação (do zero ao post)</span>
+        </div>
+        <div class="bd">
+          <div class="grid2">
+            <div>
+              <p class="lead"><b>Antes do layout</b></p>
+              <ul>
+                <li>Comportamento que você quer <b>atrair</b>: {…}</li>
+                <li>Comportamento que você quer <b>repelir</b>: {…}</li>
+                <li>Tom: suave | firme | ácido | humorado</li>
+                <li>Termo/metáfora memorável: {…}</li>
+                <li>Palavra-símbolo (vira H1): {…}</li>
+                <li>Final escolhido: filtro | convite | processo</li>
+              </ul>
+            </div>
+            <div>
+              <p class="lead"><b>No design</b></p>
+              <ul>
+                <li>Formato: 1080×1350 (4:5) + área segura central.</li>
+                <li>Ritmo: base suave ↔ fundo preto nos slides 4/6/7.</li>
+                <li>1 ideia por slide; 1 destaque por slide.</li>
+                <li>H1 gigante (40–70% da altura) nos “golpes”.</li>
+                <li>Asterisco/marker fixo (assinatura).</li>
+                <li>Texto fantasma em 1 slide (reforço sem poluir).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="lead"><b>Qualidade / revisão final</b></p>
+          <ul>
+            <li>O antagonista está claro sem atacar pessoas “genéricas”?</li>
+            <li>Existe escalada real do Slide 1 ao 6?</li>
+            <li>O Slide 8 traz nuance (não é só preço/tempo etc.)?</li>
+            <li>O limite final está claro e executável (o que fazer em vez disso)?</li>
+            <li>Leitura em 2s por slide (teste no celular).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="tag">Use a mesma máquina em outros temas</span>
+        </div>
+        <div class="bd">
+          <div class="grid2">
+            <div class="callout"><b>Variação A — Sem acidez (profissional)</b><br/>Troque “SOME DAQUI” por “NÃO É UM MATCH” / “NÃO FAZ SENTIDO” e substitua cutucadas por “critérios” e “processo”.</div>
+            <div class="callout"><b>Variação B — Educativo (menos expulsão, mais regra)</b><br/>Slide 6 vira: “REGRA #1” (ou “COMBINADO?”) e o final traz checklist de como pedir {orçamento/briefing}.</div>
+            <div class="callout"><b>Variação C — Venda direta (com filtro)</b><br/>Mantenha o limite, mas finalize com DM: “Se você é o oposto disso, me chama com ‘{palavra}’ que eu te envio {oferta}.”</div>
+            <div class="callout"><b>Variação D — Outro nicho/tema (substituições)</b><br/>Troque {persona} (aluno/paciente/gestor), {metáfora} (nome do padrão) e {3 verbos} (ações do problema). A estrutura permanece idêntica.</div>
+          </div>
+          <div class="hr"></div>
+          <p class="mini">Se quiser padronizar em Figma/Canva: nomeie componentes como <span class="kbd">H1_Destaque</span>, <span class="kbd">Aside_Manuscrito</span>, <span class="kbd">Asterisco_Assinatura</span>, <span class="kbd">TextoFantasma_BG</span>, <span class="kbd">BG_Base</span>, <span class="kbd">BG_Choque</span>.</p>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast">Roteiro copiado.</div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      async function copy(){
+        const txt = textEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(txt);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado (modo compatível).');
+        }
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
