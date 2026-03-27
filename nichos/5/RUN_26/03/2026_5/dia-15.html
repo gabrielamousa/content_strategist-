@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 15 — Design Gráfico — Carrossel meme minimalista</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.085);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r12: 14px;
+      --r16: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --g1: linear-gradient(90deg, #00E5A8 0%, #2A7CFF 45%, #FF8A00 100%);
+      --g2: radial-gradient(1200px 800px at 10% -20%, rgba(0,229,168,.18), transparent 55%),
+            radial-gradient(900px 600px at 95% 0%, rgba(42,124,255,.18), transparent 52%),
+            radial-gradient(900px 700px at 70% 120%, rgba(255,138,0,.12), transparent 56%);
+      --grid: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g2), var(--bg0);
+    }
+
+    .wrap{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 18px 70px;
+    }
+
+    header{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--r16);
+      padding: 18px 18px 16px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--grid);
+      background-size: 34px 34px;
+      opacity:.25;
+      pointer-events:none;
+      mask-image: radial-gradient(500px 180px at 20% 0%, rgba(0,0,0,1), transparent 70%);
+    }
+
+    .toprow{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .badge{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .badge strong{color: var(--text); font-weight:700}
+
+    h1{
+      margin: 10px 0 6px;
+      font-size: clamp(22px, 3.5vw, 34px);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+
+    .sub{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14.5px;
+      line-height: 1.5;
+      max-width: 78ch;
+    }
+
+    a{color: inherit}
+    .link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      text-decoration:none;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:99px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+      flex: 0 0 auto;
+    }
+
+    .ctaRow{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top: 14px}
+
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 650;
+      font-size: 13px;
+      transition: transform .08s ease, background .2s ease;
+    }
+    .btn:hover{background: rgba(255,255,255,.085)}
+    .btn:active{transform: translateY(1px)}
+
+    .btnPrimary{
+      border: none;
+      background: var(--g1);
+      color: #061018;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 920px){
+      .grid{grid-template-columns: 1fr;}
+    }
+
+    section.card{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .cardHd{
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+
+    .cardHd h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    .pill{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+    }
+
+    .cardBd{padding: 14px 16px 16px}
+
+    ul{margin: 10px 0 0 18px; padding:0; color: var(--muted)}
+    li{margin: 8px 0}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    @media (max-width: 560px){
+      .kpi{grid-template-columns: 1fr;}
+    }
+
+    .k{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: 14px;
+      padding: 12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .k:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: var(--g1);
+      opacity:.10;
+      pointer-events:none;
+      mask-image: radial-gradient(180px 120px at 18% 18%, rgba(0,0,0,1), transparent 70%);
+    }
+    .k b{display:block; font-size: 12px; color: var(--muted); font-family: var(--mono); letter-spacing:.06em; text-transform:uppercase}
+    .k span{display:block; margin-top: 6px; font-size: 14px; color: var(--text); line-height: 1.35}
+
+    .script{
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(234,240,255,.82);
+      white-space: pre-wrap;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 920px){
+      .twoCol{grid-template-columns:1fr;}
+    }
+
+    .tiny{color: var(--muted2); font-size: 12.5px; margin-top: 8px}
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin: 12px 0;
+    }
+
+    .callout{
+      border: 1px dashed rgba(255,255,255,.18);
+      background: rgba(255,255,255,.04);
+      padding: 12px;
+      border-radius: 14px;
+      color: var(--muted);
+    }
+
+    .gradText{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight: 800;
+    }
+
+    .footer{
+      margin-top: 14px;
+      color: var(--muted2);
+      font-size: 12px;
+      font-family: var(--mono);
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div>
+          <div class="badgeRow">
+            <span class="badge"><strong>Nicho</strong>: Design Gráfico</span>
+            <span class="badge"><strong>Dia</strong>: 15</span>
+            <span class="badge"><strong>Formato</strong>: Carrossel</span>
+            <span class="badge"><strong>Pilar</strong>: Checklist</span>
+          </div>
+          <h1><span class="gradText">Carrossel meme minimalista</span> (5 slides) que dá vontade de salvar</h1>
+          <p class="sub">Roteiro reproduzível para carrossel de humor + identificação de designer: abre com dualidade, quebra padrão com “alerta”, conta micro-história e fecha com lista compartilhável + CTA soft.</p>
+          <a class="link" href="https://www.instagram.com/p/DVLysDVDpIX/" target="_blank" rel="noopener noreferrer"><span class="dot"></span>Post original: https://www.instagram.com/p/DVLysDVDpIX/</a>
+        </div>
+        <div class="ctaRow">
+          <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="copySlidesBtn">Copiar slides (1..5)</button>
+        </div>
+      </div>
+
+      <div class="kpi">
+        <div class="k"><b>Objetivo</b><span>Compartilhamentos + salvamentos via identificação</span></div>
+        <div class="k"><b>Ritmo</b><span>Hook → Alerta → História → Vitória → Lista</span></div>
+        <div class="k"><b>Regra de cor</b><span>1 cor forte só no slide “pico”</span></div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div>
+        <section class="card" id="resumo">
+          <div class="cardHd"><h2>Resumo</h2><span class="pill">Para repetir toda semana</span></div>
+          <div class="cardBd">
+            <div class="callout">
+              <b>Premissa:</b> Humor autodepreciativo + dor real do designer (alterações, cansaço, vícios de ferramenta/fonte) com visual minimal e “picos” de contraste.
+            </div>
+            <ul>
+              <li><b>Funciona porque:</b> dualidade (slide 1) + quebra de padrão (slide 2) + continuidade emocional (3–4) + fechamento em formato lista (5).</li>
+              <li><b>O que produzir:</b> 5 slides 1:1, texto curto centralizado, 3 memes/imagens populares e 1 slide de alerta tipográfico.</li>
+              <li><b>Resultado esperado:</b> comentários do tipo “sou eu”, tags de amigos e saves.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card" id="estrutura" style="margin-top:14px">
+          <div class="cardHd"><h2>Estrutura</h2><span class="pill">Sequência padrão</span></div>
+          <div class="cardBd">
+            <ol style="margin: 8px 0 0 18px; color: rgba(234,240,255,.72)">
+              <li><b>Hook comparativo (2 colunas):</b> “eu tenho <b>dois moods</b>” + imagem A vs imagem B.</li>
+              <li><b>Quebra de ritmo (ALERTA):</b> slide gritado com ícones + 1 cor forte + “objeto” do nicho gigante (fonte, ferramenta, cliente, briefing, etc.).</li>
+              <li><b>Micro-história (exagero):</b> “apenas X de…” + punchline numérica.</li>
+              <li><b>Validação/vitória:</b> “eu venci…” + meme de sobrevivência/placa/cartaz.</li>
+              <li><b>Lista compartilhável + CTA:</b> “o que eu escuto/uso/vejo quando…” + grade 1+2 e CTA pequeno no rodapé.</li>
+            </ol>
+            <p class="tiny"><b>Regra de ouro:</b> texto em poucas linhas, centralizado, com 1–2 palavras em negrito por slide.</p>
+          </div>
+        </section>
+
+        <section class="card" id="roteiro" style="margin-top:14px">
+          <div class="cardHd"><h2>Roteiro</h2><span class="pill">Textos prontos (template)</span></div>
+          <div class="cardBd">
+            <div class="twoCol">
+              <div>
+                <div class="pill">Roteiro base (editável)</div>
+                <div class="script" id="scriptText">CARROSSEL (5 SLIDES) — “humor + minimal + meme”
+
+SLIDE 1 — HOOK (comparativo 2 colunas)
+Topo: “eu tenho **dois moods**”
+Coluna A (mood 1): {imagem/meme} + legenda curta: “quando o briefing é claro”
+Coluna B (mood 2): {imagem/meme} + legenda curta: “quando chega ‘só um ajuste rapidinho’”
+
+SLIDE 2 — ALERTA (quebra de padrão)
+Headline: “⚠️ CUIDADO ⚠️” (usar a única cor forte do carrossel)
+Sub: “o uso de {ITEM DO NICHO} é extremamente **viciante**”
+Objeto tipográfico/visual gigante: “{NOME DO ITEM}”
+Rodapé: “USE COM MODERAÇÃO”
+
+SLIDE 3 — EXAGERO / ROTINA
+Topo: “apenas uma folga de”
+Centro: {meme de cansaço}
+Base: “**{NÚMERO} dias** me faria bem”
+
+SLIDE 4 — VITÓRIA / VALIDAÇÃO
+Centro: {meme com ‘placa’}
+Texto: “eu venci **uma semana** horrível de {DOR}”
+Mini (opcional): “e ainda entreguei {RESULTADO}”
+
+SLIDE 5 — LISTA + CTA SOFT
+Nota pequena: “*{observação curta}*”
+Título: “o que eu {ESCUTO/USO/FAÇO} trabalhando:”
+Grade 1+2: {3 itens/memes}
+CTA no rodapé (pequeno): “Qual é o seu mood hoje? comenta 1 ou 2.”</div>
+              </div>
+              <div>
+                <div class="pill">Banco rápido de substituições</div>
+                <div class="script">ITEM DO NICHO (escolha 1):
+- “Times New Roman” (piada clássica)
+- “Canva” / “Figma” / “Illustrator”
+- “grid” / “novo ‘conceito’ do cliente”
+- “Montserrat” / “Bebas” / “Comic Sans” (com cuidado)
+
+DOR (escolha 1):
+- “alterações”
+- “revisões infinitas”
+- “alinhamentos”
+- “aprovação em grupo”
+
+OBSERVAÇÃO curta (slide 5):
+- “*ruído branco ajuda na concentração…*”
+- “*café conta como ferramenta?*”
+- “*silêncio é um luxo subestimado*”</div>
+                <p class="tiny">Dica: troque só 30–40% do texto por post para manter consistência de série.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="slides" style="margin-top:14px">
+          <div class="cardHd"><h2>Slides sugeridos (1..5)</h2><span class="pill">Storyboard</span></div>
+          <div class="cardBd">
+            <div class="script" id="slidesText">SLIDE 1 (duas colunas)
+- Título: “eu tenho **dois moods**”
+- Esquerda: “amo quando {lado bom}”
+- Direita: “odeio quando {lado ruim}”
+
+SLIDE 2 (alerta)
+- “⚠️ CUIDADO ⚠️”
+- “{coisa} é extremamente **viciante**!”
+- Objeto grande: “{ITEM}”
+- Rodapé: “USE COM MODERAÇÃO”
+
+SLIDE 3 (exagero)
+- “apenas uma folga de”
+- “**{N} dias** me faria bem”
+
+SLIDE 4 (vitória)
+- “eu venci {período} de {dor}”
+- (opcional) “e ainda {resultado}”
+
+SLIDE 5 (lista + CTA)
+- Nota: “*{observação}*”
+- “o que eu {escuto/uso} trabalhando:”
+- 3 itens (grade 1+2)
+- CTA: “comenta 1 ou 2 / salva / marca um(a) designer”</div>
+          </div>
+        </section>
+
+      </div>
+
+      <div>
+        <section class="card" id="visuais">
+          <div class="cardHd"><h2>Elementos visuais</h2><span class="pill">Design system</span></div>
+          <div class="cardBd">
+            <ul>
+              <li><b>Formato:</b> 1080×1080 (1:1). Margem segura 90–120px.</li>
+              <li><b>Composição:</b> centralizada, muito respiro, poucas linhas.</li>
+              <li><b>Textura:</b> grão/noise sutil (3–8%) para unidade.</li>
+              <li><b>Cor:</b> base neutra + <b>1 cor forte</b> só no slide 2 (alerta).</li>
+              <li><b>Componentes:</b> 2 colunas (hook), slide alerta, meme central (história), grade 1+2 (lista).</li>
+            </ul>
+            <div class="hr"></div>
+            <div class="callout">
+              <b>Tipografia:</b> sans limpa para frases + serif (ou fonte “objeto”) como punchline no slide de alerta.
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="copy" style="margin-top:14px">
+          <div class="cardHd"><h2>Copy e ganchos</h2><span class="pill">Modelos rápidos</span></div>
+          <div class="cardBd">
+            <ul>
+              <li><b>Hook (slide 1):</b> “eu tenho <b>dois moods</b>”, “eu sou 8 ou 80”, “minha relação com {algo}”.</li>
+              <li><b>Alerta (slide 2):</b> “⚠️ CUIDADO ⚠️”, “isto deveria ser ilegal”, “manual de sobrevivência”.</li>
+              <li><b>Exagero (slide 3):</b> “apenas {X} de {coisa} me faria bem”, “me dê {X} minutos e eu volto”.</li>
+              <li><b>Vitória (slide 4):</b> “eu venci…”, “sobrevivi a…”, “saí vivo de…”.</li>
+              <li><b>Lista (slide 5):</b> “o que eu {escuto/uso} quando…”, “meus 3 remédios pra…”.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card" id="cta" style="margin-top:14px">
+          <div class="cardHd"><h2>CTA</h2><span class="pill">Soft (sem quebrar o meme)</span></div>
+          <div class="cardBd">
+            <ul>
+              <li>“Qual é o seu mood hoje? comenta <b>1</b> ou <b>2</b>.”</li>
+              <li>“Qual {fonte/ferramenta} você ama/odeia? me conta.”</li>
+              <li>“Salva pra quando bater a crise criativa.”</li>
+              <li>“Marca um(a) amigo(a) que vive de alterações.”</li>
+            </ul>
+            <p class="tiny">Coloque o CTA como rodapé pequeno no slide 5 (ou na legenda do post).</p>
+          </div>
+        </section>
+
+        <section class="card" id="checklist" style="margin-top:14px">
+          <div class="cardHd"><h2>Checklist</h2><span class="pill">Criação + revisão</span></div>
+          <div class="cardBd">
+            <div class="script">ANTES (planejamento)
+[ ] Tema central: contradição / vício / dor da rotina / bastidor
+[ ] “Objeto do nicho” (1): fonte, ferramenta, cliente, briefing, grid
+[ ] 3 memes/imagens: comparação (A/B), cansaço, vitória
+[ ] 1 slide “ALERTA” com cor forte (somente nele)
+
+DESIGN (montagem)
+[ ] Prancheta 1080×1080; margem segura 90–120px
+[ ] 1–2 palavras em negrito por slide
+[ ] Poucas linhas; quebras intencionais; centralização consistente
+[ ] Noise sutil (3–8%) e contraste confortável
+[ ] Grade 1+2 no slide 5 (ou 3 cards)
+
+REVISÃO (antes de postar)
+[ ] Slide 1 entende em 2s (identificação imediata)
+[ ] Slide 2 é o “pico” (contraste + cor + objeto gigante)
+[ ] Slides 3–4 têm continuidade (parece capítulo)
+[ ] Slide 5 fecha o ciclo (lista + CTA)
+[ ] CTA está discreto (rodapé pequeno) e pede 1 ação só</div>
+          </div>
+        </section>
+
+        <section class="card" id="variacoes" style="margin-top:14px">
+          <div class="cardHd"><h2>Variações</h2><span class="pill">Sem perder o padrão</span></div>
+          <div class="cardBd">
+            <ul>
+              <li><b>Variação A (ferramenta):</b> slide 2 vira “CUIDADO: Auto Layout é viciante”.</li>
+              <li><b>Variação B (cliente):</b> slide 2 vira “CUIDADO: ‘só muda a cor’ é contagioso”.</li>
+              <li><b>Variação C (processo):</b> slide 5 vira “o que eu faço quando o projeto empaca: {3 itens}”.</li>
+              <li><b>Variação D (série semanal):</b> mantenha layout fixo e troque apenas memes + “objeto” do slide 2.</li>
+            </ul>
+            <div class="hr"></div>
+            <div class="callout">
+              <b>Regra para escalar:</b> mantenha a mesma estrutura (1..5) e mude o “objeto do nicho” + 2 memes. Isso cria reconhecimento de série.
+            </div>
+          </div>
+        </section>
+
+        <div class="footer">
+          <span>Documento interno: roteiro reproduzível — Dia 15</span>
+          <span>UX: dark + cards + destaques em degradê</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function copyFrom(elId){
+      const el = document.getElementById(elId);
+      const text = el ? el.innerText : '';
+      if(!text) return;
+      navigator.clipboard.writeText(text);
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', function(){
+      copyFrom('scriptText');
+      this.innerText = 'Roteiro copiado';
+      setTimeout(()=> this.innerText = 'Copiar roteiro', 1200);
+    });
+
+    document.getElementById('copySlidesBtn').addEventListener('click', function(){
+      copyFrom('slidesText');
+      this.innerText = 'Slides copiados';
+      setTimeout(()=> this.innerText = 'Copiar slides (1..5)', 1200);
+    });
+  </script>
+</body>
+</html>
