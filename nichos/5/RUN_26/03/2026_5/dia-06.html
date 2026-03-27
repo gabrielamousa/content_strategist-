@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 6 — Carrossel | Design Gráfico</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 18px 45px rgba(0,0,0,.45);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --grad: linear-gradient(90deg, #22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --grad2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.16), rgba(251,146,60,.14));
+      --green:#22C55E;
+      --blue:#38BDF8;
+      --orange:#FB923C;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 10%, rgba(56,189,248,.14), transparent 60%),
+        radial-gradient(900px 500px at 85% 15%, rgba(34,197,94,.12), transparent 60%),
+        radial-gradient(1000px 700px at 55% 95%, rgba(251,146,60,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+      line-height:1.45;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 56px}
+
+    .topbar{
+      position:relative;
+      border:1px solid var(--stroke);
+      border-radius:var(--r20);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .topbar::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--grad2);
+      filter: blur(18px);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .top-in{
+      position:relative;
+      padding:22px 22px 18px;
+      display:flex;
+      gap:18px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .kicker{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+    }
+    .pill{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+    .pill strong{color:var(--text); font-weight:650}
+    h1{
+      margin:10px 0 8px;
+      font-size:22px;
+      letter-spacing:-.02em;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      max-width:78ch;
+      font-size:14px;
+    }
+    .linkrow{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      color:var(--muted2);
+      font-size:13px;
+    }
+    .linkrow a{
+      border-bottom:1px dashed rgba(234,240,255,.35);
+      padding-bottom:2px;
+    }
+    .actions{display:flex; gap:10px; align-items:center; margin-top:6px}
+    .btn{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.22);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:650;
+      font-size:13px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      transition:.15s transform ease, .15s background ease, .15s border-color ease;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.18)}
+    .btn.primary{
+      background:linear-gradient(90deg, rgba(34,197,94,.18), rgba(56,189,248,.16), rgba(251,146,60,.14));
+    }
+    .btn small{font-family:var(--mono); color:var(--muted)}
+
+    .grid{margin-top:16px; display:grid; grid-template-columns: 1.05fr .95fr; gap:14px}
+    @media (max-width: 960px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:var(--r16);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:.02em; text-transform:uppercase; color:rgba(234,240,255,.85)}
+    .tag{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.68);
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.25);
+      white-space:nowrap;
+    }
+    .bd{padding:14px 16px 16px}
+    .bd p{margin:0 0 10px; color:var(--muted)}
+    .bd ul{margin:10px 0 0 18px; padding:0; color:var(--muted)}
+    .bd li{margin:6px 0}
+    .bd code{font-family:var(--mono); font-size:12px; color:#D6E6FF; background:rgba(0,0,0,.25); padding:2px 6px; border:1px solid rgba(255,255,255,.10); border-radius:8px}
+
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:700px){.twoCol{grid-template-columns:1fr}}
+
+    .hr{
+      height:1px;
+      background:linear-gradient(90deg, rgba(34,197,94,.0), rgba(34,197,94,.55), rgba(56,189,248,.55), rgba(251,146,60,.55), rgba(251,146,60,.0));
+      margin:12px 0;
+      opacity:.55;
+    }
+
+    .scriptBox{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.28);
+      border-radius:14px;
+      padding:14px;
+      font-family:var(--mono);
+      font-size:12.5px;
+      color:rgba(234,240,255,.82);
+      white-space:pre-wrap;
+      line-height:1.55;
+    }
+    .hint{font-size:12px; color:var(--muted2); margin-top:10px}
+
+    .accent{
+      background:var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:800;
+    }
+    .mini{font-size:12px; color:var(--muted2)}
+
+    .checklist{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width:900px){.checklist{grid-template-columns:1fr}}
+    .check{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.045);
+      border-radius:14px;
+      padding:12px;
+    }
+    .check h3{margin:0 0 8px; font-size:13px; letter-spacing:.01em}
+    .check ul{margin:0 0 0 18px; padding:0; color:var(--muted)}
+
+    .footerNote{margin-top:14px; color:var(--muted2); font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="top-in">
+        <div>
+          <div class="kicker">
+            <span class="pill"><strong>Nicho:</strong> Design Gráfico</span>
+            <span class="pill"><strong>Dia:</strong> 6</span>
+            <span class="pill"><strong>Formato:</strong> Carrossel</span>
+            <span class="pill"><strong>Pilar:</strong> Desejo</span>
+          </div>
+          <h1>Nem tudo no design precisa virar <span class="accent">case</span> (variações em 6 slides)</h1>
+          <p class="sub">Modelo editorial de frases-âncora: repita a mesma estrutura e troque apenas 1 elemento por slide para criar ritmo, identificação e “coleção”. Fecha com síntese + CTA sutil.</p>
+          <div class="linkrow">
+            <span class="mini">Post original:</span>
+            <a href="https://www.instagram.com/p/DVTT-l0jmwS/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DVTT-l0jmwS/</a>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro <small>(texto)</small></button>
+          <a class="btn" href="#slides">Ver slides</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">repetição + progressão temática</span>
+        </div>
+        <div class="bd">
+          <p><strong>Ideia central:</strong> aliviar a autocobrança do público (criativos) mostrando que nem tudo precisa virar lição, conteúdo ou “aprendizado” — às vezes é só o que é.</p>
+          <div class="hr"></div>
+          <div class="twoCol">
+            <div>
+              <p><strong>Por que retém:</strong></p>
+              <ul>
+                <li>padrão reconhecível no slide 1 (o cérebro quer ver as variações);</li>
+                <li>curiosidade por substituição (“qual será o próximo X?”);</li>
+                <li>micro-surpresa: 1 palavra em destaque muda a cada slide;</li>
+                <li>ritmo visual consistente (layout igual, leitura rápida).</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Quando usar:</strong></p>
+              <ul>
+                <li>posts de respiro entre tutoriais;</li>
+                <li>posicionamento de marca (tom humano);</li>
+                <li>conteúdo “salvável” para dias de ansiedade/perfeccionismo.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Estrutura (reproduzível)</h2>
+          <span class="tag">6 slides · 1080×1350</span>
+        </div>
+        <div class="bd">
+          <p><strong>Macro-sequência:</strong> leve → social → criador → universal.</p>
+          <ul>
+            <li><strong>S1:</strong> Hook (frase-base + 1 exemplo muito concreto).</li>
+            <li><strong>S2–S5:</strong> 4 variações (troque o <code>{X}</code>). Uma delas pode ser meta (sobre post/trabalho).</li>
+            <li><strong>S6:</strong> Síntese universal + CTA sutil (salvar/enviar/comentar).</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="mini"><strong>Regra de ouro:</strong> mesma frase, muda 1–2 palavras. 10–18 palavras por slide.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="slides">
+      <div class="hd">
+        <h2>Slides sugeridos (1..6)</h2>
+        <span class="tag">modelo pronto + espaço p/ nichar</span>
+      </div>
+      <div class="bd">
+        <p><strong>Título-mãe:</strong> “Nem tudo precisa virar <span class="accent">case</span>.”<br/><span class="mini">Você pode trocar “case” por: <em>lição</em>, <em>conteúdo</em>, <em>prova</em>, <em>tendência</em>, <em>estratégia</em>.</span></p>
+        <div class="hr"></div>
+        <ul>
+          <li><strong>Slide 1 (Hook):</strong> “Nem tudo precisa virar um grande <strong>case</strong> — às vezes um <em>rascunho</em> é só um rascunho mesmo.”</li>
+          <li><strong>Slide 2:</strong> “Nem tudo precisa virar um grande case — às vezes um <em>ref</em> é só um ref mesmo.”</li>
+          <li><strong>Slide 3:</strong> “Nem tudo precisa virar um grande case — às vezes um <em>job</em> é só um job mesmo.”</li>
+          <li><strong>Slide 4 (meta):</strong> “Nem tudo precisa virar um grande case — às vezes um <em>post</em> é só um post mesmo.”</li>
+          <li><strong>Slide 5 (emocional):</strong> “Nem tudo precisa virar um grande case — às vezes um <em>não</em> é só um não mesmo.”</li>
+          <li><strong>Slide 6 (fecho):</strong> “Nem tudo que acontece precisa <em>ensinar</em> algo. Às vezes é só o que é.” + CTA pequeno.</li>
+        </ul>
+        <div class="footerNote">Dica: escolha <strong>1 palavra</strong> por slide para virar destaque (script/itálico). Ela é seu “colecionável”.</div>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <article class="card">
+        <div class="hd">
+          <h2>Roteiro (copiável)</h2>
+          <span class="tag">texto-base + preenchimento</span>
+        </div>
+        <div class="bd">
+          <div class="scriptBox" id="scriptText">CARROSSEL (6 SLIDES) — TEMPLATE “NEM TUDO PRECISA…”
+
+[CONFIG]
+Tema-tensão: {autocobrança | produtividade | perfeccionismo | comparação | ansiedade}
+Narrativa-alvo: {case | lição | conteúdo | estratégia | tendência}
+
+[S1 — HOOK]
+Nem tudo precisa virar um grande {NARRATIVA} —
+às vezes um(a) {X1} é só um(a) {X1} mesmo.
+(Palavra em destaque: {X1})
+
+[S2 — VARIAÇÃO]
+Nem tudo precisa virar um grande {NARRATIVA} —
+às vezes um(a) {X2} é só um(a) {X2} mesmo.
+(Palavra em destaque: {X2})
+
+[S3 — VARIAÇÃO]
+Nem tudo precisa virar um grande {NARRATIVA} —
+às vezes um(a) {X3} é só um(a) {X3} mesmo.
+(Palavra em destaque: {X3})
+
+[S4 — META (TRABALHO/CRIADOR)]
+Nem tudo precisa virar um grande {NARRATIVA} —
+às vezes um(a) {X4} é só um(a) {X4} mesmo.
+(Palavra em destaque: {X4})
+
+[S5 — POÉTICO/EMOCIONAL]
+Nem tudo precisa virar um grande {NARRATIVA} —
+às vezes {X5} é só {Y} mesmo.
+(Palavra em destaque: {X5})
+
+[S6 — FECHAMENTO + CTA]
+Nem tudo que acontece precisa {VERBO} algo.
+Às vezes é só o que é.
+
+CTA pequeno (escolha 1):
+• Salve pra lembrar nos dias de cobrança.
+• Envie pra um(a) designer que precisa ler isso.
+• Comente: “Às vezes ___ é só ___.”</div>
+          <p class="hint">Personalização rápida para design gráfico: use X como <em>rascunho</em>, <em>ref</em>, <em>job</em>, <em>revisão</em>, <em>portfólio</em>, <em>briefing</em>.</p>
+        </div>
+      </article>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="tag">editorial · high contrast</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Formato:</strong> 1080×1350 (4:5) com margem segura (6–10%).</li>
+            <li><strong>Composição:</strong> texto dominante; imagem como “clima”/textura.</li>
+            <li><strong>Tratamento:</strong> look filme/analógico (granulação leve, ruído, leve desfoque).</li>
+            <li><strong>Paleta:</strong> base quente/neutra + alto contraste; 1 slide com cor chapada para variar ritmo.</li>
+            <li><strong>Assinatura:</strong> @handle pequeno no centro inferior, constante em todos os slides.</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Tipografia (3 níveis):</strong></p>
+          <ul>
+            <li><strong>Headline:</strong> sans bold grande, quebras agressivas.</li>
+            <li><strong>Destaque:</strong> 1 palavra em script/itálico (troca a cada slide).</li>
+            <li><strong>Rodapé:</strong> sans pequena, baixa saliência.</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <article class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">frase-âncora + variação</span>
+        </div>
+        <div class="bd">
+          <p><strong>Fórmula do gancho:</strong> afirmação contra a autocobrança + exemplo concreto.</p>
+          <ul>
+            <li>“Nem tudo precisa virar <strong>{resultado}</strong>.”</li>
+            <li>“Às vezes <strong>{X}</strong> é só <strong>{X}</strong> mesmo.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Biblioteca de palavras para o destaque (design):</strong></p>
+          <p class="mini">rascunho · ref · grid · revisão · briefing · portfólio · layout · feedback · versão 1 · bug · não · pausa</p>
+          <div class="hr"></div>
+          <p><strong>Legenda sugerida (curta):</strong></p>
+          <p class="mini">“Lembrete pra quando o cérebro quer transformar tudo em performance. Nem tudo precisa provar algo. Às vezes é só o processo.”</p>
+        </div>
+      </article>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="tag">discreto e salvável</span>
+        </div>
+        <div class="bd">
+          <p><strong>Escolha 1 CTA principal:</strong></p>
+          <ul>
+            <li><strong>Salvar:</strong> “Salve pra reler nos dias de autocobrança.”</li>
+            <li><strong>Enviar:</strong> “Envie pra alguém que tá duro consigo mesmo hoje.”</li>
+            <li><strong>Comentar (engajamento):</strong> “Complete: ‘Às vezes ___ é só ___.’”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="mini"><strong>Onde colocar:</strong> pequeno no slide 6 + repetir na legenda (sem poluir o layout).</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Checklist de criação</h2>
+        <span class="tag">produção rápida (30–50 min)</span>
+      </div>
+      <div class="bd">
+        <div class="checklist">
+          <div class="check">
+            <h3>Conteúdo</h3>
+            <ul>
+              <li>Definir {tema-tensão} (ex.: perfeccionismo no portfólio).</li>
+              <li>Escolher {narrativa} (case/lição/conteúdo).</li>
+              <li>Listar 5 itens X do universo do público.</li>
+              <li>Escrever 6 frases (10–18 palavras cada).</li>
+              <li>Selecionar 1 palavra por slide para destaque.</li>
+            </ul>
+          </div>
+          <div class="check">
+            <h3>Direção de arte</h3>
+            <ul>
+              <li>1080×1350 + margem segura (UI do Instagram).</li>
+              <li>Layout replicado em todos os slides (consistência).</li>
+              <li>Contraste alto (texto legível em 1 segundo).</li>
+              <li>Tratamento uniforme nas fotos (grain/ruído/cor).</li>
+              <li>@handle no rodapé (constante).</li>
+            </ul>
+          </div>
+          <div class="check">
+            <h3>Revisão final</h3>
+            <ul>
+              <li>Checar viúvas/órfãs nas quebras de linha.</li>
+              <li>Garantir que só 1 palavra está “script” por slide.</li>
+              <li>Exportar em alta (JPG 80–90% ou PNG conforme ruído).</li>
+              <li>Testar leitura no celular (brilho baixo).</li>
+            </ul>
+          </div>
+          <div class="check">
+            <h3>Publicação</h3>
+            <ul>
+              <li>Legenda curta + 1 CTA principal.</li>
+              <li>3–8 hashtags (bem específicas do nicho).</li>
+              <li>Fixar comentário com prompt de resposta (opcional).</li>
+              <li>Responder comentários com variações “Às vezes X…”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Variações (para repostar sem cansar)</h2>
+        <span class="tag">mesma estrutura · novos ângulos</span>
+      </div>
+      <div class="bd">
+        <ul>
+          <li><strong>Variação A (branding):</strong> “Nem tudo precisa virar identidade — às vezes é só um <em>teste</em> mesmo.”</li>
+          <li><strong>Variação B (social media):</strong> “Nem todo post precisa performar — às vezes é só <em>presença</em> mesmo.”</li>
+          <li><strong>Variação C (freela):</strong> “Nem todo cliente vira parceria — às vezes é só um <em>brief</em> ruim mesmo.”</li>
+          <li><strong>Variação D (processo criativo):</strong> troque o fecho para: “Nem tudo precisa fazer sentido agora.”</li>
+          <li><strong>Variação E (mais afiada):</strong> “Nem tudo precisa ser ‘estratégico’. Às vezes é só <em>gosto</em>.”</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const el = document.getElementById('scriptText');
+      function copy(){
+        const text = el ? el.innerText : '';
+        if(!text) return;
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(text).then(()=>{
+            btn.textContent = 'Roteiro copiado';
+            setTimeout(()=>btn.innerHTML = 'Copiar roteiro <small>(texto)</small>', 1200);
+          }).catch(()=>fallback(text));
+        } else {
+          fallback(text);
+        }
+      }
+      function fallback(text){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try{ document.execCommand('copy'); }catch(e){}
+        document.body.removeChild(ta);
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>btn.innerHTML = 'Copiar roteiro <small>(texto)</small>', 1200);
+      }
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
