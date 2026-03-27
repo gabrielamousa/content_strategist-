@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Dia 20 — Template de Carrossel de Curadoria (Design Gráfico)</title>
+<style>
+  :root{
+    --bg0:#070A0F;
+    --bg1:#0A1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.08);
+    --stroke:rgba(255,255,255,.12);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.55);
+    --shadow: 0 14px 46px rgba(0,0,0,.55);
+    --radius:18px;
+    --radius2:14px;
+    --g1: linear-gradient(90deg, #34D399 0%, #22D3EE 40%, #F59E0B 100%);
+    --g2: linear-gradient(135deg, rgba(52,211,153,.22), rgba(34,211,238,.20), rgba(245,158,11,.18));
+    --line: linear-gradient(90deg, rgba(52,211,153,.9), rgba(34,211,238,.9), rgba(245,158,11,.9));
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:
+      radial-gradient(1200px 800px at 15% 10%, rgba(34,211,238,.14), transparent 55%),
+      radial-gradient(980px 680px at 85% 15%, rgba(245,158,11,.12), transparent 55%),
+      radial-gradient(980px 680px at 65% 90%, rgba(52,211,153,.12), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 56px;}
+
+  header{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    border-radius: calc(var(--radius) + 6px);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .topbar{
+    padding:18px 18px 14px;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    justify-content:space-between;
+  }
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+  }
+  .pill{
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    border-radius:999px;
+    padding:8px 10px;
+    font-size:12px;
+    color:var(--muted);
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+  }
+  .dot{width:7px; height:7px; border-radius:999px; background: #22D3EE; box-shadow:0 0 0 4px rgba(34,211,238,.12)}
+  .dot.g{background:#34D399; box-shadow:0 0 0 4px rgba(52,211,153,.12)}
+  .dot.o{background:#F59E0B; box-shadow:0 0 0 4px rgba(245,158,11,.12)}
+
+  .hgroup{padding:0 18px 18px;}
+  h1{margin:0; font-size:22px; line-height:1.18; letter-spacing:.2px;}
+  .subtitle{margin:8px 0 0; color:var(--muted); font-size:14px; max-width:64ch}
+  .header-actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
+  .btn{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.06);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    font-size:13px;
+    cursor:pointer;
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    user-select:none;
+  }
+  .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18)}
+  .btn.primary{
+    background: var(--g2);
+    border-color: rgba(34,211,238,.28);
+  }
+  .btn .kbd{font-family:var(--mono); font-size:12px; color:var(--muted2); border:1px solid var(--stroke); padding:2px 6px; border-radius:8px; background: rgba(0,0,0,.18)}
+
+  .divider{height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);}
+  .line{height:2px; background: var(--line); opacity:.85}
+
+  main{margin-top:18px; display:grid; grid-template-columns: 1.05fr .95fr; gap:16px;}
+  @media (max-width: 980px){ main{grid-template-columns: 1fr;}}
+
+  section.card{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.05);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    border-bottom:1px solid rgba(255,255,255,.10);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  }
+  .card .hd h2{margin:0; font-size:14px; letter-spacing:.35px; text-transform:uppercase; color: rgba(234,240,255,.86)}
+  .tag{
+    font-size:12px;
+    color: var(--muted);
+    border:1px solid var(--stroke);
+    padding:6px 10px;
+    border-radius:999px;
+    background: rgba(0,0,0,.16);
+  }
+  .card .bd{padding:14px 16px 16px;}
+
+  .list{margin:0; padding-left:18px; color:var(--muted);}
+  .list li{margin:8px 0;}
+
+  .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+  @media (max-width: 650px){ .grid2{grid-template-columns:1fr;}}
+
+  .callout{
+    margin-top:12px;
+    border:1px solid rgba(34,211,238,.22);
+    background: linear-gradient(135deg, rgba(34,211,238,.10), rgba(52,211,153,.08), rgba(245,158,11,.06));
+    padding:12px 12px;
+    border-radius: var(--radius2);
+    color: var(--muted);
+  }
+  .callout strong{color:var(--text)}
+
+  textarea#roteiro{
+    width:100%;
+    min-height: 520px;
+    resize: vertical;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.22);
+    color: rgba(234,240,255,.92);
+    padding: 12px 12px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.10);
+  }
+  .small{font-size:12px; color:var(--muted2); margin-top:10px}
+
+  .kpi{
+    display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;
+  }
+  .kpi .box{
+    flex:1;
+    min-width:170px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.04);
+    border-radius:14px;
+    padding:10px 10px;
+  }
+  .kpi .t{font-size:11px; letter-spacing:.3px; text-transform:uppercase; color:var(--muted2)}
+  .kpi .v{margin-top:6px; font-size:13px; color:var(--muted)}
+  .kpi .v b{color:var(--text)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <div class="meta">
+          <span class="pill"><span class="dot g"></span><span><b>Nicho</b>: Design Gráfico</span></span>
+          <span class="pill"><span class="dot"></span><span><b>Dia</b>: 20</span></span>
+          <span class="pill"><span class="dot o"></span><span><b>Formato</b>: Carrossel</span></span>
+          <a class="pill" href="https://www.instagram.com/p/DV4GRoAD6L8/" target="_blank" rel="noreferrer"><span class="dot"></span><span><b>Post original</b>: abrir link</span></a>
+        </div>
+        <div class="header-actions">
+          <button class="btn primary" id="copyBtn">Copiar roteiro <span class="kbd">Ctrl/Cmd + C</span></button>
+          <a class="btn" href="#slides">Slides sugeridos</a>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="line"></div>
+      <div class="hgroup">
+        <h1>Carrossel de curadoria: 1 item por slide (template)</h1>
+        <p class="subtitle">Modelo reproduzível de carrossel editorial/minimalista para listas/curadorias (fontes, paletas, grids, ferramentas, referências). Promessa na capa → entrega em série → quebra de padrão para “salvar” → CTA final.</p>
+        <div class="kpi">
+          <div class="box"><div class="t">Mecânica</div><div class="v"><b>Repetição + microvariação</b> (comparação por slide)</div></div>
+          <div class="box"><div class="t">Ação desejada</div><div class="v"><b>Salvar</b> (conteúdo de referência)</div></div>
+          <div class="box"><div class="t">Estrutura</div><div class="v">8–10 slides, <b>1 item/slide</b></div></div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div>
+        <section class="card">
+          <div class="hd"><h2>Resumo</h2><span class="tag">Objetivo: retenção + saves</span></div>
+          <div class="bd">
+            <ul class="list">
+              <li><b>O que você vai produzir:</b> um carrossel de curadoria em que cada slide entrega 1 item (comparável) com layout fixo e variação controlada.</li>
+              <li><b>Por que é reproduzível:</b> o formato independe do tema; você troca apenas “Categoria” e “Itens”.</li>
+              <li><b>Truques que elevam:</b> tipografia gigante, respiro editorial, seta de avanço constante e 1 slide de “pattern break” pedindo save.</li>
+            </ul>
+            <div class="callout"><strong>Regra de ouro:</strong> se você conseguir imprimir o slide e ele fizer sentido em 1 segundo, está no caminho certo (headline gigante + label curto).</div>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px;" id="slides">
+          <div class="hd"><h2>Slides sugeridos (1..8/10)</h2><span class="tag">Sequência pronta</span></div>
+          <div class="bd">
+            <ol class="list" style="padding-left:20px;">
+              <li><b>Capa (Hook + promessa):</b> [PALAVRA FORTE] [OBJETO] + “para [benefício] em [contexto]”.</li>
+              <li><b>Começo da entrega:</b> [TEMA/CONTEXTO] + “{CATEGORIA} — {ITEM 1}”.</li>
+              <li><b>Item 2:</b> headline curta (pode repetir) + label “{CATEGORIA} — {ITEM 2}”.</li>
+              <li><b>Item 3:</b> mesmo layout + “{ITEM 3}”.</li>
+              <li><b>Item 4:</b> mesmo layout + “{ITEM 4}”.</li>
+              <li><b>Item 5 (opcional):</b> se quiser 9–10 slides, inclua mais 1–2 itens.</li>
+              <li><b>Pattern break (Save):</b> fundo invertido/forte + “SALVA PRA CONSULTAR”.</li>
+              <li><b>Fechamento (CTA):</b> “Pra mais [tema], me segue” + “link da bio / direct / comentário”.</li>
+            </ol>
+            <div class="grid2" style="margin-top:12px;">
+              <div class="callout"><strong>Dica de retenção:</strong> use a mesma headline nos slides de item (ex.: “CHURCH VISUALS”) para incentivar comparação visual.</div>
+              <div class="callout"><strong>Dica de clareza:</strong> deixe explícito o formato de lista já na capa: “5 fontes”, “8 referências”, “7 grids”.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <div class="hd"><h2>Estrutura (macro) — reproduzível</h2><span class="tag">O esqueleto</span></div>
+          <div class="bd">
+            <ul class="list">
+              <li><b>Promessa na capa</b> (resultado + contexto) + pista visual de continuidade (seta).</li>
+              <li><b>Entrega imediata</b> no slide 2 (sem aquecimento): já mostra o item 1.</li>
+              <li><b>Lista padronizada</b>: 1 item por slide, layout fixo, variação no item.</li>
+              <li><b>Quebra de padrão</b> perto do final pedindo <b>salvar</b>.</li>
+              <li><b>Próximo passo</b> (seguir / link / direct / comentário com palavra-chave).</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <div class="hd"><h2>Elementos visuais</h2><span class="tag">Sistema de design</span></div>
+          <div class="bd">
+            <ul class="list">
+              <li><b>Formato:</b> 1080×1350 (4:5); margens seguras 80–120px.</li>
+              <li><b>Grid:</b> editorial com muito respiro; headline ocupa 70–90% do slide.</li>
+              <li><b>Consistência de posicionamento:</b> assinatura (inf. esq.), seta (inf. dir.), label do item (centro inferior).</li>
+              <li><b>Variação controlada:</b> muda o item (e, se fizer sentido, a fonte), mas mantém o layout.</li>
+              <li><b>Pattern break:</b> um slide com cor sólida forte/invertida para reset visual.</li>
+            </ul>
+            <div class="callout"><strong>Paleta sugerida (adaptável):</strong> 1 cor primária forte + off-white/cinza + 1 cinza para textos secundários. (No original: vermelho + neutros.)</div>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <div class="hd"><h2>Copy e ganchos</h2><span class="tag">Fórmulas substituíveis</span></div>
+          <div class="bd">
+            <div class="grid2">
+              <div>
+                <div class="callout" style="margin-top:0;">
+                  <strong>Título (capa) — opções:</strong>
+                  <ul class="list">
+                    <li>[GREAT / PRO / GUIA RÁPIDO] + [FERRAMENTAS / FONTES / GRIDS / PALETAS]</li>
+                    <li>“Meus [N] favoritos de [categoria]”</li>
+                    <li>“[N] referências para [resultado]”</li>
+                    <li>“[N] erros em [tema] (e como evitar)” (vira lista de erros)</li>
+                  </ul>
+                </div>
+              </div>
+              <div>
+                <div class="callout" style="margin-top:0;">
+                  <strong>Subtítulo (promessa) — modelos:</strong>
+                  <ul class="list">
+                    <li>“Para [benefício] em [contexto].”</li>
+                    <li>“Pra você [ação] sem [dor].”</li>
+                    <li>“Pra elevar o nível do seu [resultado] hoje.”</li>
+                    <li>“Checklist rápido pra [objetivo].”</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="callout"><strong>Labels (linha do item):</strong> “FONTE — DRUK” / “PALETA — 01” / “GRID — 03” / “DICA — 04” / “PLUGIN — 02”. Mantenha sempre o mesmo padrão para parecer série.</div>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <div class="hd"><h2>CTA</h2><span class="tag">Salvar + próximo passo</span></div>
+          <div class="bd">
+            <ul class="list">
+              <li><b>CTA principal (slide de pattern break):</b> “SALVA PRA CONSULTAR” / “GUARDA ESSE POST” / “SALVA PRA USAR NO PRÓXIMO JOB”.</li>
+              <li><b>CTA secundário (último slide):</b> “Pra mais [tema], me segue” + 1 ação: “link na bio”, “me chama no direct”, “comenta ‘LISTA’”.</li>
+            </ul>
+            <div class="grid2" style="margin-top:10px;">
+              <div class="callout"><strong>Captação:</strong> “Comenta ‘KIT’ que eu mando o PDF/links.”</div>
+              <div class="callout"><strong>Serviço:</strong> “Quer isso aplicado na sua marca? Me chama no direct.”</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <div class="hd"><h2>Checklist</h2><span class="tag">Antes de publicar</span></div>
+          <div class="bd">
+            <ul class="list">
+              <li>☐ A capa comunica <b>benefício + formato</b> em 1 segundo?</li>
+              <li>☐ Está claro que é uma <b>lista</b> e quantos itens existem (N)?</li>
+              <li>☐ 1 item por slide, sem poluição (headline + label apenas)?</li>
+              <li>☐ Layout consistente: assinatura, seta, posição do label?</li>
+              <li>☐ Você inseriu 1 <b>pattern break</b> (slide invertido) para reset visual?</li>
+              <li>☐ CTA coerente: curadoria pede <b>salvar</b>; fechamento pede 1 próximo passo?</li>
+              <li>☐ Revisou legibilidade em tela pequena (contraste, margens seguras)?</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <div class="hd"><h2>Variações</h2><span class="tag">Como adaptar sem perder impacto</span></div>
+          <div class="bd">
+            <div class="grid2">
+              <div>
+                <div class="callout" style="margin-top:0;">
+                  <strong>Trocas rápidas (mesma estrutura):</strong>
+                  <ul class="list">
+                    <li><b>Fontes</b> → Paletas → Combinações de tipografia → Grids → Plugins → Atalhos → Sites de referência</li>
+                    <li><b>Church visuals</b> → Restaurante → Moda → SaaS → Clínica → Portfólio → E-commerce</li>
+                    <li><b>Lista de itens</b> → Lista de erros (1 erro por slide) → Lista de “boas práticas”</li>
+                  </ul>
+                </div>
+              </div>
+              <div>
+                <div class="callout" style="margin-top:0;">
+                  <strong>Variação de narrativa (sem mudar o design):</strong>
+                  <ul class="list">
+                    <li>“Do mais versátil ao mais ousado” (ordem cria curiosidade)</li>
+                    <li>“Se você quer [estilo], use…” (segmentação por objetivo)</li>
+                    <li>“Para [canal]: feed / embalagem / landing page” (contexto por slide)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="callout"><strong>Substituição com mesmo efeito de retenção:</strong> se não for fonte, mantenha “comparabilidade” visual: mesmas palavras/repetição + muda somente o item (ex.: mesma frase, muda a paleta; ou mesmo layout, muda o grid).</div>
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="card">
+          <div class="hd"><h2>Roteiro (copiável)</h2><span class="tag">Preencha os campos {}</span></div>
+          <div class="bd">
+            <textarea id="roteiro" spellcheck="false">TEMA DO CARROSSEL: {tema}
+OBJETIVO: curadoria/lista para gerar saves
+FORMATO: 1080x1350 | 8–10 slides | 1 item por slide
+
+SISTEMA VISUAL (fixo)
+- Headline gigante central (70–90% do slide)
+- Label do item (centro inferior): "{CATEGORIA} — {ITEM}"
+- Assinatura: canto inferior esquerdo
+- Seta: canto inferior direito (em todos)
+- Paleta: 1 cor forte + neutros | 1 slide invertido (pattern break)
+
+SLIDE 1 — CAPA (Hook + promessa)
+Headline: {PALAVRA FORTE} {OBJETO}
+Sub: "para {benefício} em {contexto}."
+Obs visual: opcional faixa foto P&B/texture + seta
+
+SLIDE 2 — CONTEXTO + ITEM 1 (entrega imediata)
+Headline: {TEMA/CONTEXTO curto}
+Label: {CATEGORIA} — {ITEM 1}
+(opcional microtexto bem discreto): "ideal para {uso 1}"
+
+SLIDE 3 — ITEM 2
+Headline: {mesma headline para comparação OU variação mínima}
+Label: {CATEGORIA} — {ITEM 2}
+(opcional): "ideal para {uso 2}"
+
+SLIDE 4 — ITEM 3
+Headline: {headline repetida}
+Label: {CATEGORIA} — {ITEM 3}
+
+SLIDE 5 — ITEM 4
+Headline: {headline repetida}
+Label: {CATEGORIA} — {ITEM 4}
+
+SLIDE 6 — ITEM 5 (opcional)
+Headline: {headline repetida}
+Label: {CATEGORIA} — {ITEM 5}
+
+SLIDE 7 — PATTERN BREAK (SAVE)
+Fundo: cor sólida forte / invertido
+Texto: "SALVA PRA CONSULTAR" (ou "GUARDA PRA USAR NO PRÓXIMO JOB")
+Extra: "Quer a lista completa? comenta {palavra-chave}" (opcional)
+
+SLIDE 8 — FECHAMENTO (CTA)
+Texto: "Pra mais {tema}, me segue."
+Linha 2 (escolha 1):
+- "Link na bio pra {recurso}" OU
+- "Me chama no direct pra {serviço}" OU
+- "Comenta '{palavra-chave}' que eu envio {bônus}" 
+
+LEGENDA (rápida)
+1) Promessa: "Se você quer {benefício}, aqui vão {N} {itens}."
+2) Instrução: "Salva pra consultar e me diz qual você mais curtiu."
+3) CTA: "Comenta '{palavra-chave}' pra eu te mandar {bônus}."
+
+HASHTAGS (base)
+#{nicho} #designgrafico #tipografia #direcaodearte #identidadevisual #branding #layout #designinspiration</textarea>
+            <div class="small">Dica: edite o roteiro e use o botão “Copiar roteiro”. Depois, leve para Figma/Canva mantendo o sistema (layout fixo + variação do item).</div>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <div class="hd"><h2>Estratégia de publicação</h2><span class="tag">Para performance</span></div>
+          <div class="bd">
+            <ul class="list">
+              <li><b>Primeiro slide:</b> título grande + número (N) aumenta clareza.</li>
+              <li><b>Meio do carrossel:</b> mantenha ritmo (mesmo layout) para acelerar passagem.</li>
+              <li><b>Slide “save”:</b> coloque no 70–85% do carrossel (antes do fim).</li>
+              <li><b>Comentário fixado:</b> “Quer a lista em PDF? comenta ‘LISTA’.”</li>
+            </ul>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const ta = document.getElementById('roteiro');
+    async function copyText(){
+      const text = ta.value;
+      try{
+        await navigator.clipboard.writeText(text);
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>{ btn.innerHTML = 'Copiar roteiro <span class="kbd">Ctrl/Cmd + C</span>'; }, 1400);
+      }catch(e){
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>{ btn.innerHTML = 'Copiar roteiro <span class="kbd">Ctrl/Cmd + C</span>'; }, 1400);
+      }
+    }
+    btn.addEventListener('click', copyText);
+  })();
+</script>
+</body>
+</html>
