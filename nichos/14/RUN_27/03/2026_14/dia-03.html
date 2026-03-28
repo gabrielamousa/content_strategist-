@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dia 3 — Social Media</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1624;
+      --panel2:#0c1320;
+      --text:#e9eefc;
+      --muted:#a7b2cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg,#20e3b2 0%, #2cccff 45%, #ffb020 100%);
+      --g2: linear-gradient(135deg,rgba(32,227,178,.22),rgba(44,204,255,.16),rgba(255,176,32,.14));
+      --green:#20e3b2;
+      --blue:#2cccff;
+      --orange:#ffb020;
+      --focus: rgba(44,204,255,.45);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(44,204,255,.18), transparent 60%),
+        radial-gradient(900px 500px at 85% 0%, rgba(32,227,178,.16), transparent 55%),
+        radial-gradient(900px 650px at 65% 110%, rgba(255,176,32,.11), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 56px}
+    .topbar{
+      display:flex;gap:14px;align-items:flex-start;justify-content:space-between;
+      padding:18px 18px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .topbar:before{
+      content:"";position:absolute;inset:-2px;
+      background: var(--g2);
+      opacity:.9;filter: blur(14px);
+      z-index:0;
+    }
+    .topbar > *{position:relative;z-index:1}
+    .meta{display:flex;flex-direction:column;gap:6px;min-width:280px}
+    .kicker{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-size:12.5px}
+    .pill{
+      padding:6px 10px;border-radius:999px;
+      border:1px solid var(--stroke2);
+      background: rgba(15,22,36,.55);
+      backdrop-filter: blur(8px);
+    }
+    .pill strong{color:var(--text)}
+    h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .title{
+      display:flex;flex-direction:column;gap:6px
+    }
+    .link{
+      color:var(--muted);
+      font-size:12.5px;
+      text-decoration:none;
+      border-bottom: 1px dashed rgba(167,178,204,.35);
+      width:fit-content;
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+    button{
+      appearance:none;border:1px solid var(--stroke2);
+      background: rgba(15,22,36,.62);
+      color:var(--text);
+      border-radius: 14px;
+      padding:10px 12px;
+      font-weight:650;
+      cursor:pointer;
+      transition:.18s ease;
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+    }
+    button:hover{transform: translateY(-1px);border-color: rgba(255,255,255,.22)}
+    button:focus{outline:none; box-shadow: 0 0 0 3px var(--focus), 0 10px 22px rgba(0,0,0,.25)}
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(32,227,178,.18), rgba(44,204,255,.14), rgba(255,176,32,.10));
+      border-color: rgba(255,255,255,.22);
+    }
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media(min-width: 980px){
+      .grid{grid-template-columns: 1.05fr .95fr}
+    }
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.018));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHeader{
+      padding:14px 16px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.07);
+      background: rgba(11,15,23,.35);
+    }
+    .cardHeader h2{margin:0;font-size:14px;letter-spacing:.25px}
+    .badge{
+      font-family:var(--mono);
+      font-size:11.5px;
+      color:var(--muted);
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(15,22,36,.55);
+    }
+    .cardBody{padding:14px 16px 16px}
+    .cardBody p{margin:0 0 10px;color:var(--text)}
+    .muted{color:var(--muted)}
+    ul{margin:10px 0 0 18px;padding:0}
+    li{margin:7px 0;color:var(--text)}
+    .hl{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:800;
+    }
+    .twoCol{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width: 980px){.twoCol{grid-template-columns:1fr 1fr}}
+    .script{
+      background: rgba(9,13,20,.55);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding:14px;
+      font-family:var(--mono);
+      font-size:12.8px;
+      line-height:1.55;
+      color:#dbe6ff;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .kbd{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:2px 6px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(15,22,36,.55);
+      color: var(--text);
+    }
+    .hr{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+    .mini{font-size:12.5px;color:var(--muted)}
+    .ok{color:rgba(32,227,178,.95);font-weight:700}
+    .warn{color:rgba(255,176,32,.95);font-weight:700}
+    .danger{color:rgba(255,95,95,.95);font-weight:700}
+    .footerNote{margin-top:14px;color:var(--muted);font-size:12.5px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="meta">
+        <div class="kicker">
+          <span class="pill"><strong>Nicho:</strong> Social Media</span>
+          <span class="pill"><strong>Dia:</strong> 3</span>
+          <span class="pill"><strong>Formato:</strong> Reels</span>
+          <span class="pill"><strong>Pilar:</strong> Passo a passo</span>
+        </div>
+        <div class="title">
+          <h1><span class="hl">Social media ≠ storymaker</span>: pare de misturar escopo e perder dinheiro</h1>
+          <a class="link" href="https://www.instagram.com/p/DVduqlpEbBe/" target="_blank" rel="noreferrer">Post original: https://www.instagram.com/p/DVduqlpEbBe/</a>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btnPrimary" id="copyBtn">Copiar roteiro</button>
+        <button id="copyHooksBtn">Copiar ganchos</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <div class="cardHeader">
+          <h2>Resumo</h2>
+          <span class="badge">Objetivo + promessa</span>
+        </div>
+        <div class="cardBody">
+          <p><span class="hl">Tema:</span> separação de escopo + precificação (social media vs captação/storymaker).</p>
+          <p><span class="hl">Promessa:</span> você sai com uma regra de bolso e um mini-cálculo para parar de “dar captação de brinde”.</p>
+          <div class="hr"></div>
+          <p class="muted"><span class="ok">Por que tende a performar:</span> identidade (tribo), polêmica controlada (sem atacar), exemplo numérico com “choque lógico” e framework salvável.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader">
+          <h2>Estrutura</h2>
+          <span class="badge">30–45s</span>
+        </div>
+        <div class="cardBody">
+          <ul>
+            <li><strong>Hook (0–2s):</strong> identidade + limite (sem hate).</li>
+            <li><strong>Clareza (2–6s):</strong> “A ≠ B” + consequência (dinheiro/energia).</li>
+            <li><strong>Diagnóstico (6–14s):</strong> 3–4 motivos que fazem você misturar.</li>
+            <li><strong>Virada (14–18s):</strong> reframe: oferecer ≠ incluir no pacote.</li>
+            <li><strong>Número (18–26s):</strong> exemplo que evidencia o gap.</li>
+            <li><strong>Framework (26–40s):</strong> passos simples de precificação.</li>
+            <li><strong>Regra final (40–45s):</strong> frase memorável “linha separada no orçamento”.</li>
+            <li><strong>CTA (últimos 2–3s):</strong> comentar palavra-chave / DM / salvar.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader">
+          <h2>Roteiro (reproduzível)</h2>
+          <span class="badge">texto para teleprompter</span>
+        </div>
+        <div class="cardBody">
+          <div id="script" class="script">[HOOK — 0–2s]
+“Eu sou social media e eu NÃO faço captação… mas também não sou hate de quem faz.”
+
+[CLAREZA — 2–6s]
+“Só que social media e storymaker são trabalhos diferentes. Escopo diferente = preço diferente.”
+
+[DIAGNÓSTICO — 6–14s]
+“E a gente mistura por 3 motivos: 
+1) insegurança de perder o cliente,
+2) medo do ‘ah, mas outro faz’,
+3) falta de clareza do que você entrega.”
+
+[VIRADA — 14–18s]
+“Você não tá cobrando barato. Você tá misturando função.”
+
+[EXEMPLO COM NÚMEROS — 18–26s]
+“Pensa comigo: se uma diária de captação custa R$ 1.500 e seu pacote mensal é R$ 2.000… como isso fecha?”
+
+[FRAMEWORK — 26–40s]
+“Pra precificar sem se lesar:
+1) lista seus custos fixos,
+2) calcula o tempo por cliente (horas/semana),
+3) define sua margem + sua expertise,
+4) ajusta por complexidade.
+Captação/storymaker entra como custo variável: ou o cliente paga à parte, ou você terceiriza e repassa.”
+
+[REGRA FINAL — 40–45s]
+“Trabalho diferente = linha separada no orçamento. Sempre.”
+
+[CTA — 45s]
+“Quer meu modelo de orçamento/planilha? Comenta ‘PREÇO’ que eu te mando.”</div>
+          <p class="footerNote">Dica de performance: mantenha cortes a cada 1–2 frases e faça uma micro-pausa antes do número (R$ 1.500 / R$ 2.000).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader">
+          <h2>Elementos visuais</h2>
+          <span class="badge">edição/UX</span>
+        </div>
+        <div class="cardBody">
+          <div class="twoCol">
+            <div>
+              <p><span class="hl">Tela / texto:</span></p>
+              <ul>
+                <li>Abertura: <span class="kbd">SOCIAL MEDIA ≠ STORYMAKER</span></li>
+                <li>Sub: <span class="kbd">Misturar escopo = perder dinheiro</span></li>
+                <li>Lista motivos: <span class="kbd">Insegurança</span> · <span class="kbd">Medo do cliente</span> · <span class="kbd">Concorrente</span></li>
+                <li>Números: <span class="kbd">Diária: R$1.500</span> → <span class="kbd">Pacote: R$2.000 (?)</span></li>
+                <li>Fecho: <span class="kbd">Linha separada no orçamento</span></li>
+              </ul>
+            </div>
+            <div>
+              <p><span class="hl">Captação / edição:</span></p>
+              <ul>
+                <li>Talking head plano médio/fechado, energia alta.</li>
+                <li>Jump cuts agressivos (tirar respiros).</li>
+                <li>Pop-up/tela dividida “Social Media” vs “Storymaker”.</li>
+                <li>B-roll rápido (câmera/filmagem) quando falar “captação”.</li>
+                <li>SFX leves entre tópicos (click/whoosh) + legenda dinâmica.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">pronto para testar</span>
+        </div>
+        <div class="cardBody">
+          <p class="muted">Use 1 hook + 1 reforço de consequência (tempo/dinheiro) + 1 pergunta.</p>
+          <div id="hooks" class="script">HOOKS (0–2s)
+1) “Eu sou social media e eu NÃO faço captação — e tá tudo bem.”
+2) “Você não cobra barato. Você mistura funções.”
+3) “Se você cobra R$X por diária, por que inclui no pacote por R$Y?”
+
+REFORÇOS (2–6s)
+• “Escopo diferente = preço diferente.”
+• “Se você não separa, você trabalha dobrado e lucra menos.”
+
+PERGUNTAS (ao longo)
+• “Como isso fecha na conta?”
+• “Você tá vendendo estratégia ou você tá virando equipe inteira?”
+
+FECHOS MEMORÁVEIS
+• “Trabalho diferente = linha separada no orçamento.”
+• “O que dá lucro é clareza de escopo.”</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader">
+          <h2>CTA</h2>
+          <span class="badge">1 ação</span>
+        </div>
+        <div class="cardBody">
+          <ul>
+            <li><strong>Comentário (alto volume):</strong> “Comenta <span class="kbd">PREÇO</span> que eu mando o modelo.”</li>
+            <li><strong>Direct (qualificar lead):</strong> “Me chama no direct com <span class="kbd">PRECIFICAR</span>.”</li>
+            <li><strong>Salvar (alcance sustentado):</strong> “Salva pra usar na próxima proposta.”</li>
+          </ul>
+          <p class="mini"><span class="warn">Regra:</span> escolha apenas 1 CTA por vídeo para reduzir fricção.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader">
+          <h2>Checklist de criação</h2>
+          <span class="badge">pré → gravação → edição</span>
+        </div>
+        <div class="cardBody">
+          <ul>
+            <li><strong>Pré-roteiro</strong>
+              <ul>
+                <li>[ ] Defina A vs B (duas funções que o mercado confunde).</li>
+                <li>[ ] Escreva uma frase de posicionamento sem ataque (“não faço, respeito”).</li>
+                <li>[ ] Liste 3–4 motivos reais (medo, insegurança, concorrência, clareza).</li>
+                <li>[ ] Crie 1 contraste numérico (gap) ou cenário absurdo.</li>
+                <li>[ ] Monte um mini-framework de 4–6 passos.</li>
+              </ul>
+            </li>
+            <li><strong>Gravação</strong>
+              <ul>
+                <li>[ ] Hook em até 2s (grave 3 variações).</li>
+                <li>[ ] Faça pausa de 0,3–0,6s antes do número.</li>
+                <li>[ ] Frases curtas (1 ideia por frase).</li>
+              </ul>
+            </li>
+            <li><strong>Edição</strong>
+              <ul>
+                <li>[ ] Cortes a cada 1–2 frases (ritmo).</li>
+                <li>[ ] Keywords na tela: “escopo”, “precificação”, “custo fixo”, “custo variável”.</li>
+                <li>[ ] Card “A ≠ B” + card com números.</li>
+                <li>[ ] CTA visível nos últimos 2–3s.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader">
+          <h2>Variações (para repostar sem cansar)</h2>
+          <span class="badge">mesma lógica, outro par</span>
+        </div>
+        <div class="cardBody">
+          <ul>
+            <li><strong>Gestor de tráfego ≠ social media</strong>: “anúncio não é ‘só apertar botão’ e calendário não é ‘só postar’.”</li>
+            <li><strong>Designer ≠ social media</strong>: “arte é execução; estratégia+gestão é outro produto.”</li>
+            <li><strong>Editor ≠ videomaker</strong>: “captação e edição são linhas diferentes.”</li>
+            <li><strong>Consultoria ≠ execução</strong>: “análise e direção ≠ mão na massa.”</li>
+            <li><strong>Versão B2B</strong>: use números de hora (ex.: 12h/mês + extras) em vez de diária.</li>
+          </ul>
+          <p class="mini"><span class="ok">Dica:</span> mantenha a mesma estrutura e troque apenas o par A/B + o exemplo numérico.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function(){
+      function copyFrom(elId, btn){
+        const el = document.getElementById(elId);
+        const text = el ? el.innerText : "";
+        if(!text) return;
+        navigator.clipboard.writeText(text).then(function(){
+          const prev = btn.textContent;
+          btn.textContent = "Copiado!";
+          setTimeout(function(){ btn.textContent = prev; }, 1200);
+        });
+      }
+      document.getElementById('copyBtn').addEventListener('click', function(){ copyFrom('script', this); });
+      document.getElementById('copyHooksBtn').addEventListener('click', function(){ copyFrom('hooks', this); });
+    })();
+  </script>
+</body>
+</html>
