@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha Reproduzível — Trend Alerts (Carrossel)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --g1: linear-gradient(90deg, #39FF88, #29B6F6, #FF9F1C);
+      --g2: linear-gradient(135deg, rgba(57,255,136,.18), rgba(41,182,246,.16), rgba(255,159,28,.14));
+      --shadow: 0 16px 40px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(41,182,246,.18), transparent 55%),
+        radial-gradient(1100px 650px at 85% 15%, rgba(57,255,136,.14), transparent 52%),
+        radial-gradient(900px 520px at 65% 90%, rgba(255,159,28,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1120px;margin:0 auto;padding:28px 18px 72px}
+
+    header{
+      position:relative;
+      border:1px solid var(--stroke);
+      background: var(--g2);
+      border-radius: calc(var(--radius) + 6px);
+      padding:22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background: var(--g1);
+      opacity:.12;
+      filter: blur(18px);
+      z-index:0;
+    }
+    .head{
+      position:relative;z-index:1;
+      display:flex;gap:18px;align-items:flex-start;justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .kicker{
+      font-family: var(--mono);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color: var(--muted);
+    }
+    .title{
+      margin:8px 0 6px;
+      font-size:26px;
+      line-height:1.15;
+      letter-spacing:-.02em;
+    }
+    .meta{
+      display:flex;flex-wrap:wrap;gap:10px 12px;
+      margin-top:10px;
+      color: var(--muted);
+      font-size:13px;
+    }
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      padding:6px 10px;
+      border-radius: 999px;
+      display:inline-flex;gap:8px;align-items:center;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:99px;
+      background: var(--g1);
+    }
+    .actions{display:flex;gap:10px;align-items:center}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: 12px;
+      padding:10px 12px;
+      font-weight:650;
+      font-size:13px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      display:inline-flex;gap:8px;align-items:center;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18)}
+    .btn.primary{background: rgba(41,182,246,.12); border-color: rgba(41,182,246,.28)}
+    .btn .ico{font-family:var(--mono);opacity:.9}
+
+    main{margin-top:16px;display:grid;grid-template-columns: 1fr;gap:14px}
+    .grid{display:grid;grid-template-columns: 1.35fr .9fr; gap:14px}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+
+    section.card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--radius);
+      padding:18px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.30);
+    }
+    h2{
+      margin:0 0 12px;
+      font-size:16px;
+      letter-spacing:.02em;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .h2accent{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight:780;
+    }
+    p{margin:0 0 10px;color: var(--muted);line-height:1.55}
+    ul{margin:0;padding-left:18px;color: var(--muted);line-height:1.55}
+    li{margin:6px 0}
+    .small{color: var(--muted2); font-size:12.5px; line-height:1.55}
+
+    .twoCols{display:grid;grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 720px){.twoCols{grid-template-columns:1fr}}
+
+    .callout{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      border-radius: var(--radius2);
+      padding:12px;
+    }
+    .callout strong{color: var(--text)}
+
+    pre{
+      margin:0;
+      border:1px solid var(--stroke);
+      border-radius: var(--radius2);
+      padding:14px;
+      background: rgba(0,0,0,.25);
+      overflow:auto;
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.5;
+      color: rgba(234,240,255,.92);
+      white-space:pre-wrap;
+    }
+
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .badge{
+      font-size:12px;
+      color: rgba(234,240,255,.86);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      padding:6px 10px;
+      border-radius:999px;
+      font-family: var(--mono);
+    }
+    .hr{height:1px;background: rgba(255,255,255,.10); margin:14px 0}
+
+    .toast{
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,14,30,.85);
+      backdrop-filter: blur(10px);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .18s ease, transform .18s ease;
+      font-size: 13px;
+      pointer-events:none;
+      max-width: 92vw;
+    }
+    .toast.show{opacity:1; transform: translateY(0)}
+    .toast .bar{height:2px;margin-top:8px;background: var(--g1);border-radius:99px;opacity:.9}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head">
+        <div>
+          <div class="kicker">Nicho: Social Media • Dia: 27</div>
+          <h1 class="title">Trend Alerts: template de carrossel escaneável (Parte 1)</h1>
+          <div class="meta">
+            <span class="pill"><span class="dot"></span><span>Pilar: Checklist</span></span>
+            <span class="pill"><span class="dot"></span><span>Formato: Carrossel</span></span>
+            <a class="pill" href="https://www.instagram.com/p/DVbtvaIjFOX/" target="_blank" rel="noopener noreferrer">
+              <span class="dot"></span><span>Post original</span>
+            </a>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn" type="button"><span class="ico">⧉</span>Copiar roteiro</button>
+          <a class="btn" href="#slides"><span class="ico">↧</span>Ver slides</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid">
+        <section class="card">
+          <h2><span class="h2accent">Resumo</span><span class="badge">reproduzível</span></h2>
+          <p>Modelo de carrossel “alerta/curadoria” com estética editorial e layout repetido para reduzir esforço cognitivo, aumentar retenção e acelerar produção. Funciona para tendências, ferramentas, ideias, erros e mini-playbooks.</p>
+          <div class="twoCols" style="margin-top:12px">
+            <div class="callout">
+              <p><strong>Promessa do formato:</strong> o leitor entende em segundos e consegue aplicar no contexto dele (com bullets por categoria).</p>
+            </div>
+            <div class="callout">
+              <p><strong>Loop de continuidade:</strong> usar “Parte 1/2” + numeração (1,2,3…) aumenta o “desliza até o fim”.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2><span class="h2accent">Metadados (calendário)</span></h2>
+          <div class="row">
+            <span class="badge">Título ≤ 70c</span>
+            <span class="badge">Pilar: Checklist</span>
+            <span class="badge">Formato: carrossel</span>
+          </div>
+          <div class="hr"></div>
+          <p class="small"><strong>Instrução curta:</strong> capa com teaser + 1 item por slide (O que é + Como usar) + final com CTA e palavra‑chave.</p>
+          <p class="small"><strong>Quando usar:</strong> quando você quer publicar com consistência (série) e entregar valor sem depender de texto longo na legenda.</p>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2><span class="h2accent">Estrutura</span><span class="badge">6–10 slides</span></h2>
+        <div class="twoCols">
+          <div>
+            <p><strong>Macro-ordem (recomendado):</strong></p>
+            <ul>
+              <li><strong>Slide 1 (Capa):</strong> Hook + promessa + contexto + teaser visual (2–3 mini-previews).</li>
+              <li><strong>Slides 2…N-1:</strong> 1 item por slide com o mesmo grid (título + subinfo + “O que é” + “Como usar”).</li>
+              <li><strong>Slide N (Final):</strong> CTA forte + palavra-chave + salvar/compartilhar.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Ritmo de leitura (regra prática):</strong></p>
+            <ul>
+              <li><strong>1s:</strong> captar o título do item.</li>
+              <li><strong>3s:</strong> entender “o que é”.</li>
+              <li><strong>6–10s:</strong> enxergar aplicação (bullets por categoria).</li>
+            </ul>
+            <div class="callout" style="margin-top:10px">
+              <p class="small"><strong>Substituição universal:</strong> troque “Trend” por “Ferramenta”, “Tática”, “Erro”, “Hook”, “Template”, “Checklist”, “Framework”. Mantém o impacto.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="slides">
+        <h2><span class="h2accent">Slides sugeridos (1..8)</span><span class="badge">exemplo editável</span></h2>
+        <ul>
+          <li><strong>Slide 1 — Capa:</strong> “[TEMA] [PERÍODO] — Alerts/Curadoria (Parte 1)” + 2–3 mini-previews.</li>
+          <li><strong>Slide 2 — Item 1:</strong> Nº + nome + subinfo (áudio/formato/canal) + “O que é” + “Como usar”.</li>
+          <li><strong>Slide 3 — Item 2:</strong> repetir o mesmo grid (mudando só conteúdo).</li>
+          <li><strong>Slide 4 — Item 3:</strong> repetir o mesmo grid.</li>
+          <li><strong>Slide 5 — Item 4:</strong> repetir o mesmo grid.</li>
+          <li><strong>Slide 6 — Item 5 (opcional):</strong> se tiver mais itens/menor densidade de texto.</li>
+          <li><strong>Slide 7 — Bônus (opcional):</strong> “Como escolher qual usar” (1 regra/critério) para aumentar aplicabilidade.</li>
+          <li><strong>Slide 8 — Final CTA:</strong> seguir + comentar palavra‑chave + salvar/compartilhar.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="h2accent">Roteiro</span><span class="badge">copiar e preencher</span></h2>
+        <pre id="scriptText">ROTEIRO — CARROSSEL “ALERTS/ CURADORIA” (REPRODUZÍVEL)
+
+[VARIÁVEIS]
+TEMA = __________________________
+PERÍODO (mês/semana/edição) = __________________________
+UNIDADE (trend/ferramenta/erro/tática/gancho) = __________________________
+OBJETIVO (engajar/vender/crescer/autoridade) = __________________________
+PALAVRA-CHAVE (comentário) = __________________________
+BRINDE (o que você entrega) = __________________________
+CATEGORIAS (3–4 perfis de público/negócio) = __________________________
+
+SLIDE 1 — CAPA
+Hook (linha 1): [TEMA] [PERÍODO]
+Promessa (linha 2): [ALERTS / CURADORIA / TENDÊNCIAS] para [OBJETIVO]
+Sinal de série: Parte 1/2
+Teaser: 2–3 mini-previews (prints/mini-cards) + “vem aí: #1, #2, #3…”
+
+SLIDE PADRÃO (repetir do 2 ao N-1)
+Título: [Nº]. [NOME DO ITEM]
+Subinfo (1 linha): FORMATO/CANAL/PRÉ-REQUISITO: ________
+
+O QUE É (2–4 linhas, simples):
+- Defina em linguagem comum.
+- Diga o “mecanismo” em 1 frase (por que isso chama atenção/funciona).
+
+COMO USAR COMO MARCA (2–4 bullets por categoria):
+- [Categoria 1]: verbo de ação + aplicação objetiva.
+- [Categoria 2]: verbo de ação + aplicação objetiva.
+- [Categoria 3]: verbo de ação + aplicação objetiva.
+(+ opcional) Armadilha/erro comum: 1 linha.
+(+ opcional) Variação: 1 linha (para quem não pode usar X).
+
+SLIDE FINAL — CTA
+Título: Siga @SEU_PERFIL para mais [alertas/guias/playbooks]
+Conversão (comentário): Comente “PALAVRA-CHAVE” que eu envio [BRINDE] (grátis).
+Distribuição: Salve • Compartilhe • Envie para um(a) amigo(a)
+</pre>
+        <div class="row" style="margin-top:12px">
+          <span class="badge">Dica: 1 ideia por bullet</span>
+          <span class="badge">Densidade: 35–55 palavras/slide</span>
+          <span class="badge">Padrão fixo = produção rápida</span>
+        </div>
+      </section>
+
+      <div class="grid">
+        <section class="card">
+          <h2><span class="h2accent">Elementos visuais</span><span class="badge">high-scan</span></h2>
+          <ul>
+            <li><strong>Grid fixo 2 colunas:</strong> esquerda (mockup/print), direita (texto com subtítulos).</li>
+            <li><strong>Numeração grande (1,2,3…):</strong> cria progressão.</li>
+            <li><strong>Subtítulos fixos:</strong> “O que é” e “Como usar” (o cérebro aprende o padrão).</li>
+            <li><strong>Direcionais:</strong> setas/rabiscos apontando para a parte “onde olhar”.</li>
+            <li><strong>Teaser na capa:</strong> mini-previews para antecipar prova visual.</li>
+          </ul>
+          <div class="callout" style="margin-top:10px">
+            <p class="small"><strong>Substituições com mesmo efeito:</strong> mockup de celular → miniatura do gráfico/print/capa do documento; setas manuscritas → highlights em marcador; “audio:” → “canal:”, “material:”, “gatilho:”.</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2><span class="h2accent">Copy e ganchos</span><span class="badge">modelos</span></h2>
+          <p><strong>Modelos de capa (escolha 1):</strong></p>
+          <ul>
+            <li>“[TEMA] de [PERÍODO] — Alerts/Curadoria (Parte 1)”</li>
+            <li>“5 [UNIDADES] que estão performando agora em [CANAL]”</li>
+            <li>“Se você faz [NICH0], use isso essa semana”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Modelos de título por item:</strong></p>
+          <ul>
+            <li>“[Nº]. O [NOME] que aumenta [métrica] em [contexto]”</li>
+            <li>“[Nº]. A variação de [coisa comum] que prende atenção”</li>
+            <li>“[Nº]. O jeito mais simples de [benefício] sem [barreira]”</li>
+          </ul>
+          <div class="callout" style="margin-top:10px">
+            <p class="small"><strong>Regra:</strong> título = rótulo memorável + resultado/uso. Texto = definição curta + aplicação por categoria.</p>
+          </div>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2><span class="h2accent">CTA</span><span class="badge">comentário + salvamento</span></h2>
+        <div class="twoCols">
+          <div class="callout">
+            <p><strong>CTA principal (seguir):</strong></p>
+            <ul>
+              <li>“Siga @perfil para mais [alertas/ideias/playbooks] semanalmente.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p><strong>CTA de conversão (palavra‑chave):</strong></p>
+            <ul>
+              <li>“Comente ‘TEMPLATE’ que eu envio o modelo editável.”</li>
+              <li>“Comente ‘GUIA’ que eu mando o checklist completo.”</li>
+              <li>“Comente ‘AULAS’ para receber a sequência gratuita.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="small"><strong>CTA secundária (distribuição):</strong> “Salve para usar na próxima semana” + “Envie para alguém do time” + “Compartilhe nos stories”.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="h2accent">Checklist</span><span class="badge">produção</span></h2>
+        <div class="twoCols">
+          <div>
+            <p><strong>Antes (estratégia):</strong></p>
+            <ul>
+              <li>Defina <strong>TEMA</strong> e <strong>PERÍODO</strong> (mês/semana/edição).</li>
+              <li>Escolha 4–6 itens (cada um precisa ter “o que é” + “como aplicar”).</li>
+              <li>Liste 3–4 <strong>categorias</strong> (ex.: serviço, e‑commerce, infoproduto, pessoal).</li>
+              <li>Decida o <strong>brinde</strong> e a <strong>palavra‑chave</strong> do CTA.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Durante (design e texto):</strong></p>
+            <ul>
+              <li>Use <strong>o mesmo grid</strong> em todos os slides.</li>
+              <li>Limite texto por slide (evite parágrafos longos).</li>
+              <li>Padronize subtítulos: <strong>“O que é”</strong> + <strong>“Como usar”</strong>.</li>
+              <li>Inclua 1 elemento direcional (seta/linha) por slide.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="twoCols" style="margin-top:12px">
+          <div>
+            <p><strong>Depois (publicação):</strong></p>
+            <ul>
+              <li>Legenda curta: 1 frase de promessa + lista dos itens + CTA da palavra‑chave.</li>
+              <li>Fixe o comentário com a palavra‑chave e a instrução.</li>
+              <li>Responda comentários com rapidez (primeira hora).</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Checklist de qualidade (pass/fail):</strong></p>
+            <ul>
+              <li>Consigo entender o item sem contexto? (sim/não)</li>
+              <li>Tem aplicação clara para pelo menos 2 categorias? (sim/não)</li>
+              <li>O slide final diz exatamente o que comentar? (sim/não)</li>
+              <li>A capa tem teaser visual e “Parte 1”? (sim/não)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="h2accent">Variações</span><span class="badge">mesmo impacto</span></h2>
+        <div class="twoCols">
+          <div>
+            <p><strong>Trocas de tema (mantendo o molde):</strong></p>
+            <ul>
+              <li><strong>Trends</strong> → “Ferramentas que aceleram [resultado]”.</li>
+              <li><strong>Trends</strong> → “Erros que travam [resultado] (e o que fazer)”.</li>
+              <li><strong>Trends</strong> → “Ganchos prontos para [objetivo]”.</li>
+              <li><strong>Trends</strong> → “Playbooks de 10 minutos para [situação]”.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Trocas de blocos (se não houver “áudio”):</strong></p>
+            <ul>
+              <li>“AUDIO:” → “CANAL:”, “ÂNGULO:”, “GATILHO:”, “OBJETIVO:”.</li>
+              <li>“Como usar como marca” → “Como aplicar amanhã” ou “Como adaptar ao seu nicho”.</li>
+              <li>Mockup celular → mini-captura do resultado (ex.: gráfico, antes/depois, print do roteiro).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:12px">
+          <p class="small"><strong>Para virar série:</strong> “Parte 1/2/3” + “Edição #01/#02” + manter a mesma estrutura semanal (ex.: toda segunda).</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    Roteiro copiado para a área de transferência.
+    <div class="bar"></div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+      let t;
+
+      function showToast(msg){
+        toast.firstChild.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(t);
+        t = setTimeout(()=>toast.classList.remove('show'), 1600);
+      }
+
+      btn.addEventListener('click', async () => {
+        const content = text.innerText;
+        try{
+          await navigator.clipboard.writeText(content);
+          showToast('Roteiro copiado para a área de transferência.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = content;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          try{ document.execCommand('copy'); showToast('Roteiro copiado (modo compatível).'); }
+          catch(err){ showToast('Não foi possível copiar automaticamente. Selecione e copie manualmente.'); }
+          document.body.removeChild(ta);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
