@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Roteiro Reproduzível — Dia 21</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B1228;
+      --text:#EAF0FF;
+      --muted:#AAB6D6;
+      --muted2:#7F8BB0;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 16px 48px rgba(0,0,0,.55);
+      --g1: linear-gradient(90deg,#2CE59D 0%, #1CB8FF 45%, #FFB33B 100%);
+      --g2: linear-gradient(135deg,#1CB8FF 0%, #7C3AED 55%, #FFB33B 110%);
+      --g3: linear-gradient(135deg,#2CE59D 0%, #1CB8FF 55%, #16A34A 120%);
+      --ok:#2CE59D;
+      --warn:#FFB33B;
+      --info:#1CB8FF;
+      --radius:18px;
+      --radius2:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --max: 1120px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 0%, rgba(28,184,255,.20), transparent 60%),
+        radial-gradient(1100px 700px at 90% 10%, rgba(44,229,157,.16), transparent 55%),
+        radial-gradient(900px 700px at 60% 100%, rgba(255,179,59,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:var(--max); margin:0 auto; padding:28px 18px 60px}
+
+    header{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      border-radius:calc(var(--radius) + 6px);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g2);
+      opacity:.16;
+      filter:blur(18px);
+      pointer-events:none;
+    }
+    .headTop{display:flex; gap:12px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; position:relative}
+    .kpis{display:flex; gap:10px; flex-wrap:wrap}
+    .pill{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .dot{width:8px;height:8px;border-radius:50%}
+    .dot.g{background:var(--ok)}
+    .dot.b{background:var(--info)}
+    .dot.o{background:var(--warn)}
+
+    h1{
+      margin:10px 0 6px;
+      font-size: clamp(22px, 2.2vw, 32px);
+      letter-spacing:-.02em;
+      position:relative;
+    }
+    .sub{margin:0; color:var(--muted); font-size:14px; line-height:1.5; position:relative}
+    .headActions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; position:relative}
+    .btn{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+      cursor:pointer;
+      transition:transform .08s ease, background .2s ease, border-color .2s ease;
+      text-decoration:none;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      font-size:13px;
+    }
+    .btn:hover{background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.18)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{background:linear-gradient(90deg, rgba(44,229,157,.18), rgba(28,184,255,.18), rgba(255,179,59,.16)); border-color:rgba(255,255,255,.14)}
+
+    main{margin-top:16px; display:grid; gap:14px}
+    .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card.compact{padding:14px}
+    .card:after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g1);
+      opacity:.06;
+      pointer-events:none;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      letter-spacing:-.01em;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      position:relative;
+    }
+    .tag{
+      font-family:var(--mono);
+      font-size:11px;
+      color:rgba(234,240,255,.92);
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.22);
+      padding:5px 8px;
+      border-radius:999px;
+    }
+    .card p, .card li{color:var(--muted); line-height:1.55; font-size:14px; position:relative}
+    ul{margin:10px 0 0; padding-left:18px}
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width: 720px){.cols{grid-template-columns:1fr}}
+
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.20);
+      border-radius:var(--radius2);
+      padding:12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .callout:before{
+      content:"";
+      position:absolute;
+      left:-30px; top:-30px;
+      width:120px; height:120px;
+      background:var(--g3);
+      opacity:.16;
+      filter:blur(14px);
+    }
+    .callout strong{color:var(--text)}
+
+    .codebox{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.28);
+      border-radius:var(--radius2);
+      padding:12px;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.9);
+      white-space:pre-wrap;
+      line-height:1.5;
+      position:relative;
+    }
+    .mini{color:var(--muted2); font-size:12px}
+    .hr{height:1px; background:rgba(255,255,255,.10); margin:12px 0}
+
+    .slides{counter-reset:slide}
+    .slideItem{
+      counter-increment:slide;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      border-radius:14px;
+      padding:12px;
+      margin:10px 0;
+      position:relative;
+    }
+    .slideItem:before{
+      content:counter(slide);
+      position:absolute;
+      top:10px; right:10px;
+      width:28px; height:28px;
+      border-radius:10px;
+      display:grid; place-items:center;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.9);
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    }
+    .slideItem h3{margin:0 0 6px; font-size:14px; color:var(--text); letter-spacing:-.01em}
+    .slideItem .line{margin:6px 0 0; color:var(--muted); font-size:13px}
+    .kbd{font-family:var(--mono); font-size:12px; padding:2px 6px; border-radius:8px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04)}
+
+    footer{margin-top:14px; color:var(--muted2); font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headTop">
+        <div>
+          <div class="kpis">
+            <div class="pill"><span class="dot g"></span><span><strong>Nicho</strong>: Social Media</span></div>
+            <div class="pill"><span class="dot b"></span><span><strong>Dia</strong>: 21</span></div>
+            <div class="pill"><span class="dot o"></span><span><strong>Formato</strong>: Carrossel</span></div>
+            <div class="pill"><span class="dot b"></span><span><strong>Pilar</strong>: Bastidores</span></div>
+          </div>
+          <h1>Processo + bastidores: entregas do 1º mês (reproduzível)</h1>
+          <p class="sub">Use este roteiro para mostrar o que você entrega no começo de um projeto (prova de método + posicionamento) e terminar com 1 objeção + CTA único.</p>
+          <p class="sub">Post original: <a href="https://www.instagram.com/p/DVwiqqEEbNT/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DVwiqqEEbNT/</a></p>
+        </div>
+        <div class="headActions">
+          <a class="btn" href="https://www.instagram.com/p/DVwiqqEEbNT/" target="_blank" rel="noreferrer">Abrir post</a>
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid">
+        <section class="card">
+          <h2><span class="tag">Resumo</span> O que este post faz</h2>
+          <div class="callout">
+            <p><strong>Objetivo:</strong> posicionamento + prova de método ("como eu faço") + conversão leve (seguir/salvar/DM).</p>
+            <p><strong>Por que funciona:</strong> transparência reduz insegurança, a lista cria sensação de checklist, e a objeção perto do final evita abandono.</p>
+            <p class="mini"><strong>Melhor para:</strong> social medias, estrategistas, designers, copywriters, gestores de tráfego, consultores e qualquer serviço com onboarding.</p>
+          </div>
+          <div class="hr"></div>
+          <h2><span class="tag">Princípio</span> Fórmula replicável</h2>
+          <ul>
+            <li><strong>Recorte claro</strong> (primeiros X dias / mês 1 / antes de Y).</li>
+            <li><strong>Tese forte</strong> (por que essa fase inicial define o resto).</li>
+            <li><strong>Prova em blocos</strong> (3–5 entregáveis/passos com benefício prático).</li>
+            <li><strong>Objeção</strong> ("tá, mas e ___?") + resposta curta + racional.</li>
+            <li><strong>Fechamento</strong> com ação concreta + CTA único.</li>
+          </ul>
+        </section>
+
+        <aside class="card compact">
+          <h2><span class="tag">Metadados</span> Para o calendário</h2>
+          <ul>
+            <li><strong>Título curto:</strong> Tudo que eu entrego no 1º mês com um cliente novo</li>
+            <li><strong>Instrução:</strong> Carrossel 7–9 slides com bastidores + entregáveis + objeção + CTA</li>
+            <li><strong>Pilar:</strong> Bastidores</li>
+            <li><strong>Formato:</strong> Carrossel</li>
+          </ul>
+          <div class="hr"></div>
+          <h2><span class="tag">Resultado</span> O que o leitor sente</h2>
+          <ul>
+            <li>“Ela/ele tem método.”</li>
+            <li>“Consigo visualizar a entrega.”</li>
+            <li>“Tenho menos medo de contratar.”</li>
+          </ul>
+        </aside>
+      </div>
+
+      <section class="card">
+        <h2><span class="tag">Estrutura</span> Sequência (7–9 slides)</h2>
+        <div class="cols">
+          <div>
+            <ul>
+              <li><strong>1. Capa:</strong> Hook + promessa + bastidor visual.</li>
+              <li><strong>2. Tese:</strong> crença central + consequência do erro.</li>
+              <li><strong>3–6. Entregáveis:</strong> 4 blocos (o que é + benefício + prova).</li>
+              <li><strong>7. Objeção:</strong> pergunta comum + resposta + racional.</li>
+              <li><strong>8. Fechamento:</strong> o que você faz na prática + CTA.</li>
+              <li><strong>(Opcional 9):</strong> mini-estudo/print/antes-depois.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p><strong>Dica para adaptar para qualquer tema:</strong> mantenha o mesmo “formato mental” — <span style="background:var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800;">recorte + tese + blocos + objeção + CTA</span>. Só troque os nomes dos entregáveis e a objeção final.</p>
+            <p class="mini">Se o seu serviço não tem “entregável”, use “decisões”, “checagens”, “critérios”, “rotina” ou “pilares”.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="tag">Slides sugeridos</span> (1..8) prontos para preencher</h2>
+        <div class="slides">
+          <div class="slideItem">
+            <h3>Slide 1 — CAPA (Hook + promessa)</h3>
+            <div class="line"><strong>Headline:</strong> “Tudo que eu <span class="kbd">faço/entrego</span> em <span class="kbd">[X dias / 1º mês]</span> para <span class="kbd">[tipo de cliente]</span>”</div>
+            <div class="line"><strong>Sub:</strong> “(e por que isso define <span class="kbd">[resultado maior]</span>)”</div>
+            <div class="line"><strong>Visual:</strong> selfie + tela (Notion/Docs/Canva) ou foto do setup + overlay escuro leve.</div>
+          </div>
+          <div class="slideItem">
+            <h3>Slide 2 — TESE (declaração forte)</h3>
+            <div class="line"><strong>Texto grande:</strong> “<span class="kbd">[Fase inicial]</span> é a parte mais importante de <span class="kbd">[processo]</span>.”</div>
+            <div class="line"><strong>Caixa curta (2–3 frases):</strong> “Se a base é rasa, você <span class="kbd">[consequência]</span>. E aí o projeto vira <span class="kbd">[dor]</span>.”</div>
+            <div class="line"><strong>Meta:</strong> criar urgência sem drama.</div>
+          </div>
+          <div class="slideItem">
+            <h3>Slide 3 — Entregável/Passo 1</h3>
+            <div class="line"><strong>Tag:</strong> “<span class="kbd">[Nome do bloco]</span>” (ex.: Diagnóstico / Mapa de objetivos / Auditoria)</div>
+            <div class="line"><strong>O que é:</strong> 1 frase objetiva.</div>
+            <div class="line"><strong>Pra quê:</strong> 1 benefício prático: “pra <span class="kbd">[ganho]</span>”.</div>
+            <div class="line"><strong>Prova:</strong> print real (documento, checklist, planilha).</div>
+          </div>
+          <div class="slideItem">
+            <h3>Slide 4 — Entregável/Passo 2</h3>
+            <div class="line"><strong>Tag:</strong> “<span class="kbd">[Padronização]</span>” (ex.: Tom de voz / Guia de respostas / Regras de conteúdo)</div>
+            <div class="line"><strong>Benefício:</strong> “reduz <span class="kbd">[ruído]</span> e evita <span class="kbd">[erro comum]</span>”.</div>
+          </div>
+          <div class="slideItem">
+            <h3>Slide 5 — Entregável/Passo 3</h3>
+            <div class="line"><strong>Tag:</strong> “<span class="kbd">[Direção]</span>” (ex.: Moodboard / Referências / Direção criativa)</div>
+            <div class="line"><strong>Benefício:</strong> alinhamento antes de produzir → menos retrabalho.</div>
+            <div class="line"><strong>Prova:</strong> mosaico de referências / frame do Figma/Canva.</div>
+          </div>
+          <div class="slideItem">
+            <h3>Slide 6 — Entregável/Passo 4</h3>
+            <div class="line"><strong>Tag:</strong> “Plano do mês: <span class="kbd">[tema/objetivo]</span>”</div>
+            <div class="line"><strong>Âncora:</strong> “não é só calendário; é o racional: <span class="kbd">[objetivo]</span> → <span class="kbd">[ideias]</span> → <span class="kbd">[métrica]</span>”.</div>
+          </div>
+          <div class="slideItem">
+            <h3>Slide 7 — OBJEÇÃO (virada)</h3>
+            <div class="line"><strong>Pergunta:</strong> “Tá, mas e <span class="kbd">[parte que fica de fora no começo]</span>?”</div>
+            <div class="line"><strong>Resposta curta:</strong> “Eu não <span class="kbd">[ação]</span> logo de cara.”</div>
+            <div class="line"><strong>Racional (2–4 linhas):</strong> depende de <span class="kbd">[rotina / participação / dados]</span>. Eu prefiro decidir com base em <span class="kbd">[critério]</span>.”</div>
+            <div class="line"><strong>Visual:</strong> slide de cor sólida + sua foto (humaniza e dá pausa).</div>
+          </div>
+          <div class="slideItem">
+            <h3>Slide 8 — FECHAMENTO + CTA</h3>
+            <div class="line"><strong>O que eu faço na prática:</strong> “<span class="kbd">[1 reunião / 1 call / 1 documento]</span> + <span class="kbd">[próximo passo]</span>.”</div>
+            <div class="line"><strong>CTA único:</strong> escolher 1: <span class="kbd">salvar</span> | <span class="kbd">seguir</span> | <span class="kbd">comentar palavra</span> | <span class="kbd">DM com palavra</span>.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="tag">Roteiro</span> Texto-base (copiar e preencher)</h2>
+        <div class="codebox" id="roteiroText">CARROSSEL — PROCESSO + BASTIDORES (7–9 SLIDES)
+
+[1] CAPA
+Tudo que eu [faço/entrego] em [X dias / 1º mês] para [tipo de cliente]
+(e por que isso define [resultado maior])
+
+[2] TESE
+[Etapa inicial] é a parte mais importante de [processo].
+Se a base é rasa, você [consequência].
+E aí o projeto vira [dor] disfarçada de “falta de tempo”.
+
+[3] BLOCO 1 — [Entregável/Passo]
+O que é: [1 frase].
+Pra quê: pra [benefício prático].
+Prova: [print/arquivo].
+
+[4] BLOCO 2 — [Entregável/Passo]
+O que é: [1 frase].
+Pra quê: reduz [ruído] e evita [erro comum].
+
+[5] BLOCO 3 — [Entregável/Passo]
+O que é: [1 frase].
+Pra quê: alinha antes de produzir e corta retrabalho.
+
+[6] BLOCO 4 — [Plano/Estratégia]
+Não é só um calendário.
+É o racional: [objetivo] → [mensagens] → [formatos] → [métrica].
+
+[7] OBJEÇÃO
+“Tá, mas e [objeção]?”
+Eu não [ação] logo de cara.
+Porque depende de [rotina/dados/participação].
+Eu decido com base em [critério].
+
+[8] FECHAMENTO + CTA
+Na prática, eu faço: [ação concreta] + [próximo passo].
+Se você quer [benefício], [CTA único].</div>
+        <p class="mini">Personalize: troque <span class="kbd">entregáveis</span> por <span class="kbd">decisões</span>, <span class="kbd">checagens</span> ou <span class="kbd">rituais</span> quando não existir “documento final”.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="tag">Elementos visuais</span> Direção de arte (high-tech + bastidores)</h2>
+        <div class="cols">
+          <div>
+            <ul>
+              <li><strong>Ritmo:</strong> foto real → cor sólida → foto real (evita monotonia).</li>
+              <li><strong>Provas:</strong> prints de Notion/Docs/Trello/Canva/Figma (borre dados sensíveis).</li>
+              <li><strong>Cartões:</strong> “documento” (fundo claro no card) dentro do fundo escuro do slide.</li>
+              <li><strong>Tags:</strong> etiquetas curtas (1–5 palavras) para cada bloco.</li>
+              <li><strong>Assinatura:</strong> nome @ pequeno, só na capa e/ou último slide.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout">
+              <p><strong>Composição por slide (camadas):</strong></p>
+              <ul>
+                <li>Fundo (foto ou cor sólida)</li>
+                <li>Overlay escuro leve (se tiver foto)</li>
+                <li>Tag do tópico (degradê/azul/verde/laranja)</li>
+                <li>Card “documento” com texto</li>
+                <li>(Opcional) mini card “por que importa?”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="tag">Copy e ganchos</span> Opções plug-and-play</h2>
+        <div class="cols">
+          <div>
+            <p><strong>Modelos de capa (escolha 1):</strong></p>
+            <ul>
+              <li>“Tudo que eu entrego no <strong>mês 1</strong> com um cliente novo”</li>
+              <li>“Meu checklist antes de <strong>[resultado]</strong>”</li>
+              <li>“O passo a passo que evita <strong>[dor]</strong> no começo do projeto”</li>
+              <li>“Como eu estruturo <strong>[processo]</strong> sem virar ‘post por post’”</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Frases de tese (escolha 1):</strong></p>
+            <ul>
+              <li>“O começo do projeto decide o ritmo do resto.”</li>
+              <li>“Sem base, você não tem consistência — só esforço.”</li>
+              <li>“Antes de publicar, eu organizo o que sustenta a entrega.”</li>
+              <li>“A estratégia vem antes do calendário.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="cols">
+          <div>
+            <p><strong>Microcuriosidade (para retenção):</strong></p>
+            <ul>
+              <li>“Antes do primeiro post, eu fecho 4 decisões que ninguém vê.”</li>
+              <li>“Se eu pular isso, o retrabalho vem em 2 semanas.”</li>
+              <li>“O entregável mais importante não é o que você imagina.”</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Objeções que encaixam em serviços:</strong></p>
+            <ul>
+              <li>“Tá, mas e <strong>Stories</strong>?”</li>
+              <li>“E se eu não tiver <strong>tempo</strong>?”</li>
+              <li>“E se eu não tiver <strong>conteúdo</strong>?”</li>
+              <li>“Dá pra começar sem <strong>[recurso]</strong>?”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="tag">CTA</span> Escolha 1 (não misturar)</h2>
+        <div class="cols">
+          <div>
+            <ul>
+              <li><strong>Topo de funil:</strong> “Siga pra ver mais bastidores e templates.”</li>
+              <li><strong>Engajamento:</strong> “Salva pra usar no próximo cliente.”</li>
+              <li><strong>Geração de leads:</strong> “Comenta <span class="kbd">CHECKLIST</span> que eu te mando a lista.”</li>
+              <li><strong>Venda:</strong> “Me chama no DM com <span class="kbd">PROPOSTA</span> pra orçamento.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p><strong>Regra:</strong> CTA tem que ser coerente com o nível de prova do post.</p>
+            <p class="mini">Se você mostrou prints e etapas claras, pode subir para “comenta/DM”. Se mostrou só visão geral, prefira “salvar/seguir”.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="tag">Checklist</span> Produção (criação + design + publicação)</h2>
+        <div class="cols">
+          <div>
+            <p><strong>Criação (conteúdo):</strong></p>
+            <ul>
+              <li>Definir <strong>Tema</strong>, <strong>recorte</strong> e <strong>promessa</strong> (1 frase).</li>
+              <li>Escrever a <strong>tese</strong> (1 frase forte + 2 frases de consequência).</li>
+              <li>Selecionar <strong>4 blocos</strong> (entregáveis/decisões/checagens).</li>
+              <li>Escrever benefício de cada bloco começando com “pra…”.</li>
+              <li>Escolher <strong>1 objeção</strong> real (a que mais trava compra).</li>
+              <li>Escolher <strong>1 CTA</strong> (apenas um).</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Design (carrossel):</strong></p>
+            <ul>
+              <li>Paleta: 2–3 cores fortes + neutros.</li>
+              <li>1 ideia por slide; texto escaneável.</li>
+              <li>Alternar <strong>foto</strong> ↔ <strong>cor sólida</strong> (ritmo).</li>
+              <li>Tag do tópico sempre no mesmo lugar.</li>
+              <li>Provas com dados sensíveis borrados.</li>
+              <li>Último slide: CTA grande + espaço negativo.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="cols">
+          <div>
+            <p><strong>Legenda:</strong></p>
+            <ul>
+              <li>Repetir a promessa da capa em 1 frase.</li>
+              <li>Listar os 4 blocos em bullets.</li>
+              <li>1 parágrafo: para quem é / quando usar.</li>
+              <li>Encerrar com o mesmo CTA do slide final.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Publicação:</strong></p>
+            <ul>
+              <li>Capa legível em miniatura (poucas palavras).</li>
+              <li>Adicionar ALT text e revisar ortografia.</li>
+              <li>Fixar nos comentários: palavra do CTA (se houver).</li>
+              <li>Responder comentários nas primeiras 2 horas.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="tag">Variações</span> Substituições com o mesmo impacto</h2>
+        <div class="cols">
+          <div>
+            <p><strong>Troque “entregáveis” por:</strong></p>
+            <ul>
+              <li><strong>Rituais</strong> (ex.: revisão semanal, call de alinhamento).</li>
+              <li><strong>Decisões</strong> (ex.: posicionamento, promessa, público).</li>
+              <li><strong>Critérios</strong> (ex.: o que entra/ não entra no calendário).</li>
+              <li><strong>Checks</strong> (ex.: checklist de qualidade antes de publicar).</li>
+            </ul>
+            <p><strong>Troque o recorte:</strong></p>
+            <ul>
+              <li>“Primeiros 7 dias” (mais curto e agressivo).</li>
+              <li>“Primeiras 2 semanas” (equilíbrio).</li>
+              <li>“Primeiro mês” (mais completo e consultivo).</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Adaptações por tema (exemplos):</strong></p>
+            <ul>
+              <li><strong>Gestão de comunidade:</strong> regras de moderação, guia de respostas, calendário de ativações, matriz de crises; objeção “e haters?”</li>
+              <li><strong>Tráfego pago:</strong> auditoria, tracking, estrutura de campanhas, criativos; objeção “quanto investir?”</li>
+              <li><strong>Copywriting:</strong> pesquisa, voz, ofertas, swipe file; objeção “preciso aparecer?”</li>
+              <li><strong>Design:</strong> briefing, referências, sistema de componentes, kit de posts; objeção “e alterações?”</li>
+            </ul>
+            <div class="callout">
+              <p><strong>Upgrade de prova:</strong> inclua 1 slide extra com “antes/depois” ou “métrica de baseline” para justificar o método.</p>
+              <p class="mini">Ex.: “baseline do perfil: alcance, salvamentos, cliques” → “meta do mês”.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div>Identidade sugerida: fundo escuro + cartões suaves + destaques em degradê (verde/azul/laranja) + ritmo de bastidores.</div>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('roteiroText');
+      btn.addEventListener('click', async () => {
+        const t = textEl.innerText;
+        try{
+          await navigator.clipboard.writeText(t);
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>btn.textContent=old, 1400);
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = t;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>btn.textContent=old, 1400);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
