@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Dia 9 — Curadoria semanal</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.08);
+    --stroke:rgba(255,255,255,.10);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.55);
+    --shadow: 0 14px 40px rgba(0,0,0,.55);
+    --r12:12px;
+    --r16:16px;
+    --r20:20px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    --grad: linear-gradient(90deg, #22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --grad2: radial-gradient(1200px 700px at 20% 10%, rgba(56,189,248,.18) 0%, rgba(34,197,94,.10) 35%, rgba(251,146,60,.08) 60%, rgba(0,0,0,0) 72%),
+             radial-gradient(900px 500px at 90% 20%, rgba(251,146,60,.10) 0%, rgba(56,189,248,.10) 40%, rgba(0,0,0,0) 70%);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background: var(--grad2), linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 64px}
+  .topbar{
+    display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+    padding:18px; border:1px solid var(--stroke); border-radius:var(--r20);
+    background:linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.04) 100%);
+    box-shadow: var(--shadow);
+  }
+  .kicker{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--muted2);
+  }
+  h1{
+    margin:10px 0 6px;
+    font-size:22px;
+    line-height:1.15;
+    font-weight:780;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.45;
+    max-width:72ch;
+  }
+  .badgeRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .badge{
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background:rgba(0,0,0,.18);
+    font-size:12px;
+    color:var(--muted);
+  }
+  .badge strong{color:var(--text); font-weight:700}
+  .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .btn{
+    background:rgba(255,255,255,.08);
+    border:1px solid var(--stroke);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:12px;
+    font-size:13px;
+    cursor:pointer;
+    transition:transform .12s ease, background .12s ease, border-color .12s ease;
+    user-select:none;
+  }
+  .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.16)}
+  .btnPrimary{
+    background: linear-gradient(180deg, rgba(56,189,248,.18) 0%, rgba(34,197,94,.12) 100%);
+    border-color: rgba(56,189,248,.25);
+  }
+  .link{
+    font-size:13px;
+    color:var(--muted);
+    border-bottom:1px dashed rgba(234,240,255,.35);
+  }
+  .grid{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap:16px;
+  }
+  @media (max-width: 940px){
+    .grid{grid-template-columns:1fr}
+  }
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,.045) 100%);
+    border:1px solid var(--stroke);
+    border-radius:var(--r20);
+    padding:18px;
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .card:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: radial-gradient(600px 280px at 18% 0%, rgba(34,197,94,.16), rgba(0,0,0,0) 55%),
+                radial-gradient(520px 240px at 85% 20%, rgba(56,189,248,.16), rgba(0,0,0,0) 60%),
+                radial-gradient(480px 220px at 70% 95%, rgba(251,146,60,.10), rgba(0,0,0,0) 55%);
+    opacity:.55;
+    pointer-events:none;
+  }
+  .card > *{position:relative}
+  .card h2{
+    margin:0 0 10px;
+    font-size:16px;
+    letter-spacing:.02em;
+  }
+  .hr{
+    height:1px;
+    background:rgba(255,255,255,.10);
+    margin:12px 0;
+  }
+  ul{margin:10px 0 0 18px; padding:0; color:var(--muted); line-height:1.55}
+  li{margin:6px 0}
+  .callout{
+    border:1px solid rgba(56,189,248,.25);
+    background: linear-gradient(90deg, rgba(34,197,94,.10), rgba(56,189,248,.10), rgba(251,146,60,.08));
+    border-radius:16px;
+    padding:12px 12px;
+    color:var(--text);
+  }
+  code, pre{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:rgba(234,240,255,.92);
+  }
+  pre{
+    margin:0;
+    background:rgba(0,0,0,.30);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:16px;
+    padding:14px;
+    overflow:auto;
+  }
+  .twoCol{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+  @media (max-width: 640px){.twoCol{grid-template-columns:1fr}}
+  .small{font-size:13px; color:var(--muted); line-height:1.55}
+  .pill{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    padding:7px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(0,0,0,.22);
+    margin:6px 8px 0 0;
+    color:rgba(234,240,255,.78);
+  }
+  .footerNote{margin-top:16px; color:var(--muted2); font-size:12px}
+  .toast{
+    position:fixed;
+    right:14px;
+    bottom:14px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.55);
+    color:rgba(234,240,255,.85);
+    box-shadow: var(--shadow);
+    opacity:0;
+    transform: translateY(10px);
+    transition: opacity .18s ease, transform .18s ease;
+    pointer-events:none;
+    font-size:13px;
+  }
+  .toast.show{opacity:1; transform: translateY(0)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div>
+        <div class="kicker">Nicho • Dia</div>
+        <h1>Social Media • Dia 9 — Curadoria semanal: as jogadas de marketing mais criativas</h1>
+        <p class="sub">Modelo reproduzível de carrossel estilo editorial: capa com promessa + itens curados com prova visual + slide final de engajamento e salvamento.</p>
+        <div class="badgeRow">
+          <span class="badge"><strong>Pilar:</strong> Autoridade</span>
+          <span class="badge"><strong>Formato:</strong> Carrossel (1080×1350)</span>
+          <span class="badge"><strong>Estrutura:</strong> 10 slides (1 + 8 + 1)</span>
+        </div>
+        <div class="footerNote">Post original: <a class="link" href="https://www.instagram.com/p/DWGwEDcju18/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DWGwEDcju18/</a></div>
+      </div>
+      <div class="actions">
+        <a class="btn" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/p/DWGwEDcju18/">Ver post</a>
+        <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <div class="callout small">
+          Você não está “ensinando” — está <strong>curando</strong>. A promessa é: “eu faço o filtro e trago só o que vale ver”. Isso gera autoridade + retenção (formato lista) + prova (prints) + comentário (pergunta final).
+        </div>
+        <div class="hr"></div>
+        <div class="twoCol">
+          <div>
+            <div class="pill">Objetivo</div>
+            <ul>
+              <li>Posicionar como referência (curadoria recorrente).</li>
+              <li>Gerar salvamentos (biblioteca de referências).</li>
+              <li>Gerar comentários com pergunta de baixa fricção.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="pill">Promessa replicável</div>
+            <ul>
+              <li>“As [jogadas/sacadas/ideias] mais [criativas/efetivas] da [semana/mês]”.</li>
+              <li>Critério explícito: <em>criatividade</em>, <em>resultado</em> ou <em>execução simples</em>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Metadados (para calendário)</h2>
+        <pre id="metaBlock">Título: Curadoria semanal: as jogadas de marketing mais criativas
+Pilar: Autoridade
+Formato: Carrossel
+Instrução curta: Carrossel 10 slides (capa + 8 itens com prova + CTA final).</pre>
+        <div class="hr"></div>
+        <div class="small">
+          <strong>Duração de produção</strong> (estimativa): 60–120 min (coleta de provas + copy + design).
+        </div>
+      </aside>
+
+      <section class="card">
+        <h2>Estrutura (macro)</h2>
+        <ul>
+          <li><strong>Slide 1 — Capa:</strong> promessa + recorte temporal + “edição #”. Colagem/grade de 4 imagens.</li>
+          <li><strong>Slides 2–9 — Itens (ranking da semana):</strong> 1 item por slide com texto curto + prova (print/frame/foto).</li>
+          <li><strong>Slide 10 — Encerramento/CTA:</strong> pergunta direta para comentar (+ instrução de salvar/mandar).</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="twoCol small">
+          <div>
+            <strong>Regra de ouro de retenção</strong>
+            <ul>
+              <li>1 ideia por slide.</li>
+              <li>Prova visual em todos os itens.</li>
+              <li>Ritmo: alternar fundo claro/escuro a cada 2–3 slides.</li>
+            </ul>
+          </div>
+          <div>
+            <strong>Grade/Composição</strong>
+            <ul>
+              <li>Texto à esquerda (55%) + mídia à direita (45%).</li>
+              <li>Margens amplas (8–12%).</li>
+              <li>Assinatura no topo (pequena, tracking alto).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Slides sugeridos (1..10)</h2>
+        <pre id="slidesBlock">SLIDE 1 — CAPA
+Topo: @SuaMarca • Curadoria
+Headline (3–5 linhas):
+“As jogadas de marketing mais criativas da semana”
+Sub: “Edição #__ • só referências que valem salvar”
+Fundo: colagem 2×2 (4 imagens relacionadas)
+
+SLIDE 2 — ITEM 1 (padrão)
+A/O [MARCA] [VERBO FORTE] [AÇÃO] para [OBJETIVO]:
+[detalhe em 1 linha].
+Prova: print/frame
+
+SLIDE 3 — ITEM 2 (padrão)
+Mesmo wireframe (consistência)
+
+SLIDE 4 — ITEM 3 (variação de ritmo)
+Fundo escuro + texto branco
+
+SLIDE 5 — ITEM 4 (detalhe/antes-depois opcional)
+Texto curto + prova com rótulo “ANTES/DEPOIS”
+
+SLIDE 6 — ITEM 5 (volta ao fundo claro)
+
+SLIDE 7 — ITEM 6 (print maior)
+Menos texto, mais prova
+
+SLIDE 8 — ITEM 7
+
+SLIDE 9 — ITEM 8 (o mais forte por último)
+O caso mais surpreendente/viral
+
+SLIDE 10 — CTA FINAL
+Pergunta grande: “Qual foi a melhor? Comenta o nº.”
+Linha menor: “Salva pra usar como referência na próxima campanha.”</pre>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro (texto reproduzível)</h2>
+        <div class="small">Use como base e apenas substitua os campos. Mantém concisão para leitura no 4:5.</div>
+        <div class="hr"></div>
+        <pre id="scriptBlock">CAPA (SLIDE 1)
+Título: As jogadas de marketing mais criativas da semana
+Subtítulo: Edição #__ • 8 referências com prova
+Rodapé: “Salva pra consultar depois”
+
+ITENS (SLIDES 2–9) — modelo curto
+“A/O {MARCA} {VERBO_FORTE} {AÇÃO_PRINCIPAL} para {OBJETIVO}:
+{DETALHE/PROVA EM 1 LINHA}.”
+
+Banco de verbos (escolha 1): lançou • transformou • criou • apostou • brincou com • convidou • recompensou • renomeou • fez collab • limitou edição • hackeou um hábito
+
+Fecho opcional (rodapé pequeno): “Você faria isso no seu nicho?”
+
+CTA (SLIDE 10)
+“Qual delas você gostou mais? Comenta o número 👇
+Quer a lista com links? Comenta ‘LINKS’.”</pre>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais (direção de arte)</h2>
+        <ul>
+          <li><strong>Formato:</strong> 1080×1350 (4:5).</li>
+          <li><strong>Estética:</strong> editorial/high-tech clean (muito respiro + grade fixa).</li>
+          <li><strong>Assinatura topo:</strong> caixa alta + tracking, pequeno e central.</li>
+          <li><strong>Destaques:</strong> 1 palavra por slide com cor/itálico (não usar 3 estilos diferentes).</li>
+          <li><strong>Provas:</strong> print com borda reta, sombra leve, mesma proporção entre slides.</li>
+          <li><strong>Ritmo:</strong> a cada 2–3 itens, inverter fundo (claro/escuro) mantendo tipografia.</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="small">
+          <strong>Dica prática:</strong> padronize a “janela de mídia” (mesmo tamanho e posição). Isso acelera criação e deixa o carrossel premium.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos (prontos)</h2>
+        <div class="twoCol">
+          <div>
+            <div class="pill">Títulos de capa (variações)</div>
+            <ul>
+              <li>“As sacadas de conteúdo mais inteligentes da semana”</li>
+              <li>“7 ideias de posts que mais funcionaram (edição #__)”</li>
+              <li>“As melhores campanhas do setor [X] — semana __”</li>
+              <li>“O que as marcas acertaram essa semana (com prints)”</li>
+            </ul>
+          </div>
+          <div>
+            <div class="pill">Ganchos por item</div>
+            <ul>
+              <li>“O pulo do gato: {INSIGHT}”</li>
+              <li>“Por que funcionou: {MOTIVO EM 5–8 PALAVRAS}”</li>
+              <li>“Simples e genial: {AÇÃO}”</li>
+              <li>“Eles transformaram {algo comum} em {resultado}”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="small">
+          <strong>Regra de copy:</strong> comece sempre com <em>quem</em> + <em>verbo</em> + <em>o que fez</em>. Depois, em 1 linha, o “porquê”.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <ul>
+          <li><strong>Engajamento (principal):</strong> “Qual foi a melhor? Comenta o nº.”</li>
+          <li><strong>Salvamento (reforço):</strong> “Salva pra usar como referência na próxima campanha.”</li>
+          <li><strong>Compartilhamento:</strong> “Manda pra um amigo que vive de referências.”</li>
+          <li><strong>Conversão leve:</strong> “Quer os links? Comenta ‘LINKS’.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Checklist de criação (reproduzível)</h2>
+        <div class="twoCol small">
+          <div>
+            <strong>Pré-produção (15–40 min)</strong>
+            <ul>
+              <li>Definir tema da curadoria: [ ]</li>
+              <li>Recorte: semana/mês/evento/nicho: [ ]</li>
+              <li>Quantidade de itens (5–8 ideal): [ ]</li>
+              <li>Critério de seleção (criatividade/resultado/execução): [ ]</li>
+              <li>Coletar provas (links/prints) de cada item: [ ]</li>
+            </ul>
+          </div>
+          <div>
+            <strong>Produção (40–80 min)</strong>
+            <ul>
+              <li>Montar capa (headline + edição + colagem): [ ]</li>
+              <li>Escrever 2 linhas por item (quem/ação/objetivo): [ ]</li>
+              <li>Padronizar janela de mídia (tamanho/posição): [ ]</li>
+              <li>Alternar fundo claro/escuro (ritmo): [ ]</li>
+              <li>Slide final com pergunta + instrução de salvar: [ ]</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="twoCol small">
+          <div>
+            <strong>Revisão (10 min)</strong>
+            <ul>
+              <li>1 ideia por slide (sem parágrafos longos): [ ]</li>
+              <li>Legibilidade no mobile (zoom 100%): [ ]</li>
+              <li>Destaque no máximo 1 palavra por slide: [ ]</li>
+              <li>Prova visível e contextualizada: [ ]</li>
+            </ul>
+          </div>
+          <div>
+            <strong>Publicação</strong>
+            <ul>
+              <li>Legenda curta (2–4 linhas) + CTA “comenta o nº”: [ ]</li>
+              <li>Fixar comentário pedindo “LINKS” (se aplicável): [ ]</li>
+              <li>Responder comentários nas 2 primeiras horas: [ ]</li>
+              <li>Salvar nos destaques “Referências/Curadoria”: [ ]</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Variações (para repetir sem cansar)</h2>
+        <ul>
+          <li><strong>Por nicho:</strong> “As melhores sacadas de [Odonto/Imobiliárias/SaaS] da semana”.</li>
+          <li><strong>Por formato:</strong> “As melhores capas de Reels da semana (com print)”.</li>
+          <li><strong>Por objetivo:</strong> “As campanhas mais simples de copiar (sem grandes budgets)”.</li>
+          <li><strong>Por série:</strong> “Edição #01..#52” (consistência = autoridade).</li>
+          <li><strong>Com nota rápida:</strong> adicionar “Por que funciona:” em 6 palavras no fim de cada item.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+<script>
+  (function(){
+    const copyBtn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
+    const script = document.getElementById('scriptBlock');
+    const slides = document.getElementById('slidesBlock');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), 1350);
+    }
+
+    copyBtn.addEventListener('click', async () => {
+      const text = [
+        'ROTEIRO (Dia 9 — Curadoria semanal)\n',
+        slides.innerText.trim(),
+        '\n\n',
+        script.innerText.trim()
+      ].join('');
+
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Roteiro copiado.');
+      }catch(e){
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Roteiro copiado (modo compatível).');
+      }
+    });
+  })();
+</script>
+</body>
+</html>
