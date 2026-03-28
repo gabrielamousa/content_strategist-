@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha reproduzível — Carrossel (Social Media · Dia 19)</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1626;
+      --panel2:#0c1322;
+      --text:#e8eefc;
+      --muted:#aab6d6;
+      --border:rgba(255,255,255,.10);
+      --border2:rgba(255,255,255,.16);
+      --shadow: 0 18px 40px rgba(0,0,0,.45);
+      --r:18px;
+      --g1: linear-gradient(135deg, #1ee3a1 0%, #26a6ff 45%, #ff8b2c 100%);
+      --g2: linear-gradient(90deg, rgba(30,227,161,.25), rgba(38,166,255,.2), rgba(255,139,44,.18));
+      --ok:#1ee3a1;
+      --warn:#ff8b2c;
+      --info:#26a6ff;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(38,166,255,.16), transparent 55%),
+        radial-gradient(1100px 650px at 90% 25%, rgba(30,227,161,.14), transparent 55%),
+        radial-gradient(900px 600px at 45% 90%, rgba(255,139,44,.10), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.35;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 64px;
+    }
+
+    header{
+      position:relative;
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: calc(var(--r) + 6px);
+      padding:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(18px);
+      opacity:.9;
+      pointer-events:none;
+    }
+
+    .head-inner{ position:relative; display:grid; gap:14px; }
+
+    .topline{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+    .chip{
+      border: 1px solid var(--border);
+      background: rgba(15,22,38,.55);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color: var(--muted);
+    }
+
+    .title-row{ display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; }
+    h1{
+      margin:0;
+      font-size: clamp(20px, 2.6vw, 30px);
+      letter-spacing:.2px;
+    }
+
+    .subtitle{
+      margin:6px 0 0;
+      color: var(--muted);
+      max-width: 72ch;
+      font-size: 14px;
+    }
+
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+
+    .btn{
+      border:1px solid var(--border2);
+      background: rgba(12,19,34,.65);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+      font-weight:600;
+      font-size: 13px;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.28); background: rgba(15,22,38,.72); }
+    .btn.primary{
+      position:relative;
+      border: 1px solid rgba(255,255,255,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      overflow:hidden;
+    }
+    .btn.primary:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.25;
+      filter: blur(10px);
+      pointer-events:none;
+    }
+    .btn.primary span{ position:relative; }
+
+    main{ margin-top:18px; display:grid; gap:14px; }
+
+    .grid{
+      display:grid;
+      gap:14px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 920px){
+      .grid{ grid-template-columns: 1.1fr .9fr; }
+    }
+
+    section.card{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+      border-radius: var(--r);
+      padding:16px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.35);
+    }
+
+    .card h2{
+      margin:0 0 10px;
+      font-size: 15px;
+      letter-spacing:.35px;
+      text-transform: uppercase;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color: rgba(232,238,252,.92);
+    }
+
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.05);
+      flex: 0 0 auto;
+    }
+
+    .muted{ color: var(--muted); }
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin: 12px 0;
+    }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:10px;
+    }
+    .k{
+      padding:10px;
+      border-radius: 14px;
+      background: rgba(15,22,38,.55);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .k .label{ font-size: 12px; color: var(--muted); }
+    .k .value{ margin-top:6px; font-size: 13px; font-weight:700; }
+
+    ul{ margin: 8px 0 0 18px; padding:0; }
+    li{ margin: 7px 0; color: rgba(232,238,252,.92); }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,16,28,.55);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(15,22,38,.45);
+    }
+
+    .tag i{ width:8px; height:8px; border-radius:99px; display:inline-block; background: var(--info); }
+    .tag.ok i{ background: var(--ok); }
+    .tag.warn i{ background: var(--warn); }
+
+    .codebox{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(9,13,24,.65);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+    }
+
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      color: rgba(232,238,252,.92);
+      font-size: 13px;
+      line-height: 1.45;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .two{
+      display:grid;
+      gap:14px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 920px){
+      .two{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .footer-note{ margin-top:14px; color: var(--muted); font-size: 12px; }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(15,22,38,.88);
+      border:1px solid rgba(255,255,255,.16);
+      padding: 10px 12px;
+      border-radius: 999px;
+      color: rgba(232,238,252,.92);
+      font-size: 13px;
+      box-shadow: var(--shadow);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{ opacity:1; transform: translateX(-50%) translateY(-4px); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-inner">
+        <div class="topline">
+          <div class="chips">
+            <span class="chip"><strong>Nicho:</strong> Social Media</span>
+            <span class="chip"><strong>Dia:</strong> 19</span>
+            <span class="chip"><strong>Formato:</strong> Carrossel</span>
+            <span class="chip"><strong>Pilar:</strong> Passo a passo</span>
+          </div>
+          <div class="actions">
+            <a class="btn" href="https://www.instagram.com/p/DWJs3r6j7Sw/" target="_blank" rel="noopener noreferrer"><span>Abrir post original</span></a>
+            <button class="btn primary" id="copyBtn" type="button"><span>Copiar roteiro</span></button>
+          </div>
+        </div>
+        <div class="title-row">
+          <div>
+            <h1>Onde você acha essas imagens lindas? (Template replicável)</h1>
+            <p class="subtitle">Roteiro reproduzível para responder uma pergunta recorrente com 3–4 soluções + prova + alerta + fechamento salvável. Adaptável para qualquer tema (ferramentas, processos, fontes, ideias, templates).</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid">
+        <section class="card">
+          <h2><span class="dot"></span>Resumo</h2>
+          <div class="kpi">
+            <div class="k"><div class="label">Estrutura</div><div class="value">7–8 slides</div></div>
+            <div class="k"><div class="label">Promessa</div><div class="value">Responder “de onde vem X”</div></div>
+            <div class="k"><div class="label">Conversão</div><div class="value">CTA por palavra-chave</div></div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="tag ok"><i></i>Use quando</div>
+            <p class="muted" style="margin:10px 0 0;">
+              Você quer entregar repertório (listas úteis) sem parecer “lista seca”: cada item vem com <strong>pra quem é</strong>, <strong>quando usar</strong> e <strong>ressalva</strong>. Funciona muito bem para Social Media (fontes, referências, bancos, apps, prompts, processos).
+            </p>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2><span class="dot"></span>Estrutura</h2>
+          <ul>
+            <li><strong>Slide 1:</strong> Hook em pergunta + promessa de responder em X itens.</li>
+            <li><strong>Slides 2–5:</strong> 4 soluções (a mais forte primeiro) com contexto e prova.</li>
+            <li><strong>Slide 6:</strong> Objeção/alerta (direitos, limites, risco) para credibilidade.</li>
+            <li><strong>Slide 7:</strong> Fechamento com mantra salvável + CTA.</li>
+            <li class="muted"><strong>Opcional Slide 8:</strong> Checklist-resumo + próximo passo (DM/lead magnet).</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="tag warn"><i></i>Regra de ouro</div>
+          <p class="muted" style="margin:10px 0 0;">1 ideia por slide + 1 frase “marcante” (opinião/contraste/mantra) para aumentar salvamentos.</p>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2><span class="dot"></span>Slides sugeridos (1..8)</h2>
+        <div class="two">
+          <div class="callout">
+            <p style="margin:0"><strong>1) HOOK + promessa</strong></p>
+            <ul>
+              <li><strong>Headline:</strong> “Onde você acha <strong>[RECURSO/RESULTADO]</strong>?”</li>
+              <li><strong>Subhead:</strong> “A pergunta que mais recebo — respondida em <strong>[3–5]</strong> fontes.”</li>
+              <li><strong>Micro-antecipação:</strong> “No fim tem o alerta que evita dor de cabeça.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><strong>2) Solução #1 (principal)</strong></p>
+            <ul>
+              <li><strong>Nome grande:</strong> [FERRAMENTA/MÉTODO 1]</li>
+              <li><strong>Por que é diferente:</strong> 1 frase (curadoria, velocidade, qualidade).</li>
+              <li><strong>2 benefícios + 1 caso de uso:</strong> “Uso quando…”</li>
+              <li><strong>Prova:</strong> print / antes-depois / mini exemplo.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><strong>3) Solução #2 (segmentada)</strong></p>
+            <ul>
+              <li><strong>Pra quem é:</strong> “Se você quer <strong>[OBJETIVO/ESTÉTICA]</strong>…”</li>
+              <li><strong>Como extrair valor:</strong> 1 dica prática (filtro, busca, padrão).</li>
+              <li><strong>Prova:</strong> print com setas/realce.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><strong>4) Solução #3 (óbvia + ressalva)</strong></p>
+            <ul>
+              <li><strong>Frase-chave:</strong> “Sim, funciona. Mas <strong>[CONDIÇÃO]</strong>.”</li>
+              <li><strong>Boas práticas:</strong> 2 bullets (o que fazer / o que evitar).</li>
+              <li><strong>Reforço:</strong> “Não copie, <strong>recombine</strong>.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><strong>5) Solução #4 (atalho moderno / tendência)</strong></p>
+            <ul>
+              <li><strong>Nome grande:</strong> [IA / AUTOMAÇÃO / ATALHO]</li>
+              <li><strong>Quando usar:</strong> “Quando você precisa de <strong>[RAPIDEZ/VOLUME]</strong>…”</li>
+              <li><strong>Segredo:</strong> “O resultado depende de <strong>[INPUT]</strong> (prompt, referências, direção).”</li>
+              <li><strong>Mini-CTA:</strong> “Comenta <strong>[PALAVRA]</strong> pra eu te mandar <strong>[RECURSO]</strong>.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><strong>6) Objeção/alerta crítico</strong></p>
+            <ul>
+              <li><strong>Título:</strong> “Tá, e <strong>[OBJEÇÃO]</strong>?”</li>
+              <li><strong>Bullets:</strong> licença, créditos, uso comercial, termos.</li>
+              <li><strong>Regra geral:</strong> “Se vai pra anúncio/produto, use fonte com licença.”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><strong>7) Fechamento memorável</strong></p>
+            <ul>
+              <li><strong>Mantra:</strong> “Não é magia. É <strong>[PILAR 1]</strong>, <strong>[PILAR 2]</strong> e <strong>[PILAR 3]</strong>.”</li>
+              <li><strong>Benefício de negócio:</strong> “O <strong>[RECURSO]</strong> certo acelera <strong>[RESULTADO]</strong>.”</li>
+              <li><strong>CTA:</strong> salvar + comentar palavra-chave.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><strong>8) (Opcional) Checklist + próximo passo</strong></p>
+            <ul>
+              <li><strong>Resumo:</strong> 4 fontes + 1 regra de segurança.</li>
+              <li><strong>Próximo passo:</strong> “Quer o template? Comenta/DM…”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Roteiro</h2>
+        <p class="muted" style="margin:0 0 10px">Copie e preencha. Pense em “fontes/recursos” (lugares), “métodos” (como faz) ou “atalhos” (ferramentas).</p>
+        <div class="codebox" id="scriptBox">
+          <pre id="scriptText">CARROSSEL (7 slides) — TEMPLATE
+
+[SLIDE 1 — HOOK]
+Headline: “Onde você encontra [RECURSO/RESULTADO]?”
+Subhead: “A pergunta que mais recebo — aqui vão [N] caminhos que eu uso.”
+Linha de retenção: “No fim tem o alerta que quase ninguém fala.”
+
+[SLIDE 2 — SOLUÇÃO 1 (principal)]
+Título grande: [MÉTODO/FONTE 1]
+1 linha (posicionamento): “O melhor pra [OBJETIVO] porque [DIFERENCIAL].”
+2 bullets (benefícios):
+- [Benefício 1]
+- [Benefício 2]
+Quando usar: “Uso quando [SITUAÇÃO].”
+Prova: print/mini exemplo.
+
+[SLIDE 3 — SOLUÇÃO 2 (segmentada)]
+Título grande: [MÉTODO/FONTE 2]
+Pra quem é: “Se você quer [PERFIL/ESTÉTICA/RESULTADO]…”
+Como usar: “Procure por [PALAVRAS-CHAVE/FILTRO/PADRÃO].”
+Prova: print destacado.
+
+[SLIDE 4 — SOLUÇÃO 3 (óbvia + ressalva)]
+Título grande: [MÉTODO/FONTE 3]
+Frase de contraste: “Sim, ainda funciona. Mas [RESSALVA].”
+Boas práticas:
+- Faça: [Boa prática]
+- Evite: [Erro comum]
+
+[SLIDE 5 — SOLUÇÃO 4 (atalho moderno)]
+Título grande: [IA/AUTOMAÇÃO/ATALHO]
+Contexto: “Quando você precisa de [VELOCIDADE/VOLUME] sem perder [QUALIDADE]…”
+Dica prática: “O segredo é entrar com [REFERÊNCIAS/DIREÇÃO/PROMPT].”
+Mini-CTA: “Comenta [PALAVRA] que eu mando [RECURSO].”
+
+[SLIDE 6 — ALERTA / OBJEÇÃO]
+Título: “Tá, e [OBJEÇÃO]?”
+Regras rápidas:
+- [Regra 1: licença/uso comercial/créditos]
+- [Regra 2: o que pode e o que não pode]
+- [Regra 3: onde checar termos]
+Fecho: “Se tiver dúvida, escolha a opção com licença.”
+
+[SLIDE 7 — FECHAMENTO]
+Mantra: “Não é magia. É [PILAR 1] + [PILAR 2] + [PILAR 3].”
+Benefício: “O [RECURSO] certo deixa seu conteúdo mais [CLARO/PROFISSIONAL] e melhora [MÉTRICA].”
+CTA: “Salva pra usar na próxima vez e comenta [PALAVRA] pra receber [RECURSO].”</pre>
+        </div>
+        <p class="footer-note">Dica: mantenha nomes (ferramentas/métodos) em 1–2 palavras e repita o padrão visual para leitura rápida.</p>
+      </section>
+
+      <div class="grid">
+        <section class="card">
+          <h2><span class="dot"></span>Elementos visuais</h2>
+          <ul>
+            <li><strong>Capítulos por cor:</strong> 1 cor dominante por slide (consistência + ritmo).</li>
+            <li><strong>Texto em caixa clara:</strong> blocos com alto contraste para leitura rápida.</li>
+            <li><strong>Prova visual:</strong> prints/recortes em 3+ slides (aumenta confiança).</li>
+            <li><strong>Destaques:</strong> tarjas para palavras-chave (nome da fonte, “pra quem é”, “mas…”).</li>
+            <li><strong>Unidade:</strong> leve grain/ruído e mesma margem/padrão de grid.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="tag"><i></i>Grid recomendando</div>
+          <p class="muted" style="margin:10px 0 0;">Topo: título gigante. Meio: subhead em caixa. Centro/baixo: print. Rodapé: frase curta opinativa/CTA.</p>
+        </section>
+
+        <section class="card">
+          <h2><span class="dot"></span>Copy e ganchos</h2>
+          <div class="callout">
+            <p style="margin:0"><strong>Headlines (plug-and-play)</strong></p>
+            <ul>
+              <li>“De onde eu tiro <strong>[RECURSO]</strong> que parece caro?”</li>
+              <li>“Como eu faço <strong>[RESULTADO]</strong> sem <strong>[DOR]</strong>?”</li>
+              <li>“A pergunta que mais recebo: <strong>[PERGUNTA]</strong>”</li>
+              <li>“O que ninguém te conta sobre <strong>[TEMA]</strong> (mas você precisa saber)”</li>
+            </ul>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <p style="margin:0"><strong>Frases de contraste (retém atenção)</strong></p>
+            <ul>
+              <li>“Sim, dá pra usar. Mas <strong>[CONDIÇÃO]</strong>.”</li>
+              <li>“Não é a ferramenta — é <strong>[HABILIDADE]</strong>.”</li>
+              <li>“Você não precisa de mais opções. Precisa de <strong>critério</strong>.”</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <h2><span class="dot"></span>CTA</h2>
+          <ul>
+            <li><strong>CTA principal:</strong> “Comenta <strong>[PALAVRA]</strong> que eu te mando <strong>[RECURSO]</strong> (de graça).”</li>
+            <li><strong>CTA de retenção:</strong> “Salva pra usar quando for <strong>[SITUAÇÃO]</strong>.”</li>
+            <li><strong>CTA de compartilhamento:</strong> “Envia pra alguém que vive perguntando <strong>[PERGUNTA]</strong>.”</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout">
+            <div class="tag ok"><i></i>Palavra-chave que converte</div>
+            <p class="muted" style="margin:10px 0 0;">Escolha uma palavra <strong>curta</strong> e alinhada ao benefício (ex.: IMAGEM, LISTA, TEMPLATE, ROTEIRO). Mantenha igual no carrossel e na legenda.</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2><span class="dot"></span>Checklist</h2>
+          <ul>
+            <li>[ ] Hook em pergunta + promessa em 1 frase</li>
+            <li>[ ] 4 soluções: 1 principal + 2 segmentadas + 1 “atalho”</li>
+            <li>[ ] Em cada solução: <strong>pra quem é</strong> + <strong>quando usar</strong> + <strong>prova</strong></li>
+            <li>[ ] 1 ressalva forte (contraste “sim, mas…”) em pelo menos 1 slide</li>
+            <li>[ ] 1 slide de objeção/risco com regra clara (autoridade)</li>
+            <li>[ ] Fechamento com mantra (3 pilares) + CTA por palavra</li>
+            <li>[ ] Legibilidade: 1 ideia por slide, caixas de texto claras</li>
+            <li>[ ] Consistência: cores-por-capítulo e mesmos alinhamentos</li>
+          </ul>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2><span class="dot"></span>Variações</h2>
+        <div class="two">
+          <div class="callout">
+            <p style="margin:0"><strong>Trocas que mantêm o mesmo impacto</strong></p>
+            <ul>
+              <li><strong>“Imagens” →</strong> ideias de conteúdo, legendas, trends, prompts, referências, capas, hooks, hashtags, calendário.</li>
+              <li><strong>“Ferramentas” →</strong> processos, rotinas, frameworks, templates, bancos, comunidades, newsletters, pesquisas.</li>
+              <li><strong>“Direitos autorais” →</strong> limites de tempo, orçamento, segurança, ética, consistência, qualidade, compliance.</li>
+              <li><strong>“IA” →</strong> automação, atalhos, bundles, plugins, no-code, integrações.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <p style="margin:0"><strong>Modelos alternativos de estrutura</strong></p>
+            <ul>
+              <li><strong>8 slides:</strong> Hook → Contexto → 3 métodos → Objeção → Checklist → CTA.</li>
+              <li><strong>“Top 3” (6 slides):</strong> Hook → #1 → #2 → #3 → Alerta → CTA/mantra.</li>
+              <li><strong>Mito vs Verdade:</strong> Hook → Mito → Verdade → Como fazer → Erro comum → CTA.</li>
+              <li><strong>Prova/Autoridade:</strong> Hook → O que eu uso → Resultado → Como replicar → Limites → CTA.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <p style="margin:0"><strong>Exemplos de adaptação (Social Media)</strong></p>
+          <ul>
+            <li>“Onde eu acho ideias de Reels que performam?” (4 fontes + como filtrar + alerta de copiar)</li>
+            <li>“De onde saem essas capas de carrossel ‘high-tech’?” (bibliotecas, Figma, packs, IA + licença)</li>
+            <li>“Como eu monto um calendário editorial sem travar?” (framework, template, rotina, automação + limite realista)</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg || 'Copiado.';
+        toast.classList.add('show');
+        setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      async function copy(){
+        const value = text.innerText;
+        try{
+          await navigator.clipboard.writeText(value);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = value;
+          ta.style.position='fixed';
+          ta.style.opacity='0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          try{
+            document.execCommand('copy');
+            showToast('Roteiro copiado.');
+          } catch(err){
+            showToast('Não foi possível copiar.');
+          }
+          document.body.removeChild(ta);
+        }
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
