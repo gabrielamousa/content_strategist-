@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 24 — Template de Carrossel (Homenagem + Aprendizados)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.56);
+      --shadow: 0 16px 40px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --grad: linear-gradient(90deg, #22c55e 0%, #3b82f6 45%, #f59e0b 100%);
+      --grad2: radial-gradient(1000px 600px at 10% 0%, rgba(34,197,94,.22), transparent 60%),
+               radial-gradient(900px 600px at 90% 10%, rgba(59,130,246,.22), transparent 60%),
+               radial-gradient(900px 600px at 50% 100%, rgba(245,158,11,.18), transparent 55%);
+      --ok:#22c55e;
+      --info:#3b82f6;
+      --warn:#f59e0b;
+      --danger:#fb7185;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--text);
+      background:
+        var(--grad2),
+        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 65%, #050712 100%);
+      min-height:100vh;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    .wrap{
+      max-width:1120px;
+      margin:0 auto;
+      padding:28px 18px 56px;
+    }
+
+    header{
+      position:relative;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.02) 100%);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius2);
+      overflow:hidden;
+    }
+
+    .header-inner{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      padding:20px 20px 18px;
+    }
+
+    .topline{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .chips{ display:flex; gap:10px; flex-wrap:wrap; }
+    .chip{
+      border:1px solid var(--stroke2);
+      background:rgba(255,255,255,.04);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .chip strong{ color:var(--text); font-weight:650; }
+
+    .title{
+      font-size:22px;
+      line-height:1.15;
+      margin:0;
+      letter-spacing:-.4px;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:13.5px;
+      line-height:1.45;
+      max-width:78ch;
+    }
+
+    .header-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-start;
+      margin-top:2px;
+    }
+
+    .btn{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke2);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:650;
+      font-size:13px;
+      transition:transform .08s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.22); }
+    .btn:active{ transform:translateY(1px); }
+
+    .btn-primary{
+      border:0;
+      background:var(--grad);
+      color:#081023;
+      box-shadow: 0 10px 26px rgba(34,197,94,.18), 0 10px 26px rgba(59,130,246,.14), 0 10px 26px rgba(245,158,11,.12);
+    }
+    .btn-primary:hover{ filter:brightness(1.02); }
+
+    .divider{
+      height:1px;
+      background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,.12) 20%, rgba(255,255,255,.12) 80%, transparent 100%);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      margin-top:14px;
+    }
+
+    @media (max-width: 980px){
+      .grid{ grid-template-columns:1fr; }
+    }
+
+    section.card{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,.02) 100%);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+
+    .card-h{
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.02);
+    }
+
+    .card-h h2{
+      margin:0;
+      font-size:14px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:rgba(234,240,255,.86);
+      font-weight:800;
+    }
+
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(0,0,0,.78);
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--grad);
+    }
+
+    .card-b{ padding:14px 16px 16px; }
+
+    .p{ margin:0; color:var(--muted); font-size:13.5px; line-height:1.55; }
+    .p + .p{ margin-top:10px; }
+
+    .list{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      font-size:13.5px;
+      line-height:1.55;
+    }
+    .list li{ margin:8px 0; }
+
+    .kpi{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+    @media (max-width: 520px){
+      .kpi{ grid-template-columns:1fr; }
+    }
+    .k{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:12px;
+    }
+    .k .t{ font-size:12px; color:var(--muted2); letter-spacing:.08em; text-transform:uppercase; margin:0 0 6px 0; }
+    .k .v{ margin:0; font-weight:850; letter-spacing:-.2px; }
+
+    .code{
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color:rgba(234,240,255,.86);
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .cols{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 840px){
+      .cols{ grid-template-columns:1fr; }
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:12.5px;
+      margin:6px 6px 0 0;
+    }
+    .dot{ width:8px; height:8px; border-radius:99px; display:inline-block; }
+
+    .dot.ok{ background:var(--ok); }
+    .dot.info{ background:var(--info); }
+    .dot.warn{ background:var(--warn); }
+    .dot.danger{ background:var(--danger); }
+
+    .hr{ height:1px; background:rgba(255,255,255,.08); margin:14px 0; }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background:rgba(10,14,28,.85);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      font-size:13px;
+      display:none;
+      max-width:min(560px, calc(100vw - 26px));
+    }
+    .toast strong{ color:#fff; }
+
+    .footer{
+      color:rgba(234,240,255,.52);
+      font-size:12px;
+      margin-top:14px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="header-inner">
+        <div class="topline">
+          <div class="chips">
+            <div class="chip"><strong>Nicho:</strong> Social Media</div>
+            <div class="chip"><strong>Dia:</strong> 24</div>
+            <div class="chip"><strong>Formato:</strong> Carrossel</div>
+            <div class="chip"><strong>Pilar:</strong> Checklist</div>
+          </div>
+          <a class="chip" href="https://www.instagram.com/p/DVn2hMcEWpr/" target="_blank" rel="noreferrer">Post original ↗</a>
+        </div>
+
+        <h1 class="title">Carrossel de homenagem: lista curada + aprendizados (template)</h1>
+        <p class="subtitle">Modelo reproduzível para qualquer tema: você entrega uma lista curada (pessoas, cases, campanhas, erros, ferramentas) e transforma cada item em um aprendizado acionável — com visual editorial e CTA social no final.</p>
+
+        <div class="header-actions">
+          <button class="btn btn-primary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="copyCaptionBtn">Copiar copy sugerida</button>
+          <button class="btn" id="copyChecklistBtn">Copiar checklist</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="header-inner" style="padding-top:14px;">
+        <div class="kpi">
+          <div class="k"><p class="t">Quantidade</p><p class="v">6–8 slides</p></div>
+          <div class="k"><p class="t">Estrutura</p><p class="v">Capa + 5 itens + CTA</p></div>
+          <div class="k"><p class="t">Leitura</p><p class="v">1 ideia por caixa</p></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="card-h">
+          <h2>Resumo</h2>
+          <span class="badge">Template</span>
+        </div>
+        <div class="card-b">
+          <p class="p">Este formato funciona porque mistura <strong>curadoria (autoridade)</strong> + <strong>mini-histórias (emoção)</strong> + <strong>aprendizado aplicável (valor)</strong>. O leitor passa os slides para descobrir “quem entra na lista” e “o que roubar disso”.</p>
+          <div class="hr"></div>
+          <p class="p"><strong>Quando usar:</strong> homenagens, referências, “o que aprendi com…”, análise de campanhas, erros que viraram método, clientes/cases, ferramentas que mudaram o jogo.</p>
+          <div>
+            <span class="pill"><span class="dot ok"></span> Curadoria</span>
+            <span class="pill"><span class="dot info"></span> Prova humana</span>
+            <span class="pill"><span class="dot warn"></span> Takeaway por slide</span>
+            <span class="pill"><span class="dot danger"></span> CTA social</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h">
+          <h2>Estrutura</h2>
+          <span class="badge">Sequência</span>
+        </div>
+        <div class="card-b">
+          <ol class="list">
+            <li><strong>Slide 1 (Capa):</strong> hook + promessa + recorte anti-clichê.</li>
+            <li><strong>Slides 2–6 (Itens):</strong> 1 item por slide com arco fixo: Quem é → Tese → Prova → Aprendizado → Fecho.</li>
+            <li><strong>Slide 7 (Fechamento):</strong> amarração emocional + CTA fácil (marcar, comentar, salvar).</li>
+            <li><strong>(Opcional) Slide 8:</strong> “bônus” com regra do jogo / resumo em 3 bullets / pergunta final.</li>
+          </ol>
+          <div class="hr"></div>
+          <p class="p"><strong>Regra de consistência:</strong> mesmo layout em todos os slides (faixa de nome + 2–3 caixas de texto). A variação fica nas fotos/prints e na cor da faixa de nome.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h">
+          <h2>Slides sugeridos (1..7)</h2>
+          <span class="badge">1080×1350</span>
+        </div>
+        <div class="card-b">
+          <div class="code" id="slidesText">SLIDE 1 — CAPA
+H1: “[X] que me fazem [transformação desejada] no que eu faço.”
+Sub: “(e não, não é uma lista genérica de [clichê do nicho])”
+Assinatura: @seuperfil
+
+SLIDE 2 — ITEM 1
+Faixa (nome): [NOME/REFERÊNCIA 1]
+Caixa (tese): “Me lembra que [princípio].”
+Caixa (prova): “Porque [detalhe concreto].”
+Caixa (aprendizado): “Aplicação: faça [ação simples].”
+Fecho: “[frase curta memorável].”
+
+SLIDE 3 — ITEM 2 (mesma estrutura)
+SLIDE 4 — ITEM 3 (mesma estrutura)
+SLIDE 5 — ITEM 4 (mesma estrutura)
+SLIDE 6 — ITEM 5 (mesma estrutura)
+
+SLIDE 7 — FECHAMENTO + CTA
+Caixa 1: “Hoje eu quis [intenção do post em 1 linha].”
+Caixa 2: “Se isso te ajudou, salva pra revisitar.”
+Faixa CTA: “Agora: marca/comenta [ação curta].”</div>
+          <p class="p" style="margin-top:10px; color:rgba(234,240,255,.62)">Dica: se faltar foto do “item”, substitua por <strong>print</strong> (campanha, feed, story, gráfico) ou <strong>mockup</strong> (antes/depois).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h">
+          <h2>Roteiro (preenchível)</h2>
+          <span class="badge">Copie e edite</span>
+        </div>
+        <div class="card-b">
+          <div class="code" id="scriptText">TEMA CENTRAL: [ex.: referências / campanhas / clientes / erros / ferramentas]
+CRITÉRIO DA LISTA: [por que estes itens? ex.: “mudaram minha régua de qualidade”]
+QUANTIDADE: 5 itens
+
+CAPA
+- Promessa: “Hoje eu vou te mostrar [lista] que me fazem [resultado].”
+- Anti-clichê: “Sem lista genérica de [clichê]. É curadoria com motivo.”
+
+PARA CADA ITEM (Slides 2–6)
+1) Quem é: [nome / marca / campanha / ferramenta]
+2) Tese (1 linha): “[representa o quê]”
+3) Prova (1 detalhe): “[o que faz / como executa / qual decisão te marcou]”
+4) Aprendizado (princípio): “Isso me ensinou que [princípio acionável].”
+5) Aplicação (ação): “Na prática: [passo simples em Social Media].”
+6) Fecho (frase curta): “[conclusão memorável].”
+
+FECHAMENTO (Slide 7)
+- Amarração: “Se você quer evoluir mais rápido, pare de consumir ‘dica solta’ e comece a colecionar princípios.”
+- CTA social: “Se você tem [pessoas/itens] assim: marca/comenta aqui. Elas/isso merecem crédito.”</div>
+          <div class="hr"></div>
+          <div class="cols">
+            <div>
+              <p class="p"><strong>Tempo de criação (fluxo):</strong></p>
+              <ol class="list">
+                <li>Escolha tema + critério (10 min)</li>
+                <li>Liste 5 itens (15 min)</li>
+                <li>Escreva tese/prova/aprendizado (30–45 min)</li>
+                <li>Separe fotos/prints (15–30 min)</li>
+                <li>Montagem no Canva/Figma (45–70 min)</li>
+              </ol>
+            </div>
+            <div>
+              <p class="p"><strong>Limites para ficar legível:</strong></p>
+              <ul class="list">
+                <li>2–3 caixas de texto por slide</li>
+                <li>1 ideia por caixa</li>
+                <li>1–2 trechos em <strong>negrito</strong> por caixa</li>
+                <li>35–55 caracteres por linha (aprox.)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h">
+          <h2>Elementos visuais</h2>
+          <span class="badge">High-tech limpo</span>
+        </div>
+        <div class="card-b">
+          <p class="p"><strong>Layout padrão (sistema):</strong> foto/print em tela cheia + (A) faixa de nome + (B) caixas cinza claro/claras + assinatura discreta.</p>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Capa:</strong> colagem 2×2 (mosaico) ou 1 imagem forte + texto grande estilo manchete.</li>
+            <li><strong>Slides internos:</strong> 1 imagem por slide; texto em caixas alinhadas e com padding generoso.</li>
+            <li><strong>Cores:</strong> varie a cor da faixa de nome (verde/azul/laranja/roxo) para sensação de progresso.</li>
+            <li><strong>Tipografia:</strong> Títulos/Nomes em sans bold; corpo em sans regular; negrito apenas para “takeaway”.</li>
+            <li><strong>Safe area:</strong> margens 64–96px; evite encostar em bordas.</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="p"><strong>Substituições que mantêm o impacto:</strong> se não houver retrato, use (1) captura de tela do trabalho, (2) mockup do feed, (3) textura/gradiente + ícone minimalista.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">Hook bank</span>
+        </div>
+        <div class="card-b">
+          <p class="p"><strong>Modelos de capa (escolha 1):</strong></p>
+          <div class="code" id="captionText">OPÇÃO A
+“[X] que me fazem [transformação desejada] no que eu faço.”
+“(e não: uma lista genérica de [clichê do nicho])”
+
+OPÇÃO B
+“5 [pessoas/cases/estratégias] que mudaram minha régua de qualidade.”
+“Cada slide = 1 princípio que você consegue aplicar.”
+
+OPÇÃO C
+“Eu aprendi mais com [X] do que com 100 dicas soltas.”
+“Vou te mostrar o porquê (com exemplos).”
+
+GANCHOS DE SLIDE (para as caixas)
+- Tese: “Isso me lembra que [princípio].”
+- Prova: “O detalhe que ninguém nota: [detalhe].”
+- Aprendizado: “Num mercado onde [problema], o diferencial é [conclusão].”
+- Aplicação: “Se você faz social media: teste [ação] por 7 dias.”
+- Fecho: “No fim, é sobre [resumo de 3–5 palavras].”</div>
+          <div class="hr"></div>
+          <p class="p"><strong>Anti-clichê (reduz resistência):</strong> use uma linha que exclui o óbvio e qualifica a lista: “não é sobre [clichê], é sobre [critério concreto]”.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h">
+          <h2>CTA</h2>
+          <span class="badge">Comentários</span>
+        </div>
+        <div class="card-b">
+          <p class="p"><strong>CTA principal (alto potencial):</strong> “Se você tem pessoas assim na sua vida — <strong>marca elas aqui</strong>. Elas merecem saber.”</p>
+          <div class="hr"></div>
+          <p class="p"><strong>Variações por objetivo:</strong></p>
+          <ul class="list">
+            <li><strong>Mais comentários:</strong> “Comenta <strong>1 nome</strong> que te inspira e eu vou ler todos.”</li>
+            <li><strong>Mais salvamentos:</strong> “Salva pra usar como checklist quando bater a dúvida.”</li>
+            <li><strong>Mais DMs:</strong> “Quer o template no Canva? Comenta <strong>TEMPLATE</strong>.”</li>
+            <li><strong>Mais compartilhamentos:</strong> “Manda pra alguém que precisa lembrar disso hoje.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="p"><strong>Regra:</strong> 1 CTA por post. Se quiser 2, combine “salvar + comentar” (nesta ordem).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h">
+          <h2>Checklist</h2>
+          <span class="badge">Produção</span>
+        </div>
+        <div class="card-b">
+          <div class="cols">
+            <div>
+              <p class="p"><strong>Antes de escrever:</strong></p>
+              <ul class="list" id="checklistText">
+                <li>Definir tema central: [referências / estratégias / erros / cases / ferramentas].</li>
+                <li>Definir critério: “entram na lista se…” (1 frase).</li>
+                <li>Selecionar 5 itens (ou 6 se texto curto).</li>
+                <li>Garantir 1 aprendizado acionável por item.</li>
+                <li>Separar 1 visual por item (foto/print/mockup).</li>
+              </ul>
+            </div>
+            <div>
+              <p class="p"><strong>Antes de publicar:</strong></p>
+              <ul class="list">
+                <li>Capa: promessa clara + anti-clichê.</li>
+                <li>Slides: 2–3 caixas, com negrito só no essencial.</li>
+                <li>Consistência: mesma posição de faixa/caixas em todos os slides.</li>
+                <li>Legibilidade: contraste alto e safe area respeitada.</li>
+                <li>CTA final: curto, específico e fácil.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="p"><strong>Checklist de qualidade (rápido):</strong> dá para entender só lendo os negritos? Se sim, está pronto.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h">
+          <h2>Variações</h2>
+          <span class="badge">Adaptações</span>
+        </div>
+        <div class="card-b">
+          <p class="p"><strong>Trocas que mantêm o mesmo mecanismo:</strong> você continua entregando “lista curada + justificativa + princípio”.</p>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Em vez de “pessoas”:</strong> “5 campanhas”, “5 marcas”, “5 criadores”, “5 ferramentas”, “5 posts que eu estudaria”.</li>
+            <li><strong>Em vez de “homenagem”:</strong> “curadoria técnica” (tom mais profissional) ou “meus favoritos do mês”.</li>
+            <li><strong>Em vez de foto:</strong> print do feed, frame de vídeo, gráfico simples com dado, ou mockup do case.</li>
+            <li><strong>Em vez de aprendizado:</strong> “1 regra”, “1 erro a evitar”, “1 pergunta-guia”, “1 checklist”.</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="p"><strong>Temas prontos (Social Media):</strong></p>
+          <ul class="list">
+            <li>“5 estratégias de conteúdo que eu roubaria hoje (e por quê)”</li>
+            <li>“5 erros que quase travaram meu crescimento — e a correção”</li>
+            <li>“5 perfis que me ensinaram a escrever melhor (com 1 exemplo cada)”</li>
+            <li>“5 campanhas que valem ser estudadas (1 lição por slide)”</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <p class="footer">Use este documento como roteiro base: troque [X], mantenha o sistema (nome + tese + prova + aprendizado + CTA).</p>
+  </div>
+
+  <div class="toast" id="toast"><strong>Copiado.</strong> Agora é só colar e adaptar.</div>
+
+  <script>
+    function toast(msg){
+      const t = document.getElementById('toast');
+      t.innerHTML = msg;
+      t.style.display = 'block';
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=>{ t.style.display='none'; }, 2200);
+    }
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        toast('<strong>Copiado.</strong>');
+      } catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        toast('<strong>Copiado.</strong>');
+      }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', ()=>{
+      const texto = document.getElementById('scriptText').innerText.trim();
+      copyText(texto);
+    });
+
+    document.getElementById('copyCaptionBtn').addEventListener('click', ()=>{
+      const texto = document.getElementById('captionText').innerText.trim();
+      copyText(texto);
+    });
+
+    document.getElementById('copyChecklistBtn').addEventListener('click', ()=>{
+      const texto = document.getElementById('checklistText').innerText.trim();
+      copyText(texto);
+    });
+  </script>
+</body>
+</html>
