@@ -1,0 +1,403 @@
+<!doctype html><html lang="pt-br"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Dia 29 — Roteiro reproduzível (Social Media)</title><style>
+:root{
+  --bg0:#070A12;
+  --bg1:#0B1020;
+  --card:rgba(255,255,255,.06);
+  --card2:rgba(255,255,255,.08);
+  --stroke:rgba(255,255,255,.10);
+  --text:#EAF0FF;
+  --muted:rgba(234,240,255,.72);
+  --muted2:rgba(234,240,255,.55);
+  --green:#20E3B2;
+  --blue:#3B82F6;
+  --orange:#FF8A3D;
+  --shadow: 0 18px 55px rgba(0,0,0,.55);
+  --r12:12px;
+  --r16:16px;
+  --r20:20px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--text);
+  background:
+    radial-gradient(1200px 650px at 20% 10%, rgba(32,227,178,.20), transparent 55%),
+    radial-gradient(900px 520px at 85% 15%, rgba(59,130,246,.22), transparent 55%),
+    radial-gradient(900px 520px at 70% 90%, rgba(255,138,61,.16), transparent 52%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+}
+.container{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+.header{
+  display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end; justify-content:space-between;
+  padding:18px 18px;
+  border:1px solid var(--stroke);
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+  border-radius:var(--r20);
+  box-shadow:var(--shadow);
+  backdrop-filter: blur(10px);
+}
+.h-left{display:flex; flex-direction:column; gap:8px; min-width:min(700px, 100%)}
+.kicker{display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:13px}
+.pill{padding:6px 10px; border:1px solid var(--stroke); border-radius:999px; background:rgba(0,0,0,.18)}
+.pill strong{color:var(--text)}
+.title{
+  font-size: clamp(20px, 3.2vw, 30px);
+  line-height:1.15;
+  margin:0;
+  letter-spacing:-.02em;
+}
+.subtitle{margin:0; color:var(--muted); font-size:14px; line-height:1.35}
+.h-right{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.a{
+  color:var(--text);
+  text-decoration:none;
+  font-size:13px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.05);
+}
+.a:hover{background:rgba(255,255,255,.08)}
+.btn{
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,.14);
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:12px;
+  background:
+    linear-gradient(135deg, rgba(32,227,178,.22), rgba(59,130,246,.18) 55%, rgba(255,138,61,.14));
+}
+.btn:active{transform:translateY(1px)}
+.grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px}
+@media (min-width: 980px){ .grid{grid-template-columns: 1.15fr .85fr} }
+.card{
+  border:1px solid var(--stroke);
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+  border-radius:var(--r16);
+  box-shadow: 0 10px 40px rgba(0,0,0,.35);
+  padding:16px 16px;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background: linear-gradient(135deg, rgba(32,227,178,.18), rgba(59,130,246,.14), rgba(255,138,61,.12));
+  filter: blur(18px);
+  opacity:.55;
+  pointer-events:none;
+}
+.card > *{position:relative}
+.h2{margin:0 0 10px; font-size:15px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.p{margin:0; color:var(--muted); line-height:1.55; font-size:14px}
+.ul{margin:10px 0 0; padding:0 0 0 18px; color:var(--muted); line-height:1.6; font-size:14px}
+.li{margin:6px 0}
+.hr{height:1px; background:rgba(255,255,255,.10); border:0; margin:12px 0}
+.code{
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:rgba(234,240,255,.88);
+  background:rgba(0,0,0,.28);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:12px;
+  padding:12px;
+  overflow:auto;
+  white-space:pre-wrap;
+  line-height:1.55;
+}
+.badges{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+.badge{font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.22); color:rgba(234,240,255,.82)}
+.badge.g{border-color:rgba(32,227,178,.35)}
+.badge.b{border-color:rgba(59,130,246,.35)}
+.badge.o{border-color:rgba(255,138,61,.35)}
+.small{font-size:12px; color:var(--muted2); line-height:1.4}
+.twoCol{display:grid; grid-template-columns:1fr; gap:12px}
+@media (min-width: 760px){ .twoCol{grid-template-columns:1fr 1fr} }
+.kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
+.k{border:1px solid rgba(255,255,255,.10); background:rgba(0,0,0,.20); border-radius:14px; padding:10px}
+.k .t{font-size:12px; color:var(--muted2); margin:0}
+.k .v{font-size:13px; color:rgba(234,240,255,.90); margin:6px 0 0; font-family:var(--mono)}
+.toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:rgba(10,14,26,.92); color:var(--text); border:1px solid rgba(255,255,255,.14); padding:10px 12px; border-radius:12px; box-shadow:var(--shadow); display:none; font-size:13px}
+</style></head><body><div class="container">
+  <div class="header">
+    <div class="h-left">
+      <div class="kicker">
+        <span class="pill"><strong>Nicho:</strong> Social Media</span>
+        <span class="pill"><strong>Dia:</strong> 29</span>
+        <span class="pill"><strong>Formato:</strong> Carrossel</span>
+        <span class="pill"><strong>Pilar:</strong> Checklist</span>
+      </div>
+      <h1 class="title">30 ideias de conteúdo do mês (em 4 semanas)</h1>
+      <p class="subtitle">Banco de ideias por semanas para aumentar salvamentos e reduzir o esforço de “inventar post”. Feche com CTA de palavra‑chave para entregar um bônus (template/planilha/scripts).</p>
+    </div>
+    <div class="h-right">
+      <a class="a" href="https://www.instagram.com/p/DVMAavUDDbS/" target="_blank" rel="noopener">Abrir post original</a>
+      <button class="btn" onclick="copyRoteiro()">Copiar roteiro</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="h2">Resumo</div>
+      <p class="p">Estrutura previsível (Semana 1–4) + listas em “pílulas” = leitura rápida, alta taxa de salvamento e fácil adaptação para qualquer tema. O último slide converte com uma oferta simples: comentar uma palavra‑chave para receber um material.</p>
+      <div class="badges">
+        <span class="badge g">Objetivo: salvamentos</span>
+        <span class="badge b">Objetivo: crescimento (follow)</span>
+        <span class="badge o">Objetivo: leads (comentário/DM)</span>
+      </div>
+      <div class="kpi">
+        <div class="k"><p class="t">Quantidade sugerida</p><p class="v">6 slides (1 capa + 4 semanas + 1 CTA)</p></div>
+        <div class="k"><p class="t">Densidade por slide</p><p class="v">5–6 prompts (6–12 palavras)</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="h2">Instrução curta (execução)</div>
+      <p class="p">Escolha um <strong>tema + período + promessa</strong>, divida em 4 semanas e escreva prompts preenchíveis. Mantenha layout repetível e rodapé com <strong>“Salve para usar depois”</strong>. No final, ofereça um bônus por comentário com palavra‑chave.</p>
+      <hr class="hr"/>
+      <div class="h2">Metas do post</div>
+      <ul class="ul">
+        <li class="li"><strong>Salvar:</strong> criar efeito “vou usar no planejamento”.</li>
+        <li class="li"><strong>Completar o carrossel:</strong> progressão Semana 1 → 4.</li>
+        <li class="li"><strong>Comentar:</strong> palavra‑chave para envio de template/planilha.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="h2">Estrutura (reproduzível)</div>
+    <div class="twoCol">
+      <div>
+        <p class="p"><strong>Macro:</strong> Capa (promessa) → 4 slides (blocos previsíveis) → Fechamento (CTA + bônus + prova visual).</p>
+        <ul class="ul">
+          <li class="li"><strong>Slide 1:</strong> Título forte + “Parte X” + seta (swipe).</li>
+          <li class="li"><strong>Slides 2–5:</strong> “Semana 1–4” com 5–6 prompts cada.</li>
+          <li class="li"><strong>Slide 6:</strong> “Siga para…” + “Comente ‘PALAVRA’…” + benefício + mockup/miniatura.</li>
+        </ul>
+      </div>
+      <div>
+        <p class="p"><strong>Como adaptar sem perder impacto</strong> (trocas equivalentes):</p>
+        <ul class="ul">
+          <li class="li"><strong>Semanas →</strong> Categorias, Etapas, Pilares, Níveis, Módulos.</li>
+          <li class="li"><strong>Ideias →</strong> Checklist, Prompts, Roteiros, Exemplos, Ângulos.</li>
+          <li class="li"><strong>Mês →</strong> Campanha, Lançamento, Trimestre, Evento, “Próximos 7 dias”.</li>
+          <li class="li"><strong>Comentário por palavra-chave →</strong> “Me chama no DM com ‘X’” (quando preferir conversa 1:1).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="h2">Slides sugeridos (1..6)</div>
+    <div class="code" id="slides">SLIDE 1 — CAPA
+Título: “30 ideias de conteúdo para [PERÍODO]”
+Sub: “(em 4 semanas) • Parte [X]”
+Microtexto: “arraste →”
+
+SLIDE 2 — SEMANA 1 (Aquecimento / Conexão)
+5–6 prompts curtos (preenchíveis) + rodapé “Salve para usar depois”.
+
+SLIDE 3 — SEMANA 2 (Autoridade / Ensino)
+5–6 prompts + rodapé fixo.
+
+SLIDE 4 — SEMANA 3 (Prova / Bastidores)
+5–6 prompts + rodapé fixo.
+
+SLIDE 5 — SEMANA 4 (Conversão leve / Oferta)
+5–6 prompts + rodapé fixo.
+
+SLIDE 6 — FECHAMENTO (CTA)
+Headline: “Quer isso em planilha + calendário pronto?”
+Instrução: “Comente ‘CALENDÁRIO’ que eu te envio.”
+Benefício: “Você só preenche e posta.”
+Prova: mockup/print do template + bullets do que vem junto.</div>
+    <p class="small" style="margin-top:10px">Dica de consistência: mantenha a mesma grade/margens e só altere o título “Semana X” e os prompts.</p>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="h2">Roteiro (texto-base copiável)</div>
+    <div class="code" id="roteiro">TEMA: [tema principal]
+PERÍODO: [mês/campanha/semana]
+PÚBLICO: [persona]
+PROMESSA: “Aqui vão [N] ideias prontas para você não ficar travado(a).”
+
+SLIDE 1 (Capa)
+“[N] ideias de conteúdo para [PERÍODO]”
+“em 4 semanas • Parte [X] →”
+
+SLIDE 2 (Semana 1 — Conexão)
+1) Complete: “Meu [tema] hoje parece ____.”
+2) Expectativa vs realidade de [processo/rotina].
+3) Uma coisa que eu gostaria que tivessem me dito sobre [tema].
+4) 3 sinais de que você está complicando [tarefa].
+5) Pergunta: você está mais em “A” ou “B” em [assunto]?
+
+SLIDE 3 (Semana 2 — Ensino)
+1) Passo a passo: como eu faço [resultado] em 15 min.
+2) Checklist: antes de postar sobre [tema], confira isso.
+3) O erro #1 em [tema] (e a correção em 1 frase).
+4) Ferramentas que uso para [tarefa] (com porquê).
+5) Framework: [sigla/3 passos] para [objetivo].
+
+SLIDE 4 (Semana 3 — Prova/Bastidores)
+1) Bastidor: como eu organizo meu [processo] por semana.
+2) Mini-estudo de caso: resultado de [ação] (sem prometer milagres).
+3) Antes/depois: [situação] após [mudança].
+4) O que eu parei de fazer em [tema] (e o impacto).
+5) “Se eu começasse do zero, faria isso primeiro: ____.”
+
+SLIDE 5 (Semana 4 — Conversão leve)
+1) Quem é (e quem não é) para [solução].
+2) 3 sinais de que você precisa de ajuda com [tema].
+3) O que está incluso no meu [serviço/material] (em bullets).
+4) Objeção comum: “não tenho tempo” → alternativa de 10 min.
+5) Convite: “se você quiser o template, comente ‘[PALAVRA]’.”
+
+SLIDE 6 (CTA)
+“Toda semana eu posto ideias prontas + templates.”
+“Comente ‘[PALAVRA-CHAVE]’ e eu te envio o [bônus] (grátis).”
+“Salve este post para usar no seu planejamento.”
+
+RODAPÉ (em todos os slides internos)
+“Curta • Comente • Compartilhe” | “Salve para depois”</div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="h2">Elementos visuais (identidade + UX)</div>
+    <ul class="ul">
+      <li class="li"><strong>Fundo:</strong> claro (internos) ou escuro (se quiser versão high-tech). Aqui, o princípio é contraste alto + respiro.</li>
+      <li class="li"><strong>Estrutura:</strong> título “Semana X” grande + lista central em pílulas com borda suave.</li>
+      <li class="li"><strong>Indicadores fixos:</strong> rodapé “Salve para depois” repetido para reforçar comportamento.</li>
+      <li class="li"><strong>Detalhes:</strong> ruído/grain sutil, linhas finas, ícones minimalistas (seta, marcador).</li>
+      <li class="li"><strong>Slide final:</strong> mockup do template/print da planilha + 3 bullets do que a pessoa recebe.</li>
+    </ul>
+    <hr class="hr"/>
+    <div class="h2">Guia de hierarquia (rápido)</div>
+    <ul class="ul">
+      <li class="li"><strong>H1 (capa/semana):</strong> serif ou display (impacto/editorial).</li>
+      <li class="li"><strong>Itens:</strong> sans legível, 6–12 palavras.</li>
+      <li class="li"><strong>Assinatura:</strong> pequeno, consistente, no topo.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="h2">Copy e ganchos (prontos + substituições)</div>
+    <div class="twoCol">
+      <div>
+        <p class="p"><strong>Ganchos de capa</strong> (escolha 1):</p>
+        <ul class="ul">
+          <li class="li">“[N] ideias prontas para [PERÍODO] (sem travar).”</li>
+          <li class="li">“Seu conteúdo do mês em 4 semanas.”</li>
+          <li class="li">“Calendário de conteúdo: copie e adapte.”</li>
+          <li class="li">“Se você posta e ‘some’, salva isso.”</li>
+        </ul>
+      </div>
+      <div>
+        <p class="p"><strong>Tipos de prompt</strong> (mesmo impacto, qualquer nicho):</p>
+        <ul class="ul">
+          <li class="li"><strong>Complete a frase:</strong> “____” (gera comentário).</li>
+          <li class="li"><strong>Comparação:</strong> expectativa vs realidade / antes vs depois.</li>
+          <li class="li"><strong>Opinião:</strong> “impopular, mas…” (retenção).</li>
+          <li class="li"><strong>Checklist:</strong> “antes de fazer X, confira Y” (salvamento).</li>
+          <li class="li"><strong>Bastidor:</strong> “como eu faço X na prática” (confiança).</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="hr"/>
+    <div class="h2">Legenda (caption) — modelo</div>
+    <div class="code">Começa o mês e você não precisa inventar conteúdo do zero.
+
+Aqui estão [N] ideias organizadas por semana para você:
+1) saber o que postar,
+2) variar os ângulos,
+3) ganhar consistência.
+
+✅ Dica: escolha 1 ideia por dia e adapte para seu contexto.
+
+Comente “CALENDÁRIO” que eu te mando a versão em planilha/template.
+Salve este post para usar no seu planejamento.</div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="h2">CTA (primário + secundários)</div>
+    <ul class="ul">
+      <li class="li"><strong>Durante o carrossel (rodapé):</strong> “Salve para depois” + “Compartilhe com um amigo que posta”.</li>
+      <li class="li"><strong>Final (primário):</strong> “Comente ‘CALENDÁRIO’ para eu te enviar o template”.</li>
+      <li class="li"><strong>Variações de palavra‑chave:</strong> “PLANILHA”, “PROMPTS”, “ROTEIROS”, “AGENDA”.</li>
+      <li class="li"><strong>Se o objetivo for vendas:</strong> “Comente ‘VAGAS’ e eu te explico como funciona”.</li>
+      <li class="li"><strong>Se o objetivo for DM:</strong> “Me chama no DM com ‘CALENDÁRIO’”.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="h2">Checklist de criação (produção)</div>
+    <ul class="ul">
+      <li class="li">Definir: <strong>tema</strong> + <strong>período</strong> + <strong>benefício</strong> em 1 frase.</li>
+      <li class="li">Escolher estrutura: <strong>Semana 1–4</strong> (ou Categorias/Etapas).</li>
+      <li class="li">Escrever <strong>20–24 prompts</strong> (5–6 por bloco) com 6–12 palavras.</li>
+      <li class="li">Padronizar layout (grade, margens, pílulas, rodapé fixo).</li>
+      <li class="li">Criar slide final com: <strong>CTA</strong> + <strong>palavra‑chave</strong> + <strong>o que a pessoa recebe</strong> + <strong>mockup</strong>.</li>
+      <li class="li">Revisar legibilidade: contraste, tamanho mínimo, “scan” em 3 segundos.</li>
+      <li class="li">Publicar e fixar comentário: “Comente ‘X’ para receber”.</li>
+      <li class="li">Pós: responder comentários com a entrega/fluxo combinado (DM/automação/link).</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="h2">Variações (para reaproveitar a mesma estrutura)</div>
+    <div class="twoCol">
+      <div>
+        <p class="p"><strong>Variação A — por objetivo</strong></p>
+        <ul class="ul">
+          <li class="li"><strong>Alcance:</strong> semanas com ganchos polêmicos, mitos, comparativos.</li>
+          <li class="li"><strong>Leads:</strong> semanas com templates, checklists e “comente para receber”.</li>
+          <li class="li"><strong>Vendas:</strong> semana 4 focada em objeções + bastidores + convite.</li>
+        </ul>
+      </div>
+      <div>
+        <p class="p"><strong>Variação B — trocando “Semanas”</strong></p>
+        <ul class="ul">
+          <li class="li"><strong>Etapa 1–4:</strong> Diagnóstico → Plano → Execução → Otimização.</li>
+          <li class="li"><strong>Pilar 1–4:</strong> Educação → Prova → Bastidor → Oferta.</li>
+          <li class="li"><strong>Nível 1–4:</strong> Iniciante → Intermediário → Avançado → Expert.</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="hr"/>
+    <p class="small">Se você quiser transformar isso em <strong>Reels</strong>: mantenha os 4 blocos como 4 capítulos (texto na tela), com cortes rápidos e CTA no final + comentário fixado.</p>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">Roteiro copiado.</div>
+
+<script>
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.display='block';
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer=setTimeout(()=>{t.style.display='none';}, 2200);
+}
+async function copyRoteiro(){
+  const txt = document.getElementById('roteiro').innerText;
+  try{
+    await navigator.clipboard.writeText(txt);
+    showToast('Roteiro copiado.');
+  }catch(e){
+    // Fallback
+    const ta=document.createElement('textarea');
+    ta.value=txt;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    showToast('Roteiro copiado.');
+  }
+}
+</script></body></html>
