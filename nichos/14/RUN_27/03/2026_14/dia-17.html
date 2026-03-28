@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 17 — Roteiro reproduzível (Eu vs X)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --stroke2: rgba(255,255,255,.18);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.56);
+      --good:#39ffb6;
+      --blue:#4aa3ff;
+      --orange:#ffb36b;
+      --shadow: 0 16px 50px rgba(0,0,0,.55);
+      --r12: 14px;
+      --r16: 18px;
+      --r20: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(74,163,255,.14), transparent 55%),
+        radial-gradient(900px 700px at 80% 20%, rgba(57,255,182,.12), transparent 55%),
+        radial-gradient(900px 700px at 70% 90%, rgba(255,179,107,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    a{ color: inherit; text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .container{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 18px 64px;
+    }
+
+    header{
+      position: relative;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      border-radius: var(--r20);
+      padding: 18px 18px;
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: linear-gradient(90deg, rgba(57,255,182,.22), rgba(74,163,255,.18), rgba(255,179,107,.18));
+      filter: blur(22px);
+      opacity:.55;
+      z-index:0;
+    }
+
+    .header-inner{ position:relative; z-index:1; display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; }
+
+    .kpis{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .pill{
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing:.2px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke2);
+      background: rgba(0,0,0,.25);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .pill strong{ color: var(--text); font-weight:650; }
+
+    .title{
+      margin: 6px 0 0;
+      font-size: 20px;
+      line-height: 1.15;
+      font-weight: 780;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle{
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.35;
+      max-width: 78ch;
+      font-size: 14px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      margin-top: 8px;
+    }
+
+    .btn{
+      border: 1px solid var(--stroke2);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:650;
+      font-size: 13px;
+      transition: transform .08s ease, background .12s ease, border-color .12s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .btn:hover{ background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.26); transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0); }
+
+    .btn-primary{
+      border: 0;
+      background: linear-gradient(90deg, rgba(57,255,182,.26), rgba(74,163,255,.22), rgba(255,179,107,.22));
+      position: relative;
+    }
+
+    .btn-primary:after{
+      content:"";
+      position:absolute;
+      inset:1px;
+      border-radius: 11px;
+      background: rgba(8,10,18,.55);
+      z-index:0;
+    }
+    .btn-primary span{ position:relative; z-index:1; }
+
+    .grid{
+      margin-top: 16px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 920px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card h2{
+      margin:0;
+      padding: 14px 14px 0;
+      font-size: 14px;
+      letter-spacing: .2px;
+      text-transform: uppercase;
+      color: rgba(234,240,255,.86);
+    }
+
+    .card .content{ padding: 12px 14px 14px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin: 12px 0;
+    }
+
+    .highlight{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      border-radius: 14px;
+      padding: 12px 12px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .highlight:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: linear-gradient(90deg, rgba(57,255,182,.22), rgba(74,163,255,.18), rgba(255,179,107,.18));
+      filter: blur(18px);
+      opacity:.45;
+      z-index:0;
+    }
+    .highlight > *{ position:relative; z-index:1; }
+
+    ul{ margin: 0; padding-left: 18px; }
+    li{ margin: 6px 0; }
+
+    .two-col{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 720px){
+      .two-col{ grid-template-columns: 1fr; }
+    }
+
+    .code{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: rgba(234,240,255,.86);
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .tag{
+      display:inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      margin: 4px 6px 0 0;
+      color: rgba(234,240,255,.78);
+      font-size: 12px;
+      font-family: var(--mono);
+    }
+
+    .toast{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      background: rgba(10,14,26,.78);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: rgba(234,240,255,.88);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .16s ease, transform .16s ease;
+      pointer-events:none;
+      font-size: 13px;
+    }
+    .toast.show{ opacity:1; transform: translateY(0); }
+
+    .small{ font-size: 12.5px; color: var(--muted2); }
+    .accent{
+      background: linear-gradient(90deg, rgba(57,255,182,.95), rgba(74,163,255,.95), rgba(255,179,107,.95));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 820;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-inner">
+        <div>
+          <div class="kpis">
+            <div class="pill"><strong>Nicho</strong>: Social Media</div>
+            <div class="pill"><strong>Dia</strong>: 17</div>
+            <div class="pill"><strong>Formato</strong>: Reels</div>
+            <div class="pill"><strong>Pilar</strong>: Passo a passo</div>
+          </div>
+          <h1 class="title">Roteiro pronto: <span class="accent">“Eu vs X”</span> (opostos que se completam)</h1>
+          <p class="subtitle">Use a dinâmica de “ping‑pong” (call-and-response) para criar retenção e comentários de identificação. Funciona com cliente, algoritmo, prazos, estratégia vs execução, antes vs depois, etc.</p>
+          <p class="subtitle small">Post original: <a href="https://www.instagram.com/p/DVmPQ0FjM1i/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DVmPQ0FjM1i/</a></p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" id="copyBtn" type="button"><span>Copiar roteiro</span></button>
+          <a class="btn" href="https://www.instagram.com/p/DVmPQ0FjM1i/" target="_blank" rel="noreferrer">Abrir post</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <div class="content">
+          <div class="highlight">
+            <div style="font-weight:720; color: rgba(234,240,255,.92); margin-bottom:6px;">O que você vai fazer</div>
+            <div>Escolher <b>2 lados</b> (A vs B), escrever <b>8–10 respostas curtas</b> e editar alternando cenas no beat. No final, você “reconcilia” e pede uma escolha (<i>Qual lado é você?</i>).</div>
+          </div>
+          <div class="hr"></div>
+          <div class="two-col">
+            <div>
+              <div style="font-weight:720; color: rgba(234,240,255,.92); margin-bottom:6px;">Por que performa</div>
+              <ul>
+                <li>Conflito simples (A/B) = leitura instantânea sem áudio.</li>
+                <li>Repetição + refrão = loop natural e rewatch.</li>
+                <li>Identificação forte ("isso sou eu" / "meu cliente é assim").</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-weight:720; color: rgba(234,240,255,.92); margin-bottom:6px;">Resultado esperado</div>
+              <ul>
+                <li>Mais retenção por cortes previsíveis.</li>
+                <li>Mais comentários por pergunta binária.</li>
+                <li>Mais compartilhamentos por “marcar o oposto”.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Parâmetros rápidos</h2>
+        <div class="content">
+          <div class="tag">Duração: 7–12s (ideal)</div>
+          <div class="tag">Cortes: 0,3–0,8s</div>
+          <div class="tag">Texto: 2–6 palavras</div>
+          <div class="tag">Estrutura: A/B/A/B</div>
+          <div class="hr"></div>
+          <div style="font-weight:720; color: rgba(234,240,255,.92); margin-bottom:6px;">Template dos lados</div>
+          <div class="code">Lado A ("Você") = [persona/força 1]
+Lado B ("Eu")   = [persona/força 2]
+
+Exemplos:
+• Cliente vs Social Media
+• Estratégia vs Execução
+• Criatividade vs Prazo
+• Branding vs Performance
+• Perfeccionismo vs Consistência</div>
+        </div>
+      </aside>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Estrutura</h2>
+        <div class="content">
+          <div class="two-col">
+            <div class="highlight">
+              <div style="font-weight:800; margin-bottom:6px;">Bloco 1 — Setup (0–1s)</div>
+              <div>Contexto em 1 linha: <b>“Eu vs [X]”</b> ou <b>“[A] vs [B]”</b>.</div>
+              <div class="small" style="margin-top:8px;">Regra: o espectador precisa entender a piada em 1 segundo.</div>
+            </div>
+            <div class="highlight">
+              <div style="font-weight:800; margin-bottom:6px;">Bloco 2 — Ping‑pong (1–8s)</div>
+              <div>Alterna A/B a cada frase do áudio. Cada lado “retruca” com <b>frase curtíssima</b>.</div>
+              <div class="small" style="margin-top:8px;">Regra: cada corte tem um contraste (sim/não, rápido/lento, barato/caro).</div>
+            </div>
+            <div class="highlight">
+              <div style="font-weight:800; margin-bottom:6px;">Bloco 3 — Escalada (8–11s)</div>
+              <div>Insere a “melhor treta” (a mais comum/engraçada e mais comentável).</div>
+              <div class="small" style="margin-top:8px;">Regra: 1 punchline visual (zoom, pausa, olhar).</div>
+            </div>
+            <div class="highlight">
+              <div style="font-weight:800; margin-bottom:6px;">Bloco 4 — Resolução + CTA (últimos 1–2s)</div>
+              <div>Fecha conciliando: <b>“No fim… funciona.”</b> + pergunta binária.</div>
+              <div class="small" style="margin-top:8px;">Regra: terminar parecido com o começo para favorecer loop.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro (modelo copiável)</h2>
+        <div class="content">
+          <div class="small" style="margin-bottom:10px;">Preencha os campos entre colchetes. O texto na tela deve ser curto e legível.</div>
+          <div class="code" id="scriptText">TÍTULO NA TELA (0–1s)
+“Eu vs [X]”
+OU “[A] vs [B]”
+
+PING-PONG (1–8s) — alternar com cortes no beat
+Você: “[pedido/frase do lado A]”
+Eu:   “[resposta curta do lado B]”
+Você: “[pedido 2]”
+Eu:   “[resposta 2]”
+Você: “[pedido 3]”
+Eu:   “[resposta 3]”
+Você: “[pedido 4]”
+Eu:   “[resposta 4]”
+
+ESCALADA (8–11s)
+Você: “[o absurdo mais comum]”
+Eu:   “[a verdade que ninguém quer ouvir]”
+
+RESOLUÇÃO (últimos 1–2s)
+Texto: “No fim… dá certo. Melhor em estéreo.”
+CTA: “Qual lado é você: Você ou Eu?”</div>
+          <div class="hr"></div>
+          <div style="font-weight:720; color: rgba(234,240,255,.92); margin-bottom:6px;">Banco de falas (substituíveis)</div>
+          <div class="two-col">
+            <div>
+              <div class="tag">Você: “posta mais”</div>
+              <div class="tag">Eu: “com que tempo?”</div>
+              <div class="tag">Você: “faz viral”</div>
+              <div class="tag">Eu: “com qual verba?”</div>
+              <div class="tag">Você: “sem aparecer”</div>
+              <div class="tag">Eu: “sem alcance”</div>
+            </div>
+            <div>
+              <div class="tag">Você: “mais simples”</div>
+              <div class="tag">Eu: “e o branding?”</div>
+              <div class="tag">Você: “pra amanhã”</div>
+              <div class="tag">Eu: “brief cadê?”</div>
+              <div class="tag">Você: “barato”</div>
+              <div class="tag">Eu: “mas bom”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <div class="content">
+          <ul>
+            <li><b>Split screen</b> (lado esquerdo A, lado direito B) ou alternância A/B em tela cheia.</li>
+            <li><b>Diferenciação rápida</b> entre personagens: óculos/boné/camisa, posição fixa, luz diferente.</li>
+            <li><b>Textos fixos</b>: use rótulos “Você:” e “Eu:” para leitura instantânea.</li>
+            <li><b>Ênfase em opostos</b>: palavras em CAIXA ALTA e cor (verde/azul/laranja) para SIM/NÃO, AGORA/DEPOIS.</li>
+            <li><b>Clímax com punch</b>: micro-zoom, pausa, olhar para a câmera, freeze de 0,2s.</li>
+            <li><b>Loop</b>: terminar em pose parecida com a abertura (ou repetir a tela “Eu vs X”).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Copy e ganchos</h2>
+        <div class="content">
+          <div class="two-col">
+            <div class="highlight">
+              <div style="font-weight:800; margin-bottom:6px;">Ganchos (1 linha na legenda ou 1ª tela)</div>
+              <ul>
+                <li>“A relação entre <b>[EU]</b> e <b>[X]</b> é exatamente assim:”</li>
+                <li>“Se você trabalha com <b>[tema]</b>, você vai entender na hora.”</li>
+                <li>“Dois opostos, um resultado: <b>[resultado]</b>.”</li>
+                <li>“O dia que <b>[A]</b> encontra <b>[B]</b>:”</li>
+              </ul>
+            </div>
+            <div class="highlight">
+              <div style="font-weight:800; margin-bottom:6px;">Legenda pronta (adaptável)</div>
+              <div class="code">Eu e [X] brigamos… mas é assim que sai [resultado].
+
+Você é mais “Você” (lado A) ou “Eu” (lado B)?
+Comenta e marca a pessoa que é teu oposto.
+
+#socialmedia #[seunicho] #marketingdigital #conteudo #reels</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div style="font-weight:720; color: rgba(234,240,255,.92); margin-bottom:6px;">Fórmulas de texto na tela (curtas)</div>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>“Eu 🆚 [X]”</li>
+                <li>“[A] 🆚 [B]”</li>
+                <li>“Quando [A] encontra [B]”</li>
+                <li>“Expectativa 🆚 Realidade”</li>
+              </ul>
+            </div>
+            <div>
+              <ul>
+                <li>“Você: ______”</li>
+                <li>“Eu: ______”</li>
+                <li>“Plot twist: ______”</li>
+                <li>“No fim: ______”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <div class="content">
+          <div class="highlight">
+            <div style="font-weight:800; margin-bottom:6px;">Escolha 1 (não quebra o ritmo)</div>
+            <ul>
+              <li>“Qual lado é você: <b>Você</b> ou <b>Eu</b>?”</li>
+              <li>“Marca teu <b>[cliente/colega/sócio]</b>.”</li>
+              <li>“Comenta <b>A</b> ou <b>B</b>.”</li>
+              <li>“Quer parte 2 com <b>[situação]</b>?”</li>
+              <li>“Salva pra lembrar quando bater esse conflito.”</li>
+            </ul>
+          </div>
+          <div class="hr"></div>
+          <div class="small">Dica: coloque o CTA no último frame + 1 pergunta na legenda (mesma pergunta) para dobrar a conversão em comentários.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Checklist de criação</h2>
+        <div class="content">
+          <div class="two-col">
+            <div>
+              <div style="font-weight:800; margin-bottom:6px;">Pré‑produção (10 min)</div>
+              <ul>
+                <li>Definir lados: <b>A</b> (quem pede/pressiona) vs <b>B</b> (quem executa/segura).</li>
+                <li>Escrever <b>8–10 falas</b> com <b>2–6 palavras</b> cada.</li>
+                <li>Escolher <b>1 clímax</b> (a frase mais comentável).</li>
+                <li>Decidir estética: split screen ou alternância + item de figurino.</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-weight:800; margin-bottom:6px;">Gravação + edição (20–40 min)</div>
+              <ul>
+                <li>Gravar todas as cenas do lado A (mesmo enquadramento).</li>
+                <li>Gravar todas as cenas do lado B (espelhado/posição fixa).</li>
+                <li>Cortar no beat (0,3–0,8s) e manter padrão A/B.</li>
+                <li>Texto sincronizado + destaque em cor para palavras opostas.</li>
+                <li>Final em loop (último frame parecido com o primeiro).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div style="font-weight:800; margin-bottom:6px;">Publicação</div>
+          <ul>
+            <li>Legenda com pergunta binária (A ou B) + convite de marcação.</li>
+            <li>Fixar comentário: “Você é A ou B? (vale explicar o porquê)”.</li>
+            <li>Hashtags: 3 amplas + 2 específicas do nicho.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <h2>Variações (mesmo impacto, outros temas)</h2>
+        <div class="content">
+          <div class="two-col">
+            <div class="highlight">
+              <div style="font-weight:800; margin-bottom:6px;">Substituições de “lados” (A/B)</div>
+              <ul>
+                <li><b>Antes vs Depois</b> (eu antigo vs eu atual).</li>
+                <li><b>Cliente vs Processo</b> (o que querem vs como funciona).</li>
+                <li><b>Mito vs Verdade</b> (crença comum vs realidade).</li>
+                <li><b>Preço vs Valor</b> (barato vs bem-feito).</li>
+                <li><b>Manual vs Automação</b> (quando usar cada um).</li>
+              </ul>
+            </div>
+            <div class="highlight">
+              <div style="font-weight:800; margin-bottom:6px;">Adaptações por objetivo</div>
+              <ul>
+                <li><b>Mais compartilhamento</b>: use situação “marcável” ("manda pro teu cliente").</li>
+                <li><b>Mais salvamentos</b>: feche com mini-regra ("sempre faça X antes de Y").</li>
+                <li><b>Mais autoridade</b>: traga 1 frase técnica (bem curta) na escalada.</li>
+                <li><b>Mais humor</b>: exagero controlado no clímax + reação facial.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div style="font-weight:800; margin-bottom:6px;">Matriz de ideias (preencha rápido)</div>
+          <div class="code">Tema: [ex: estratégia vs execução]
+Lado A (pede): [ex: “vamos postar todo dia”]
+Lado B (realidade): [ex: “cadê o planejamento?”]
+Conflito principal: [ex: “sem aparecer”]
+Resolução: [ex: “os dois juntos performam”]
+CTA: [ex: “A ou B?”]</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado para a área de transferência.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=> toast.classList.remove('show'), 1800);
+      }
+
+      btn.addEventListener('click', async () => {
+        const content = textEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(content);
+          showToast('Roteiro copiado para a área de transferência.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = content;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado (modo compatibilidade).');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
