@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 23 — Social Media — Carrossel reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.085);
+      --stroke: rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.6);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r12: 14px;
+      --r16: 18px;
+      --g1: linear-gradient(90deg, #2AE98E 0%, #2AA8FF 50%, #FFB547 100%);
+      --g2: radial-gradient(900px 500px at 20% 10%, rgba(42,233,142,.18), transparent 55%),
+            radial-gradient(900px 520px at 90% 15%, rgba(42,168,255,.16), transparent 55%),
+            radial-gradient(900px 520px at 50% 95%, rgba(255,181,71,.14), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      letter-spacing: .2px;
+    }
+
+    .wrap{ max-width: 1120px; margin: 0 auto; padding: 28px 18px 80px; }
+
+    header{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--r16);
+      padding: 18px 18px 16px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 140px at 30% 0%, rgba(42,233,142,.18), transparent 60%),
+                  radial-gradient(600px 140px at 70% 0%, rgba(42,168,255,.16), transparent 60%),
+                  radial-gradient(600px 140px at 50% 105%, rgba(255,181,71,.12), transparent 65%);
+      pointer-events:none;
+      filter: blur(.2px);
+    }
+
+    .toprow{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; position:relative; }
+    .meta{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .pill{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .pill strong{ color: var(--text); font-weight: 650; }
+
+    .title{
+      position:relative;
+      margin: 12px 0 2px;
+      font-size: 22px;
+      line-height: 1.18;
+      font-weight: 820;
+      letter-spacing: .3px;
+    }
+    .subtitle{ position:relative; margin:0; color: var(--muted); font-size: 13.5px; line-height: 1.45; max-width: 78ch; }
+
+    a{ color: #9CD7FF; text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (min-width: 960px){
+      .grid{ grid-template-columns: 1.2fr .8fr; align-items:start; }
+    }
+
+    .card{
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .card .hd h2{ margin:0; font-size: 14px; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); }
+    .card .bd{ padding: 14px 16px 16px; }
+
+    .kpi{
+      display:flex; flex-wrap:wrap; gap:10px;
+    }
+    .k{
+      flex: 1 1 180px;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--r12);
+      padding: 12px;
+      min-width: 190px;
+    }
+    .k .l{ font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .k .v{ font-family: var(--mono); font-size: 12.5px; color: var(--text); line-height: 1.35; }
+
+    .btns{ display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; }
+    button{
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 650;
+      letter-spacing: .2px;
+    }
+    button.primary{
+      background: linear-gradient(180deg, rgba(42,233,142,.17), rgba(42,168,255,.12));
+      border-color: rgba(42,168,255,.35);
+    }
+    button:hover{ filter: brightness(1.08); }
+
+    .tagline{
+      display:inline-block;
+      background: var(--g1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 900;
+    }
+
+    ul{ margin: 10px 0 0 18px; padding:0; }
+    li{ margin: 7px 0; color: var(--muted); line-height: 1.5; }
+    .note{ color: var(--muted2); font-size: 13px; line-height: 1.55; }
+
+    .hr{ height:1px; background: rgba(255,255,255,.10); margin: 12px 0; }
+
+    .code{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+      border-radius: var(--r12);
+      padding: 12px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: rgba(234,240,255,.86);
+      white-space: pre-wrap;
+    }
+
+    .list2{ display:grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 700px){ .list2{ grid-template-columns: 1fr 1fr; } }
+
+    .mini{
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--r12);
+      background: rgba(255,255,255,.04);
+      padding: 12px;
+    }
+    .mini h3{ margin: 0 0 8px; font-size: 13px; color: var(--text); }
+    .mini p{ margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+
+    .slides{ counter-reset: s; }
+    .slide{ position:relative; padding-left: 38px; }
+    .slide:before{
+      counter-increment: s;
+      content: counter(s);
+      position:absolute;
+      left: 12px; top: 12px;
+      width: 22px; height: 22px;
+      display:grid; place-items:center;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: rgba(234,240,255,.9);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    footer{ margin-top: 18px; color: var(--muted2); font-size: 12.5px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="meta">
+          <span class="pill"><strong>Nicho:</strong> Social Media</span>
+          <span class="pill"><strong>Dia:</strong> 23</span>
+          <span class="pill"><strong>Formato:</strong> Carrossel</span>
+          <span class="pill"><strong>Pilar:</strong> Checklist</span>
+        </div>
+        <div class="btns">
+          <a class="pill" href="https://www.instagram.com/p/DWOxCwYjaO4/" target="_blank" rel="noopener noreferrer">Post original</a>
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <h1 class="title"><span class="tagline">Carrossel curado</span>: lista de ferramentas/recursos do dia a dia</h1>
+      <p class="subtitle">Modelo reproduzível para qualquer tema: você entrega uma lista curta (5–7 itens) com benefício + uso prático + prova visual. O segredo é ritmo (1 cor por slide), micro-entregas e CTA com recompensa.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd"><h2>Resumo</h2></div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="k"><div class="l">Promessa do conteúdo</div><div class="v">Lista curada (não genérica) + “o que eu realmente uso”</div></div>
+            <div class="k"><div class="l">Estrutura</div><div class="v">Capa → 5–7 itens (repetição) → recap → CTA</div></div>
+            <div class="k"><div class="l">Retenção</div><div class="v">Curiosidade + prova (prints) + ritmo de cores + tom pessoal</div></div>
+          </div>
+          <div class="hr"></div>
+          <p class="note"><strong>Quando usar:</strong> para crescer salvamentos/compartilhamentos, posicionar autoridade prática e gerar comentários/DMs pedindo links, templates ou lista completa.</p>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd"><h2>Metadados e parâmetros</h2></div>
+        <div class="bd">
+          <div class="list2">
+            <div class="mini"><h3>Quantidade ideal</h3><p>5–7 itens. Total: 7–9 slides.</p></div>
+            <div class="mini"><h3>Texto por slide</h3><p>12–22 palavras (1 ideia, 1 benefício, 1 uso).</p></div>
+            <div class="mini"><h3>Prova</h3><p>Print, mini-demo, antes/depois, screenshot de resultado, interface.</p></div>
+            <div class="mini"><h3>CTA</h3><p>Comentário com palavra-chave + “salva” + pergunta de reciprocidade.</p></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Estrutura (sequência)</h2></div>
+      <div class="bd">
+        <ul>
+          <li><strong>Slide 1 (capa):</strong> Hook + promessa + curiosidade (“duvido que você use todos”).</li>
+          <li><strong>Slides 2–6/8 (itens):</strong> Repetição da mesma estrutura (nome → benefício → como uso → prova → micro-opinião).</li>
+          <li><strong>Penúltimo (recap):</strong> resumo rápido + reforço “não é lista genérica”.</li>
+          <li><strong>Último (CTA):</strong> palavra-chave + reciprocidade (“me conta os seus”) + salvar/compartilhar.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Slides sugeridos (1..8)</h2></div>
+      <div class="bd slides" id="slides">
+        <div class="mini slide">
+          <h3>Slide 1 — Capa (Hook forte)</h3>
+          <p><strong>Headline:</strong> “{N} {coisas/ferramentas/recursos} que eu uso pra {benefício} em {contexto}”<br />
+          <strong>Sub:</strong> “(aposto que você não usa todas)” / “(sem lista genérica)”</p>
+        </div>
+        <div class="mini slide">
+          <h3>Slide 2 — Item 1</h3>
+          <p><strong>Tarja:</strong> {ITEM_1}<br />
+          <strong>Texto:</strong> “Uso pra {tarefa} e ganho {benefício}.”<br />
+          <strong>Prova:</strong> print/preview + seta destacando o que olhar.<br />
+          <strong>Frase humana:</strong> “me salvou em {situação}”.</p>
+        </div>
+        <div class="mini slide">
+          <h3>Slide 3 — Item 2 (antes/depois)</h3>
+          <p><strong>Tarja:</strong> {ITEM_2}<br />
+          <strong>Texto:</strong> “Antes eu fazia {dor}. Agora resolvo com {como}.”<br />
+          <strong>Prova:</strong> print + exemplo rápido (1 linha).</p>
+        </div>
+        <div class="mini slide">
+          <h3>Slide 4 — Item 3 (diferencial)</h3>
+          <p><strong>Tarja:</strong> {ITEM_3}<br />
+          <strong>Texto:</strong> “O diferencial é {feature} → perfeito pra {uso}.”<br />
+          <strong>Prova:</strong> print/mini-demo.</p>
+        </div>
+        <div class="mini slide">
+          <h3>Slide 5 — Item 4 (resultado)</h3>
+          <p><strong>Tarja:</strong> {ITEM_4}<br />
+          <strong>Texto:</strong> “Em {rotina}, isso reduz {tempo/erros}.”<br />
+          <strong>Selo (curtinho):</strong> “life-saver.”</p>
+        </div>
+        <div class="mini slide">
+          <h3>Slide 6 — Item 5 (ponte)</h3>
+          <p><strong>Tarja:</strong> {ITEM_5}<br />
+          <strong>Texto:</strong> “Eu organizo/planejo/analiso {área} por aqui.”<br />
+          <strong>Ponte opcional:</strong> “Quer meu modelo/lista completa?”<br />
+          <strong>CTA embutido:</strong> “Comenta {PALAVRA} que eu mando”.</p>
+        </div>
+        <div class="mini slide">
+          <h3>Slide 7 — Recap</h3>
+          <p><strong>Headline:</strong> “Resumo rápido”<br />
+          <strong>Formato:</strong> bullets com os {N} itens OU “Se eu tivesse que escolher 1: {TOP1}”.<br />
+          <strong>Reforço:</strong> “só coisa que eu realmente uso”.</p>
+        </div>
+        <div class="mini slide">
+          <h3>Slide 8 — CTA final (conversacional)</h3>
+          <p><strong>Headline:</strong> “Agora é sua vez”<br />
+          <strong>Pergunta:</strong> “Quais são seus {sites/apps/dicas} indispensáveis?”<br />
+          <strong>Extra:</strong> “Salva pra consultar depois” + “manda pra alguém de {área}”.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Roteiro (texto copiável)</h2></div>
+      <div class="bd">
+        <div class="code" id="roteiro">SLIDE 1 — CAPA
+Título: “{N} {FERRAMENTAS/IDEIAS} que eu uso pra {BENEFÍCIO} em {CONTEXTO}”
+Sub: “(aposto que você não usa todas)” | “(sem lista genérica)” | “(vou te mostrar o que realmente uso)”
+
+SLIDE 2 — ITEM 1
+{ITEM_1}
+“Uso pra {TAREFA} e ganho {BENEFÍCIO_1}. Ex.: {EXEMPLO_RÁPIDO}.”
+Prova: {PRINT/DEMO}
+Selo: “me salvou em {SITUAÇÃO}”
+
+SLIDE 3 — ITEM 2
+{ITEM_2}
+“Antes eu fazia {DOR}. Agora resolvo com {COMO}.”
+Prova: {PRINT/DEMO}
+
+SLIDE 4 — ITEM 3
+{ITEM_3}
+“O diferencial é {FEATURE} → perfeito pra {USO}.”
+Prova: {PRINT/DEMO}
+
+SLIDE 5 — ITEM 4
+{ITEM_4}
+“Em {ROTINA}, isso reduz {TEMPO/ERROS}.”
+Selo: “life-saver.”
+
+SLIDE 6 — ITEM 5
+{ITEM_5}
+“Eu {AÇÃO PRINCIPAL} {ÁREA} por aqui.”
+Ponte: “Quer a lista completa / meu template?”
+CTA embutido: “Comenta {PALAVRA} que eu mando o link/passo a passo.”
+
+SLIDE 7 — RECAP
+“Resumo rápido: {ITEM_1}, {ITEM_2}, {ITEM_3}, {ITEM_4}, {ITEM_5}.”
+Alternativa: “Se eu tivesse que escolher 1: {TOP1} (por {MOTIVO}).”
+
+SLIDE 8 — CTA FINAL
+“Agora me conta: quais são seus {RECURSOS} indispensáveis?”
+“Salva pra consultar depois + manda pra alguém de {PÚBLICO}.”</div>
+        <p class="note" style="margin-top:10px;">Dica de consistência: mantenha o <strong>mesmo molde</strong> em todos os itens (nome → benefício → uso → prova). A sensação de “progressão” vem da <strong>cor por slide</strong> e dos <strong>prints</strong>.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Elementos visuais</h2></div>
+      <div class="bd">
+        <div class="list2">
+          <div class="mini"><h3>Identidade (high-tech, limpo)</h3><p>Fundo escuro + cards claros, borda suave. Use 1 cor dominante por item para ritmo (capítulos).</p></div>
+          <div class="mini"><h3>Capa</h3><p>Colagem/bastidores + ruído leve + tarjas retangulares com título grande.</p></div>
+          <div class="mini"><h3>Slides de itens</h3><p>Fundo chapado (1 cor), tarja com o nome, card branco (ou claro) com 1–2 frases e print com moldura.</p></div>
+          <div class="mini"><h3>Hierarquia tipográfica</h3><p>Título (bold) em tarja; corpo curto; 1 frase “voz humana” em 2–3 slides; @ no rodapé.</p></div>
+        </div>
+        <div class="hr"></div>
+        <ul>
+          <li><strong>Regra de ouro:</strong> 1 ideia por slide. Se precisar explicar, transforme em exemplo (print + 1 frase).</li>
+          <li><strong>Prova visual:</strong> sempre que possível, destaque com setas/círculos o detalhe que importa no print.</li>
+          <li><strong>Zona segura:</strong> margens generosas (evite bordas inferior/superior por causa da UI do Instagram).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Copy e ganchos</h2></div>
+      <div class="bd">
+        <div class="mini">
+          <h3>Fórmulas de título (capa)</h3>
+          <div class="code">1) “{N} {COISAS} que {BENEFÍCIO} pra {PERSONA/CONTEXTO}”
+2) “Os {N} recursos que mais economizam meu tempo em {ÁREA}”
+3) “{N} ferramentas que eu uso pra {RESULTADO} sem {DOR/OBJEÇÃO}”
+4) “Lista anti-genérica: {N} {COISAS} que eu realmente uso em {ROTINA}”</div>
+        </div>
+        <div class="hr"></div>
+        <div class="list2">
+          <div class="mini"><h3>Ganchos de retenção</h3><p>“duvido que você use todos”, “não é lista genérica”, “te mostro o que realmente uso”, “o #3 é o que mais me salva”.</p></div>
+          <div class="mini"><h3>Micro-frases (voz humana)</h3><p>“Ok, isso elevou minha régua.” “Eu uso TODO DIA.” “Parece bobo, mas muda tudo.” “Isso aqui me poupa 1h/semana.”</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>CTA</h2></div>
+      <div class="bd">
+        <div class="list2">
+          <div class="mini"><h3>Engajamento (comentários)</h3><p>“Qual desses você já usa? E qual eu deveria testar? Comenta aqui.”</p></div>
+          <div class="mini"><h3>Lead/DM (palavra-chave)</h3><p>“Comenta <strong>{PALAVRA}</strong> que eu te mando os links / o passo a passo.”</p></div>
+          <div class="mini"><h3>Autoridade</h3><p>“Se quiser, eu faço a Parte 2 com meu setup completo. Quer?”</p></div>
+          <div class="mini"><h3>Distribuição</h3><p>“Manda pra alguém que vive pedindo ferramenta de {TEMA}.”</p></div>
+        </div>
+        <div class="hr"></div>
+        <p class="note"><strong>Boa prática:</strong> use 1 CTA principal (comentário com palavra-chave) e 1 secundário (salvar/compartilhar). Evite muitos pedidos no mesmo slide.</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Checklist (criação e publicação)</h2></div>
+      <div class="bd">
+        <ul>
+          <li>[ ] Defina o objetivo: engajamento, leads/DM, vendas, autoridade.</li>
+          <li>[ ] Escolha {N}=5–7 itens (cada um precisa ter: 1 benefício + 1 uso prático + 1 prova).</li>
+          <li>[ ] Escreva a capa com promessa + curiosidade (1 linha + 1 linha).</li>
+          <li>[ ] Padronize o layout: tarja do título + card de texto + print + @ no rodapé.</li>
+          <li>[ ] Varie 1 cor por item (ritmo). Estrutura igual, cor muda.</li>
+          <li>[ ] Insira 2–3 “frases humanas” para personalidade (curtas).</li>
+          <li>[ ] Faça recap (slide penúltimo) para consolidar e aumentar salvamentos.</li>
+          <li>[ ] Inclua CTA final: palavra-chave + pergunta de reciprocidade + “salva/manda”.</li>
+          <li>[ ] Revise escaneabilidade: título → 1 frase → prova (sem parágrafos).</li>
+          <li>[ ] Publique com legenda curta e repetindo o CTA (principal e secundário).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd"><h2>Variações (adapte para outros temas mantendo o impacto)</h2></div>
+      <div class="bd">
+        <div class="list2">
+          <div class="mini"><h3>Troque “ferramentas” por…</h3><p>{hábitos}, {checklist}, {atalhos}, {prompts}, {referências}, {fontes}, {modelos}, {planilhas}, {frameworks}.</p></div>
+          <div class="mini"><h3>Troque “prints” por…</h3><p>foto do bastidor, antes/depois, trecho de template, screenshot de resultado, mini-case (1 métrica).</p></div>
+          <div class="mini"><h3>Se o tema for sensível/sem prova visual</h3><p>Use “prova por evidência”: mini-história, exemplo real, ou “sintoma → ação → resultado” em 1 linha.</p></div>
+          <div class="mini"><h3>Se quiser vender</h3><p>Slide 6 vira “ponte”: “Quer meu template completo? Link na bio.” Mantenha os itens entregando valor primeiro.</p></div>
+        </div>
+        <div class="hr"></div>
+        <div class="mini">
+          <h3>Substituições prontas (mesma estrutura, outro assunto)</h3>
+          <div class="code">Tema: Nutrição
+Capa: “5 coisas que eu uso pra comer bem na correria (sem terrorismo)"
+Itens: 5 alimentos/atalhos + como uso + foto/print de lista
+CTA: “Comenta ‘LISTA’ que eu mando a compra da semana”
+
+Tema: Finanças
+Capa: “6 hábitos que me fizeram gastar menos sem sofrer”
+Itens: apps/rotinas + antes/depois + print de categoria
+CTA: “Comenta ‘PLANILHA’ que eu mando meu modelo”
+
+Tema: Estudos
+Capa: “5 recursos que aceleram meus estudos (de verdade)”
+Itens: técnicas/ferramentas + exemplo de uso + foto de caderno
+CTA: “Comenta ‘MAPA’ que eu mando o template”</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="hr"></div>
+      <p>Pronto para reproduzir: troque os campos {ENTRE CHAVES}, mantenha o molde e publique. Se quiser, dá para versionar “Parte 2” com mais {N} itens para continuar a série.</p>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const txt = document.getElementById('roteiro');
+      btn.addEventListener('click', async () => {
+        const content = txt.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(content);
+          const old = btn.textContent;
+          btn.textContent = 'Copiado!';
+          setTimeout(()=> btn.textContent = old, 1200);
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = content;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          const old = btn.textContent;
+          btn.textContent = 'Copiado!';
+          setTimeout(()=> btn.textContent = old, 1200);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
