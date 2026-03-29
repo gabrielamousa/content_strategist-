@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 10 — Sinais de alerta após procedimentos estéticos</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#090F1F;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.55);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 14px;
+
+      --g1: linear-gradient(90deg, #2EE59D 0%, #35C9FF 45%, #FFB648 100%);
+      --g2: radial-gradient(1200px 600px at 20% 10%, rgba(53,201,255,.22), transparent 55%),
+            radial-gradient(900px 500px at 90% 20%, rgba(46,229,157,.18), transparent 52%),
+            radial-gradient(900px 500px at 60% 90%, rgba(255,182,72,.14), transparent 52%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+
+    .header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px 18px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.12;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+
+    .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .chips{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .chip{
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.22);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      backdrop-filter: blur(10px);
+    }
+    .chip strong{color:var(--text); font-weight:700}
+
+    .hgroup{margin-top:10px; display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap}
+    h1{
+      font-size: clamp(20px, 3vw, 28px);
+      margin:0;
+      letter-spacing:-0.02em;
+      line-height:1.15;
+    }
+    .sub{
+      margin:8px 0 0;
+      color: var(--muted);
+      line-height:1.45;
+      max-width: 78ch;
+      font-size:14px;
+    }
+
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px}
+    .btn{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22)}
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(46,229,157,.20), rgba(53,201,255,.12));
+      border-color: rgba(53,201,255,.35);
+    }
+
+    .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px}
+    @media(min-width: 920px){
+      .grid{grid-template-columns: 1.05fr .95fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      border-radius: var(--radius);
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px 10px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:baseline;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.14);
+    }
+    .card h2{font-size:14px; margin:0; letter-spacing:.02em; text-transform:uppercase; color: rgba(234,240,255,.86)}
+    .card .hint{font-size:12px; color: var(--muted2)}
+    .card .bd{padding:14px 16px 16px}
+
+    .hl{
+      display:inline-block;
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight:800;
+    }
+
+    ul{margin:10px 0 0; padding:0 0 0 18px; color: var(--muted); line-height:1.55}
+    li{margin:6px 0}
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: var(--radius2);
+      padding:10px;
+      min-height:64px;
+    }
+    .pill .t{font-size:12px; color: var(--muted2); margin:0 0 4px}
+    .pill .v{font-size:13px; color: var(--text); margin:0; font-weight:650}
+
+    .script{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: rgba(234,240,255,.82);
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 12px;
+      overflow:auto;
+      white-space: pre-wrap;
+      line-height:1.55;
+    }
+
+    .twoCols{display:grid; grid-template-columns:1fr; gap:12px}
+    @media(min-width: 920px){
+      .twoCols{grid-template-columns:1fr 1fr}
+    }
+
+    .note{
+      border-left: 3px solid rgba(53,201,255,.55);
+      padding: 10px 12px;
+      background: rgba(53,201,255,.06);
+      border-radius: 12px;
+      color: var(--muted);
+      margin-top:10px;
+    }
+
+    .footer{
+      margin-top:14px;
+      color: var(--muted2);
+      font-size:12px;
+      text-align:center;
+    }
+
+    .link{
+      color: rgba(234,240,255,.92);
+      border-bottom: 1px solid rgba(255,255,255,.22);
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.72);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(234,240,255,.92);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+      backdrop-filter: blur(10px);
+      z-index: 999;
+    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(-4px)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="topline">
+        <div class="chips">
+          <div class="chip"><strong>Nicho</strong>: Harmonização e dermatologia</div>
+          <div class="chip"><strong>Dia</strong>: 10</div>
+          <div class="chip"><strong>Formato</strong>: Reels</div>
+          <div class="chip"><strong>Pilar</strong>: Dor</div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DV9Z87aAQ8c/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
+      </div>
+
+      <div class="hgroup">
+        <div>
+          <h1><span class="hl">Sinais de alerta</span> após procedimentos estéticos (não ignore)</h1>
+          <p class="sub">Roteiro reproduzível para falar de uma complicação real (ex.: oclusão vascular, infecção, queimadura/mancha pós-laser/peeling), com prevenção, sinais e conduta. Tom: educativo, urgente e responsável.</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <div class="hint">Objetivo + promessa</div>
+        </div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="pill"><p class="t">Promessa</p><p class="v">Entender <b>por que acontece</b>, <b>como reduzir o risco</b> e <b>quando agir rápido</b>.</p></div>
+            <div class="pill"><p class="t">Duração</p><p class="v">60–90s (pode ir a 2min se for “grave e salvador”).</p></div>
+            <div class="pill"><p class="t">Formato de gravação</p><p class="v">Talking head + texto por blocos + cortes a cada 1–2 frases.</p></div>
+            <div class="pill"><p class="t">Tom</p><p class="v">Alerta sem terrorismo: “sou a favor, com segurança”.</p></div>
+          </div>
+          <div class="note"><b>Como escolher o tema do dia:</b> selecione <span class="hl">1 complicação</span> ligada ao seu procedimento mais procurado. Ex.: preenchimento (oclusão vascular), toxina (ptose), bioestimulador (nódulos), laser/peeling (queimadura/hiperpigmentação), fios (infecção/assimetria).</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <div class="hint">Sequência padrão (retenção)</div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>0–3s:</b> Hook com risco + nome da complicação.</li>
+            <li><b>3–8s:</b> Contexto/credencial curta (autoridade + humano).</li>
+            <li><b>8–15s:</b> Definição simples (1 frase).</li>
+            <li><b>15–30s:</b> Por que acontece (2–4 causas).</li>
+            <li><b>30–55s:</b> Como prevenir (4–6 ações).</li>
+            <li><b>55–75s:</b> Sinais de alerta (3–6 sinais + “isso é alerta”).</li>
+            <li><b>75–85s:</b> O que fazer agora (conduta imediata + não esperar).</li>
+            <li><b>85–95s:</b> Fechamento ético + posicionamento.</li>
+            <li><b>95–100s:</b> CTA (salvar + enviar + palavra-chave).</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Roteiro</h2>
+        <div class="hint">Texto falado + texto na tela (modelo copiável)</div>
+      </div>
+      <div class="bd">
+        <div class="twoCols">
+          <div>
+            <p style="margin:0; color:var(--muted)">Preencha os campos entre colchetes. Escolha <b>uma</b> complicação principal.</p>
+            <div id="script" class="script">[TEMA/COMPLICAÇÃO] após [PROCEDIMENTO]
+
+1) HOOK (0–3s)
+FALADO: “Atenção: depois de [procedimento], existe um sinal que você NÃO pode ignorar: [complicação].”
+TELA: “ALERTA: [COMPLICAÇÃO] após [PROCEDIMENTO]”
+
+2) CONTEXTO + CREDENCIAL (3–8s)
+FALADO: “Eu atendo isso no consultório e o problema quase sempre é o mesmo: a pessoa acha que ‘vai passar’.”
+TELA: “Não é terrorismo. É segurança.”
+
+3) DEFINIÇÃO SIMPLES (8–15s)
+FALADO: “[Complicação] é quando [definição leiga em 1 frase].”
+TELA: “[COMPLICAÇÃO] = [1 linha simples]”
+
+4) POR QUE ACONTECE (15–30s)
+FALADO: “Geralmente acontece por três motivos: (1) [fator do procedimento], (2) [fator do paciente], (3) [fator do pós].”
+TELA: “Por que acontece: 1) … 2) … 3) …”
+
+5) COMO PREVENIR (30–55s)
+FALADO: “Pra reduzir muito o risco, eu recomendo: 1) [ação prática], 2) [ação prática], 3) [ação ignorada], 4) [ação ignorada].”
+TELA: “Como reduzir o risco: 1) … 2) … 3) … 4) …”
+
+6) SINAIS DE ALERTA (55–75s)
+FALADO: “Agora, sinais de alerta de verdade: [sinal 1 com descrição sensorial], [sinal 2], [sinal 3]. Se aparecer, isso NÃO é normal.”
+TELA: “SINAIS DE ALERTA: • … • … • …”
+
+7) O QUE FAZER (75–85s)
+FALADO: “Não espera. Entra em contato com seu médico agora. E se tiver [sinal grave], procura atendimento imediatamente.”
+TELA: “NÃO espere passar. Aja rápido.”
+
+8) FECHAMENTO RESPONSÁVEL (85–95s)
+FALADO: “Eu sou a favor de procedimentos estéticos — mas com avaliação, técnica e pós-operatório bem feito.”
+TELA: “Estética com responsabilidade.”
+
+9) CTA (95–100s)
+FALADO: “Salva esse vídeo e envia pra alguém que vai fazer [procedimento]. Comenta ‘CHECKLIST’ que eu te mando os cuidados gerais.”
+TELA: “SALVE + ENVIE | Comente: CHECKLIST”</div>
+          </div>
+          <div>
+            <div class="card" style="border-radius:14px; background: rgba(0,0,0,.18)">
+              <div class="hd" style="border-bottom:1px solid rgba(255,255,255,.06)">
+                <h2>Exemplos prontos (3 opções)</h2>
+                <div class="hint">Escolha 1 e grave</div>
+              </div>
+              <div class="bd">
+                <ul>
+                  <li><b>Preenchimento:</b> “Oclusão vascular: como reconhecer nos primeiros minutos/horas e o que fazer.”</li>
+                  <li><b>Laser/peeling:</b> “Queimadura/mancha: o que é normal vs o que é alerta nas primeiras 24–72h.”</li>
+                  <li><b>Procedimentos injetáveis em geral:</b> “Infecção: quando a vermelhidão sai do ‘esperado’ e vira sinal de perigo.”</li>
+                </ul>
+                <div class="note"><b>Importante:</b> evite instrução clínica específica que substitua consulta. Enfatize <b>procurar o profissional</b> e/ou <b>atendimento imediato</b> quando houver sinais graves.</div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:12px; border-radius:14px; background: rgba(0,0,0,.18)">
+              <div class="hd">
+                <h2>Texto na tela (blocos)</h2>
+                <div class="hint">padrão “high retention”</div>
+              </div>
+              <div class="bd">
+                <ul>
+                  <li>Tela 1: “ALERTA: [COMPLICAÇÃO]”</li>
+                  <li>Tela 2: “Por que acontece + Como prevenir + Sinais”</li>
+                  <li>Tela 3: “[Complicação] = [1 linha]”</li>
+                  <li>Tela 4: “Como reduzir o risco: 1) 2) 3) 4)”</li>
+                  <li>Tela 5: “Sinais de ALERTA: …”</li>
+                  <li>Tela 6: “NÃO espere passar”</li>
+                  <li>Tela 7: “Estética com responsabilidade”</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <article class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <div class="hint">captação + edição</div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>Plano:</b> meio corpo, câmera na altura dos olhos, fundo limpo.</li>
+            <li><b>Áudio:</b> prioridade máxima (microfone de lapela se possível).</li>
+            <li><b>Cortes:</b> jump cuts a cada 1–2 frases.</li>
+            <li><b>Ênfase:</b> zoom-in leve em “SINAL DE ALERTA” e “NÃO espere”.</li>
+            <li><b>B-roll opcional:</b> consultório, EPIs, ilustração simples, checklist na tela, close em “texto” (sem imagens sensíveis).</li>
+            <li><b>Trilha:</b> baixa e constante; whoosh sutil na troca de blocos.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <div class="hint">modelos rápidos</div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><b>Alerta real:</b> “Tem um risco pouco falado de [procedimento] que eu preciso te explicar hoje.”</li>
+            <li><b>Risco invisível:</b> “O perigo de [procedimento] que quase ninguém te conta: [complicação].”</li>
+            <li><b>Quebra de normalidade:</b> “Nem toda dor/inchaço é ‘esperado’. Em alguns casos é alerta.”</li>
+            <li><b>Estrutura em perguntas:</b> “O que é? Por que acontece? Como prevenir? Quando correr?”</li>
+            <li><b>Detalhe concreto:</b> “A janela mais crítica costuma ser [X horas/dias], dependendo do caso.”</li>
+          </ul>
+          <div class="note"><b>Legenda sugerida (curta):</b> “Salva este post para o pós. Procedimento bom é procedimento com <span class=\"hl\">segurança</span>. Se notar sinais de alerta, procure seu profissional/atendimento.”</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <article class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <div class="hint">escolha 1–2</div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li>“Salva esse vídeo pra rever no pós-procedimento.”</li>
+            <li>“Envia pra alguém que vai fazer [procedimento].”</li>
+            <li>“Comenta ‘CHECKLIST’ que eu mando os cuidados gerais.”</li>
+            <li>“Quer que eu faça um vídeo sobre [procedimento] + sinais de alerta? Comenta aqui.”</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <h2>Checklist</h2>
+          <div class="hint">produção (rápido e reproduzível)</div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li>Definir <b>1 complicação</b> + <b>1 procedimento</b> (um tema por vídeo).</li>
+            <li>Escrever hook com <b>risco + nome</b> (até 12 palavras).</li>
+            <li>Adicionar 1 frase de <b>autoridade</b> (sem expor paciente).</li>
+            <li>Definir a complicação em <b>1 linha</b> (sem jargão).</li>
+            <li>Listar <b>3 causas</b> (procedimento/paciente/pós).</li>
+            <li>Listar <b>4–6 prevenções</b> (inclua 2 que o público ignora).</li>
+            <li>Listar <b>3–6 sinais</b> com descrição sensorial (“como parece/como sente”).</li>
+            <li>Fechar com <b>conduta</b>: “não espere, acione seu médico/atendimento”.</li>
+            <li>Inserir textos por bloco (Definição / Prevenção / Sinais / Ação).</li>
+            <li>Editar com cortes rápidos + destaque nos alertas.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Variações</h2>
+        <div class="hint">3 versões para testar</div>
+      </div>
+      <div class="bd">
+        <div class="twoCols">
+          <div>
+            <ul>
+              <li><b>V1 (urgência):</b> abrir com “Se você fez [procedimento] e percebeu [sinal], não espera.”</li>
+              <li><b>V2 (mito do ‘é normal’):</b> “O que é normal vs o que é alerta no pós de [procedimento].”</li>
+              <li><b>V3 (erro comum):</b> “O erro do pós que aumenta o risco de [complicação].”</li>
+            </ul>
+          </div>
+          <div>
+            <div class="note"><b>Dica de teste A/B:</b> mantenha o mesmo miolo e altere apenas o hook (primeiros 3s) + primeira linha da legenda.</div>
+            <p style="margin:10px 0 0; color:var(--muted2); font-size:12px">
+              Link original: <a class="link" href="https://www.instagram.com/p/DV9Z87aAQ8c/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DV9Z87aAQ8c/</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">Documento de roteiro e produção — identidade visual dark + destaque em degradê (verde/azul/laranja).</div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const scriptEl = document.getElementById('script');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>toast.classList.remove('show'), 1400);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = scriptEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
+          catch(err){ showToast('Não foi possível copiar automaticamente.'); }
+          document.body.removeChild(ta);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
