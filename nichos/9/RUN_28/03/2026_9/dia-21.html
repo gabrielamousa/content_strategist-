@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dia 21 — Tendência não é indicação</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:rgba(255,255,255,.06);
+    --card2:rgba(255,255,255,.04);
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.14);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.55);
+    --shadow: 0 18px 60px rgba(0,0,0,.45);
+    --r12:12px;
+    --r16:16px;
+    --r20:20px;
+    --grad: linear-gradient(90deg, #22c55e 0%, #38bdf8 45%, #f59e0b 100%);
+    --grad2: radial-gradient(1200px 700px at 10% 0%, rgba(56,189,248,.20), transparent 60%),
+             radial-gradient(900px 600px at 90% 10%, rgba(245,158,11,.16), transparent 55%),
+             radial-gradient(800px 500px at 50% 100%, rgba(34,197,94,.14), transparent 60%);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background: var(--grad2), linear-gradient(180deg, var(--bg0), var(--bg1));
+  }
+  a{color:inherit}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 64px}
+  header{
+    display:grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap:14px;
+    align-items:stretch;
+    margin-bottom:18px;
+  }
+  @media (max-width: 880px){
+    header{grid-template-columns:1fr}
+  }
+  .hero{
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+    border:1px solid var(--stroke);
+    border-radius: var(--r20);
+    padding:18px 18px 16px;
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--grad);
+    opacity:.12;
+    filter: blur(10px);
+    z-index:0;
+  }
+  .hero > *{position:relative; z-index:1}
+  .kicker{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    font-size:12px;color:var(--muted);
+  }
+  .pill{
+    border:1px solid var(--stroke2);
+    background: rgba(0,0,0,.22);
+    padding:6px 10px;
+    border-radius:999px;
+    backdrop-filter: blur(8px);
+  }
+  h1{
+    margin:10px 0 8px;
+    font-size:22px;
+    line-height:1.2;
+    letter-spacing:.2px;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.5;
+  }
+  .meta{
+    background: rgba(255,255,255,.05);
+    border:1px solid var(--stroke);
+    border-radius: var(--r20);
+    box-shadow: var(--shadow);
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .label{font-size:12px;color:var(--muted2)}
+  .value{font-size:13px;color:var(--text)}
+  .link{
+    display:flex;gap:10px;align-items:center;justify-content:space-between;
+    padding:10px 12px;
+    border-radius:14px;
+    background: rgba(0,0,0,.20);
+    border:1px solid var(--stroke);
+  }
+  .link small{color:var(--muted2)}
+  .btn{
+    appearance:none;border:1px solid var(--stroke2);
+    background: rgba(255,255,255,.06);
+    color:var(--text);
+    padding:10px 12px;border-radius:14px;
+    cursor:pointer;
+    transition:.2s ease;
+  }
+  .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.22)}
+  .btn.primary{
+    background: linear-gradient(180deg, rgba(56,189,248,.20), rgba(34,197,94,.10));
+    border-color: rgba(56,189,248,.35);
+  }
+  main{display:grid;grid-template-columns: 1fr 1fr; gap:14px; margin-top:14px}
+  @media (max-width: 980px){
+    main{grid-template-columns:1fr}
+  }
+  section{
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border:1px solid var(--stroke);
+    border-radius: var(--r16);
+    padding:16px;
+    box-shadow: var(--shadow);
+  }
+  section h2{
+    margin:0 0 10px;
+    font-size:14px;
+    letter-spacing:.3px;
+    text-transform:uppercase;
+    color:rgba(234,240,255,.86);
+    display:flex;align-items:center;gap:10px;
+  }
+  .bar{
+    height:10px;width:52px;border-radius:999px;background:var(--grad);
+  }
+  .p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+  ul{margin:10px 0 0; padding:0 0 0 18px; color:var(--muted); line-height:1.65}
+  li{margin:6px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+  .code{
+    margin-top:10px;
+    background: rgba(0,0,0,.30);
+    border:1px solid var(--stroke);
+    border-radius: var(--r12);
+    padding:12px;
+    font-family: var(--mono);
+    font-size:12.5px;
+    color: rgba(234,240,255,.90);
+    white-space:pre-wrap;
+    line-height:1.55;
+  }
+  .hint{
+    margin-top:10px;
+    padding:10px 12px;
+    border:1px solid rgba(245,158,11,.24);
+    background: rgba(245,158,11,.08);
+    border-radius: var(--r12);
+    color: rgba(234,240,255,.82);
+    font-size:13px;
+    line-height:1.5;
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    color: rgba(234,240,255,.78);
+  }
+  .footerActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .toast{
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,.72);
+    border: 1px solid var(--stroke2);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events:none;
+    transition: opacity .2s ease, transform .2s ease;
+    backdrop-filter: blur(10px);
+  }
+  .toast.show{opacity:1; transform: translateX(-50%) translateY(-2px)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hero">
+        <div class="kicker">
+          <span class="pill">Nicho: Harmonização e dermatologia</span>
+          <span class="pill">Dia: 21</span>
+          <span class="pill">Formato: Reels</span>
+          <span class="pill">Pilar: Mito vs Verdade</span>
+        </div>
+        <h1>Tendência não é indicação: filtro anti-hype na estética</h1>
+        <p class="sub">Roteiro reproduzível para pegar um tema em alta, validar sem demonizar, virar o jogo para “o problema é a promessa”, proteger o público e fechar com mantra + diagnóstico + básico.</p>
+        <div class="footerActions">
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="copyHooksBtn">Copiar ganchos</button>
+          <button class="btn" id="copyChecklistBtn">Copiar checklist</button>
+        </div>
+      </div>
+      <div class="meta">
+        <div>
+          <div class="label">Link do post original</div>
+          <div class="link">
+            <div>
+              <div class="value" style="font-family:var(--mono);font-size:12px;opacity:.95;">https://www.instagram.com/p/DVMmdlIkaIQ/</div>
+              <small>Use como referência de ritmo e posicionamento anti-hype.</small>
+            </div>
+            <a class="btn" href="https://www.instagram.com/p/DVMmdlIkaIQ/" target="_blank" rel="noreferrer">Abrir</a>
+          </div>
+        </div>
+        <div class="grid2">
+          <div>
+            <div class="label">Tempo alvo</div>
+            <div class="value">45–60s</div>
+          </div>
+          <div>
+            <div class="label">Objetivo</div>
+            <div class="value">Educar + proteger + gerar salvamentos/compartilhamentos</div>
+          </div>
+          <div>
+            <div class="label">Entrega principal</div>
+            <div class="value">3 perguntas-filtro + mantra</div>
+          </div>
+          <div>
+            <div class="label">Tom</div>
+            <div class="value">Calmo, firme, científico, sem ataque</div>
+          </div>
+        </div>
+        <div class="chips" aria-label="Substituições rápidas">
+          <span class="chip">Substitua [X] por: exossomos</span>
+          <span class="chip">PDRN</span>
+          <span class="chip">GHK-Cu</span>
+          <span class="chip">bioestimulador</span>
+          <span class="chip">skinbooster</span>
+          <span class="chip">fios</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2><span class="bar"></span>Resumo</h2>
+        <p class="p">Estratégia: usar uma <strong>tendência</strong> como isca de atenção, aplicar uma <strong>virada</strong> (“o problema é a promessa”), trazer <strong>humildade científica</strong> (evidência/indicação), ancorar no <strong>básico bem feito</strong> e fechar protegendo o paciente (risco de comprar/fazer sem avaliação).</p>
+        <div class="hint"><strong>Por que funciona?</strong> Curiosidade (nome técnico), baixa resistência (valida antes de criticar), medo realista (frustração/efeito ruim), e mantra compartilhável (“Tendência ≠ indicação”).</div>
+      </section>
+
+      <section>
+        <h2><span class="bar"></span>Estrutura</h2>
+        <ul>
+          <li><strong>B1 Hook (0–3s):</strong> “Tá todo mundo falando de [X]…”</li>
+          <li><strong>B2 Validação (3–7s):</strong> “Tem potencial/tem lógica por [benefício geral].”</li>
+          <li><strong>B3 Virada (7–12s):</strong> “O problema não é [X]; é a promessa rápida.”</li>
+          <li><strong>B4 Básico (12–25s):</strong> “Antes do hype: [básico 1], [básico 2], [básico 3].”</li>
+          <li><strong>B5 Regra de ouro (25–35s):</strong> “Tendência não é indicação.”</li>
+          <li><strong>B6 Alerta (35–50s):</strong> “Sem avaliação/compra online/‘serve pra todo mundo’ aumenta risco.”</li>
+          <li><strong>B7 Fecho (50–60s):</strong> 3 perguntas-filtro + “diagnóstico + básico” + CTA.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2><span class="bar"></span>Roteiro</h2>
+        <p class="p">Use colchetes para trocar o tema. Mantenha as frases curtas e as perguntas retóricas.</p>
+        <div class="code" id="roteiroText">(0–3s) Se você abrir o feed hoje, vai ver todo mundo falando de [TENDÊNCIA X].
+
+(3–7s) E sim: [TENDÊNCIA X] tem pontos interessantes — principalmente para [BENEFÍCIO GERAL / OBJETIVO].
+
+(7–12s) Mas deixa eu te dizer o que quase ninguém fala: o problema não é a [TENDÊNCIA X].
+O problema é a velocidade com que isso vira promessa.
+
+(12–25s) Antes de qualquer coisa “da moda”, tem o básico que sustenta resultado:
+1) [BÁSICO #1 do seu tema]
+2) [BÁSICO #2 do seu tema]
+3) [BÁSICO #3 do seu tema]
+
+(25–35s) Frase-chave (pra você guardar): TENDÊNCIA não é INDICAÇÃO.
+Nem tudo que viraliza é certo pra você.
+
+(35–50s) E cuidado com [ERRO/RISCO principal: comprar online / aplicar sozinho / fazer sem avaliação / copiar o da amiga].
+Sem diagnóstico, a chance de frustração e de efeito ruim sobe.
+
+(50–60s) Antes do próximo procedimento/produto, faz 3 perguntas:
+Isso tem evidência?
+É indicado pro MEU caso?
+Ou eu tô comprando marketing?
+
+Fecho: Resultado bom não começa no hype.
+Começa no diagnóstico e no básico bem feito.
+
+CTA: [CTA escolhido]</div>
+      </section>
+
+      <section>
+        <h2><span class="bar"></span>Elementos visuais</h2>
+        <ul>
+          <li><strong>Cortes:</strong> jump cuts leves a cada 1,5–3s.</li>
+          <li><strong>Ênfase:</strong> zoom-in sutil em “o problema não é…” e “Tendência ≠ indicação”.</li>
+          <li><strong>Texto na tela:</strong> blocos de 3–6 palavras, sincronizados com as viradas.</li>
+          <li><strong>B-roll opcional:</strong> rolagem de feed; frasco genérico; sala de avaliação; protetor solar/rotina.</li>
+          <li><strong>Áudio:</strong> voz limpa; trilha baixa e constante.</li>
+        </ul>
+        <div class="code">Texto na tela (sequência pronta):
+1) “A nova febre: [X]”
+2) “Tem potencial? SIM.”
+3) “O problema: promessa”
+4) “Antes do hype: o básico”
+5) “Tendência ≠ indicação”
+6) “Sem avaliação = risco”
+7) “Ciência pro meu caso?”
+8) “Diagnóstico + básico”</div>
+      </section>
+
+      <section>
+        <h2><span class="bar"></span>Copy e ganchos</h2>
+        <div class="grid2">
+          <div>
+            <div class="label">Hooks (escolha 1)</div>
+            <div class="code" id="hooksText">1) “Se você abrir o feed hoje, vai ver todo mundo falando de [X]…”
+2) “A nova febre da estética é [NOME TÉCNICO]. E sim, tem motivo — mas tem um problema.”
+3) “Eu não sou contra [X]. O perigo é o que estão prometendo com isso.”
+4) “Se te prometeram [RESULTADO RÁPIDO] com [X], pausa 30 segundos e ouve isso.”</div>
+          </div>
+          <div>
+            <div class="label">Frases de impacto (plug & play)</div>
+            <div class="code">• “Tendência não é indicação.”
+• “Não existe ‘serve pra todo mundo’.”
+• “Evidência não é promessa.”
+• “O que dá resultado é plano + consistência.”
+• “Sem diagnóstico, você só tá tentando a sorte.”</div>
+          </div>
+        </div>
+        <div class="hint"><strong>Como adaptar para qualquer tema:</strong> mantenha a mesma lógica (validar → virar → básico → regra → risco → 3 perguntas). Só troque [X], 1 benefício geral, 3 básicos e 1 risco principal.</div>
+      </section>
+
+      <section>
+        <h2><span class="bar"></span>CTA</h2>
+        <ul>
+          <li><strong>Comentários (alto engajamento):</strong> “Comenta <strong>CIÊNCIA</strong> que eu mando um checklist antes de fazer/usar [X].”</li>
+          <li><strong>Salvar (conteúdo utilitário):</strong> “Salva pra lembrar dessas 3 perguntas antes de investir.”</li>
+          <li><strong>Direct (relacionamento):</strong> “Me manda no direct a tendência que você viu e eu te digo quais perguntas levar pra consulta.”</li>
+          <li><strong>Compartilhar (proteção):</strong> “Compartilha com alguém que tá pensando em fazer [X] por causa do hype.”</li>
+        </ul>
+        <div class="code">CTA universal (modelo):
+“Quer que eu adapte esse filtro pra [X]? Comenta [PALAVRA] + o que você quer melhorar (ex.: manchas, flacidez, melasma, acne).”</div>
+      </section>
+
+      <section>
+        <h2><span class="bar"></span>Checklist</h2>
+        <div class="code" id="checklistText">ANTES DE GRAVAR
+[ ] Escolhi 1 tendência específica (nome técnico/viral)
+[ ] Tenho 1 validação honesta (o que faz sentido)
+[ ] Tenho 1 problema real (promessa / banalização / indicação errada)
+[ ] Listei 3 itens do “básico” ligados ao tema
+[ ] Defini 1 mantra curto (ex.: “Tendência ≠ indicação”)
+[ ] Incluí 2–3 perguntas retóricas
+
+ROTEIRO (ORDEM)
+[ ] Hook: “você vai ver [X] no feed…”
+[ ] Validação: “tem pontos interessantes…”
+[ ] Virada: “mas o problema é…”
+[ ] Básico: “antes disso…”
+[ ] Regra: “tendência não é indicação”
+[ ] Alerta: “sem avaliação…”
+[ ] 3 perguntas-filtro
+[ ] Fecho + CTA
+
+EDIÇÃO
+[ ] Cortes a cada ~2s
+[ ] Texto na tela com 3–6 palavras
+[ ] Zoom/pausa na frase-mantra
+[ ] Últimos 5–8s com CTA + frase final</div>
+      </section>
+
+      <section>
+        <h2><span class="bar"></span>Variações</h2>
+        <ul>
+          <li><strong>Variação A (Objeção):</strong> “Mas meu amigo fez e amou…” → responda com “pode ter dado certo, mas não prova indicação”.</li>
+          <li><strong>Variação B (Erro comum):</strong> trocar “hype” por “atalho”: “O perigo é pular etapas.”</li>
+          <li><strong>Variação C (Autoridade suave):</strong> “Na consulta eu decido isso com 3 critérios…” (pele/objetivo/risco).</li>
+          <li><strong>Variação D (Prova):</strong> “O que mais vejo no consultório depois do hype: [1 consequência comum].”</li>
+        </ul>
+        <div class="code">Substituições que mantêm o impacto (use conforme o tema):
+• [X] pode ser: exossomos, PDRN, GHK-Cu, skinbooster, bioestimulador, preenchimento full face, fios, lasers “milagrosos”, microagulhamento em casa.
+• [Benefício geral] pode ser: textura, viço, linhas finas, manchas, cicatrizes, flacidez.
+• [Básico #1-3] pode ser: fotoproteção, barreira cutânea, retinoide/ácidos com indicação, sono, proteína/ferro, aderência à rotina, controle de inflamação/acne.
+• [Risco] pode ser: piora de melasma, irritação/dermatite, efeito rebote, assimetria, infecção, gasto sem resultado, expectativas irreais.</div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Copiado para a área de transferência</div>
+
+<script>
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg || 'Copiado para a área de transferência';
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 1400);
+  }
+
+  async function copyFrom(id){
+    const el = document.getElementById(id);
+    const text = el ? el.textContent.trim() : '';
+    if(!text) return toast('Nada para copiar');
+    try{
+      await navigator.clipboard.writeText(text);
+      toast('Copiado');
+    }catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      toast('Copiado');
+    }
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', ()=>copyFrom('roteiroText'));
+  document.getElementById('copyHooksBtn').addEventListener('click', ()=>copyFrom('hooksText'));
+  document.getElementById('copyChecklistBtn').addEventListener('click', ()=>copyFrom('checklistText'));
+</script>
+</body>
+</html>
