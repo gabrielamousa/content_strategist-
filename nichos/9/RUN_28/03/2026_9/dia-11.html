@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dia 11 — Peptídeos: o hype explicado (sem virar aula chata)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.08);
+    --stroke: rgba(255,255,255,.12);
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,.72);
+    --muted2: rgba(234,240,255,.55);
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --r: 18px;
+    --r2: 14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    --g1: linear-gradient(90deg, #37F3A7 0%, #32B6FF 45%, #FF9A3C 100%);
+    --g2: radial-gradient(800px 300px at 15% 0%, rgba(55,243,167,.18), transparent 60%),
+          radial-gradient(700px 240px at 90% 10%, rgba(50,182,255,.16), transparent 55%),
+          radial-gradient(700px 260px at 50% 100%, rgba(255,154,60,.10), transparent 55%);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
+  header{
+    position:relative;
+    padding:22px;
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    border-radius: calc(var(--r) + 6px);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: var(--g1);
+    opacity:.12;
+    filter: blur(14px);
+  }
+  header > *{position:relative}
+  .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .badges{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .badge{
+    padding:8px 10px;
+    border-radius: 999px;
+    border:1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing:.2px;
+  }
+  .badge strong{color:var(--text); font-weight:650}
+  h1{margin:14px 0 6px; font-size: 22px; line-height:1.2}
+  .sub{margin:0; color:var(--muted); font-size:14px; line-height:1.4}
+  .linkrow{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .linkpill{
+    display:inline-flex; gap:8px; align-items:center;
+    padding:10px 12px;
+    border-radius: 12px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.05);
+    color: var(--muted);
+    max-width:100%;
+  }
+  .linkpill span{font-family:var(--mono); font-size:12px; color:var(--muted2)}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    gap:10px;
+    padding:10px 14px;
+    font-weight:650;
+    border-radius: 12px;
+    border:1px solid rgba(255,255,255,.16);
+    background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    color: var(--text);
+    cursor:pointer;
+    user-select:none;
+    transition:.15s transform ease, .15s background ease, .15s border ease;
+  }
+  .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.24)}
+  .btn.primary{
+    border:0;
+    background: var(--g1);
+    color:#08111A;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap:14px;
+    margin-top:14px;
+  }
+  @media (max-width: 900px){
+    .grid{grid-template-columns:1fr}
+  }
+  section.card{
+    border:1px solid var(--stroke);
+    border-radius: var(--r);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    box-shadow: 0 10px 40px rgba(0,0,0,.35);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:14px 16px;
+    border-bottom:1px solid rgba(255,255,255,.10);
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .card .hd h2{margin:0; font-size:14px; letter-spacing:.35px; text-transform:uppercase; color:var(--muted)}
+  .card .bd{padding:16px}
+  .kpi{
+    display:grid; grid-template-columns: repeat(3, 1fr);
+    gap:10px;
+  }
+  @media (max-width: 520px){
+    .kpi{grid-template-columns:1fr}
+  }
+  .k{
+    padding:12px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius: var(--r2);
+    background: rgba(0,0,0,.18);
+  }
+  .k .t{font-size:12px; color:var(--muted2)}
+  .k .v{margin-top:6px; font-weight:720; font-size:14px}
+  .list{margin:0; padding-left:18px; color:var(--muted); line-height:1.55}
+  .list li{margin:8px 0}
+  .hr{height:1px; background: rgba(255,255,255,.10); margin:14px 0}
+  .callout{
+    padding:12px;
+    border-radius: var(--r2);
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.20);
+  }
+  .callout b{
+    background: var(--g1);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .code{
+    font-family:var(--mono);
+    font-size:12px;
+    color: rgba(234,240,255,.80);
+    background: rgba(0,0,0,.30);
+    border:1px solid rgba(255,255,255,.14);
+    border-radius: var(--r2);
+    padding:12px;
+    overflow:auto;
+    white-space:pre-wrap;
+    line-height:1.5;
+  }
+  .pillrow{display:flex; gap:8px; flex-wrap:wrap}
+  .pill{
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.18);
+    color: var(--muted);
+  }
+  .two{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+  }
+  @media (max-width: 900px){
+    .two{grid-template-columns:1fr}
+  }
+  .foot{
+    margin-top:14px;
+    color:var(--muted2);
+    font-size:12px;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badges">
+          <div class="badge"><strong>Nicho</strong>: Harmonização e dermatologia</div>
+          <div class="badge"><strong>Dia</strong>: 11</div>
+          <div class="badge"><strong>Formato</strong>: Reels</div>
+          <div class="badge"><strong>Pilar</strong>: Autoridade</div>
+        </div>
+        <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+      </div>
+      <h1>Peptídeos: o hype explicado (sem virar aula chata)</h1>
+      <p class="sub">Roteiro reproduzível para “traduzir” um termo do hype, criar clareza com base científica e conectar com estética/dermato (com gancho para Parte 2).</p>
+      <div class="linkrow">
+        <a class="linkpill" href="https://www.instagram.com/p/DVegcojEjZK/" target="_blank" rel="noreferrer">
+          <strong>Post original</strong>
+          <span>instagram.com/p/DVegcojEjZK/</span>
+        </a>
+        <div class="pillrow">
+          <span class="pill">45–60s</span>
+          <span class="pill">jump cuts 1–2 frases</span>
+          <span class="pill">texto grande 1 ideia/vez</span>
+          <span class="pill">open loop (Parte 2)</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd"><h2>Resumo</h2></div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="k"><div class="t">Objetivo</div><div class="v">Traduzir o hype + posicionar autoridade</div></div>
+            <div class="k"><div class="t">Promessa</div><div class="v">Entender peptídeos sem ser médico</div></div>
+            <div class="k"><div class="t">Gancho final</div><div class="v">Parte 2: peptídeos na pele (quais e pra quê)</div></div>
+          </div>
+          <div class="hr"></div>
+          <div class="callout">
+            <b>Fórmula do sucesso</b>: hype real → pergunta que segmenta leigo → definição simples → regra fácil → quebra de crença → “grande sacada” (mensageiros) → exemplos que todo mundo já ouviu → contexto (tempo/ciência) → ponte com pele → open loop + CTA.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Metadados de execução</h2></div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>Personagem</b>: médico(a)/dermato/harmonização falando direto para leigos.</li>
+            <li><b>Tom</b>: didático, rápido, provocação leve (sem humilhar).</li>
+            <li><b>Cenário</b>: consultório/fundo clean + luz frontal.</li>
+            <li><b>Audio</b>: voz principal; trilha baixa “high-tech”.</li>
+            <li><b>Entrega</b>: 1 conceito por frase; exemplos em lista rápida.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Estrutura (sequência reproduzível)</h2></div>
+      <div class="bd">
+        <ol class="list">
+          <li><b>Hype + saturação</b>: “você abre o Instagram e é [TERMO] pra tudo…”</li>
+          <li><b>Pergunta que segmenta</b>: “você que não é médico, sabe o que é?”</li>
+          <li><b>Definição simples</b>: trazer “biologia do colégio” + metáfora visual.</li>
+          <li><b>Regra/limiar</b>: um número/comparação que dá clareza imediata.</li>
+          <li><b>Quebra de crença</b>: verbalizar a objeção (“isso não é pra comer?”).</li>
+          <li><b>Grande sacada</b>: reframe (“mensageiros biológicos que ‘mandam recados’”).</li>
+          <li><b>Prova por familiaridade</b>: 2–3 exemplos populares (insulina, GLP‑1…).</li>
+          <li><b>Contexto/autoridade</b>: linha do tempo (“isso é estudado há décadas…”).</li>
+          <li><b>Ponte pro nicho</b>: o que isso tem a ver com pele/dermato/harmonização.</li>
+          <li><b>Open loop + CTA</b>: prometer Parte 2 com algo específico e acionável.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Roteiro (45–60s) — pronto para gravar</h2></div>
+      <div class="bd">
+        <div class="two">
+          <div>
+            <div class="callout"><b>Instrução</b>: leia em voz alta e ajuste com seu vocabulário. Mantenha frases curtas. Corte entre blocos.</div>
+            <div class="hr"></div>
+            <div class="code" id="roteiro">[0–3s | Hook | texto na tela: “O HYPE: PEPTÍDEOS”]
+“Você abre o Instagram e é ‘peptídeo’ pra tudo quanto é lado…”
+
+[3–7s | Segmentação | texto: “Você sabe o que é?”]
+“Mas me diz uma coisa: você que não é médico, você sabe o que é um peptídeo de verdade?”
+
+[7–15s | Definição simples | texto: “Peptídeo = pedaço de proteína”]
+“Lembra da biologia? Proteína é uma corrente de aminoácidos. Um peptídeo é tipo um ‘pedacinho’ dessa proteína.”
+
+[15–22s | Regra/limiar | texto: “até X = peptídeo | acima = proteína”]
+“Regra bem simples: cadeias menores costumam ser chamadas de peptídeos; as maiores, proteínas. A ideia é: tamanho muda comportamento.”
+
+[22–28s | Quebra de crença | texto: “Não é ‘só suplemento’”]
+“Aí você pensa: ‘tá, mas isso não é coisa de suplemento / de comer?’ Nem sempre.”
+
+[28–36s | Grande sacada | texto: “A sacada: mensageiros”]
+“A grande sacada é que muitos peptídeos funcionam como mensageiros: eles ‘mandam recados’ e acionam respostas no corpo.”
+
+[36–46s | Prova por exemplos | texto: “Exemplos: insulina | GLP‑1”]
+“Você conhece vários e nem sabia: insulina é um peptídeo. E o GLP‑1, das ‘canetinhas’, também entra nessa lógica de sinalização.”
+
+[46–54s | Autoridade/tempo | texto: “Isso existe há décadas”]
+“Isso não é invenção do marketing da semana. É estudado e usado na medicina há décadas.”
+
+[54–60s | Ponte + Parte 2 | texto: “Parte 2: na pele”]
+“E na dermatologia? Aí é que fica interessante: tem peptídeos usados pra comunicação celular na pele e suporte de colágeno, barreira e mais. Quer que eu faça o capítulo 2 com os principais peptídeos e pra que serve cada um?”</div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 10px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.35px">Textos na tela (sincronizados)</h3>
+            <ul class="list">
+              <li>O HYPE: PEPTÍDEOS</li>
+              <li>Você sabe o que é?</li>
+              <li>Peptídeo = pedaço de proteína</li>
+              <li>Regra: menor = peptídeo | maior = proteína</li>
+              <li>Não é “só suplemento”</li>
+              <li>A sacada: MENSAGEIROS</li>
+              <li>“Mandam recados” pra célula</li>
+              <li>Exemplos: Insulina | GLP‑1</li>
+              <li>Existe há décadas</li>
+              <li>Parte 2: peptídeos na pele</li>
+            </ul>
+            <div class="hr"></div>
+            <h3 style="margin:0 0 10px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.35px">Pontos de zoom (3 viradas)</h3>
+            <ul class="list">
+              <li>“Você que não é médico…”</li>
+              <li>“A grande sacada…”</li>
+              <li>“E na dermatologia?”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Elementos visuais</h2></div>
+      <div class="bd">
+        <div class="two">
+          <div>
+            <ul class="list">
+              <li><b>Estilo</b>: high-tech clean (fundo neutro, luz frontal, estética minimalista).</li>
+              <li><b>Overlay simples</b> (opcional): “mensageiro → receptor → célula” com setas.</li>
+              <li><b>Card de capítulos</b>: “CAP. 1: O que é” / “CAP. 2: Na pele”.</li>
+              <li><b>Gráfico rápido</b>: barra “menor vs maior” para regra/limiar.</li>
+              <li><b>Legenda dinâmica</b>: destacar 3–5 palavras por frase.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout"><b>Direção de edição</b>: cortes a cada 1–2 frases, acelera nos exemplos, pausa de 0,3–0,5s antes da “grande sacada”.</div>
+            <div class="hr"></div>
+            <ul class="list">
+              <li><b>Enquadramento</b>: plano médio (peito pra cima).</li>
+              <li><b>Tipografia na tela</b>: bold, grande, 1 ideia por vez.</li>
+              <li><b>Cores do texto</b>: branco + 1 cor por destaque (verde/azul/laranja).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Copy e ganchos (modelos adaptáveis)</h2></div>
+      <div class="bd">
+        <div class="two">
+          <div>
+            <h3 style="margin:0 0 10px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.35px">Hooks (primeiros 3s)</h3>
+            <ul class="list">
+              <li>“O hype do momento é <b>[TERMO]</b>. Você sabe o que é de verdade?”</li>
+              <li>“Se você não é médico, isso aqui vai te poupar de muito marketing…”</li>
+              <li>“<b>[TERMO]</b> não é ‘coisa de influencer’. É biologia — e eu vou traduzir.”</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 10px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.35px">Frases de autoridade (sem jargão)</h3>
+            <ul class="list">
+              <li>“Isso é estudado há décadas; o que muda é como o marketing empacota.”</li>
+              <li>“A palavra é nova no seu feed. O conceito não é novo na medicina.”</li>
+              <li>“O ponto não é ‘ter peptídeo’. É <b>o que ele sinaliza</b> e em qual contexto.”</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>CTA (escolha 1 primário + 1 secundário)</h2></div>
+      <div class="bd">
+        <div class="two">
+          <div>
+            <ul class="list">
+              <li><b>Continuação (primário)</b>: “Comenta <b>PARTE 2</b> que eu trago os peptídeos mais usados na pele e pra que serve cada um.”</li>
+              <li><b>Salvamento</b>: “Salva esse vídeo pra não cair em marketing de ‘peptídeo pra tudo’.”</li>
+              <li><b>Follow</b>: “Me segue pra ver o Capítulo 2: peptídeos na dermatologia.”</li>
+              <li><b>Pesquisa</b>: “Qual hype da estética você quer que eu traduza: exossomos, PDRN, bioestimulador…?”</li>
+            </ul>
+          </div>
+          <div>
+            <div class="callout"><b>Padrão recomendável</b>: CTA nos últimos 5–7s + card final “PARTE 2?” por 1s.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Checklist de criação (pré, gravação, edição, postagem)</h2></div>
+      <div class="bd">
+        <div class="two">
+          <div>
+            <h3 style="margin:0 0 10px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.35px">Antes de gravar</h3>
+            <ul class="list">
+              <li>[ ] Escolhi 1 hype (peptídeos ou outro termo em alta).</li>
+              <li>[ ] Defini 1 pergunta provocativa para leigos.</li>
+              <li>[ ] Escrevi 1 definição simples + 1 metáfora.</li>
+              <li>[ ] Criei 1 regra/limiar (comparação clara).</li>
+              <li>[ ] Listei 2–3 exemplos que o público reconhece.</li>
+              <li>[ ] Planejei a ponte com pele (1 frase) + Parte 2 (promessa específica).</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin:0 0 10px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.35px">Gravação e edição</h3>
+            <ul class="list">
+              <li>[ ] Frases curtas; cortes a cada 1–2 frases.</li>
+              <li>[ ] Texto grande: 1 ideia por vez.</li>
+              <li>[ ] Zoom leve nas 3 viradas (pergunta/sacada/ponte).</li>
+              <li>[ ] Acelerei nos exemplos (lista rápida).</li>
+              <li>[ ] Card final: “Parte 2” + CTA.</li>
+              <li>[ ] Legenda final do post reforça “salvar” e “comentar PARTE 2”.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd"><h2>Variações (para série e testes A/B)</h2></div>
+      <div class="bd">
+        <ul class="list">
+          <li><b>Variação de hook (mais direta)</b>: “Peptídeo não é ‘ingrediente mágico’. É um mensageiro. Deixa eu te mostrar.”</li>
+          <li><b>Variação de metáfora</b>: “Pensa no peptídeo como um ‘e-mail curto’ que dispara uma ação na célula.”</li>
+          <li><b>Variação de prova</b>: trocar exemplos por outros familiares ao seu público (ex.: GH, ocitocina) sem virar aula; use 2 no máximo.</li>
+          <li><b>Variação de Parte 2</b>: “3 peptídeos comuns em skincare/consultório e o que dá pra esperar de cada um (sem promessa milagrosa).”</li>
+          <li><b>Variação para harmonização</b>: “Como peptídeos entram em protocolos de recuperação de barreira e qualidade de pele no pré/pós procedimento (sem generalizar).”</li>
+        </ul>
+      </div>
+    </section>
+
+    <p class="foot">Dica: mantenha a promessa do Capítulo 2 bem específica (ex.: “3 peptídeos + função + para quem faz sentido”).</p>
+  </div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const el = document.getElementById('roteiro');
+    function copy(){
+      const text = el.innerText;
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(()=>{
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=>btn.textContent='Copiar roteiro', 1400);
+        }).catch(()=>fallback(text));
+      }else{
+        fallback(text);
+      }
+    }
+    function fallback(text){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(ta);
+      btn.textContent = 'Roteiro copiado';
+      setTimeout(()=>btn.textContent='Copiar roteiro', 1400);
+    }
+    btn.addEventListener('click', copy);
+  })();
+</script>
+</body>
+</html>
