@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 18 — Teste metade/metade (A vs B)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card: rgba(255,255,255,.05);
+    --card2: rgba(255,255,255,.07);
+    --stroke: rgba(255,255,255,.10);
+    --stroke2: rgba(255,255,255,.16);
+    --text:#EAF0FF;
+    --muted:#A8B3CF;
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --r:18px;
+    --g: linear-gradient(90deg, #27F2A6 0%, #3AA7FF 45%, #FF9B3F 100%);
+    --g2: linear-gradient(135deg, rgba(39,242,166,.18), rgba(58,167,255,.14), rgba(255,155,63,.14));
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background:
+      radial-gradient(1200px 700px at 20% 0%, rgba(58,167,255,.16), transparent 55%),
+      radial-gradient(900px 600px at 90% 10%, rgba(39,242,166,.12), transparent 55%),
+      radial-gradient(1000px 600px at 60% 100%, rgba(255,155,63,.10), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{ color: inherit; text-decoration: none; }
+  .wrap{ max-width: 1100px; margin: 0 auto; padding: 28px 18px 60px; }
+  header{
+    border: 1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius: calc(var(--r) + 8px);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    overflow:hidden;
+    position:relative;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g2);
+    filter: blur(14px);
+    opacity:.9;
+    pointer-events:none;
+  }
+  header > *{ position:relative; z-index:1; }
+  .toprow{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+  .badgeRow{ display:flex; gap:10px; flex-wrap:wrap; }
+  .badge{
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing:.2px;
+  }
+  .badge strong{ color: var(--text); font-weight: 650; }
+  h1{
+    margin: 12px 0 8px;
+    font-size: clamp(20px, 3vw, 30px);
+    line-height: 1.12;
+    letter-spacing: .2px;
+  }
+  .sub{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .glowLink{
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display:inline-flex;
+    gap:10px;
+    align-items:center;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .glowLink:hover{ transform: translateY(-1px); border-color: var(--stroke2); }
+  .dot{
+    width:10px;height:10px;border-radius:50%;
+    background: var(--g);
+    box-shadow: 0 0 0 4px rgba(255,255,255,.03);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap:14px;
+    margin-top: 14px;
+  }
+  @media (max-width: 920px){ .grid{ grid-template-columns: 1fr; } }
+
+  .card{
+    border: 1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    padding: 16px;
+  }
+  .card h2{
+    margin: 0 0 10px;
+    font-size: 16px;
+    letter-spacing:.2px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .chip{
+    display:inline-block;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: rgba(234,240,255,.9);
+    border: 1px solid var(--stroke);
+    background: rgba(0,0,0,.25);
+    padding: 5px 8px;
+    border-radius: 999px;
+  }
+  .hr{
+    height:1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+    margin: 12px 0;
+  }
+  .muted{ color: var(--muted); }
+  ul{ margin:10px 0 0 18px; padding:0; }
+  li{ margin: 6px 0; color: rgba(234,240,255,.92); }
+  .kpi{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:10px;
+    margin-top: 10px;
+  }
+  @media (max-width: 520px){ .kpi{ grid-template-columns: 1fr; } }
+  .kpi .box{
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    border-radius: 14px;
+    padding: 12px;
+    min-height: 64px;
+  }
+  .kpi .lbl{ font-size: 12px; color: var(--muted); }
+  .kpi .val{ font-size: 14px; font-weight:650; margin-top: 4px; }
+
+  .script{
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    border: 1px solid var(--stroke);
+    background: rgba(0,0,0,.25);
+    border-radius: 14px;
+    padding: 14px;
+    overflow:auto;
+  }
+  .btnRow{ display:flex; flex-wrap:wrap; gap:10px; margin-top: 10px; }
+  button{
+    appearance:none;
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,.05);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 14px;
+    cursor:pointer;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    font-weight: 650;
+  }
+  button:hover{ transform: translateY(-1px); border-color: var(--stroke2); background: rgba(255,255,255,.07); }
+  .primary{
+    border: 0;
+    background: var(--g);
+    color: #061016;
+  }
+  .hint{ font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+  .cols{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+  }
+  @media (max-width: 780px){ .cols{ grid-template-columns: 1fr; } }
+
+  .callout{
+    border: 1px solid rgba(255,255,255,.14);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius: 16px;
+    padding: 12px;
+  }
+  .callout .title{
+    display:flex; align-items:center; gap:10px;
+    font-weight: 700;
+  }
+  .bar{
+    height:2px; width:100%;
+    background: var(--g);
+    margin: 10px 0 8px;
+    border-radius: 99px;
+    opacity:.9;
+  }
+  .small{ font-size: 13px; }
+
+  .checklist{ list-style:none; margin: 10px 0 0; padding:0; }
+  .checklist li{
+    margin: 8px 0;
+    padding: 10px 10px;
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    border-radius: 14px;
+    color: rgba(234,240,255,.92);
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .boxTick{
+    width:16px; height:16px; border-radius:4px;
+    border: 1px solid rgba(255,255,255,.22);
+    margin-top: 2px;
+    flex: 0 0 auto;
+    background: rgba(0,0,0,.20);
+  }
+
+  footer{
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align:center;
+    opacity:.9;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="badgeRow">
+          <div class="badge"><strong>Nicho:</strong> Estética</div>
+          <div class="badge"><strong>Dia:</strong> 18</div>
+          <div class="badge"><strong>Pilar:</strong> Prova</div>
+          <div class="badge"><strong>Formato:</strong> Reels</div>
+        </div>
+        <a class="glowLink" href="https://www.instagram.com/p/DVjqph9ibdC/" target="_blank" rel="noreferrer">
+          <span class="dot"></span>
+          <span>Ver post original</span>
+        </a>
+      </div>
+      <h1>Teste metade/metade: prova visual em 30s (A vs B)</h1>
+      <div class="sub">
+        <span class="chip">Objetivo: aumentar retenção com experimento justo</span>
+        <span class="chip">Mecânica: lado A vs lado B + teste replicável</span>
+        <span class="chip">Duração: 20–35s</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="chip">Resumo</span> O “motor” do engajamento</h2>
+        <div class="bar"></div>
+        <ul>
+          <li><strong>Curiosidade imediata + prova visual:</strong> abrir com “quer ver a diferença?” e entregar um resultado perceptível.</li>
+          <li><strong>Experimento justo:</strong> comparação simultânea (metade/metade) reduz sensação de propaganda e aumenta credibilidade.</li>
+          <li><strong>Promessa rápida e sensorial:</strong> “primeiro uso”, “toque/macio”, “menos atrito”, “mais viço”.</li>
+          <li><strong>Evolução em capítulos:</strong> aplicação → teste no úmido → resultado final (gran finale).</li>
+          <li><strong>CTA-desafio:</strong> público replica, comenta e marca (UGC).</li>
+        </ul>
+        <div class="kpi">
+          <div class="box"><div class="lbl">Gatilho principal</div><div class="val">Prova em close</div></div>
+          <div class="box"><div class="lbl">Formato de prova</div><div class="val">A vs B simultâneo</div></div>
+          <div class="box"><div class="lbl">CTA que rende comentários</div><div class="val">“A ou B?”</div></div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2><span class="chip">Estrutura</span> Modelo reproduzível</h2>
+        <div class="bar"></div>
+        <ol class="small" style="margin:10px 0 0 18px; padding:0; color: rgba(234,240,255,.92)">
+          <li><strong>Hook (0–2s):</strong> pergunta + promessa visual.</li>
+          <li><strong>Setup do experimento (2–5s):</strong> “dividi ao meio” + critério do teste.</li>
+          <li><strong>1 frase de porquê funciona (5–8s):</strong> mecanismo simples.</li>
+          <li><strong>Aplicação rápida (8–14s):</strong> 2–4 cortes.</li>
+          <li><strong>Prova 1 (14–22s):</strong> teste em close (A e B) + replay.</li>
+          <li><strong>Prova 2 / final (22–30s):</strong> resultado final lado a lado.</li>
+          <li><strong>CTA (30–35s):</strong> desafio + comentário.</li>
+        </ol>
+        <div class="hr"></div>
+        <div class="callout">
+          <div class="title"><span class="chip">Regra de ouro</span> Um critério + uma comparação</div>
+          <div class="muted small" style="margin-top:8px;">Escolha <strong>1 teste</strong> (gesto) e <strong>1 comparação</strong> (A vs B). O resto só conduz até a prova.</div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="chip">Roteiro</span> Falas + cenas (copiar e gravar)</h2>
+      <div class="bar"></div>
+      <div id="roteiro" class="script">[TEMA]: (troque) cabelo / pele / unhas / cílios / sobrancelha / corporal
+[PROBLEMA]: (troque) frizz / ressecamento / porosidade / textura / oleosidade / descamação / falta de viço
+[SOLUÇÃO A]: controle (sem ativo / produto comum)
+[SOLUÇÃO B]: com ativo/linha/protocolo (ex.: ácido hialurônico, ceramidas, niacinamida, pantenol, reconstrutor, selante)
+[TESTE]: (troque) nó/escova | deslize | brilho contra luz | papel absorvente | “risco”/marcação | resistência/flexibilidade
+
+0–2s (HOOK – rosto na câmera)
+“Quer ver uma diferença REAL em [RESULTADO] em 30 segundos?”
+
+2–5s (SETUP – mostrar divisão)
+“Eu vou fazer um teste honesto: metade com [A] e metade com [B].”
+(na tela: “Lado A vs Lado B”)
+
+5–8s (MECANISMO – 1 frase)
+“A ideia é: [B] ajuda a [AÇÃO SIMPLES] → e aí [EFEITO VISÍVEL NO TESTE].”
+
+8–14s (APLICAÇÃO – cortes rápidos)
+“Aplicando no lado B… e agora a gente testa no [ÚMIDO/AGORA].”
+
+14–22s (PROVA 1 – close + replay)
+“Olha o [TESTE] no lado A… (pausa) agora no lado B.”
+(replay 0,5x do gesto)
+
+22–30s (PROVA 2 / FINAL – lado a lado)
+“Depois do [SECO/FINALIZAÇÃO], a diferença fica mais nítida: [B] com [BENEFÍCIO 1] e [BENEFÍCIO 2].”
+
+30–35s (CTA – desafio)
+“Qual lado você acha que é o [B]? A ou B? Comenta aqui.
+E se você fizer o teste, me marca que eu repostarei.”</div>
+      <div class="btnRow">
+        <button class="primary" id="copyBtn">Copiar roteiro</button>
+        <button id="copyHooks">Copiar ganchos</button>
+        <button id="copyCTA">Copiar CTAs</button>
+      </div>
+      <div class="hint" id="copyHint">Dica: personalize apenas os campos entre colchetes para adaptar a qualquer tema.</div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="chip">Elementos visuais</span> O que gravar (para ficar “prova real”)</h2>
+      <div class="bar"></div>
+      <div class="cols">
+        <div>
+          <ul>
+            <li><strong>Comparação simultânea:</strong> tela dividida (A à esquerda, B à direita) nos momentos de teste e resultado final.</li>
+            <li><strong>Close do critério:</strong> filme o gesto do teste bem perto (mãos/pele/fio/unha) com foco travado.</li>
+            <li><strong>Capítulos na tela:</strong> “Aplicação” → “No úmido” → “No seco/final”.</li>
+            <li><strong>Replay estratégico:</strong> 1 segundo em 0,5x no momento em que o público “vê” a diferença.</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li><strong>Textos curtos:</strong> “Lado A” “Lado B” “Teste: ____” (evitar bloco de texto).</li>
+            <li><strong>Iluminação:</strong> luz lateral suave para evidenciar textura/brilho (pele e cabelo).</li>
+            <li><strong>B-roll mínimo:</strong> rótulo/texture shot + aplicação + prova. Sem enrolar.</li>
+            <li><strong>Áudio:</strong> voz clara + música baixa. Faça uma micro-pausa antes da prova.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="chip">Copy e ganchos</span> Prontos + substituições com o mesmo impacto</h2>
+      <div class="bar"></div>
+      <div class="cols">
+        <div class="callout">
+          <div class="title">Hooks (1–2s)</div>
+          <div class="hr"></div>
+          <ul class="small">
+            <li>“Quer ver a diferença REAL em <strong>[resultado]</strong>?”</li>
+            <li>“Esse teste simples mostra se você tá com <strong>[problema]</strong>.”</li>
+            <li>“Eu fiz o experimento mais honesto: metade com <strong>[A]</strong> e metade com <strong>[B]</strong>.”</li>
+            <li>“Se isso acontece com você, falta <strong>[barreira/massa/hidratação/proteção]</strong>.”</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <div class="title">Textos na tela (sequência)</div>
+          <div class="hr"></div>
+          <ol class="small" style="margin:10px 0 0 18px; padding:0;">
+            <li>“TESTE RÁPIDO: [teste]”</li>
+            <li>“Metade A | Metade B”</li>
+            <li>“Objetivo: [benefício]”</li>
+            <li>“No úmido: olha isso”</li>
+            <li>“No final: diferença nítida”</li>
+            <li>“A ou B? + Marca aqui”</li>
+          </ol>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="callout">
+        <div class="title"><span class="chip">Substituições que mantêm o efeito</span> (para adaptar outro tema)</div>
+        <div class="muted small" style="margin-top:8px;">Mantenha a estrutura e troque só as peças abaixo.</div>
+        <ul class="small">
+          <li><strong>“Metade/metade”</strong> pode virar: “um lado com técnica X e outro com técnica Y”, “um lado com primer e outro sem”, “um dedo com base e outro sem”.</li>
+          <li><strong>“Teste do nó”</strong> pode virar: “teste do papel” (oleosidade), “teste da gota” (absorção), “teste da luz” (viço/brilho), “teste da flexão” (unhas), “teste do pente” (cabelo).</li>
+          <li><strong>“Primeiro uso”</strong> pode virar: “na primeira aplicação”, “em 1 minuto”, “na hora”, “na primeira sessão” (apenas se for verdadeiro).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="chip">CTA</span> Chamadas para ação (escolha 1 principal)</h2>
+      <div class="bar"></div>
+      <div class="cols">
+        <div>
+          <ul class="small">
+            <li><strong>Desafio/UGC:</strong> “Faz o teste e me marca nos stories que eu repostarei.”</li>
+            <li><strong>Comentário guiado:</strong> “Qual lado é o [com ativo]? A ou B?”</li>
+            <li><strong>DM/lead:</strong> “Comenta ‘TESTE’ que eu te mando o passo a passo.”</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="small">
+            <li><strong>Salvar:</strong> “Salva pra fazer no seu banho/rotina hoje.”</li>
+            <li><strong>Compartilhar:</strong> “Manda pra alguém que vive com [problema].”</li>
+            <li><strong>Filtro de interesse:</strong> “Se você quer [resultado], comenta ‘EU QUERO’.”</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="muted small"><strong>Fixar comentário sugerido:</strong> “Quem fizer o teste, marca aqui. Vou repostar os melhores resultados + dizer como adaptar pro seu caso.”</div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="chip">Checklist</span> Criação rápida (pré → grava → edita → publica)</h2>
+      <div class="bar"></div>
+      <div class="cols">
+        <div>
+          <div class="callout">
+            <div class="title">Pré-produção (10 min)</div>
+            <ul class="checklist">
+              <li><span class="boxTick"></span><span>Escolher <strong>1 problema</strong> (ex.: frizz, oleosidade, textura, falta de viço).</span></li>
+              <li><span class="boxTick"></span><span>Definir <strong>1 teste visual</strong> (gesto simples e repetível).</span></li>
+              <li><span class="boxTick"></span><span>Escolher comparação <strong>A vs B</strong> (controle vs solução).</span></li>
+              <li><span class="boxTick"></span><span>Escrever promessa em 1 linha: “Você vai ver a diferença em <strong>[tempo]</strong>”.</span></li>
+              <li><span class="boxTick"></span><span>Garantir luz e enquadramento close (textura/brilho).</span></li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="callout">
+            <div class="title">Gravação + Edição</div>
+            <ul class="checklist">
+              <li><span class="boxTick"></span><span>Gravar hook (1–2s) olhando pra câmera.</span></li>
+              <li><span class="boxTick"></span><span>Mostrar divisão clara (risca/presilha/fita/marcação).</span></li>
+              <li><span class="boxTick"></span><span>Aplicação em 2–4 cortes (sem explicação longa).</span></li>
+              <li><span class="boxTick"></span><span>Teste em close (A e B) + replay 0,5x no momento-chave.</span></li>
+              <li><span class="boxTick"></span><span>Tela dividida no final + texto “no úmido” → “no final”.</span></li>
+              <li><span class="boxTick"></span><span>Legenda: promessa (1 linha) + desafio (1 linha) + CTA (1 linha).</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2><span class="chip">Variações</span> Para repetir sem ficar “mais do mesmo”</h2>
+      <div class="bar"></div>
+      <div class="cols">
+        <div class="callout">
+          <div class="title">Variação de estrutura (mantém a prova)</div>
+          <div class="hr"></div>
+          <ul class="small">
+            <li><strong>Começar pela prova:</strong> abrir já com o teste (2s) e depois explicar “metade/metade”.</li>
+            <li><strong>Quiz:</strong> “Qual lado tem [ativo]? A ou B” antes de revelar.</li>
+            <li><strong>Checklist rápido:</strong> “3 sinais de que falta [X] + teste final confirmando”.</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <div class="title">Variação de tema (mesma mecânica)</div>
+          <div class="hr"></div>
+          <ul class="small">
+            <li><strong>Pele:</strong> papel absorvente (oleosidade) / gota d’água (absorção) / luz lateral (textura).</li>
+            <li><strong>Cabelo:</strong> deslize do pente / frizz contra luz / elasticidade controlada (com cuidado).</li>
+            <li><strong>Unhas:</strong> flexão/resistência / lascamento após “teste do toque” (somente seguro).</li>
+            <li><strong>Maquiagem:</strong> metade com primer / metade sem; teste de transferência em lenço.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Identidade: fundo escuro, cartões com borda suave e destaques em degradê (verde/azul/laranja). Use este modelo como template fixo do calendário.
+    </footer>
+  </div>
+
+<script>
+  const roteiroEl = document.getElementById('roteiro');
+  const copyHint = document.getElementById('copyHint');
+
+  function copyText(text){
+    navigator.clipboard.writeText(text).then(()=>{
+      copyHint.textContent = 'Copiado! Agora é só colar e trocar os campos entre colchetes.';
+      setTimeout(()=> copyHint.textContent = 'Dica: personalize apenas os campos entre colchetes para adaptar a qualquer tema.', 2400);
+    }).catch(()=>{
+      copyHint.textContent = 'Não foi possível copiar automaticamente. Selecione o texto e copie manualmente.';
+    });
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', ()=>{
+    copyText(roteiroEl.innerText);
+  });
+
+  document.getElementById('copyHooks').addEventListener('click', ()=>{
+    const hooks = [
+      'Quer ver a diferença REAL em [RESULTADO] em 30 segundos?',
+      'Esse teste simples mostra se você tá com [PROBLEMA]...',
+      'Eu fiz o experimento mais honesto: metade com [A] e metade com [B].',
+      'Se isso acontece com você, falta [MASSA/BARREIRA/HIDRATAÇÃO/PROTEÇÃO].'
+    ].join('\n');
+    copyText(hooks);
+  });
+
+  document.getElementById('copyCTA').addEventListener('click', ()=>{
+    const ctas = [
+      'Qual lado é o [COM ATIVO]? A ou B? Comenta aqui.',
+      'Faz o teste e me marca nos stories que eu repostarei.',
+      'Comenta “TESTE” que eu te mando o passo a passo.',
+      'Salva pra fazer hoje na sua rotina.'
+    ].join('\n');
+    copyText(ctas);
+  });
+</script>
+</body>
+</html>
