@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Roteiro Reproduzível — Estética | Dia 24</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1222;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.085);
+    --stroke: rgba(255,255,255,.12);
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,.74);
+    --muted2: rgba(234,240,255,.60);
+    --shadow: 0 18px 50px rgba(0,0,0,.55);
+    --radius: 18px;
+    --radius2: 14px;
+    --g1: linear-gradient(90deg, #36D399, #3ABFF8, #FBBD23);
+    --g2: linear-gradient(135deg, rgba(54,211,153,.22), rgba(58,191,248,.20), rgba(251,189,35,.18));
+    --g3: linear-gradient(90deg, rgba(54,211,153,.95), rgba(58,191,248,.95), rgba(251,189,35,.95));
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background:
+      radial-gradient(900px 500px at 15% 10%, rgba(58,191,248,.16), transparent 55%),
+      radial-gradient(800px 480px at 85% 15%, rgba(54,211,153,.13), transparent 55%),
+      radial-gradient(900px 520px at 45% 95%, rgba(251,189,35,.10), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{ color: inherit; text-decoration: none; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:28px 18px 60px; }
+
+  header{
+    background: var(--g2);
+    border: 1px solid var(--stroke);
+    border-radius: calc(var(--radius) + 6px);
+    box-shadow: var(--shadow);
+    padding: 18px 18px 16px;
+    position: relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: radial-gradient(500px 220px at 20% 0%, rgba(58,191,248,.22), transparent 60%),
+                radial-gradient(520px 220px at 80% 0%, rgba(54,211,153,.20), transparent 60%),
+                radial-gradient(520px 220px at 50% 110%, rgba(251,189,35,.14), transparent 60%);
+    pointer-events:none;
+  }
+  .headTop{ display:flex; gap:14px; align-items:flex-start; justify-content:space-between; position:relative; }
+  .badgeRow{ display:flex; gap:10px; flex-wrap:wrap; }
+  .badge{
+    font-family: var(--mono);
+    font-size:12px;
+    padding:8px 10px;
+    border-radius:999px;
+    background: rgba(0,0,0,.22);
+    border: 1px solid rgba(255,255,255,.14);
+    color: rgba(234,240,255,.88);
+    backdrop-filter: blur(10px);
+  }
+  .title{
+    margin: 10px 0 6px;
+    font-size: 22px;
+    letter-spacing: .2px;
+    line-height: 1.2;
+    position:relative;
+  }
+  .title strong{
+    background: var(--g1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .sub{
+    margin:0;
+    color: var(--muted);
+    line-height: 1.45;
+    font-size: 14px;
+    position:relative;
+  }
+  .link{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    margin-top:12px;
+    padding:10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.20);
+    color: rgba(234,240,255,.88);
+    font-size: 13px;
+    position:relative;
+  }
+  .link span{ font-family: var(--mono); font-size:12px; opacity:.85; }
+
+  .grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; margin-top:14px; }
+  @media (max-width: 920px){ .grid{ grid-template-columns: 1fr; } }
+
+  .card{
+    background: rgba(255,255,255,.06);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .cardHeader{
+    padding: 14px 16px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom: 1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.18);
+  }
+  .cardHeader h2{ margin:0; font-size:14px; letter-spacing:.4px; text-transform:uppercase; color: rgba(234,240,255,.86); }
+  .pill{
+    font-family: var(--mono);
+    font-size:12px;
+    padding:7px 10px;
+    border-radius:999px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.04);
+    color: rgba(234,240,255,.82);
+    white-space:nowrap;
+  }
+  .cardBody{ padding: 14px 16px 16px; }
+  .cardBody p{ margin: 0 0 10px; color: var(--muted); line-height:1.55; font-size:14px; }
+  .cardBody ul{ margin: 8px 0 0; padding: 0 0 0 18px; color: var(--muted); }
+  .cardBody li{ margin: 7px 0; line-height:1.5; font-size: 14px; }
+
+  .meta{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width: 520px){ .meta{ grid-template-columns:1fr; } }
+  .metaItem{
+    padding: 12px;
+    border-radius: var(--radius2);
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.18);
+  }
+  .metaItem .k{ font-family: var(--mono); font-size: 12px; color: rgba(234,240,255,.70); }
+  .metaItem .v{ margin-top:6px; font-size: 14px; color: rgba(234,240,255,.92); line-height:1.35; }
+
+  .hr{ height:1px; background: rgba(255,255,255,.10); margin: 14px 0; }
+
+  .script{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: rgba(234,240,255,.86);
+    background: rgba(0,0,0,.26);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    padding: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .btnRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  button{
+    cursor:pointer;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color: rgba(234,240,255,.92);
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-family: var(--sans);
+    font-size: 13px;
+  }
+  button.primary{
+    background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+    position:relative;
+  }
+  button.primary:before{
+    content:"";
+    position:absolute;
+    inset:-1px;
+    border-radius: 12px;
+    padding:1px;
+    background: var(--g3);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events:none;
+  }
+  .toast{
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.14);
+    color: rgba(234,240,255,.88);
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow);
+    opacity:0;
+    transform: translateY(10px);
+    transition: .18s ease;
+    pointer-events:none;
+  }
+  .toast.show{ opacity:1; transform: translateY(0); }
+
+  .miniNote{
+    margin-top:10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(54,211,153,.07);
+    color: rgba(234,240,255,.84);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .miniNote strong{
+    background: var(--g1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headTop">
+        <div>
+          <div class="badgeRow">
+            <div class="badge">Nicho: Estética</div>
+            <div class="badge">Dia: 24</div>
+            <div class="badge">Formato: Carrossel</div>
+            <div class="badge">Pilar: Autoridade</div>
+          </div>
+          <h1 class="title"><strong>Segredos de uma rotina</strong> + o que eu faria diferente</h1>
+          <p class="sub">Roteiro reproduzível para criar carrosséis de “análise técnica” (rotina/tema), com itens por slide, contraste (o que manter vs o que mudar), payoff no final (“o que faltou”) e CTA de alto salvamento.</p>
+          <a class="link" href="https://www.instagram.com/p/DVFGqvnDO09/" target="_blank" rel="noreferrer">
+            Abrir post original <span>instagram.com/p/DVFGqvnDO09</span>
+          </a>
+        </div>
+        <div class="pill">1080×1350 • 8–10 slides</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardHeader"><h2>Resumo</h2><div class="pill">O que entregar</div></div>
+        <div class="cardBody">
+          <p><strong>Promessa do post:</strong> mostrar uma “rotina/estrutura” popular (ou de um caso real), explicar <em>por que faz sentido</em>, apontar <em>nuances</em> (o que não é necessário / quando muda) e finalizar com <strong>“o que faltou / o que eu faria diferente”</strong>.</p>
+          <div class="meta">
+            <div class="metaItem"><div class="k">Objetivo</div><div class="v">Autoridade + salvamentos (lista guiada) + compartilhamentos (custo-benefício/alternativas)</div></div>
+            <div class="metaItem"><div class="k">Mecânica de retenção</div><div class="v">1 item por slide → progresso + suspense do slide “O que faltou?”</div></div>
+            <div class="metaItem"><div class="k">Quando usar</div><div class="v">Rotina home care, pós-procedimento, protocolo de cabine, análise de tendências, “o que funciona pra X”</div></div>
+            <div class="metaItem"><div class="k">Público</div><div class="v">Leigos curiosos + quem já tenta tratar uma queixa e quer orientação prática</div></div>
+          </div>
+          <div class="miniNote"><strong>Regra de ouro:</strong> opinião técnica com ressalva (“depende do tipo de pele/caso”) + orientação prática (“como eu faria”).</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader"><h2>Copiar roteiro</h2><div class="pill">Pronto para colar</div></div>
+        <div class="cardBody">
+          <p>Use o texto abaixo como base. Substitua apenas os campos entre colchetes.</p>
+          <div id="roteiro" class="script">TEMA: [rotina/assunto]
+OBJETIVO: [resultado desejado]
+PÚBLICO: [tipo de pele/queixa/nível]
+CREDENCIAL: [sua formação/experiência]
+
+CAPA (Hook + promessa + autoridade)
+- Título: “Segredos de [TEMA] para [OBJETIVO]”
+- Linha 2: “+ o que eu faria diferente”
+- Assinatura: “(por [CREDENCIAL])”
+
+SLIDE 2 — ITEM 1 (Base/começo)
+[ETAPA/PRODUTO/CONDUTA]
+- Por que entra: [benefício principal em 1 frase]
+- O que observar: [ressalva técnica/erro comum]
+- Como eu faria: [frequência/ordem/quantidade]
+
+SLIDE 3 — ITEM 2 (Ativo/ação principal)
+[ATIVO/CONDUTA-CHAVE]
+- Por que entra: [mecanismo/benefício]
+- O que observar: [para quem não serve/contraindicação geral]
+- Como eu faria: [quando usar + combinação segura]
+
+SLIDE 4 — ITEM 3 (Reparo/barreira)
+[REPARO/CALMANTE/BARREIRA]
+- Por que entra: [quando é indispensável]
+- O que observar: [erro comum]
+- Como eu faria: [momento ideal na rotina]
+
+SLIDE 5 — COMPARATIVO (Custo-benefício)
+[OPÇÃO A] vs [OPÇÃO B]
+- Em comum: [por que as duas funcionam]
+- Diferença real: [textura/concentração/forma de uso/serviço]
+- Minha escolha: [para qual cenário]
+
+SLIDE 6 — PROTEÇÃO/MANUTENÇÃO
+[PROTEÇÃO / HÁBITO-ÂNCORA]
+- Por que é o pilar: [consequência direta]
+- Dica prática: [como garantir adesão]
+
+SLIDE 7 — CONTEXTO/PROCEDIMENTOS (se couber)
+“O que potencializa o resultado”
+- [procedimento/hábito 1]
+- [procedimento/hábito 2]
+- [procedimento/hábito 3]
+Ressalva: “sempre com avaliação individual.”
+
+SLIDE 8 — PAYOFF
+“O que faltou na rotina?”
+- [recomendação 1]
+- [recomendação 2]
+- [recomendação 3]
+Fecho: “Com isso, dá pra [resultado] com mais consistência.”
+
+SLIDE 9 — FECHAMENTO + CTA
+“Se eu tivesse que escolher 3 prioridades: [1], [2], [3].”
+CTA principal: “Salve pra montar sua rotina de [OBJETIVO].”
+CTA secundário: “Comenta ‘[PALAVRA-CHAVE]’ que eu te mando um checklist.”
+Aviso curto: “Conteúdo educativo — não substitui avaliação.”</div>
+          <div class="btnRow">
+            <button class="primary" id="copyBtn">Copiar roteiro</button>
+            <button id="selectBtn">Selecionar texto</button>
+          </div>
+          <div class="miniNote"><strong>Dica:</strong> mantenha 1 ideia por slide. Se o texto passar de 6–8 linhas visíveis, divida em “Parte 1 / Parte 2”.</div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader"><h2>Estrutura</h2><div class="pill">Sequência lógica</div></div>
+      <div class="cardBody">
+        <ul>
+          <li><strong>Contexto</strong>: por que esse tema/rotina está em alta (1 frase).</li>
+          <li><strong>Mapeamento</strong>: listar etapas/itens (1 por slide).</li>
+          <li><strong>Validação</strong>: o que faz sentido e por quê (explicação simples + nuance).</li>
+          <li><strong>Otimização</strong>: o que é dispensável / o que eu ajustaria (sem atacar; com critério).</li>
+          <li><strong>Custo-benefício</strong>: comparativo de opções (produto/serviço/técnica).</li>
+          <li><strong>Ampliação</strong>: o que potencializa (hábitos/procedimentos/rotina).</li>
+          <li><strong>Payoff</strong>: “o que faltou” (síntese + recomendações objetivas).</li>
+          <li><strong>CTA</strong>: salvar + comentar palavra-chave/DM/agendamento.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader"><h2>Slides sugeridos (1..10)</h2><div class="pill">8–10 (use 9 como padrão)</div></div>
+      <div class="cardBody">
+        <ul>
+          <li><strong>Slide 1 (Capa)</strong>: “Segredos de [TEMA] para [OBJETIVO]” + “o que eu faria diferente” + sua credencial.</li>
+          <li><strong>Slide 2</strong>: Item 1 (base/começo) — limpeza, preparo, avaliação, ou etapa inicial.</li>
+          <li><strong>Slide 3</strong>: Item 2 (ação principal) — ativo/técnica/passo que dá resultado.</li>
+          <li><strong>Slide 4</strong>: Item 3 (reparo/barreira) — prevenção de sensibilização/recuperação.</li>
+          <li><strong>Slide 5</strong>: Comparativo — opção A vs opção B (ou “caro vs acessível”).</li>
+          <li><strong>Slide 6</strong>: Proteção/manutenção — FPS, hábitos, periodicidade, adesão.</li>
+          <li><strong>Slide 7</strong>: Procedimentos/estratégias — o que potencializa (com ressalva de avaliação).</li>
+          <li><strong>Slide 8</strong>: “O que faltou / o que eu mudaria” — 2–3 recomendações em bullets.</li>
+          <li><strong>Slide 9 (Final)</strong>: resumo em 3 prioridades + CTA (salvar + comentar).</li>
+          <li><strong>Slide 10 (Opcional)</strong>: prova/autoridade — bastidor, certificação, depoimento (sem expor paciente).</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:14px;">
+      <section class="card">
+        <div class="cardHeader"><h2>Elementos visuais</h2><div class="pill">High-tech clean</div></div>
+        <div class="cardBody">
+          <ul>
+            <li><strong>Layout padrão</strong>: topo com @nome pequeno; centro com imagem recortada (produto/ícone); base com título grande + texto curto.</li>
+            <li><strong>Consistência</strong>: mesma posição de assinatura, mesma margem e mesma escala de títulos.</li>
+            <li><strong>Destaques</strong>: 1 frase curta por slide com cor de destaque (não “pintar” tudo).</li>
+            <li><strong>Slide comparativo</strong>: duas colunas simétricas + “Em comum / Diferença real / Minha escolha”.</li>
+            <li><strong>Slide payoff</strong>: fundo levemente diferente (mais escuro) ou moldura para sinalizar “final/segredo”.</li>
+          </ul>
+          <div class="miniNote"><strong>Substituições que mantêm o impacto:</strong> produto → ícone/ilustração; celebridade → “caso comum do consultório” (sem identificação); antes/depois → “2016 vs 2026” / “jeito errado vs jeito certo”.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader"><h2>Copy e ganchos</h2><div class="pill">Modelos prontos</div></div>
+        <div class="cardBody">
+          <p><strong>Modelos de capa (escolha 1):</strong></p>
+          <ul>
+            <li>“Segredos de [ROTINA/TEMA] para [OBJETIVO] + o que eu faria diferente”</li>
+            <li>“A rotina para [QUEIXA] que faz sentido (e o que é excesso)”</li>
+            <li>“Checklist pós-[PROCEDIMENTO]: o que ajuda de verdade + o que evitar”</li>
+            <li>“[Tipo de pele]: o que priorizar em 3 passos (com justificativa técnica)”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>Fórmula por item (microcopy):</strong></p>
+          <div class="script">[NOME DO ITEM]
+Por que entra: [benefício em 1 frase].
+O que observar: [ressalva/erro comum].
+Como eu faria: [instrução prática].</div>
+          <div class="hr"></div>
+          <p><strong>Frases de nuance (para não soar “receita pronta”):</strong></p>
+          <ul>
+            <li>“Funciona, mas depende de [tipo de pele/frequência/associação].”</li>
+            <li>“Não é obrigatório — vira prioridade quando [condição].”</li>
+            <li>“O erro aqui é [erro comum]; o acerto é [correção simples].”</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader"><h2>CTA</h2><div class="pill">Escolha 1 principal</div></div>
+      <div class="cardBody">
+        <ul>
+          <li><strong>Salvar (principal)</strong>: “Salve pra montar sua rotina de [OBJETIVO].”</li>
+          <li><strong>Comentar (captura)</strong>: “Comenta ‘[PALAVRA]’ que eu te mando um checklist.”</li>
+          <li><strong>DM (qualificação)</strong>: “Me chama no direct com ‘[AVALIAÇÃO]’ e me diz: [tipo de pele/queixa].”</li>
+          <li><strong>Compartilhar</strong>: “Manda pra alguém que está tentando tratar [QUEIXA].”</li>
+          <li><strong>Agendar</strong>: “Quer um plano pós-[procedimento]? Link na bio/WhatsApp.”</li>
+        </ul>
+        <div class="miniNote"><strong>Recomendação:</strong> use 1 CTA principal + 1 secundário. Ex.: “Salve” + “Comenta palavra-chave”.</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader"><h2>Checklist</h2><div class="pill">Criação + revisão</div></div>
+      <div class="cardBody">
+        <ul>
+          <li><strong>Pré</strong>: defina [TEMA], [OBJETIVO], [PÚBLICO], [CREDENCIAL], e 5–7 itens/etapas.</li>
+          <li><strong>Roteiro</strong>: 1 item por slide; incluir sempre “por que entra” + “o que observar” + “como eu faria”.</li>
+          <li><strong>Retenção</strong>: planeje o suspense do slide 8 (“O que faltou?”).</li>
+          <li><strong>Comparativo</strong>: 1 slide com custo-benefício/alternativas (gera compartilhamento).</li>
+          <li><strong>Segurança</strong>: incluir aviso curto “não substitui avaliação” (principalmente pós-procedimento/ativos fortes).</li>
+          <li><strong>Design</strong>: grade consistente; título grande; texto até 6–8 linhas; 1 destaque por slide.</li>
+          <li><strong>Revisão</strong>: linguagem simples, sem jargão excessivo; se usar termo técnico, explique em 5 palavras.</li>
+          <li><strong>Publicação</strong>: legenda curta repetindo promessa + CTA; fixar comentário com palavra-chave.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="cardHeader"><h2>Variações</h2><div class="pill">Trocas que preservam o efeito</div></div>
+      <div class="cardBody">
+        <ul>
+          <li><strong>Sem celebridade</strong>: “Rotina que eu vejo toda semana no consultório: o que manter e o que ajustar”.</li>
+          <li><strong>Sem produtos</strong>: troque por “etapas/decisões” (ex.: “limpar”, “tratar”, “proteger”, “recuperar”).</li>
+          <li><strong>Com serviço</strong>: itens viram “passos do protocolo” + slide comparativo “avulsa vs pacote / técnica A vs B”.</li>
+          <li><strong>Com mito vs verdade</strong>: em cada item, inclua 1 mini-contraste (ex.: “parece bom, mas…”).</li>
+          <li><strong>Para outro nicho</strong>: mantenha a estrutura “analisar → validar → otimizar → comparar → ‘o que faltou’ → CTA” e substitua por: treino, nutrição, finanças, estudos, etc.</li>
+        </ul>
+        <div class="miniNote"><strong>Atalhos de adaptação (substituições universais):</strong> “rotina” → “processo”; “produto” → “ferramenta”; “pele” → “cliente/sistema”; “ativo” → “alavanca principal”; “procedimento” → “intervenção”.</div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+<script>
+  const copyBtn = document.getElementById('copyBtn');
+  const selectBtn = document.getElementById('selectBtn');
+  const roteiro = document.getElementById('roteiro');
+  const toast = document.getElementById('toast');
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(()=> toast.classList.remove('show'), 1200);
+  }
+
+  async function copyText(){
+    const text = roteiro.innerText;
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast('Roteiro copiado.');
+    }catch(e){
+      const range = document.createRange();
+      range.selectNodeContents(roteiro);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      try{ document.execCommand('copy'); showToast('Roteiro copiado (modo compatível).'); }
+      catch(err){ showToast('Não foi possível copiar. Selecione e copie manualmente.'); }
+    }
+  }
+
+  function selectText(){
+    const range = document.createRange();
+    range.selectNodeContents(roteiro);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    showToast('Texto selecionado.');
+  }
+
+  copyBtn.addEventListener('click', copyText);
+  selectBtn.addEventListener('click', selectText);
+</script>
+</body>
+</html>
