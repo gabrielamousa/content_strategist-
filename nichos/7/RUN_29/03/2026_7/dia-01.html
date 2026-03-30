@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 1 — Estética — Roteiro reproduzível</title>
+<style>
+  :root{
+    --bg:#0b0f17;
+    --panel:#0f1726;
+    --card:#0c1424;
+    --muted:#9aa6bd;
+    --text:#e7eefc;
+    --stroke: rgba(255,255,255,.10);
+    --stroke2: rgba(255,255,255,.14);
+    --shadow: 0 18px 60px rgba(0,0,0,.45);
+    --radius: 18px;
+    --radius2: 14px;
+    --grad1: linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --grad2: radial-gradient(1200px 600px at 20% -10%, rgba(56,189,248,.22), transparent 55%),
+             radial-gradient(900px 500px at 90% 0%, rgba(34,197,94,.18), transparent 55%),
+             radial-gradient(900px 500px at 30% 110%, rgba(251,146,60,.14), transparent 55%);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--text);
+    background: var(--grad2), var(--bg);
+    line-height:1.45;
+  }
+  a{color:#93c5fd; text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
+
+  header{
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border:1px solid var(--stroke);
+    border-radius: var(--radius);
+    padding:18px;
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--grad1);
+    opacity:.10;
+    filter: blur(8px);
+    z-index:0;
+  }
+  header > *{position:relative; z-index:1}
+
+  .topline{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+  .chips{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+  .chip{
+    padding:7px 10px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.03);
+    border-radius: 999px;
+    font-size:12px;
+    color: var(--muted);
+  }
+  .chip strong{color:var(--text); font-weight:600}
+
+  h1{margin:10px 0 6px; font-size:22px; letter-spacing:.2px}
+  .sub{color:var(--muted); font-size:13px; margin:0}
+
+  .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px; margin-top:14px}
+  @media (max-width: 940px){ .grid{grid-template-columns:1fr} }
+
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    border:1px solid var(--stroke);
+    border-radius: var(--radius);
+    padding:16px;
+    box-shadow: var(--shadow);
+  }
+  .card h2{margin:0 0 10px; font-size:14px; text-transform:uppercase; letter-spacing:.14em; color:#cfe0ff}
+  .card h3{margin:14px 0 8px; font-size:14px; color:#dbe7ff}
+  .muted{color:var(--muted)}
+
+  .hl{
+    display:inline-block;
+    padding:2px 8px;
+    border-radius:999px;
+    background: rgba(255,255,255,.06);
+    border:1px solid var(--stroke);
+  }
+  .hl.grad{
+    background: linear-gradient(90deg, rgba(34,197,94,.20), rgba(56,189,248,.16), rgba(251,146,60,.16));
+    border:1px solid rgba(255,255,255,.14);
+  }
+
+  .list{margin:0; padding-left:18px}
+  .list li{margin:6px 0}
+
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media (max-width: 700px){ .two{grid-template-columns:1fr} }
+
+  .codebox{
+    background: rgba(4,10,20,.55);
+    border:1px solid var(--stroke2);
+    border-radius: var(--radius2);
+    padding:14px;
+    overflow:auto;
+  }
+  pre{margin:0; white-space:pre-wrap; word-wrap:break-word; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12.5px; color:#dce7ff}
+
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  button{
+    border:1px solid var(--stroke2);
+    background: rgba(255,255,255,.05);
+    color: var(--text);
+    border-radius: 12px;
+    padding:10px 12px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  button.primary{
+    border:1px solid rgba(56,189,248,.35);
+    background: linear-gradient(90deg, rgba(34,197,94,.18), rgba(56,189,248,.18), rgba(251,146,60,.18));
+  }
+  button:hover{filter:brightness(1.08)}
+
+  .note{
+    font-size:12.5px;
+    color: var(--muted);
+    margin-top:10px;
+    border-top:1px solid var(--stroke);
+    padding-top:10px;
+  }
+
+  .kpi{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  .kpi .pill{
+    padding:8px 10px;
+    border-radius: 14px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.03);
+    min-width: 170px;
+  }
+  .pill .t{font-size:12px; color:var(--muted)}
+  .pill .v{font-size:13px; margin-top:2px}
+
+  .slides{counter-reset: slide}
+  .slide{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.03);
+    border-radius: 16px;
+    padding:12px;
+    margin:10px 0;
+  }
+  .slide .head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  .slide .num{
+    font-size:12px;
+    color:var(--muted);
+  }
+  .tag{
+    font-size:12px;
+    padding:4px 8px;
+    border-radius: 999px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    color:#cfe0ff;
+    white-space:nowrap;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <span class="chip"><strong>Nicho:</strong> Estética</span>
+          <span class="chip"><strong>Dia:</strong> 1</span>
+          <span class="chip"><strong>Formato:</strong> Carrossel</span>
+          <span class="chip"><strong>Pilar:</strong> <span class="hl grad">Prova</span></span>
+        </div>
+        <div class="chips">
+          <span class="chip"><strong>Original:</strong> <a href="https://www.instagram.com/p/DIwxSQsvAZy/" target="_blank" rel="noreferrer">abrir post</a></span>
+        </div>
+      </div>
+      <h1>Resultado na pele (e no bolso): o carrossel de prova pronto</h1>
+      <p class="sub">Arquitetura reproduzível para estética: gancho paradoxal → prova visual → autoridade → objeção → CTA por hashtag (comentários + Direct).</p>
+      <div class="kpi">
+        <div class="pill"><div class="t">Objetivo</div><div class="v">Conversão por autoridade + prova + pertencimento</div></div>
+        <div class="pill"><div class="t">Tamanho sugerido</div><div class="v">12 slides (ritmo texto ↔ prova)</div></div>
+        <div class="pill"><div class="t">Métrica foco</div><div class="v">Salvamentos + comentários com palavra-chave</div></div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <p class="muted">Use este carrossel quando você precisar <span class="hl grad">provar resultado</span> (procedimento, protocolo, pacote, agenda, mentoria, curso). A sequência cria retenção por open loop, consolidando confiança com repetição de antes/depois, prints e credenciais, e fechando com CTA de comentário (triagem para Direct).</p>
+
+        <h3>Estrutura (sequência lógica)</h3>
+        <ol class="list">
+          <li><strong>Tensão/Paradoxo</strong> (captura atenção)</li>
+          <li><strong>Reposicionamento</strong> (é sobre a cliente/aluna)</li>
+          <li><strong>Prova imediata</strong> (antes/depois forte)</li>
+          <li><strong>Promessa metódica</strong> (resultado = padrão)</li>
+          <li><strong>Ampliação de prova</strong> (casos, perfis, categorias)</li>
+          <li><strong>Autoridade formal</strong> (números/selos/tempo)</li>
+          <li><strong>Prova social</strong> (prints/depoimentos)</li>
+          <li><strong>Objeção emocional</strong> (medo/tempo/dinheiro)</li>
+          <li><strong>Autoridade humana</strong> (quem é você + valores)</li>
+          <li><strong>Convite</strong> (qualificação) + <strong>CTA</strong> (hashtag)</li>
+        </ol>
+
+        <h3>Roteiro (texto base copiável)</h3>
+        <div class="codebox">
+          <pre id="roteiro">CARROSSEL (12 SLIDES) — TEMPLATE ESTÉTICA
+
+[SLIDE 1 — HOOK | paradoxo]
+Tudo começa com [TEMA]...
+Mas não termina em [TEMA].
+(Arraste →)
+
+[SLIDE 2 — ENQUADRAMENTO | para quem]
+[SEU MÉTODO/PROCEDIMENTO] é pra quem quer [GRANDE TRANSFORMAÇÃO]
+através de [MEIO: protocolo/procedimento/rotina].
+Mas isso não é sobre mim.
+É sobre você — e o que a gente constrói com constância.
+
+[SLIDE 3 — PROVA #1 | antes/depois]
+Aqui, resultado não é promessa — é padrão.
+(antes/depois)
+
+[SLIDE 4 — OPEN LOOP | método]
+RESULTADOS REAIS com:
+→ [1 pilar: diagnóstico]
+→ [2 pilar: protocolo certo]
+→ [3 pilar: segurança + acompanhamento]
+
+[SLIDE 5 — PROVA #2 | categoria]
+Caso: [DOR 1: manchas/acne/flacidez/estrias/...] 
+(antes/depois + label “antes/depois”)
+
+[SLIDE 6 — PROVA #3 | categoria]
+Caso: [DOR 2] 
+(antes/depois)
+
+[SLIDE 7 — DIFERENCIAL | autoridade institucional]
+Mais que [o comum do mercado].
+É um [formação/experiência/protocolo validado].
+• [credencial/curso relevante]
+• [anos de prática]
+• [+X atendimentos/execuções]
+
+[SLIDE 8 — NÚMEROS | escala]
++ [NÚMERO] clientes/alunas já passaram por aqui.
+E não saíram só com [algo básico].
+Saíram com [resultado concreto].
+
+[SLIDE 9 — PROVA SOCIAL | print]
+“[frase curta do depoimento]”
+Se fizer sentido: Resultado na pele. Resultado no bolso.
+
+[SLIDE 10 — OBJEÇÃO | medo]
+Eu comecei com medo?
+SIM.
+E foi com medo mesmo — do jeito certo.
+
+[SLIDE 11 — QUEM SOU EU | autoridade humana]
+Sou [SEU NOME].
+[1 linha: especialidade + credencial].
+[1 linha: sua causa/compromisso].
+Sem enrolação. Sem esconder o jogo.
+
+[SLIDE 12 — QUALIFICAÇÃO + CTA]
+Se você quer [resultado desejado], você precisa:
+• [requisito 1: constância]
+• [requisito 2: fazer do jeito certo]
+• [requisito 3: acompanhamento]
+Comenta #[HASHTAG] que eu te envio o caminho no direct.</pre>
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="selectBtn">Selecionar texto</button>
+        </div>
+        <div class="note" id="copyNote">Dica: troque apenas os campos entre [ ] e mantenha a ordem dos slides para preservar retenção e prova.</div>
+      </section>
+
+      <aside class="card">
+        <h2>Elementos visuais</h2>
+        <div class="two">
+          <div>
+            <h3>Identidade (high-tech dark)</h3>
+            <ul class="list">
+              <li><strong>Fundo:</strong> #0b0f17 (escuro) com brilho sutil em degradê</li>
+              <li><strong>Cards:</strong> borda suave + sombra (premium/clean)</li>
+              <li><strong>Destaques:</strong> degradê <span class="hl grad">verde → azul → laranja</span> para palavras-chave</li>
+              <li><strong>Tipografia:</strong> título com fonte mais “tech” (sans forte); corpo legível</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Provas (padrão)</h3>
+            <ul class="list">
+              <li>Antes/depois em grade 2 colunas</li>
+              <li>Label fixo “ANTES” e “DEPOIS” (mesma posição sempre)</li>
+              <li>Anonimização ética (faixa nos olhos) quando necessário</li>
+              <li>Prints com tarja para esconder dados sensíveis</li>
+            </ul>
+          </div>
+        </div>
+
+        <h2 style="margin-top:14px">Copy e ganchos</h2>
+        <h3>Hooks prontos (Slide 1)</h3>
+        <ul class="list">
+          <li>“Tudo começa com <strong>[procedimento]</strong>… mas não termina nele.”</li>
+          <li>“Não é milagre. É <strong>método</strong>.”</li>
+          <li>“O que ninguém te conta sobre <strong>[dor estética]</strong>…”</li>
+          <li>“Quer resultado que <strong>dá pra ver</strong>? Então lê isso.”</li>
+        </ul>
+
+        <h3>Frases de tese (Slide 3/4)</h3>
+        <ul class="list">
+          <li>“Resultado é <strong>padrão</strong> quando tem diagnóstico + plano.”</li>
+          <li>“O procedimento é só a ferramenta. O <strong>protocolo</strong> é o que muda o jogo.”</li>
+          <li>“Segurança e constância: onde a maioria erra.”</li>
+        </ul>
+
+        <h2 style="margin-top:14px">CTA</h2>
+        <h3>CTA principal (comentário)</h3>
+        <p class="muted">Baixo atrito + alto engajamento + abre conversa no Direct.</p>
+        <ul class="list">
+          <li>“Comenta <strong>#Quero</strong> que eu te mando os detalhes.”</li>
+          <li>“Comenta <strong>#Agenda</strong> pra eu te enviar horários e valores.”</li>
+          <li>“Comenta <strong>#Protocolo</strong> que eu digo se é indicado pro seu caso.”</li>
+        </ul>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Slides sugeridos (1..12)</h2>
+      <div class="slides">
+        <div class="slide"><div class="head"><div class="num">Slide 1</div><div class="tag">Hook paradoxal</div></div><div class="muted">Frase curta em 2 linhas + “Arraste →”. 1 palavra em destaque no degradê.</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 2</div><div class="tag">Enquadramento</div></div><div class="muted">Para quem é + “não é sobre mim”. Máximo 4 linhas.</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 3</div><div class="tag">Prova #1</div></div><div class="muted">Antes/depois mais forte do carrossel + tese (“resultado é padrão”).</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 4</div><div class="tag">Open loop</div></div><div class="muted">Lista 3 pilares do método com setinha indicando continuação.</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 5</div><div class="tag">Prova #2</div></div><div class="muted">Categoria/Dor 1 (ex.: acne) + label fixo.</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 6</div><div class="tag">Prova #3</div></div><div class="muted">Categoria/Dor 2 (ex.: manchas) + consistência visual.</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 7</div><div class="tag">Diferencial</div></div><div class="muted">“Mais que X: é Y” + 3 bullets de autoridade.</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 8</div><div class="tag">Números</div></div><div class="muted">Escala: +N atendimentos/clientes + o que isso significa na prática.</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 9</div><div class="tag">Prova social</div></div><div class="muted">Print/depoimento (1 frase) + mini-legenda de transformação.</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 10</div><div class="tag">Objeção</div></div><div class="muted">Quebra de medo/tempo/dinheiro: pôster curto e emocional.</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 11</div><div class="tag">Autoridade humana</div></div><div class="muted">Quem é você + credencial + valores (sem esconder o jogo).</div></div>
+        <div class="slide"><div class="head"><div class="num">Slide 12</div><div class="tag">Qualificação + CTA</div></div><div class="muted">3 requisitos + CTA por hashtag (comentário) e promessa do próximo passo (Direct).</div></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Checklist</h2>
+      <div class="two">
+        <div>
+          <h3>Checklist de criação (conteúdo)</h3>
+          <ul class="list">
+            <li>Hook (Slide 1) tem: paradoxo + curiosidade + “Arraste →”</li>
+            <li>Slide 2 define: público + transformação + “não é sobre mim”</li>
+            <li>Pelo menos <strong>3 provas</strong> (antes/depois) com qualidade e consistência</li>
+            <li>1 slide com <strong>método</strong> (3 pilares) para não parecer “milagre”</li>
+            <li>1 slide com <strong>números/credenciais</strong> (anos, atendimentos, formações)</li>
+            <li>1 slide com <strong>prova social</strong> (print/depoimento)</li>
+            <li>1 slide quebrando <strong>objeção</strong> (medo/tempo/dinheiro/dor)</li>
+            <li>Slide final com <strong>qualificação</strong> + CTA de <strong>comentário</strong></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Checklist de criação (design/UX)</h3>
+          <ul class="list">
+            <li>1 ideia principal por slide (sem textão)</li>
+            <li>Ritmo: texto → prova → texto → prova</li>
+            <li>Labels “ANTES/DEPOIS” no mesmo lugar em todos os slides</li>
+            <li>Contraste alto (legibilidade no escuro)</li>
+            <li>Destaque em degradê apenas em 1–2 palavras (não poluir)</li>
+            <li>Anonimização e ética: ocultar dados sensíveis</li>
+            <li>Último slide: CTA grande, fácil de copiar (hashtag curta)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Variações</h2>
+      <div class="two">
+        <div>
+          <h3>Variação A — lotar agenda</h3>
+          <ul class="list">
+            <li>Slide 8: trocar “+N clientes” por “Agenda abre X vezes/mês”</li>
+            <li>Slide 12 CTA: “Comenta <strong>#AGENDA</strong> que eu mando horários e valores”</li>
+          </ul>
+          <h3>Variação B — vender avaliação</h3>
+          <ul class="list">
+            <li>Slide 4: pilares = diagnóstico, plano, acompanhamento</li>
+            <li>Slide 12 CTA: “Comenta <strong>#AVALIAÇÃO</strong> que eu envio como funciona”</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Variação C — vender protocolo carro-chefe</h3>
+          <ul class="list">
+            <li>Slides 5–6: provas apenas do mesmo protocolo (consistência)</li>
+            <li>Slide 7: diferencial = segurança + tecnologia + pós</li>
+            <li>Slide 12 CTA: “Comenta <strong>#PROTOCOLO</strong> (indicações/contraindicações)”</li>
+          </ul>
+          <h3>Variação D — curso/mentoria (profissionais)</h3>
+          <ul class="list">
+            <li>Slide 9: depoimento com ganho de confiança/agenda</li>
+            <li>Slide 10: objeção = “não sou boa o suficiente”</li>
+            <li>Slide 12 CTA: “Comenta <strong>#FORMAÇÃO</strong> que eu te mando a grade”</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">Se você me disser <strong>o que você quer vender</strong> (ex.: peeling, bioestimulador, depilação a laser, limpeza de pele premium, mentoria) e <strong>para quem</strong>, eu devolvo o texto já preenchido com ganchos específicos da sua oferta.</p>
+    </section>
+
+  </div>
+
+<script>
+  function getRoteiroText(){
+    return document.getElementById('roteiro').innerText;
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    const text = getRoteiroText();
+    try{
+      await navigator.clipboard.writeText(text);
+      document.getElementById('copyNote').textContent = 'Roteiro copiado. Cole no seu drive/notas e substitua os campos entre [ ].';
+    }catch(e){
+      document.getElementById('copyNote').textContent = 'Não consegui copiar automaticamente. Use o botão “Selecionar texto” e copie manualmente.';
+    }
+  });
+
+  document.getElementById('selectBtn').addEventListener('click', () => {
+    const el = document.getElementById('roteiro');
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.getElementById('copyNote').textContent = 'Texto selecionado. Agora é só copiar (Ctrl/Cmd + C).';
+  });
+</script>
+</body>
+</html>
