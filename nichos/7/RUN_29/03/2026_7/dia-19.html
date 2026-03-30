@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 19 • Estética • Carrossel reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630CC;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --r:18px;
+      --r2:14px;
+      --g1: linear-gradient(100deg,#24F28D 0%, #2BD2FF 45%, #FF8A3D 100%);
+      --g2: linear-gradient(135deg, rgba(36,242,141,.18), rgba(43,210,255,.14), rgba(255,138,61,.14));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 600px at 15% 15%, rgba(43,210,255,.14), transparent 60%),
+        radial-gradient(900px 600px at 85% 20%, rgba(255,138,61,.10), transparent 60%),
+        radial-gradient(900px 700px at 55% 90%, rgba(36,242,141,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+
+    .header{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(14,22,48,.82), rgba(14,22,48,.55));
+      box-shadow:var(--shadow);
+      border-radius:calc(var(--r) + 6px);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background:var(--g2);
+      filter:blur(14px);
+      opacity:.9;
+      z-index:0;
+    }
+    .header > *{position:relative;z-index:1}
+
+    .topline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .chips{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.18);
+      color:var(--muted);
+      font-size:12.5px;
+      letter-spacing:.2px;
+    }
+    .chip strong{color:var(--text);font-weight:650}
+
+    .title{
+      margin:12px 0 10px;
+      font-size:24px;
+      line-height:1.15;
+      letter-spacing:-.3px;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.5;
+      max-width:80ch;
+    }
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.20);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:650;
+      font-size:13.5px;
+      transition:transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:var(--stroke2);background:rgba(0,0,0,.28)}
+    .btn.primary{
+      border:0;
+      background:var(--g1);
+      color:#06101C;
+    }
+    .btn.primary:hover{transform:translateY(-1px)}
+    .btn.link{font-weight:600}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:16px}
+    @media (min-width: 920px){
+      .grid{grid-template-columns:1fr 1fr}
+      .span2{grid-column:1 / -1}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(14,22,48,.72), rgba(14,22,48,.40));
+      border-radius:var(--r);
+      box-shadow: 0 18px 55px rgba(0,0,0,.45);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      display:flex;align-items:center;justify-content:space-between;gap:12px
+    }
+    .card h2{margin:0;font-size:14px;letter-spacing:.25px;text-transform:uppercase;color:rgba(234,240,255,.86)}
+    .pill{
+      font-size:12px;
+      color:rgba(234,240,255,.82);
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.18);
+      white-space:nowrap;
+    }
+    .card .bd{padding:14px}
+
+    .kpi{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:520px){.kpi{grid-template-columns:repeat(3,1fr)}}
+    .kpi .box{
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(0,0,0,.16);
+      border-radius:var(--r2);
+      padding:12px;
+    }
+    .kpi .box .l{font-size:12px;color:var(--muted2);margin-bottom:6px}
+    .kpi .box .v{font-weight:750;letter-spacing:-.2px}
+
+    .list{margin:0;padding:0 0 0 18px;color:var(--muted);line-height:1.55}
+    .list li{margin:8px 0}
+
+    .hr{height:1px;background:rgba(255,255,255,.08);margin:14px 0}
+
+    .script{
+      font-family:var(--mono);
+      background:rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:var(--r2);
+      padding:12px;
+      color:rgba(234,240,255,.86);
+      font-size:12.6px;
+      line-height:1.6;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+    }
+
+    .note{
+      border:1px dashed rgba(255,255,255,.18);
+      background:rgba(0,0,0,.14);
+      border-radius:var(--r2);
+      padding:12px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .gradTag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.16);
+      border:1px solid rgba(255,255,255,.10);
+      color:rgba(234,240,255,.86);
+      font-size:12.5px;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background:var(--g1);
+      box-shadow:0 0 0 3px rgba(255,255,255,.06);
+    }
+
+    .twoCol{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:720px){.twoCol{grid-template-columns:1fr 1fr}}
+
+    .toast{
+      position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.16);
+      color:rgba(234,240,255,.92);
+      padding:10px 12px;
+      border-radius:12px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 18px 55px rgba(0,0,0,.55);
+      font-size:13px;
+      opacity:0;pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+
+    .footer{
+      margin-top:18px;
+      color:var(--muted2);
+      font-size:12.5px;
+      display:flex;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .footer a{color:rgba(234,240,255,.82)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="topline">
+        <div class="chips">
+          <span class="chip"><strong>Nicho:</strong> Estética</span>
+          <span class="chip"><strong>Dia:</strong> 19</span>
+          <span class="chip"><strong>Formato:</strong> Carrossel</span>
+          <span class="chip"><strong>Pilar:</strong> Mito vs Verdade</span>
+        </div>
+        <a class="chip" href="https://www.instagram.com/p/DWKdneNkcYl/" target="_blank" rel="noreferrer">Post original ↗</a>
+      </div>
+
+      <h1 class="title">6 “erros” em estética que não são erros (e como ajustar)</h1>
+      <p class="subtitle">Template reproduzível no formato <span class="gradTag"><span class="dot"></span>parece erro → alívio → critério → ação</span>. Funciona para estética facial, corporal, capilar, pós-procedimento, equipamentos e home care.</p>
+
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <button class="btn" id="copyHooksBtn">Copiar ganchos</button>
+        <a class="btn link" href="#slides">Ver slides sugeridos</a>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card span2">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="pill">Objetivo: retenção + confiança + ação</span>
+        </div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="box"><div class="l">Quantidade ideal</div><div class="v">6–9 slides</div></div>
+            <div class="box"><div class="l">Promessa central</div><div class="v">“Você não está errando”</div></div>
+            <div class="box"><div class="l">Entrega por slide</div><div class="v">1 ajuste prático</div></div>
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Gatilho:</strong> tirar a culpa (alívio) e manter critério (segurança).</li>
+            <li><strong>Estratégia:</strong> lista escaneável + micro-ganhos + variedade visual.</li>
+            <li><strong>Resultado esperado:</strong> mais salvamentos/compartilhamentos e mais DMs por “checklist/avaliação”.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Estrutura</h2><span class="pill">macro + micro</span></div>
+        <div class="bd">
+          <div class="note"><strong>Macro (fluxo):</strong> Capa (quebra de crença + autoridade) → 5–7 itens (cada um com correção + limite + ação) → Fechamento (CTA + benefício + branding).</div>
+          <div class="hr"></div>
+          <div class="note"><strong>Micro (modelo por item):</strong><br>
+            1) <strong>“Parece erro”</strong> (headline curto)<br>
+            2) <strong>“Na verdade…”</strong> (correção simples)<br>
+            3) <strong>“Atenção se…”</strong> (condição/limite de segurança)<br>
+            4) <strong>“Faça assim:”</strong> (passo prático aplicável)
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Elementos visuais</h2><span class="pill">clean + high trust</span></div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Base:</strong> fotos reais (consultório/rotina/produto) + caixas de texto com alto contraste.</li>
+            <li><strong>Consistência:</strong> mesmas posições de caixas e mesmo tamanho de headline por slide.</li>
+            <li><strong>Variedade:</strong> alterne (1) rosto/contexto profissional, (2) mão na massa/demonstração, (3) fundo clean com produtos recortados.</li>
+            <li><strong>Legibilidade:</strong> 1 ideia por slide; evite parágrafos longos; área segura do Instagram.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="note"><strong>Dica de design reproduzível:</strong> mantenha 2 caixas por slide (headline + corpo). Use uma “etiqueta” discreta com @ no topo. Deixe respiro; ícones só se realmente ajudarem a escanear.</div>
+        </div>
+      </section>
+
+      <section class="card span2" id="slides">
+        <div class="hd"><h2>Slides sugeridos (1..8)</h2><span class="pill">modelo padrão</span></div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="note"><strong>Slide 1 — Capa</strong><br>
+              Headline: “Coisas que você acha que está fazendo errado em [TEMA]… mas não está”<br>
+              Sub: “(por uma [SUA PROFISSÃO/FORMAÇÃO])”<br>
+              Visual: foto sua em contexto profissional + caixa de texto.
+            </div>
+            <div class="note"><strong>Slide 2 — Item 1 (fácil de concordar)</strong><br>
+              Escolha algo comum e leve que quase todo mundo faz.<br>
+              Feche com um ajuste simples.
+            </div>
+            <div class="note"><strong>Slide 3 — Item 2 (erro “meio polêmico”)</strong><br>
+              Aumente a retenção com um item que gere “sério?” sem ser perigoso.
+            </div>
+            <div class="note"><strong>Slide 4 — Item 3 (mão na massa)</strong><br>
+              Foto/vídeo mostrando aplicação/ordem/quantidade/tempo.<br>
+              Texto mínimo.
+            </div>
+            <div class="note"><strong>Slide 5 — Item 4 (clean com produto/diagrama)</strong><br>
+              Fundo limpo + 2–4 recortes (produto/área do corpo/step).<br>
+              Explicação curta (2–3 linhas).
+            </div>
+            <div class="note"><strong>Slide 6 — Item 5 (condição de segurança)</strong><br>
+              Use “Só evite se…” para mostrar critério e profissionalismo.
+            </div>
+            <div class="note"><strong>Slide 7 — Item 6 (o mais memorável)</strong><br>
+              Coloque o item com maior potencial de comentário/compartilhamento.
+            </div>
+            <div class="note"><strong>Slide 8 — Fechamento</strong><br>
+              Frase: “Errado mesmo é…” + CTA (seguir/salvar/compartilhar) + promessa de próximos posts.
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="note"><strong>Alternativa (6 slides):</strong> Capa + 4 itens + Fechamento. Mantém o mesmo impacto quando o tema é mais simples.</div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd"><h2>Roteiro</h2><span class="pill">preencher e publicar</span></div>
+        <div class="bd">
+          <div class="script" id="scriptText">CARROSSEL — “Parece erro, mas não é” (Estética)
+
+[OBJETIVO]
+Educar sem assustar: tirar a culpa, colocar critério e dar 1 ação simples por slide.
+
+[DEFINIÇÕES RÁPIDAS]
+Tema: [TEMA]
+Público: [INICIANTES | EM TRATAMENTO | PÓS-PROCEDIMENTO | PROFISSIONAIS | PELE SENSÍVEL | ETC.]
+Autoridade: [SUA PROFISSÃO/FORMAÇÃO]
+Quantidade: 6 a 9 slides (recomendado: 8)
+
+SLIDE 1 — CAPA
+Texto grande: “Coisas que você acha que faz errado em [TEMA]… mas não faz.”
+Texto pequeno: “(por uma [SUA PROFISSÃO/FORMAÇÃO])”
+Branding: @seuperfil
+
+SLIDE 2 — ITEM 1
+Headline: “[HÁBITO 1 QUE PARECE ERRO]”
+Na verdade: “Isso é comum porque [MOTIVO SIMPLES].”
+Atenção se: “O problema é quando [CONDIÇÃO/LIMITE].”
+Faça assim: “[AJUSTE PRÁTICO EM 1 FRASE].”
+
+SLIDE 3 — ITEM 2
+Headline: “[HÁBITO 2 QUE PARECE ERRO]”
+Na verdade: “Nem sempre isso piora [RESULTADO]; depende de [VARIÁVEL].”
+Atenção se: “Evite se você tem/está: [SINAL/CONTRAINDICAÇÃO].”
+Faça assim: “[AJUSTE PRÁTICO].”
+
+SLIDE 4 — ITEM 3 (DEMONSTRAÇÃO)
+Headline: “[DEMONSTRAÇÃO: QUANTIDADE/ORDEM/TEMPO/LOCAL]”
+Faça assim: “Regra rápida: [REGRA 1] + [REGRA 2].”
+Atenção: “Se arder/descamar demais, pause e procure avaliação.”
+
+SLIDE 5 — ITEM 4 (CLEAN)
+Headline: “[PRODUTO/ETAPA QUE GERA DÚVIDA]”
+Na verdade: “Você não precisa [MITO]; você precisa [VERDADE].”
+Faça assim: “Escolha [CRITÉRIO] e ajuste [FREQUÊNCIA/INTENSIDADE].”
+
+SLIDE 6 — ITEM 5
+Headline: “[HÁBITO 5]”
+Na verdade: “O ‘erro’ não é fazer — é fazer sem [CRITÉRIO].”
+Atenção se: “Se [SINAL], não insista.”
+Faça assim: “[AJUSTE].”
+
+SLIDE 7 — ITEM 6 (MAIOR RETENÇÃO)
+Headline: “[HÁBITO 6 MAIS CONTRAINTUITIVO]”
+Na verdade: “O que manda é [FATOR PRINCIPAL].”
+Atenção se: “Em [CASO ESPECÍFICO], muda a conduta.”
+Faça assim: “[AJUSTE PRÁTICO].”
+
+SLIDE 8 — FECHAMENTO
+Frase: “Errado mesmo é não ter critério (e se culpar à toa).”
+CTA: “Me siga e salve este post para consultar antes de [ROTINA/PROCEDIMENTO/COMPRA].”
+CTA extra: “Comenta ‘CHECK’ que eu te mando um checklist de [TEMA] (ou deixo nos stories).”
+
+LEGENDA (OPCIONAL — 4 LINHAS)
+“Eu vejo muita gente se culpando por coisas normais em [TEMA].
+O que muda o jogo é entender o ‘quando’ vira problema.
+Se quiser, comenta CHECK que eu te mando um checklist.
+E se você está em dúvida do seu caso, manda ‘AVALIAÇÃO’ no direct.”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>Copy e ganchos</h2><span class="pill">alta retenção</span></div>
+        <div class="bd">
+          <div class="script" id="hooksText">GANCHOS (capa / 1ª linha)
+1) “Você acha que está errando em [TEMA]… mas não está.”
+2) “Pare de se culpar: isso é normal em [TEMA].”
+3) “Se você faz isso, calma: pode estar tudo certo (depende de X).”
+4) “5 ‘erros’ que NÃO são erros em [TEMA] — por uma [PROFISSÃO].”
+5) “O problema não é fazer. É fazer sem critério.”
+
+FRASES-CHAVE (miolo)
+- “Na verdade, o que pesa mesmo é [FATOR].”
+- “Atenção: só vira problema quando [CONDIÇÃO].”
+- “Ajuste simples: [AÇÃO].”
+- “Se tiver [SINAL], muda a conduta.”
+
+FECHAMENTOS
+- “Errado mesmo é se comparar e não entender o ‘quando’.”
+- “Quer que eu te mande o checklist de [TEMA]? Comenta CHECK.”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>CTA</h2><span class="pill">salvar + seguir + DM</span></div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Salvar:</strong> “Salva para consultar antes de [rotina/procedimento/compra].”</li>
+            <li><strong>Seguir (com autoridade):</strong> “Me siga para aprender [tema] com critério e segurança.”</li>
+            <li><strong>Compartilhar:</strong> “Manda para alguém que vive achando que faz tudo errado.”</li>
+            <li><strong>Comentário (lead leve):</strong> “Comenta <strong>CHECK</strong> que eu te mando um checklist de [tema].”</li>
+            <li><strong>DM (conversão):</strong> “Me chama no direct com <strong>AVALIAÇÃO</strong> e me diz: [tipo de pele/queixa/tempo de sintoma/procedimento].”</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="note"><strong>Regra de ouro:</strong> use no máximo 1 CTA principal (salvar) + 1 secundário (comentário ou DM). CTA demais derruba conversão.</div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd"><h2>Checklist</h2><span class="pill">produção rápida</span></div>
+        <div class="bd">
+          <div class="twoCol">
+            <div>
+              <div class="note"><strong>Antes de escrever</strong></div>
+              <ul class="list">
+                <li>Defina o <strong>tema</strong>: [técnica/protocolo/home care/pós].</li>
+                <li>Defina o <strong>público</strong> (1 só): [iniciante | pele sensível | gestante | pós-procedimento | profissional].</li>
+                <li>Liste <strong>5–7 “erros que não são erros”</strong> (do mais simples ao mais polêmico).</li>
+                <li>Para cada item, preencha: <strong>verdade</strong> + <strong>quando vira problema</strong> + <strong>ajuste prático</strong>.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="note"><strong>Antes de publicar</strong></div>
+              <ul class="list">
+                <li>Headline de cada slide com <strong>até 7 palavras</strong>.</li>
+                <li>Corpo com <strong>2–4 linhas</strong>; evite jargão.</li>
+                <li>Inclua <strong>1 slide de demonstração</strong> e/ou <strong>1 slide clean</strong> para variar.</li>
+                <li>Revisão de segurança: sem promessas absolutas; inclua “atenção se”.</li>
+                <li>Legenda com <strong>CTA de salvar</strong> + palavra-chave (CHECK/AVALIAÇÃO).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="note"><strong>Config de texto (recomendação):</strong> 35–60 palavras por slide como teto. 1 ideia principal por slide.</div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <div class="hd"><h2>Variações</h2><span class="pill">mesmo impacto, outro tema</span></div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="note"><strong>Substituições que mantêm o efeito</strong><br>
+              <ul class="list">
+                <li><strong>“Você acha que está errando”</strong> → “Você está se cobrando por isso” / “Isso parece errado, mas é normal”.</li>
+                <li><strong>“Na verdade…”</strong> → “O que acontece de verdade é…” / “O que manda é…”.</li>
+                <li><strong>“Atenção se…”</strong> → “Sinal de alerta:” / “Evite quando:” / “Procure avaliação se:”.</li>
+                <li><strong>“Faça assim”</strong> → “Ajuste rápido:” / “Regra prática:” / “Melhor caminho:”.</li>
+              </ul>
+            </div>
+            <div class="note"><strong>Adaptações por tema (exemplos)</strong><br>
+              <ul class="list">
+                <li><strong>Facial:</strong> limpeza, hidratação, ácidos, protetor, barreira cutânea.</li>
+                <li><strong>Corporal:</strong> celulite, flacidez, drenagem, treino x estética, hábitos.</li>
+                <li><strong>Capilar:</strong> cronograma, oleosidade, lavagem, finalização, queda.</li>
+                <li><strong>Pós-procedimento:</strong> edema/roxos, sensibilidade, tempo de recuperação, cuidados.</li>
+                <li><strong>Equipamentos/protocolos:</strong> indicações, intervalos, “quanto é demais”, sinais para ajustar.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="note"><strong>Variação de estrutura (para reaproveitar sem ficar repetitivo):</strong> em 1 dos itens, troque “Atenção se…” por “Como saber se está ok?” e dê 2 sinais de ok + 1 sinal de alerta.</div>
+        </div>
+      </section>
+
+      <section class="footer span2">
+        <div>Identidade sugerida: fundo escuro, cards com borda suave, destaques em degradê (verde/azul/laranja), layout limpo e high-tech.</div>
+        <div>Link: <a href="https://www.instagram.com/p/DWKdneNkcYl/" target="_blank" rel="noreferrer">instagram.com/p/DWKdneNkcYl/</a></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Copiado para a área de transferência.</div>
+
+  <script>
+    const toast = document.getElementById('toast');
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=>toast.classList.remove('show'), 1400);
+    }
+    async function copyFrom(elId){
+      const text = document.getElementById(elId).innerText;
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Copiado!');
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Copiado (modo compatível).');
+      }
+    }
+    document.getElementById('copyBtn').addEventListener('click', ()=>copyFrom('scriptText'));
+    document.getElementById('copyHooksBtn').addEventListener('click', ()=>copyFrom('hooksText'));
+  </script>
+</body>
+</html>
