@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dia 27 — Roteiro reproduzível (Estética)</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card:#0C1224cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --muted2:#7E8AB0;
+      --good:#39ff88;
+      --blue:#4aa8ff;
+      --orange:#ff9a3c;
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --grad: linear-gradient(90deg, rgba(57,255,136,.95), rgba(74,168,255,.95), rgba(255,154,60,.95));
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% -10%, rgba(74,168,255,.18), transparent 55%),
+        radial-gradient(900px 700px at 90% 10%, rgba(255,154,60,.14), transparent 50%),
+        radial-gradient(900px 700px at 60% 110%, rgba(57,255,136,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+    a{color:inherit; text-underline-offset:3px}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(12,18,36,.72), rgba(12,18,36,.42));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--grad);
+      opacity:.10;
+      filter: blur(18px);
+      pointer-events:none;
+    }
+    .toprow{display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap}
+    .meta{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      font-family: var(--mono);
+      font-size:12px; color: var(--muted);
+    }
+    .pill{
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      backdrop-filter: blur(6px);
+    }
+    h1{margin:10px 0 8px; font-size:22px; letter-spacing:.2px}
+    .subtitle{color:var(--muted); margin:0; line-height:1.35}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:600;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.22)}
+    .btn:active{transform: translateY(1px)}
+    .btnPrimary{
+      border: none;
+      background: linear-gradient(90deg, rgba(57,255,136,.18), rgba(74,168,255,.18), rgba(255,154,60,.18));
+      outline:1px solid rgba(255,255,255,.16);
+    }
+    .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:14px}
+    @media(min-width: 960px){ .grid{grid-template-columns: 1fr 1fr} }
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(12,18,36,.68), rgba(12,18,36,.40));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px 16px 14px;
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute; left:-40px; top:-40px;
+      width:120px; height:120px;
+      background: var(--grad);
+      opacity:.10;
+      filter: blur(24px);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .card h2 .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: var(--grad);
+      box-shadow: 0 0 18px rgba(74,168,255,.25);
+      flex:0 0 auto;
+    }
+    .card p, .card li{color:var(--muted); line-height:1.5}
+    .card ul{margin:10px 0 0; padding-left:18px}
+    .card li{margin:6px 0}
+    .k{
+      display:inline-flex; align-items:center; gap:8px;
+      font-family: var(--mono);
+      font-size:12px;
+      color: var(--muted);
+      border:1px dashed rgba(255,255,255,.18);
+      padding:6px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.03);
+    }
+    .twoCol{display:grid; grid-template-columns: 1fr; gap:12px}
+    @media(min-width:780px){ .twoCol{grid-template-columns: 1fr 1fr} }
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      margin:12px 0;
+    }
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      color: #EAF0FF;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius2);
+      padding:12px;
+      line-height:1.45;
+      font-family: var(--mono);
+      font-size:12.5px;
+    }
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      border-left:3px solid transparent;
+      border-image: var(--grad) 1;
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.04);
+      padding:10px 12px;
+      color: var(--muted);
+    }
+    .mini{font-size:12px; color: var(--muted2)}
+    .slides{counter-reset: s}
+    .slide{
+      counter-increment: s;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius2);
+      padding:12px;
+    }
+    .slide .label{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:8px;
+      font-family: var(--mono);
+      font-size:12px;
+      color: var(--muted);
+    }
+    .slide .label b{color: var(--text)}
+    .badge{
+      font-size:12px; font-family: var(--mono);
+      padding:4px 8px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+    }
+    .badge.good{color: rgba(57,255,136,.95); border-color: rgba(57,255,136,.22)}
+    .badge.bad{color: rgba(255,154,60,.95); border-color: rgba(255,154,60,.22)}
+    .badge.mid{color: rgba(74,168,255,.95); border-color: rgba(74,168,255,.22)}
+    textarea{
+      width:100%; min-height: 240px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      padding:12px;
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.5;
+      resize: vertical;
+      outline:none;
+    }
+    textarea:focus{border-color: rgba(74,168,255,.35); box-shadow: 0 0 0 3px rgba(74,168,255,.12)}
+    .footer{margin-top:14px; color: var(--muted2); font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div>
+          <div class="meta">
+            <span class="pill">Nicho: <b>Estética</b></span>
+            <span class="pill">Dia: <b>27</b></span>
+            <span class="pill">Formato: <b>Carrossel (4 slides)</b></span>
+            <span class="pill">Pilar: <b>Mito vs Verdade</b></span>
+          </div>
+          <h1>Vale o hype? O que funciona e o que é só modinha</h1>
+          <p class="subtitle">Template reproduzível: Hook humano → classificação rápida → contraste → “joia escondida” + CTA (salvar/comentar/direct).</p>
+          <p class="subtitle mini">Post original: <a href="https://www.instagram.com/p/DUWk74miWH8/" target="_blank" rel="noopener">https://www.instagram.com/p/DUWk74miWH8/</a></p>
+        </div>
+        <div class="actions">
+          <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+          <a class="btn" href="https://www.instagram.com/p/DUWk74miWH8/" target="_blank" rel="noopener">Abrir post</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="dot"></span>Resumo</h2>
+        <p>Carrossel curto (4 slides) que entrega <b>opinião direta</b> e <b>classificação fácil de salvar</b>: o que <b>vale o hype</b>, o que <b>não vale</b> e o que <b>merecia mais atenção</b>. Funciona para procedimentos, produtos, hábitos, tendências, aparelhos e “modinhas”.</p>
+        <div class="hr"></div>
+        <div class="callout">
+          <b>Promessa</b>: “eu vou te dizer sem filtro o que realmente compensa” + sensação de “lista definitiva”.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Estrutura</h2>
+        <ul>
+          <li><b>Slide 1 (hook humano)</b>: rosto/bastidor + pergunta curta → curiosidade e autoridade pessoal.</li>
+          <li><b>Slide 2 (categoria A)</b>: “vale o hype” → valida o público, constrói confiança.</li>
+          <li><b>Slide 3 (categoria B)</b>: “não vale o hype” → contraste/polêmica controlada, gera comentários.</li>
+          <li><b>Slide 4 (categoria C + CTA)</b>: “merecia mais hype” → recompensa/surpresa + ação (salvar/comentar).</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="mini"><span class="k">Regra de ouro</span> 1 ideia por slide (2–4 palavras). O detalhe fica na legenda.</p>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <h2><span class="dot"></span>Roteiro</h2>
+        <div class="twoCol">
+          <div>
+            <p class="mini">Use o campo abaixo como “master script” (é o que o botão copia).</p>
+            <textarea id="script" spellcheck="false">TEMPLATE — CARROSSEL (4 SLIDES) “VALE O HYPE?”
+
+[TEMA PRINCIPAL]: ______________________________
+(Ex.: “ativos para manchas”, “procedimentos para flacidez”, “aparelhos para celulite”, “hábitos no skincare”, “tendências de estética 2026”)
+
+SLIDE 1 — HOOK (HUMANO)
+Visual: selfie/rosto/bastidor na cabine.
+Texto (escolha 1):
+- “quer a verdade mesmo?”
+- “sem filtro: [TEMA]”
+- “vamos falar de [TEMA] sem romantizar?”
+- “eu testei/vi na prática: [TEMA]”
+
+SLIDE 2 — CATEGORIA A (VALIDAÇÃO)
+Visual: 2–4 itens/procedimentos (fundo escuro, clean).
+Texto grande: “vale o hype”
+Nota pequena (opcional): “por quê? na legenda”
+
+SLIDE 3 — CATEGORIA B (CONTRASTE)
+Visual: 1–3 itens.
+Texto grande (escolha 1):
+- “não vale o hype”
+- “não compensa (pra maioria)”
+- “custo x benefício ruim”
+Nota pequena (opcional): “depende do caso”
+
+SLIDE 4 — CATEGORIA C (DESCOBERTA) + CTA
+Visual: 1–3 itens “subestimados”.
+Texto grande: “merecia mais hype”
+CTA pequeno (escolha 1):
+- “quer parte 2? comenta ‘HYPE’”
+- “salva pra consultar depois”
+- “comenta ‘LISTA’ que eu mando o checklist”
+- “quer pro seu caso? me chama no direct: ‘AVALIAÇÃO’”
+
+LEGENDA — MODELO (COPIAR E PREENCHER)
+Hype em [TEMA]. Vou ser bem direta(o): o que eu vejo funcionar na prática 👇
+
+✅ VALE O HYPE
+• [ITEM 1] — porque [benefício principal] (melhor para [perfil/objetivo])
+• [ITEM 2] — porque [benefício principal]
+• [ITEM 3] — porque [benefício principal]
+
+⚠️ NÃO VALE O HYPE (OU SÓ EM CASOS ESPECÍFICOS)
+• [ITEM 1] — ponto fraco: [limitação/risco/dor/recuperação/custo]
+• [ITEM 2] — ponto fraco: [limitação]
+
+💎 MERECIA MAIS HYPE
+• [ITEM 1] — funciona muito bem quando [condição + frequência]
+
+CTA (escolha 1):
+1) “Comenta HYPE que eu faço a parte 2 com [subtema].”
+2) “Qual item você quer que eu avalie na próxima: A, B ou C?”
+3) “Me chama no direct com ‘AVALIAÇÃO’ + seu objetivo + sua rotina.”
+
+Nota de segurança (opcional): “Resultados variam. Indicação e combinações dependem de avaliação profissional.”</textarea>
+            <div class="footer" id="copyStatus"></div>
+          </div>
+          <div>
+            <div class="callout">
+              <b>Como adaptar para qualquer tema (mesmo impacto)</b>
+              <ul>
+                <li><b>Substituição do “hype”</b>: “modinha”, “queridinho do momento”, “trend”, “viral”, “todo mundo faz”.</li>
+                <li><b>Categoria B sem treta</b>: “não é pra todo mundo” / “não é primeira escolha” / “só se [condição]”.</li>
+                <li><b>Categoria C mais forte</b>: “subestimado” / “ninguém dá atenção” / “o que mais entrega”.</li>
+                <li><b>Gatilho de autoridade</b>: “na minha rotina clínica”, “no consultório”, “nos casos que acompanho”.</li>
+              </ul>
+            </div>
+            <div class="hr"></div>
+            <p class="mini"><span class="k">Dica de retenção</span> Coloque o item mais “polêmico” no slide 3, mas escreva a ressalva na legenda (sem poluir o slide).</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <h2><span class="dot"></span>Slides sugeridos (1..4)</h2>
+        <div class="slides twoCol">
+          <div class="slide">
+            <div class="label"><b>Slide 1</b> <span class="badge mid">Hook</span></div>
+            <ul>
+              <li><b>Imagem</b>: selfie/rosto (humaniza).</li>
+              <li><b>Texto</b>: “quer a verdade mesmo?”</li>
+              <li><b>Objetivo</b>: curiosidade + promessa de sinceridade.</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="label"><b>Slide 2</b> <span class="badge good">Vale</span></div>
+            <ul>
+              <li><b>Imagem</b>: 2–4 itens/procedimentos em fundo escuro.</li>
+              <li><b>Texto</b>: “vale o hype”</li>
+              <li><b>Objetivo</b>: valor rápido e “salvável”.</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="label"><b>Slide 3</b> <span class="badge bad">Não vale</span></div>
+            <ul>
+              <li><b>Imagem</b>: 1–3 itens (menos elementos).</li>
+              <li><b>Texto</b>: “não vale o hype”</li>
+              <li><b>Objetivo</b>: contraste + debate (retenção).</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <div class="label"><b>Slide 4</b> <span class="badge mid">Subestimado + CTA</span></div>
+            <ul>
+              <li><b>Imagem</b>: 1–3 itens “joia escondida”.</li>
+              <li><b>Texto</b>: “merecia mais hype”</li>
+              <li><b>CTA pequeno</b>: “comenta ‘HYPE’ pra parte 2”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Elementos visuais</h2>
+        <ul>
+          <li><b>Fundo</b>: preto/grafite (premium, high-tech).</li>
+          <li><b>Composição</b>: produto(s) centralizados + respiro (sem poluição).</li>
+          <li><b>Texto</b>: 2–4 palavras, fonte bold, branco com sombra/contorno.</li>
+          <li><b>Consistência</b>: mesma posição do texto nos slides 2–4.</li>
+          <li><b>Quebra de padrão</b>: slide 1 com rosto (conexão humana).</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="mini"><span class="k">Escolha de imagens</span> Evite reflexos estourados; luz lateral suave (look editorial).</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Copy e ganchos</h2>
+        <ul>
+          <li><b>Hooks prontos</b>: “quer a verdade mesmo?”, “sem filtro”, “isso aqui é superestimado”, “o que mais entrega de verdade”.</li>
+          <li><b>Ganchos de continuação</b>: “no final tem o mais subestimado”, “o 3º item é o que mais dá erro”.</li>
+          <li><b>Polêmica controlada</b>: troque “não presta” por “não compensa (pra maioria)” e explique o cenário na legenda.</li>
+          <li><b>Microfrases de autoridade</b>: “na prática”, “no consultório”, “no pós-procedimento”, “no longo prazo”.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>CTA</h2>
+        <ul>
+          <li><b>Para comentário</b>: “Comenta <b>HYPE</b> que eu faço a parte 2 com [subtema].”</li>
+          <li><b>Para salvamento</b>: “Salva pra consultar quando for comprar/fazer.”</li>
+          <li><b>Para direct</b> (serviço): “Me chama no direct com <b>AVALIAÇÃO</b> + objetivo + rotina.”</li>
+          <li><b>Para engajar sem esforço</b>: “Qual você já fez/usou: A, B ou C?”</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="mini"><span class="k">Posicionamento</span> CTA no slide 4 (pequeno) + reforço na legenda.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot"></span>Checklist</h2>
+        <ul>
+          <li><b>Definição</b>: tema + 3 categorias + 2–4 itens por categoria.</li>
+          <li><b>Slide 1</b>: foto com rosto + hook (máx. 4 palavras).</li>
+          <li><b>Slides 2–4</b>: fundo escuro, iluminação consistente, textos alinhados no mesmo lugar.</li>
+          <li><b>Tipografia</b>: bold, alto contraste, sombra/contorno.</li>
+          <li><b>Legenda</b>: 1 linha de contexto + bullets com “porque” (benefício) + “para quem” (perfil).</li>
+          <li><b>Segurança</b>: incluir ressalva “depende de avaliação” quando falar de procedimentos/ativos.</li>
+          <li><b>CTA</b>: escolher 1 principal (comentário OU direct) + 1 secundário (salvar).</li>
+          <li><b>Revisão</b>: checar legibilidade em tela pequena (zoom 100%).</li>
+        </ul>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <h2><span class="dot"></span>Variações</h2>
+        <div class="twoCol">
+          <div>
+            <p class="mini"><span class="k">Mesmo formato, outros pilares</span></p>
+            <ul>
+              <li><b>Erro comum</b>: “vale / erro / alternativa melhor”.</li>
+              <li><b>Objeção</b>: “vale / não vale / quando vale”.</li>
+              <li><b>Checklist</b>: “faça / evite / priorize”.</li>
+              <li><b>Prova</b>: “funcionou / não funcionou / evidência prática”.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="mini"><span class="k">Ajustes de intensidade (sem perder impacto)</span></p>
+            <ul>
+              <li><b>Versão mais agressiva</b>: “superestimado” / “marketing puro” (use com cuidado).</li>
+              <li><b>Versão mais ética</b>: “não é pra todo mundo” / “não é primeira escolha”.</li>
+              <li><b>Versão educativa</b>: adicionar na legenda “quando indicar” + “quando evitar”.</li>
+              <li><b>Versão de leads</b>: CTA “comenta ‘GUIA’ que eu envio um PDF/checklist”.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ta = document.getElementById('script');
+      const status = document.getElementById('copyStatus');
+
+      async function copy(){
+        const text = ta.value.trim();
+        try{
+          if(navigator.clipboard && window.isSecureContext){
+            await navigator.clipboard.writeText(text);
+          } else {
+            ta.focus();
+            ta.select();
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+          }
+          status.textContent = 'Roteiro copiado para a área de transferência.';
+          setTimeout(()=> status.textContent = '', 2500);
+        } catch(e){
+          status.textContent = 'Não foi possível copiar automaticamente. Selecione o texto e copie manualmente.';
+        }
+      }
+
+      btn.addEventListener('click', copy);
+    })();
+  </script>
+</body>
+</html>
