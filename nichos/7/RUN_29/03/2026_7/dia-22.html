@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roteiro Reproduzível — Estética Dia 22</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1624;
+      --card:#111b2e;
+      --text:#e7edf7;
+      --muted:#a8b3c7;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --r:16px;
+      --r2:22px;
+      --g1: linear-gradient(135deg,#30d158 0%, #00c2ff 45%, #ff8a00 100%);
+      --g2: linear-gradient(135deg, rgba(48,209,88,.22) 0%, rgba(0,194,255,.18) 45%, rgba(255,138,0,.16) 100%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1100px 700px at 20% -10%, rgba(0,194,255,.18), transparent 55%),
+                  radial-gradient(900px 650px at 110% 0%, rgba(255,138,0,.14), transparent 55%),
+                  radial-gradient(900px 700px at 50% 110%, rgba(48,209,88,.14), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.35;
+    }
+    a{color:#7bdcff; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 54px}
+
+    header{
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius:var(--r2);
+      padding:20px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background:var(--g2);
+      filter: blur(22px);
+      opacity:.75;
+      z-index:0;
+    }
+    .head-grid{position:relative;z-index:1;display:grid;gap:14px;grid-template-columns: 1.4fr .6fr}
+    @media (max-width:860px){.head-grid{grid-template-columns:1fr}}
+
+    .kicker{
+      font-family:var(--mono);
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    h1{margin:6px 0 10px;font-size:22px;line-height:1.15}
+    .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+    .pill{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      padding:7px 10px;
+      border-radius:999px;
+    }
+    .linkbox{
+      border:1px solid var(--stroke);
+      background:rgba(17,27,46,.55);
+      border-radius:14px;
+      padding:12px;
+    }
+    .linkbox .label{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .linkbox .url{font-family:var(--mono);font-size:12.5px;word-break:break-all}
+
+    .grid{display:grid;grid-template-columns: 1fr 1fr; gap:16px; margin-top:16px}
+    @media (max-width:920px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius:var(--r);
+      padding:16px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .card:after{
+      content:"";
+      position:absolute; left:-30%; top:-60%;
+      width:80%; height:140%;
+      background:var(--g2);
+      transform:rotate(16deg);
+      opacity:.25;
+      pointer-events:none;
+    }
+    .card > *{position:relative; z-index:1}
+
+    h2{margin:0 0 10px;font-size:16px}
+    .muted{color:var(--muted)}
+    ul{margin:10px 0 0 18px; padding:0}
+    li{margin:6px 0}
+    .hr{height:1px;background:var(--stroke);margin:14px 0}
+
+    .badge{
+      display:inline-block;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.18);
+    }
+    .badge strong{background:var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent;}
+
+    .scriptbox{
+      background:rgba(0,0,0,.22);
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:14px;
+      margin-top:10px;
+    }
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.5;
+      color:#dbe6ff;
+    }
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    button{
+      cursor:pointer;
+      border:1px solid var(--stroke2);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+    }
+    button.primary{
+      border-color: rgba(0,194,255,.35);
+      box-shadow: 0 0 0 4px rgba(0,194,255,.09);
+    }
+    .hint{font-size:12px;color:var(--muted);margin-top:8px}
+
+    .two-col{display:grid;grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:780px){.two-col{grid-template-columns:1fr}}
+
+    .callout{
+      border:1px solid var(--stroke2);
+      background: rgba(17,27,46,.55);
+      border-radius:14px;
+      padding:12px;
+    }
+    .callout .t{font-weight:700;margin-bottom:6px}
+    .small{font-size:12.5px}
+
+    .footer{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-grid">
+        <div>
+          <div class="kicker">Nicho • Estética  |  Dia 22</div>
+          <h1>Mito vs Realidade: o que funciona de verdade em <span class="badge"><strong>[TEMA]</strong></span></h1>
+          <div class="muted">Estrutura reproduzível para carrossel educacional com tom científico acessível: quebra de crença → mecanismo → prova/padrão → nuance → CTA.</div>
+          <div class="meta">
+            <span class="pill">Pilar: Mito vs Verdade</span>
+            <span class="pill">Formato: Carrossel</span>
+            <span class="pill">Objetivo: salvamentos + autoridade</span>
+            <span class="pill">Duração: 10–16 slides</span>
+          </div>
+        </div>
+        <div class="linkbox">
+          <div class="label">Link do post original</div>
+          <div class="url"><a href="https://www.instagram.com/p/DV4aUhGkW_E/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DV4aUhGkW_E/</a></div>
+          <div class="hr"></div>
+          <div class="label">Instrução curta</div>
+          <div class="small muted">Faça a capa com “MITO” + sua credencial, explique o mecanismo real em 2–4 telas, mostre critérios de escolha e finalize com salvar + comentário.</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <div class="two-col">
+          <div class="callout">
+            <div class="t">Promessa do post</div>
+            <div class="small muted">Trocar uma crença popular por um modelo mental prático, com linguagem objetiva e “pé no mecanismo”.</div>
+          </div>
+          <div class="callout">
+            <div class="t">Por que retém</div>
+            <div class="small muted">Polêmica controlada (“é mito”), perguntas-ponte, listas escaneáveis, prova de esforço (N análises) e fechamento memorável.</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="callout">
+          <div class="t">Onde usar</div>
+          <div class="small muted">Procedimentos (peeling, microagulhamento), ativos (retinol, niacinamida), tecnologias (radiofrequência), hábitos (esfoliar todo dia), cosméticos “milagrosos”.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura (sequência replicável)</h2>
+        <ol class="small muted" style="margin:10px 0 0 18px; padding:0;">
+          <li><strong>Capa:</strong> hook + palavra de contraste (“MITO”) + credencial.</li>
+          <li><strong>Tese/virada:</strong> “X não significa o que você acha”.</li>
+          <li><strong>Contexto:</strong> “em A faz sentido; em B não”.</li>
+          <li><strong>Mecanismo real:</strong> explique o que de fato gera o efeito.</li>
+          <li><strong>Mapa:</strong> lista das 3–5 coisas que realmente entregam resultado.</li>
+          <li><strong>Deep dives:</strong> 2–4 telas (cada uma: o que é + como identificar + o que faz).</li>
+          <li><strong>Pergunta-ponte:</strong> “diferença entre rótulos A/B/C?”</li>
+          <li><strong>Prova/benchmark:</strong> “analisei N [produtos/casos/protocolos]”.</li>
+          <li><strong>Padrão encontrado:</strong> arquitetura comum (o “esqueleto”).</li>
+          <li><strong>Conclusão impopular:</strong> mais marketing do que mecanismo (com nuance).</li>
+          <li><strong>Objeção avançada:</strong> “e [ativo/tecnologia]?”</li>
+          <li><strong>Nuance + CTA:</strong> quando ajuda / limites + seguir/salvar/comentar.</li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro (copiável e preenchível)</h2>
+        <div class="actions">
+          <button class="primary" onclick="copyScript()">Copiar roteiro</button>
+          <button onclick="copyHooks()">Copiar ganchos</button>
+          <button onclick="copyChecklist()">Copiar checklist</button>
+        </div>
+        <div class="hint">Dica: substitua apenas os campos entre colchetes. Mantém o mesmo impacto em qualquer tema.</div>
+        <div class="scriptbox" id="script">
+<pre>CARROSSEL (12–14 SLIDES) — “MITO vs MECANISMO”
+
+SLIDE 1 — CAPA
+Texto grande: “Quase tudo que você acredita sobre [TEMA] é MITO”
+Linha menor: “(por [CREDENCIAL: esteticista/dermato/biomédica/pesquisadora])”
+Visual: palavra “MITO” em destaque + foto sua (rosto) ou elemento do tema.
+
+SLIDE 2 — A VIRADA (tese)
+“[TERMO/PROMESSA] não é exatamente o que parece.”
+“Na prática, muita gente confunde [CONCEITO POPULAR] com [CONCEITO TÉCNICO].”
+
+SLIDE 3 — CONTEXTO (onde faz sentido x onde não faz)
+“Para [CONTEXTO A], falar em [TERMO] até faz sentido…”
+“Mas para [CONTEXTO B], o mecanismo é outro.”
+
+SLIDE 4 — MECANISMO REAL (explicação simples)
+“O resultado que você quer ([OBJETIVO: clarear/firmar/secar acne/reduzir frizz]) vem de:”
+• [MECANISMO 1]  
+• [MECANISMO 2]  
+• [MECANISMO 3]
+
+SLIDE 5 — MAPA (o que realmente entrega)
+“O que mais entrega [OBJETIVO] costuma ser:”
+1) [CATEGORIA 1: ex. ativos-chave] 
+2) [CATEGORIA 2: ex. veículo/forma de entrega] 
+3) [CATEGORIA 3: ex. consistência/rotina] 
+4) [CATEGORIA 4: ex. proteção/evitar gatilhos]
+
+SLIDE 6 — DEEP DIVE #1
+[TÍTULO CATEGORIA 1]
+Como identificar: [EXEMPLOS/INCI/nomes comuns]
+O que faz:
+• [EFEITO 1]
+• [EFEITO 2]
+• [LIMITE/OBSERVAÇÃO]
+
+SLIDE 7 — DEEP DIVE #2
+[TÍTULO CATEGORIA 2]
+Como identificar: [ex.: gel/creme/serum, % se aplicável, tecnologia]
+O que muda na prática:
+• [RESULTADO 1]
+• [TOLERÂNCIA/IRRITAÇÃO]
+• [QUANDO ESCOLHER]
+
+SLIDE 8 — DEEP DIVE #3 (opcional)
+[TÍTULO CATEGORIA 3]
+Sinais de que está funcionando:
+• [SINAL 1]
+• [SINAL 2]
+• [PRAZO REALISTA]
+
+SLIDE 9 — PERGUNTA-PONTE
+“Então qual a diferença entre [RÓTULO A], [RÓTULO B] e [RÓTULO C]?”
+“Eu analisei [N] [produtos/casos/protocolos] pra entender o padrão.”
+
+SLIDE 10 — PROVA / PADRÃO
+“O padrão mais comum é esse ‘esqueleto’:”
+1. [BASE/VEÍCULO]
+2. [ATIVOS PRINCIPAIS]
+3. [ATIVOS DE SUPORTE]
+4. [SENSORIAL/oclusão]
+5. [FREQUÊNCIA/uso]
+6. [PROTEÇÃO/contraindicações]
+
+SLIDE 11 — CONCLUSÃO IMPopular (com nuance)
+“Muitas vezes, a diferença é mais [MARKETING/POSICIONAMENTO] + [CONCENTRAÇÃO/VEÍCULO] do que o nome.”
+“Escolha pelo que dá pra observar: [CRITÉRIO 1], [CRITÉRIO 2], [CRITÉRIO 3].”
+
+SLIDE 12 — OBJEÇÃO
+“Ué, mas e [OBJEÇÃO: ‘e o ácido X?’, ‘e a tecnologia Y?’]”
+Resposta curta:
+“Ajuda em [O QUE AJUDA], mas não faz [PROMESSA IRREAL] biologicamente.”
+
+SLIDE 13 — FECHAMENTO MEMORÁVEL (soundbite)
+“Frase-chave: [SOUNDBITE curta e repetível].”
+Exemplos:
+• “Nome vende. Mecanismo entrega.”
+• “Não é milagre. É consistência + critério.”
+
+SLIDE 14 — CTA
+“Salve pra consultar antes de comprar/agendar.”
+“Comenta ‘GUIA’ que eu te mando a checklist do que olhar em [TEMA].”
+“Me siga pra mais conteúdo com embasamento e sem terrorismo.”</pre>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Slides sugeridos (1..14)</h2>
+        <div class="small muted">Use 10–16. Se o tema for simples, corte os deep dives; se for complexo, adicione 1–2 telas de exemplos visuais.</div>
+        <ul class="small muted">
+          <li><strong>1:</strong> Capa (MITO + credencial + foco em 1 promessa).</li>
+          <li><strong>2:</strong> Tese/virada.</li>
+          <li><strong>3:</strong> Contexto (A vs B).</li>
+          <li><strong>4:</strong> Mecanismo real (3 bullets).</li>
+          <li><strong>5:</strong> Mapa do que entrega (lista 3–5).</li>
+          <li><strong>6–8:</strong> Deep dives (um por categoria).</li>
+          <li><strong>9:</strong> Pergunta-ponte + “analisei N…”</li>
+          <li><strong>10:</strong> Prova/padrão (esqueleto).</li>
+          <li><strong>11:</strong> Conclusão impopular + critérios.</li>
+          <li><strong>12:</strong> Objeção avançada + limite.</li>
+          <li><strong>13:</strong> Soundbite.</li>
+          <li><strong>14:</strong> CTA salvar + comentário.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais (para replicar o “look & feel”)</h2>
+        <div class="two-col">
+          <div class="callout">
+            <div class="t">Identidade</div>
+            <ul class="small muted">
+              <li>Estilo minimalista/high-tech: fundo limpo, muito respiro.</li>
+              <li>1 cor de alerta p/ palavras: “MITO”, “NÃO”, “SIM”.</li>
+              <li>Marca d’água: @seuperfil pequeno no topo (todas as telas).</li>
+              <li>Hierarquia: 1 ideia forte por slide (título grande + 1 bloco).</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <div class="t">Componentes</div>
+            <ul class="small muted">
+              <li>Capa com rosto (humaniza) + caixa arredondada com texto.</li>
+              <li>Telas técnicas com tipografia + ícones/recortes (PNG) do tema.</li>
+              <li>1–2 telas com lista numerada (escaneável).</li>
+              <li>1 tela de “prova de esforço”: N análises / comparação / checklist.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos (substituíveis)</h2>
+        <div class="callout">
+          <div class="t">Ganchos de capa (escolha 1)</div>
+          <ul class="small muted" id="hooks">
+            <li>“Quase tudo o que você acredita sobre <strong>[TEMA]</strong> é mito.”</li>
+            <li>“Se você quer <strong>[OBJETIVO]</strong>, precisa entender isso antes de gastar com <strong>[PROMESSA]</strong>.”</li>
+            <li>“<strong>[CRENÇA POPULAR]</strong> é mito: o mecanismo real é outro.”</li>
+            <li>“O que ninguém te conta sobre <strong>[TEMA]</strong> (com base em evidência).”</li>
+          </ul>
+        </div>
+        <div class="hr"></div>
+        <div class="two-col">
+          <div class="callout">
+            <div class="t">Frases-padrão (para ritmo)</div>
+            <ul class="small muted">
+              <li>“Na verdade…”</li>
+              <li>“Isso não significa que…”</li>
+              <li>“Ou seja…”</li>
+              <li>“Então qual a diferença entre…?”</li>
+              <li>“Mas e [objeção]?”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <div class="t">Soundbites prontos</div>
+            <ul class="small muted">
+              <li>“Nome vende. Mecanismo entrega.”</li>
+              <li>“Rótulo não é resultado.”</li>
+              <li>“Sem consistência, até o melhor ativo vira promessa.”</li>
+              <li>“O básico bem feito vence o ‘milagre’ mal usado.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA (1 primário + 1 de conversa)</h2>
+        <div class="two-col">
+          <div class="callout">
+            <div class="t">Primário (escolha 1)</div>
+            <ul class="small muted">
+              <li>“Salve pra consultar antes de comprar/agendar.”</li>
+              <li>“Me siga pra conteúdos com embasamento e sem terrorismo.”</li>
+              <li>“Compartilha com alguém que está prestes a investir em [TEMA].”</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <div class="t">Conversa (escolha 1)</div>
+            <ul class="small muted">
+              <li>“Comenta ‘GUIA’ que eu te mando a checklist de [TEMA].”</li>
+              <li>“Comenta seu objetivo: [opção 1]/[opção 2]/[opção 3].”</li>
+              <li>“Quer parte 2? Comenta ‘PARTE 2’ + o tema.”</li>
+              <li>“Me chama no direct com ‘DÚVIDA’ e me diz: [pergunta].”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Checklist de criação (produção + revisão)</h2>
+        <div class="scriptbox" id="checklist"><pre>CHECKLIST — antes de publicar
+
+Conteúdo
+[ ] Defini 1 crença popular específica pra quebrar (não genérica)
+[ ] Expliquei o mecanismo real em 3 bullets (simples e correto)
+[ ] Incluí 1 comparação de contexto (ex.: casa vs clínica / pele vs fio)
+[ ] Listei 3–5 critérios observáveis (o que olhar/como escolher)
+[ ] Incluí 1 prova de esforço (N análises, comparação, esqueleto)
+[ ] Antecipei 1 objeção avançada e respondi com nuance
+[ ] Fechei com 1 soundbite (frase curta memorável)
+
+Roteiro/UX
+[ ] 1 mensagem forte por slide (título grande)
+[ ] Texto com quebras de linha intencionais (escaneável)
+[ ] Pergunta-ponte a cada 2–3 slides
+[ ] CTA primário (salvar/seguir) + CTA conversa (comentário/DM)
+
+Design
+[ ] Consistência de tipografia (H1/H2/body)
+[ ] Palavra-chave destacada (MITO/NÃO/SIM)
+[ ] @/assinatura no topo em todas as telas
+[ ] 1–3 elementos visuais recortados (produto/ícone/ilustração)
+
+Qualidade
+[ ] Evitei promessas absolutas (“zera”, “cura”, “nunca”)
+[ ] Usei prazos realistas (quando aplicável)
+[ ] Revisão final: legibilidade no celular (tamanho e contraste)</pre></div>
+      </section>
+
+      <section class="card">
+        <h2>Variações (mesmo impacto, outro tema)</h2>
+        <div class="callout">
+          <div class="t">Trocas rápidas (substituições)</div>
+          <ul class="small muted">
+            <li><strong>[TEMA]</strong> → procedimento (microagulhamento), ativo (retinol), problema (melasma), hábito (esfoliação), tecnologia (laser).</li>
+            <li><strong>[TERMO/PROMESSA]</strong> → palavra da moda (detox, “efeito lifting”, “hidratação profunda”, “pós-procedimento milagroso”).</li>
+            <li><strong>[MECANISMO]</strong> → fisiologia/química (barreira cutânea, inflamação, melanogênese, colágeno, oclusão, fotoproteção).</li>
+            <li><strong>[PROVA]</strong> → “analisei N rótulos”, “comparei N protocolos”, “vi N casos em consultório”, “revisei diretriz/consenso”.</li>
+          </ul>
+        </div>
+        <div class="hr"></div>
+        <div class="two-col">
+          <div class="callout">
+            <div class="t">Formatos alternativos</div>
+            <ul class="small muted">
+              <li><strong>Checklist</strong>: “Antes de comprar/agendar [TEMA], veja isso”.</li>
+              <li><strong>Erro comum</strong>: “O erro que faz [TEMA] parecer que não funciona”.</li>
+              <li><strong>Objeção</strong>: “ ‘Mas [objeção]…’ — resposta honesta e prática”.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <div class="t">O que NÃO mudar (para manter performance)</div>
+            <ul class="small muted">
+              <li>Hook com quebra de crença + especificidade.</li>
+              <li>Mecanismo em linguagem simples (sem “aula” longa).</li>
+              <li>1 slide de prova/padrão (número + estrutura).</li>
+              <li>Nuance: ajuda em X, não faz Y.</li>
+              <li>CTA duplo: salvar + comentário.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">Use este roteiro como template. Se você me disser o tema exato (ex.: melasma, peeling, radiofrequência), dá para preencher slide a slide com copy pronta e exemplos.</div>
+  </div>
+
+  <script>
+    function copyToClipboard(text){
+      if(navigator.clipboard && window.isSecureContext){
+        return navigator.clipboard.writeText(text);
+      }
+      const ta=document.createElement('textarea');
+      ta.value=text;
+      ta.style.position='fixed';
+      ta.style.left='-9999px';
+      ta.style.top='-9999px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try{document.execCommand('copy');}catch(e){}
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+
+    function copyScript(){
+      const t=document.getElementById('script').innerText;
+      copyToClipboard(t);
+    }
+
+    function copyHooks(){
+      const t=document.getElementById('hooks').innerText;
+      copyToClipboard(t);
+    }
+
+    function copyChecklist(){
+      const t=document.getElementById('checklist').innerText;
+      copyToClipboard(t);
+    }
+  </script>
+</body>
+</html>
