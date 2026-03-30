@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 25 — Roteiro reproduzível (Estética)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:#0E1630;
+    --card2:#0B132A;
+    --text:#EAF0FF;
+    --muted:#A9B4D0;
+    --line:rgba(255,255,255,.10);
+    --shadow: 0 14px 40px rgba(0,0,0,.45);
+    --r12:12px;
+    --r16:16px;
+    --grad1: linear-gradient(90deg,#20E3B2 0%, #2D9CDB 45%, #F2994A 100%);
+    --grad2: linear-gradient(135deg, rgba(32,227,178,.18), rgba(45,156,219,.16), rgba(242,153,74,.15));
+    --ok:#20E3B2;
+    --warn:#F2994A;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--text);
+    background:
+      radial-gradient(1200px 800px at 15% 10%, rgba(45,156,219,.20), transparent 55%),
+      radial-gradient(1000px 700px at 90% 15%, rgba(242,153,74,.18), transparent 55%),
+      radial-gradient(900px 650px at 30% 90%, rgba(32,227,178,.14), transparent 60%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    line-height:1.35;
+  }
+  a{color:#B9E6FF; text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 64px}
+
+  header{
+    border:1px solid var(--line);
+    background: rgba(14,22,48,.65);
+    backdrop-filter: blur(10px);
+    border-radius: var(--r16);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .hdrTop{
+    display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+    padding:18px;
+    background: var(--grad2);
+    border-bottom:1px solid var(--line);
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background: rgba(7,10,18,.45);
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.2px;
+    white-space:nowrap;
+  }
+  .dot{
+    width:10px;height:10px;border-radius:99px;
+    background: var(--grad1);
+    box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+  }
+  .hdrMain{padding:18px; display:grid; grid-template-columns: 1.4fr .6fr; gap:16px}
+  .title{
+    font-size:22px; margin:0 0 6px 0; letter-spacing:.2px
+  }
+  .sub{
+    margin:0; color:var(--muted); font-size:14px
+  }
+  .actions{display:flex; flex-direction:column; gap:10px; align-items:flex-end}
+  .btn{
+    cursor:pointer;
+    width:100%;
+    display:inline-flex; gap:10px; align-items:center; justify-content:center;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color:var(--text);
+    font-weight:600;
+  }
+  .btnPrimary{
+    background: var(--grad1);
+    border:0;
+    color:#071018;
+  }
+  .btn small{opacity:.9; font-weight:700; letter-spacing:.2px}
+  .copyHint{color:var(--muted); font-size:12px; text-align:right}
+
+  .grid{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+  }
+  @media (min-width: 980px){
+    .grid{grid-template-columns: 1fr 1fr}
+  }
+
+  .card{
+    border:1px solid var(--line);
+    background: rgba(14,22,48,.62);
+    backdrop-filter: blur(10px);
+    border-radius: var(--r16);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card h2{
+    margin:0; padding:14px 14px 10px;
+    font-size:14px;
+    letter-spacing:.35px;
+    text-transform:uppercase;
+    color:#DCE6FF;
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .pill{
+    font-size:12px; letter-spacing:.2px;
+    color:#061018;
+    font-weight:800;
+    padding:7px 10px;
+    border-radius:999px;
+    background: var(--grad1);
+    white-space:nowrap;
+  }
+  .content{padding:14px}
+  .content p{margin:0 0 10px; color:var(--muted); font-size:14px}
+  .content ul{margin:0; padding-left:18px; color:var(--muted); font-size:14px}
+  .content li{margin:7px 0}
+  .kpi{
+    display:grid; grid-template-columns: repeat(3, 1fr);
+    gap:10px; margin-top:10px
+  }
+  .kpi .box{
+    border:1px solid var(--line);
+    background: rgba(7,10,18,.35);
+    border-radius: 14px;
+    padding:10px;
+  }
+  .kpi .label{color:var(--muted); font-size:12px}
+  .kpi .value{font-size:14px; font-weight:800; margin-top:2px}
+
+  .mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12.5px;
+    color:#D7E2FF;
+    background: rgba(7,10,18,.45);
+    border:1px solid var(--line);
+    border-radius: 14px;
+    padding:12px;
+    overflow:auto;
+    white-space: pre-wrap;
+    line-height:1.45;
+  }
+  .callout{
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(7,10,18,.35);
+    border-radius: 14px;
+    padding:12px;
+    margin-top:10px;
+  }
+  .callout strong{color:var(--text)}
+  .tagRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+  .tag{
+    font-size:12px;
+    color:var(--muted);
+    border:1px solid var(--line);
+    background: rgba(255,255,255,.04);
+    padding:7px 10px;
+    border-radius:999px;
+  }
+  .ok{color:var(--ok); font-weight:800}
+  .warn{color:var(--warn); font-weight:800}
+
+  footer{
+    margin-top:16px;
+    color:var(--muted);
+    font-size:12px;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hdrTop">
+        <div class="badge"><span class="dot"></span><span><strong>Nicho:</strong> Estética</span></div>
+        <div class="badge"><strong>Dia:</strong> 25</div>
+        <div class="badge"><strong>Formato:</strong> Carrossel</div>
+        <div class="badge"><strong>Pilar:</strong> Checklist</div>
+      </div>
+      <div class="hdrMain">
+        <div>
+          <h1 class="title">7 recomendações de skincare que uma especialista indicaria</h1>
+          <p class="sub">Post original: <a href="https://www.instagram.com/p/DV6-fkjFWA9/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DV6-fkjFWA9/</a></p>
+          <div class="tagRow">
+            <span class="tag">Colecionável (salvável)</span>
+            <span class="tag">1 ideia por slide</span>
+            <span class="tag">Gancho + benefício + porquê</span>
+            <span class="tag">Prova social leve</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btnPrimary" id="copyBtn" type="button"><small>Copiar roteiro</small></button>
+          <button class="btn" id="copyCaptionBtn" type="button"><small>Copiar legenda (modelo)</small></button>
+          <div class="copyHint" id="copyStatus">Copie e adapte trocando os campos entre [colchetes].</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Resumo <span class="pill">Reproduzível</span></h2>
+        <div class="content">
+          <p>Carrossel em formato de <strong>lista curada</strong>: capa com promessa + 7 recomendações (1 por slide) + fechamento com CTA. Ideal para estética porque gera <strong>salvamentos</strong> e posiciona como especialista sem precisar de texto longo.</p>
+          <div class="kpi">
+            <div class="box"><div class="label">Nº de slides</div><div class="value">9</div></div>
+            <div class="box"><div class="label">Meta principal</div><div class="value">Salvar</div></div>
+            <div class="box"><div class="label">CTA secundário</div><div class="value">Comentar/DM</div></div>
+          </div>
+          <div class="callout">
+            <strong>Regra de ouro:</strong> a 1ª linha de cada slide <em>vende</em>; as 2–3 linhas seguintes <em>justificam</em>.
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Estrutura <span class="pill">Sequência</span></h2>
+        <div class="content">
+          <ul>
+            <li><span class="ok">Slide 1</span>: Capa (promessa + perfil + autoridade leve)</li>
+            <li><span class="ok">Slides 2–8</span>: 7 itens (gancho curto + benefício + porquê/diferencial + para quem)</li>
+            <li><span class="ok">Slide 9</span>: Fechamento (resumo + CTA + incentivo a salvar)</li>
+          </ul>
+          <div class="callout">
+            <strong>Distribuição de “momentos”:</strong> comece com o item mais “viral/queridinho”, coloque um “premium/aspiracional” no início, um item “técnico” no meio e um “clímax/hype” perto do final.
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Slides sugeridos (1..9) <span class="pill">Modelo</span></h2>
+        <div class="content">
+          <div class="mono" id="slidesText">SLIDE 1 — CAPA
+Título (grande): “[TEMA/CATEGORIA] que eu indicaria para [PERFIL/OBJETIVO]”
+Subtítulo: “por especialista em [ÁREA]…”
+Micro-promessa: “7 escolhas certeiras (pra salvar)”
+
+SLIDE 2 — ITEM 1 (viral/queridinho)
+Gancho: “O mais pedido pra [BENEFÍCIO]”
+O que faz: “[RESULTADO 1] sem pesar”
+Por que: “[TEXTURA/TECNOLOGIA/ATIVO]”
+Bom pra: “[PERFIL]”
+
+SLIDE 3 — ITEM 2 (premium/diferencial)
+Gancho: “Se você ama sensação de [LUXO/CONFORTO], esse é o tipo de escolha”
+Por que: “[MECANISMO] → [RESULTADO]”
+
+SLIDE 4 — ITEM 3 (técnico/credibilidade)
+Gancho: “Ativo-chave: [ATIVO] (do jeito certo)”
+Foco: “[DOR 1] + [DOR 2]”
+Atenção (opcional): “Introduza aos poucos / siga orientação”
+
+SLIDE 5 — ITEM 4 (base da rotina)
+Gancho: “Etapa que deixa o resto funcionar melhor: [ETAPA]”
+O que faz: “[REMOVE/PREPARA/EQUILIBRA]”
+Textura/sensorial: “[SENSORIAL]”
+
+SLIDE 6 — ITEM 5 (essencial responsável)
+Gancho: “Indispensável: [ESSENCIAL]”
+Por quê: “Sem isso, [RESULTADO] não sustenta.”
+
+SLIDE 7 — ITEM 6 (manutenção/viço)
+Gancho: “Pra manter viço ao longo do dia”
+Benefícios: “• [B1] • [B2] • [B3]”
+
+SLIDE 8 — ITEM 7 (clímax/hype)
+Gancho: “O mais falado pra [RESULTADO-CLÍMAX]”
+Como usar (opcional): “[FREQUÊNCIA SIMPLES]”
+
+SLIDE 9 — FECHAMENTO/CTA
+Resumo: “Se você quer [OBJETIVO], essas 7 escolhas encurtam o caminho.”
+CTA 1: “Comenta ‘[PALAVRA-CHAVE]’ que eu adapto pro seu caso”
+CTA 2: “Ou me chama no Direct com ‘[PALAVRA-CHAVE]’”
+Extra: “Salva pra consultar antes de comprar/agendar”</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Roteiro <span class="pill">Script pronto (preenchível)</span></h2>
+        <div class="content">
+          <p>Use este padrão em <strong>todos</strong> os slides 2–8 para manter consistência (e leitura rápida).</p>
+          <div class="mono" id="roteiroText">FÓRMULA (Slides 2–8)
+
+[GANCHO em 1 linha, com energia]
+O que faz: [benefício principal em linguagem simples]
+Por que eu gosto: [ativo/diferencial/textura/tecnologia]
+Bom para: [perfil/condição/estágio]
+Atenção (opcional): [uso consciente / limite / procure profissional]
+
+BANCO DE GANCHOS (substituíveis)
+- “O mais pedido para…”
+- “O queridinho de quem quer…”
+- “Se você sente que nada ‘segura’…”
+- “Pra quem quer resultado sem pesar…”
+- “Esse é o tipo de escolha que muda o jogo em…”
+- “O básico bem feito (que quase ninguém faz)”</div>
+          <div class="callout">
+            <strong>Segurança na estética:</strong> evite promessas absolutas. Prefira “ajuda”, “melhora a aparência”, “pode contribuir”, “tende a”. Em ativos/procedimentos sensíveis, inclua 1 linha de uso responsável.
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Elementos visuais <span class="pill">Identidade</span></h2>
+        <div class="content">
+          <ul>
+            <li><strong>Padrão:</strong> foto real vertical + produto/elemento central + caixa de texto de alto contraste.</li>
+            <li><strong>Consistência:</strong> mesmo enquadramento e luz em todos os slides (acelera leitura).</li>
+            <li><strong>Humanização:</strong> mão segurando (prova de uso real) + fundo de “rotina/bastidor” levemente desfocado.</li>
+            <li><strong>UI:</strong> caixa arredondada, poucas linhas, 1 destaque em negrito por slide.</li>
+            <li><strong>Ícones:</strong> use 1 ícone pequeno recorrente (ex.: selo “queridinho”, “técnico”, “essencial”).</li>
+          </ul>
+          <div class="callout">
+            <strong>Dica high-tech:</strong> aplique um mini “label” no topo da caixa (ex.: “VIRAL”, “TÉCNICO”, “ESSENCIAL”, “HYPE”) para guiar a leitura.
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Copy e ganchos <span class="pill">Substituições</span></h2>
+        <div class="content">
+          <p>Troque as “alavancas” sem perder impacto (vale para qualquer tema: estética facial, corporal, pós-procedimento, depilação, protocolos de cabine).</p>
+          <ul>
+            <li><strong>Curiosidade:</strong> “o que eu indicaria para [perfil]” → “o que eu montaria para [objetivo]”</li>
+            <li><strong>Prova social:</strong> “o mais pedido/viral” → “o que mais dá retorno no consultório”</li>
+            <li><strong>Aspiração:</strong> “sensação de luxo” → “acabamento de pele ‘rica’/toque aveludado”</li>
+            <li><strong>Técnico:</strong> “ativo-chave” → “etapa que faz diferença” (quando o tema não for produto)</li>
+            <li><strong>Responsável:</strong> “sem isso não sustenta” → “isso protege o investimento do tratamento”</li>
+          </ul>
+          <div class="callout">
+            <strong>Frases-curinga por slide:</strong> “sem pesar”, “sem arder (quando aplicável)”, “ótimo para rotina corrida”, “bom para iniciar”, “não é milagre — é consistência”.
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>CTA <span class="pill">Alto contato</span></h2>
+        <div class="content">
+          <ul>
+            <li><strong>CTA principal (comentário):</strong> “Comenta <strong>‘QUERO’</strong> que eu adapto para o seu caso.”</li>
+            <li><strong>CTA alternativo (Direct):</strong> “Me chama no Direct com <strong>‘LISTA’</strong>.”</li>
+            <li><strong>CTA para clínica:</strong> “Quer um protocolo completo? Agendamentos no link da bio/WhatsApp.”</li>
+            <li><strong>CTA de engajamento:</strong> “Salva este post para revisar antes de comprar/agendar.”</li>
+          </ul>
+          <div class="callout">
+            <strong>Micro-urgência saudável:</strong> “Quer que eu te responda hoje? Comenta agora com [PALAVRA].”
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Checklist <span class="pill">Criação</span></h2>
+        <div class="content">
+          <ul>
+            <li>Definir tema: “7 recomendações para <strong>[dor/objetivo/perfil]</strong>”.</li>
+            <li>Selecionar 7 itens/etapas: misture <strong>viral</strong>, <strong>premium</strong>, <strong>técnico</strong>, <strong>base</strong>, <strong>essencial</strong>, <strong>manutenção</strong>, <strong>clímax</strong>.</li>
+            <li>Escrever texto de cada item em 4 linhas (gancho + benefício + porquê + para quem).</li>
+            <li>Inserir 1 linha de <strong>uso consciente</strong> onde necessário.</li>
+            <li>Fotografar padrão: mesma luz/local; 1 item central; fundo de rotina.</li>
+            <li>Design: caixa arredondada; alto contraste; 1 destaque em negrito/slide.</li>
+            <li>Revisão: legibilidade no celular (tamanho de fonte e contraste).</li>
+            <li>Publicação: legenda com resumo + CTA; 5–12 hashtags específicas; fixar 1 comentário com palavra-chave.</li>
+          </ul>
+          <div class="callout">
+            <strong class="warn">Cheque de compliance:</strong> sem “cura/garantido/zera”. Prefira linguagem probabilística e orientativa.
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Variações <span class="pill">Para outros temas</span></h2>
+        <div class="content">
+          <p>Troque “produtos” por “etapas/técnicas/hábitos” mantendo a mesma arquitetura (lista curada + prova + CTA).</p>
+          <ul>
+            <li><strong>Procedimentos faciais:</strong> “7 etapas de um protocolo para [resultado]” (limpeza, esfoliação, peeling, LED, máscara, massagem, finalização/home care).</li>
+            <li><strong>Corporal:</strong> “7 escolhas para [celulite/flacidez]” (drenagem, radiofrequência, ativos, hábitos, etc.).</li>
+            <li><strong>Pós-procedimento:</strong> “7 cuidados obrigatórios após [procedimento]” (o que fazer + o que evitar).</li>
+            <li><strong>Depilação/laser:</strong> “7 erros + o que fazer no lugar” (mesma estrutura, só muda a natureza do item).</li>
+            <li><strong>Por faixa de preço:</strong> slide 2 barato, 3 médio, 4 premium… mantendo base/essencial.</li>
+          </ul>
+          <div class="callout">
+            <strong>Variação com o mesmo impacto:</strong> em vez de “para [cliente-ícone]”, use “para <em>rotina corrida</em>”, “para <em>iniciante</em>”, “para <em>pós-peeling</em>”, “para <em>pele sensível</em>”.
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <article class="card" style="margin-top:14px">
+      <h2>Legenda (modelo copiável) <span class="pill">Pronta</span></h2>
+      <div class="content">
+        <div class="mono" id="captionText">Legenda (copie e personalize)
+
+Se você quer [OBJETIVO], aqui vão 7 escolhas que eu indicaria para [PERFIL].
+
+• Slide 1: visão geral
+• Slides 2–8: 1 recomendação por slide (salva pra consultar depois)
+
+Quer que eu adapte para o seu caso?
+Comenta “ [PALAVRA-CHAVE] ” que eu te digo por onde começar.
+
+(Se for algo sensível/ativo forte) *Introduza aos poucos e procure orientação profissional.*</div>
+      </div>
+    </article>
+
+    <footer>
+      UX high-tech • fundo escuro • cards com borda suave • destaques em degradê (verde/azul/laranja)
+    </footer>
+  </div>
+
+<script>
+  function copyToClipboard(text){
+    return navigator.clipboard.writeText(text);
+  }
+
+  const statusEl = document.getElementById('copyStatus');
+  const copyBtn = document.getElementById('copyBtn');
+  const copyCaptionBtn = document.getElementById('copyCaptionBtn');
+
+  copyBtn.addEventListener('click', async () => {
+    const slides = document.getElementById('slidesText').innerText.trim();
+    const roteiro = document.getElementById('roteiroText').innerText.trim();
+    const full = slides + "\n\n" + roteiro;
+    try{
+      await copyToClipboard(full);
+      statusEl.textContent = 'Roteiro copiado. Agora é só substituir os [campos].';
+    }catch(e){
+      statusEl.textContent = 'Não foi possível copiar automaticamente. Selecione e copie manualmente.';
+    }
+  });
+
+  copyCaptionBtn.addEventListener('click', async () => {
+    const caption = document.getElementById('captionText').innerText.trim();
+    try{
+      await copyToClipboard(caption);
+      statusEl.textContent = 'Legenda modelo copiada.';
+    }catch(e){
+      statusEl.textContent = 'Não foi possível copiar automaticamente a legenda.';
+    }
+  });
+</script>
+</body>
+</html>
