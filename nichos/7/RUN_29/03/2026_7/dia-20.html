@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Carrossel Ranking — Modelo Reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.70);
+      --muted2: rgba(234,240,255,.55);
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --r16: 16px;
+      --r20: 20px;
+      --r24: 24px;
+      --grad: linear-gradient(90deg, #2FE57A 0%, #2F80FF 45%, #FF8A1E 100%);
+      --grad2: linear-gradient(135deg, rgba(47,229,122,.18), rgba(47,128,255,.16), rgba(255,138,30,.16));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 10%, rgba(47,128,255,.18), transparent 55%),
+        radial-gradient(700px 420px at 80% 20%, rgba(47,229,122,.14), transparent 60%),
+        radial-gradient(800px 520px at 70% 85%, rgba(255,138,30,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{ max-width:1100px; margin:0 auto; padding:28px 18px 56px; }
+
+    header{
+      position:relative;
+      padding:20px;
+      border:1px solid var(--stroke);
+      border-radius: var(--r24);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--grad2);
+      filter: blur(18px);
+      opacity:.9;
+      z-index:0;
+    }
+    header > *{ position:relative; z-index:1; }
+
+    .topline{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+
+    .chips{ display:flex; gap:8px; flex-wrap:wrap; }
+    .chip{
+      padding:7px 10px;
+      border:1px solid var(--stroke2);
+      background: rgba(0,0,0,.18);
+      border-radius:999px;
+      font-size:12px;
+      letter-spacing:.2px;
+      color: var(--muted);
+    }
+    .chip strong{ color: var(--text); font-weight:650; }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    h1{
+      margin:0;
+      font-size:22px;
+      line-height:1.15;
+      letter-spacing:-.2px;
+    }
+    .subtitle{
+      color: var(--muted);
+      font-size:14px;
+      line-height:1.4;
+    }
+
+    a{ color: inherit; }
+    .link{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      border-radius: 12px;
+      text-decoration:none;
+      color: var(--muted);
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      white-space:nowrap;
+    }
+    .link:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.06); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+
+    @media (min-width: 900px){
+      .grid{ grid-template-columns: 1.02fr .98fr; }
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius: var(--r20);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      box-shadow: 0 14px 45px rgba(0,0,0,.45);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0;
+      padding:16px 16px 10px;
+      font-size:14px;
+      text-transform:uppercase;
+      letter-spacing: .14em;
+      color: var(--muted);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+    }
+    .badge .bar{
+      display:inline-block;
+      width:38px;
+      height:8px;
+      margin-right:8px;
+      border-radius:999px;
+      vertical-align:middle;
+      background: var(--grad);
+    }
+
+    .content{ padding:16px; color: var(--muted); font-size:14px; line-height:1.55; }
+    .content p{ margin:0 0 10px; }
+    .content ul{ margin:10px 0 0; padding-left:18px; }
+    .content li{ margin:6px 0; }
+
+    .divider{ height:1px; background: rgba(255,255,255,.08); margin:14px 0; }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    .k{
+      padding:12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+    }
+    .k .t{ font-size:12px; color: var(--muted2); margin-bottom:6px; }
+    .k .v{ font-size:14px; color: var(--text); font-weight:650; }
+
+    .scriptBox{
+      padding:16px;
+    }
+
+    textarea{
+      width:100%;
+      min-height: 520px;
+      resize: vertical;
+      padding:14px 14px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12.8px;
+      line-height: 1.55;
+      outline:none;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      padding: 0 16px 16px;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight:650;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.22); }
+    .btnPrimary{
+      border-color: rgba(47,229,122,.25);
+      background: linear-gradient(90deg, rgba(47,229,122,.16), rgba(47,128,255,.14), rgba(255,138,30,.12));
+    }
+
+    .hint{ color: var(--muted2); font-size:12px; }
+
+    .twocol{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media (min-width: 900px){
+      .twocol{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      border-radius: 16px;
+      padding:12px;
+      color: var(--muted);
+    }
+    .callout strong{ color: var(--text); }
+
+    .footer{
+      margin-top:14px;
+      padding:14px 16px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      background: rgba(0,0,0,.14);
+      color: var(--muted2);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .hl{
+      background: var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight:750;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <div class="chip"><strong>Nicho:</strong> Estética</div>
+          <div class="chip"><strong>Dia:</strong> 20</div>
+          <div class="chip"><strong>Formato:</strong> Carrossel</div>
+          <div class="chip"><strong>Pilar:</strong> Checklist</div>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DV9ro5kEd2V/" target="_blank" rel="noopener noreferrer">Ver post original →</a>
+      </div>
+
+      <div class="title">
+        <h1><span class="hl">Carrossel Ranking</span>: Top 3 por categoria (modelo curadoria)</h1>
+        <div class="subtitle">Modelo reproduzível para curadoria comparativa: você simplifica escolhas, segmenta por perfis e ganha salvamentos/compartilhamentos.</div>
+      </div>
+
+      <div class="kpi">
+        <div class="k"><div class="t">Slides ideais</div><div class="v">7–10</div></div>
+        <div class="k"><div class="t">Categorias</div><div class="v">4–6</div></div>
+        <div class="k"><div class="t">Itens por categoria</div><div class="v">Top 3</div></div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo <span class="badge"><span class="bar"></span>O que entregar</span></h2>
+        <div class="content">
+          <p><strong>Objetivo:</strong> transformar um tema amplo em <strong>pequenas decisões</strong> com um <strong>ranking curto</strong> (Top 1–3) por categoria, sempre com <em>“para quem é”</em> + <em>“por quê”</em>.</p>
+          <p><strong>Por que funciona:</strong> promessa de lista (curiosidade) + segmentação (a pessoa procura “a minha categoria”) + padrão repetível (consumo rápido) + autoridade (método/experiência).</p>
+          <div class="divider"></div>
+          <div class="callout">
+            <strong>Resultado esperado:</strong> mais <strong>salvamentos</strong>, mais <strong>compartilhamentos</strong> e crescimento por <strong>curadoria útil</strong> (sem depender de “venda direta”).
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura <span class="badge"><span class="bar"></span>Sequência</span></h2>
+        <div class="content">
+          <ul>
+            <li><strong>Slide 1 — Capa:</strong> Hook + tema + autoridade/método + “arraste”.</li>
+            <li><strong>Slides 2–(N-1) — Categorias:</strong> cada slide = 1 categoria com Top 3 (ouro/prata/bronze) + “para quem” + “por quê”.</li>
+            <li><strong>Slide opcional:</strong> “Como escolher em 30s” (critérios/triagem).</li>
+            <li><strong>Slide final — CTA:</strong> seguir/salvar/comentar + (opcional) direct/avaliação.</li>
+          </ul>
+          <div class="divider"></div>
+          <p><strong>Regra de ouro:</strong> manter o mesmo layout e a mesma lógica de texto em todos os slides do meio (isso aumenta retenção).</p>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <h2>Roteiro <span class="badge"><span class="bar"></span>Copiar e preencher</span></h2>
+      <div class="scriptBox">
+        <textarea id="roteiro" spellcheck="false">CARROSSEL “RANKING” — TEMPLATE REPRODUZÍVEL (7–10 SLIDES)
+
+[CONFIGURAÇÃO RÁPIDA]
+Tema macro (X): __________________________________________
+Objetivo/queixa (Y): ______________________________________
+Autoridade/método (prova): ( ) evidências  ( ) prática clínica  ( ) testes  ( ) experiência pessoal orientada
+Critérios do ranking (3–5): 1) ________ 2) ________ 3) ________ 4) ________ 5) ________
+Categorias (4–6): 1) ________ 2) ________ 3) ________ 4) ________ 5) ________ 6) ________
+Aviso (se aplicável): “Resultados variam. Procure orientação profissional.” / “Não substitui consulta.”
+
+——
+SLIDE 1 — CAPA (HOOK + AUTORIDADE)
+Título (fórmula A): “Meu RANKING de [X] para [Y] (com base em [método/experiência])”
+Título (fórmula B, sem ‘meu’): “Ranking de [X] para [Y]: Top 3 por categoria”
+Subtítulo (opcional): “Arraste → e encontre o seu perfil” / “Top 3 em cada cenário”
+Rodapé pequeno: “Critérios: [3 critérios]” (opcional, aumenta confiança)
+
+Visual: foto humana + caixa de texto (alto contraste). Elemento: selo/linha com degradê.
+
+——
+SLIDES 2–7 — RANKING POR CATEGORIA (1 CATEGORIA POR SLIDE)
+
+Estrutura fixa do slide:
+@seuperfil (topo, pequeno)
+H1: [NOME DA CATEGORIA]
+
+COLUNA OURO (#1)
+Item: [_________________]
+Para quem: “Pra você que [perfil/condição] e quer [resultado].”
+Por quê (#1): [critério objetivo em 1 linha]
+Por quê (#2): [critério objetivo em 1 linha]
+
+COLUNA PRATA (#2)
+Item: [_________________]
+Para quem: “Ideal se você [perfil/condição].”
+Por quê: [1 diferencial]
+
+COLUNA BRONZE (#3)
+Item: [_________________]
+Para quem: “Boa opção se você [perfil/condição].”
+Por quê: [1 diferencial]
+
+Linha de cuidado (opcional, bem curta): “Atenção: se [restrição], comece com [adaptação].”
+Rodapé micro (opcional): “*Resultados variam/Procure orientação.”
+
+——
+SLIDE 8 (OPCIONAL) — “COMO ESCOLHER EM 30s”
+Título: “Como escolher [X] sem errar”
+Bullets (3–5):
+1) Se você tem [A], priorize [critério].
+2) Se você tem [B], evite [erro comum].
+3) Comece por [passo inicial].
+4) Reavalie em [prazo].
+5) Ajuste se houver [sinal].
+
+——
+SLIDE FINAL — CTA (CLARO + 1 AÇÃO PRINCIPAL)
+Headline: “Quer escolher [X] com mais segurança e resultado?”
+CTA principal (escolha 1):
+( ) “Siga para mais rankings e guias práticos.”
+( ) “Salve para consultar quando for comprar/decidir.”
+( ) “Comente ‘GUIA’ que eu envio um checklist.”
+( ) “Envie para alguém que está em dúvida sobre [tema].”
+( ) “Quer indicação personalizada? Direct com: idade + queixa + rotina.”
+( ) “Para avaliação/agenda: link na bio.”
+
+Prova/autoridade (opcional): “+ de [n] atendimentos / [credencial] / [método]”
+
+——
+LEGENDA (COPY CURTA)
+1) 1 frase de promessa: “Se você está em dúvida sobre [X], aqui vai um ranking por perfil.”
+2) 1 frase de método: “Eu considerei: [3–5 critérios].”
+3) 1 pergunta para comentário: “Qual categoria é a sua: [A], [B] ou [C]?”
+4) CTA repetido (1 linha).
+
+HASHTAGS (opcional): 3–8, específicas (procedimento/queixa/cidade).
+</textarea>
+      </div>
+      <div class="actions">
+        <div class="hint">Dica: preencha primeiro <strong>Tema (X)</strong>, <strong>Queixa (Y)</strong>, <strong>Critérios</strong> e <strong>Categorias</strong>. Depois só replica o bloco dos slides.</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+          <button class="btn" id="selectBtn">Selecionar tudo</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="twocol">
+      <section class="card" style="margin-top:14px;">
+        <h2>Elementos visuais <span class="badge"><span class="bar"></span>Design system</span></h2>
+        <div class="content">
+          <ul>
+            <li><strong>Layout fixo:</strong> 1 slide = 1 categoria + grid de 3 colunas (Top 1/2/3).</li>
+            <li><strong>Ícones:</strong> medalhas (ouro/prata/bronze) para escaneabilidade.</li>
+            <li><strong>Imagens:</strong> packshots recortados ou ícones (se for serviço/procedimento, use pictogramas).</li>
+            <li><strong>Textos curtos:</strong> “Pra você que… / Ideal se… / Evite se…”.</li>
+            <li><strong>Padronização:</strong> mesma posição de título, mesma hierarquia, mesma quantidade de linhas.</li>
+          </ul>
+          <div class="divider"></div>
+          <p><strong>Spec para Canva:</strong> 1080×1350; margens 80–120px; espaçamento 40–60px; contraste alto; 1 família de fonte + variações de peso.</p>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top:14px;">
+        <h2>Copy e ganchos <span class="badge"><span class="bar"></span>Frases prontas</span></h2>
+        <div class="content">
+          <p><strong>Ganchos de capa (escolha 1):</strong></p>
+          <ul>
+            <li>“Meu ranking de [X] para [Y] (Top 3 por categoria)”</li>
+            <li>“Se você tem [dor], esse ranking vai encurtar sua escolha”</li>
+            <li>“Top 3 de [X] para cada tipo de [perfil]”</li>
+            <li>“O que eu colocaria em 1º, 2º e 3º (e pra quem)”</li>
+          </ul>
+          <div class="divider"></div>
+          <p><strong>Templates por item (repetir):</strong></p>
+          <ul>
+            <li><strong>Para quem:</strong> “Pra você que [condição] e quer [resultado].”</li>
+            <li><strong>Por quê:</strong> “Entra no Top 1 porque [critério 1] + [critério 2].”</li>
+            <li><strong>Limite:</strong> “Se você é [restrição], comece com [adaptação].”</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <div class="twocol">
+      <section class="card" style="margin-top:14px;">
+        <h2>CTA <span class="badge"><span class="bar"></span>Escolha 1 ação</span></h2>
+        <div class="content">
+          <p><strong>CTAs principais (1 por post):</strong></p>
+          <ul>
+            <li><strong>Salvar:</strong> “Salve para consultar quando for decidir/comprar.”</li>
+            <li><strong>Comentário:</strong> “Comente ‘GUIA’ que eu te mando um checklist.”</li>
+            <li><strong>Compartilhar:</strong> “Envie para alguém que está em dúvida sobre [tema].”</li>
+            <li><strong>Direct:</strong> “Quer uma sugestão pro seu caso? Me chama com: [3 infos].”</li>
+            <li><strong>Agenda:</strong> “Quer um plano? Link na bio para avaliação.”</li>
+          </ul>
+          <div class="divider"></div>
+          <p><strong>Regra:</strong> CTA = 1 frase + 1 verbo. Evite 4 pedidos no mesmo slide.</p>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top:14px;">
+        <h2>Checklist <span class="badge"><span class="bar"></span>Antes de publicar</span></h2>
+        <div class="content">
+          <ul>
+            <li>[ ] Tema (X) e queixa/objetivo (Y) definidos em 1 linha.</li>
+            <li>[ ] Critérios do ranking (3–5) listados (pra sustentar escolhas).</li>
+            <li>[ ] Categorias (4–6) cobrindo perfis reais (sensibilidade, orçamento, tempo, nível, objetivo).</li>
+            <li>[ ] Cada item tem <strong>Para quem</strong> + <strong>Por quê</strong> (1–2 motivos).</li>
+            <li>[ ] Texto por coluna: 2–4 linhas no máximo (sem “muro”).</li>
+            <li>[ ] Isso está <strong>consistente</strong> em todos os slides do meio.</li>
+            <li>[ ] Slide final com CTA único (salvar/comentar/seguir/direct).</li>
+            <li>[ ] Disclaimers quando necessário (segurança/variabilidade/consulta).</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <h2>Slides sugeridos (1..9) <span class="badge"><span class="bar"></span>Exemplo de distribuição</span></h2>
+      <div class="content">
+        <ol style="margin:0; padding-left:18px;">
+          <li><strong>Capa:</strong> “Ranking de [X] para [Y] — Top 3 por categoria”.</li>
+          <li><strong>Categoria 1:</strong> “Para iniciantes / primeira escolha”.</li>
+          <li><strong>Categoria 2:</strong> “Para pele sensível / baixo risco”.</li>
+          <li><strong>Categoria 3:</strong> “Para quem quer resultado rápido”.</li>
+          <li><strong>Categoria 4:</strong> “Custo-benefício / orçamento”.</li>
+          <li><strong>Categoria 5:</strong> “Manutenção / longo prazo”.</li>
+          <li><strong>Categoria 6:</strong> “Pós-procedimento / recuperação” (se fizer sentido).</li>
+          <li><strong>Como escolher em 30s:</strong> critérios + erro a evitar (opcional).</li>
+          <li><strong>CTA final:</strong> salvar/comentar/seguir + pergunta.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2>Variações <span class="badge"><span class="bar"></span>Adaptações com mesmo impacto</span></h2>
+      <div class="content">
+        <p><strong>Trocas seguras (mantêm a performance):</strong></p>
+        <ul>
+          <li><strong>“Ranking” → “Mapa”:</strong> “Mapa de [X] por perfil: escolha em 10s”.</li>
+          <li><strong>Top 3 → 2 escolhas:</strong> se o tema for complexo, faça “Melhor para…” vs “Evite se…”.</li>
+          <li><strong>Produto → qualquer unidade de decisão:</strong> procedimento, ativo, protocolo, hábito, ferramenta, exame, profissional, rotina.</li>
+          <li><strong>Categorias por cenário:</strong> “antes/depois”, “em casa/na clínica”, “leve/moderado/intenso”.</li>
+          <li><strong>Categorias por restrição:</strong> sensibilidade, tempo de recuperação, orçamento, disponibilidade.</li>
+        </ul>
+        <div class="divider"></div>
+        <p><strong>Substituições de copy (mesmo ritmo):</strong></p>
+        <ul>
+          <li>“Pra você que…” → “Se o seu caso é…”</li>
+          <li>“Ideal se…” → “Melhor escolha quando…”</li>
+          <li>“Evite se…” → “Atenção se…”</li>
+          <li>“Por quê” → “O critério aqui foi…”</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="footer">
+      <strong>Nota de segurança (saúde/estética):</strong> adapte recomendações ao seu escopo profissional, use linguagem de orientação (não promessa), e inclua restrições/encaminhamento quando necessário.
+    </div>
+  </div>
+
+  <script>
+    const ta = document.getElementById('roteiro');
+    const copyBtn = document.getElementById('copyBtn');
+    const selectBtn = document.getElementById('selectBtn');
+
+    async function copyText(){
+      const text = ta.value;
+      try{
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Copiado!';
+        setTimeout(()=> copyBtn.textContent = 'Copiar roteiro', 1200);
+      }catch(e){
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        copyBtn.textContent = 'Copiado!';
+        setTimeout(()=> copyBtn.textContent = 'Copiar roteiro', 1200);
+      }
+    }
+
+    copyBtn.addEventListener('click', copyText);
+    selectBtn.addEventListener('click', () => { ta.focus(); ta.select(); });
+  </script>
+</body>
+</html>
