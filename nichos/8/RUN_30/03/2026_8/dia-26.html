@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 26 — Pare de copiar estratégia: conteúdo depende do seu modelo</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.085);
+      --stroke:rgba(255,255,255,.10);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.75);
+      --muted2:rgba(234,240,255,.60);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --r12:14px;
+      --r16:18px;
+      --g: linear-gradient(90deg,#22C55E 0%, #38BDF8 38%, #F59E0B 76%, #FB7185 100%);
+      --g2: radial-gradient(1200px 600px at 10% -10%, rgba(56,189,248,.22) 0%, rgba(56,189,248,0) 60%),
+            radial-gradient(900px 520px at 95% 10%, rgba(245,158,11,.18) 0%, rgba(245,158,11,0) 60%),
+            radial-gradient(900px 520px at 30% 120%, rgba(34,197,94,.18) 0%, rgba(34,197,94,0) 60%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+
+    .topbar{
+      display:flex; gap:14px; align-items:stretch; justify-content:space-between;
+      padding:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.04) 100%);
+      border:1px solid var(--stroke);
+      border-radius:var(--r16);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .topbar::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g);
+      opacity:.14;
+      filter: blur(18px);
+      z-index:0;
+    }
+    .topbar > *{position:relative; z-index:1}
+
+    .hdrL{min-width:0}
+    .kicker{display:flex; flex-wrap:wrap; gap:10px; align-items:center; color:var(--muted)}
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.18);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .dot{width:7px;height:7px;border-radius:999px;background:#38BDF8; box-shadow:0 0 0 3px rgba(56,189,248,.12)}
+
+    h1{margin:10px 0 0; font-size:22px; line-height:1.2}
+    .sub{margin:10px 0 0; color:var(--muted2); font-size:14px; line-height:1.5; max-width:70ch}
+
+    .hdrR{display:flex; flex-direction:column; gap:10px; align-items:flex-end; justify-content:space-between}
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .btn{
+      cursor:pointer;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:600;
+      font-size:13px;
+      transition:.15s ease;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+    }
+    .btn:hover{transform: translateY(-1px); background:rgba(255,255,255,.08)}
+    .btn.primary{
+      background:linear-gradient(90deg, rgba(34,197,94,.18), rgba(56,189,248,.18), rgba(245,158,11,.16));
+      border-color:rgba(255,255,255,.16);
+    }
+    .ico{font-family:var(--mono); font-size:12px; opacity:.85}
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr;}
+      .hdrR{align-items:flex-start}
+      .btnRow{justify-content:flex-start}
+    }
+
+    .card{
+      padding:16px;
+      border-radius:var(--r16);
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .card::after{
+      content:"";
+      position:absolute;
+      top:-120px; right:-120px;
+      width:280px; height:280px;
+      background:var(--g);
+      opacity:.08;
+      filter: blur(28px);
+      transform: rotate(12deg);
+    }
+
+    .h2{display:flex; align-items:center; gap:10px; margin:0 0 10px; font-size:14px; letter-spacing:.2px}
+    .h2 .bar{width:10px; height:10px; border-radius:3px; background:linear-gradient(180deg,#22C55E,#38BDF8)}
+    .txt{color:var(--muted); font-size:14px; line-height:1.6}
+
+    .list{margin:10px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px}
+    .li{
+      background:rgba(0,0,0,.16);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      padding:12px;
+    }
+    .li b{color:var(--text)}
+    .li .meta{margin-top:6px; font-size:12px; color:var(--muted2)}
+
+    .codebox{
+      margin-top:10px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(180deg, rgba(8,12,24,.75), rgba(8,12,24,.55));
+      overflow:hidden;
+    }
+    .codehdr{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.09);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:12px;
+    }
+    pre{
+      margin:0;
+      padding:14px 12px;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      font-family:var(--mono);
+      font-size:12.6px;
+      line-height:1.55;
+      color:#DCE7FF;
+    }
+
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 720px){ .cols{grid-template-columns:1fr;} }
+
+    .tagrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .tag{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      color:var(--muted);
+    }
+    .tag strong{color:var(--text)}
+
+    .hr{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
+
+    .foot{
+      margin-top:16px;
+      color:var(--muted2);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .link{
+      display:inline-flex; gap:10px; align-items:center;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+    }
+    .link span{opacity:.85}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="hdrL">
+        <div class="kicker">
+          <div class="pill"><span class="dot"></span><span><b>Nicho:</b> Marketing e Posicionamento</span></div>
+          <div class="pill"><span><b>Dia:</b> 26</span></div>
+          <div class="pill"><span><b>Formato:</b> Reels</span></div>
+          <div class="pill"><span><b>Pilar:</b> Mito vs Verdade</span></div>
+        </div>
+        <h1>Pare de copiar estratégia: conteúdo depende do seu modelo</h1>
+        <p class="sub">Roteiro reproduzível para um Reel de 60–90s com hook de choque ético + segmentação por modelo (high ticket, low ticket, esteira mista) + perguntas de diagnóstico + CTA coerente.</p>
+      </div>
+      <div class="hdrR">
+        <div class="btnRow">
+          <a class="btn" href="https://www.instagram.com/p/DUojaYJiSlt/" target="_blank" rel="noopener noreferrer"><span class="ico">↗</span>Ver post original</a>
+          <button class="btn primary" id="copyBtn"><span class="ico">⧉</span>Copiar roteiro</button>
+        </div>
+        <div class="link" title="URL do post original">
+          <span class="ico">URL</span>
+          <span style="font-family:var(--mono); font-size:12px;">instagram.com/p/DUojaYJiSlt</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="h2"><span class="bar"></span><span>Resumo</span></div>
+        <div class="txt">
+          <b>Mito:</b> “Postar menos = vender mais / métrica não importa”.<br/>
+          <b>Verdade:</b> estratégia de conteúdo só faz sentido quando encaixa no <b>modelo de negócio</b> (ticket, esteira, ciclo e maturidade).<br/>
+          O vídeo prende porque começa com tensão moral (“eu poderia te enganar com um case”), desmonta o atalho e entrega um diagnóstico que faz cada perfil se sentir chamado.
+        </div>
+        <div class="tagrow">
+          <span class="tag"><strong>Objetivo</strong>: retenção + comentário</span>
+          <span class="tag"><strong>Promessa</strong>: clareza do que postar para seu modelo</span>
+          <span class="tag"><strong>Inimigo</strong>: copiar estratégia do feed</span>
+          <span class="tag"><strong>Tom</strong>: humano, direto, sem “marketez”</span>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="h2"><span class="bar"></span><span>Estrutura (sequência reproduzível)</span></div>
+        <ul class="list">
+          <li class="li"><b>1) Hook (0–3s)</b><div class="meta">Choque ético + vulnerabilidade: “Seria uma sacanagem eu dizer X…”</div></li>
+          <li class="li"><b>2) Conclusão errada (3–8s)</b><div class="meta">Mostre o mito que a pessoa tiraria do seu “case”.</div></li>
+          <li class="li"><b>3) Virada: “depende do modelo” (8–15s)</b><div class="meta">Coloque a regra-mãe e diga que copiar sem contexto destrói resultado.</div></li>
+          <li class="li"><b>4) Contexto do seu caso (15–25s)</b><div class="meta">Ticket/oferta/ciclo + “o que realmente importa” (pessoas certas, não volume).</div></li>
+          <li class="li"><b>5) Mecanismo em 3 passos (25–40s)</b><div class="meta">O que seu conteúdo faz (ex.: atrai, educa, posiciona).</div></li>
+          <li class="li"><b>6) Segmentação em 3 cenários (40–60s)</b><div class="meta">High / low / esteira mista (ou outro recorte do nicho).</div></li>
+          <li class="li"><b>7) Perguntas de diagnóstico (60–75s)</b><div class="meta">Sequência curta (4–6 perguntas) para autoatribuição.</div></li>
+          <li class="li"><b>8) Confronto + CTA (75–90s)</b><div class="meta">“Você não sabe por que posta o que posta” + convite coerente (comentar / DM / link).</div></li>
+        </ul>
+      </section>
+
+      <aside class="card">
+        <div class="h2"><span class="bar"></span><span>Elementos visuais</span></div>
+        <div class="txt">
+          <div class="cols">
+            <div class="li">
+              <b>Edição</b>
+              <div class="meta">Jump cuts a cada 1–2 frases. Zoom-in leve nos confrontos. SFX discreto em transições de lista.</div>
+            </div>
+            <div class="li">
+              <b>Texto na tela (capítulos)</b>
+              <div class="meta">Use frases curtas, grandes, com 1–3 palavras em destaque (DEPENDE / TICKET / VOLUME / PESSOAS CERTAS).</div>
+            </div>
+          </div>
+          <ul class="list">
+            <li class="li"><b>Marcações de bloco:</b><div class="meta">“CASO 1: HIGH”, “CASO 2: ESTEIRA”, “CASO 3: LOW”</div></li>
+            <li class="li"><b>B-roll opcional:</b><div class="meta">Print de feed “copiar/colar”, setas, pequeno gráfico (views vs conversas).</div></li>
+            <li class="li"><b>Ritmo:</b><div class="meta">Começo agressivo e curto → meio didático → final acelerado com perguntas.</div></li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="h2"><span class="bar"></span><span>Roteiro (pronto para gravar)</span></div>
+
+        <div class="codebox" id="roteiroBox">
+          <div class="codehdr"><span>Reel 60–90s — versão base (adaptável)</span><span style="font-family:var(--mono); opacity:.8;">PT-BR</span></div>
+          <pre id="roteiroText">[0–3s | HOOK]
+“Seria uma sacanagem eu vir aqui e dizer que eu consegui [RESULTADO] fazendo só [ATALHO]…
+porque você ia concluir que [CONCLUSÃO ERRADA].”
+
+[3–8s | QUEBRA DO MITO]
+“E isso é exatamente a mentira confortável que o feed vende: que a estratégia é universal.”
+
+[8–15s | REGRA-MÃE]
+“Conteúdo não funciona ‘porque sim’. Funciona quando encaixa no seu modelo de negócio.”
+
+[15–25s | CONTEXTO DO MEU CASO]
+“No meu caso, eu vendo [TIPO DE OFERTA] com ticket [ALTO/MÉDIO].
+Então eu não preciso de milhões de views — eu preciso de [PESSOAS CERTAS / CONVERSAS / REUNIÕES].”
+
+[25–40s | MECANISMO EM 3 PASSOS]
+“Meu conteúdo faz 3 coisas:
+1) Atrai a pessoa certa (não a curiosa)
+2) Educa no nível de decisão (não só dica)
+3) Posiciona minha solução como caminho lógico”
+
+[40–60s | SEGMENTAÇÃO (3 CENÁRIOS)]
+“Agora, olha como muda por modelo:
+• Se você é HIGH TICKET: você ganha no argumento, prova e clareza — não no volume.
+• Se você é LOW TICKET: seu jogo é volume + oferta + repetição (com consistência).
+• Se você tem ESTEIRA MISTA: você precisa equilibrar topo (alcance) com meio (autoridade) e fundo (conversão).”
+
+[60–75s | PERGUNTAS DE DIAGNÓSTICO]
+“Antes de copiar qualquer estratégia, responde rápido:
+1) Você vende o quê?
+2) Qual seu ticket?
+3) Seu ciclo é curto ou longo?
+4) Você tem esteira ou produto único?
+5) Seu gargalo é audiência, autoridade ou conversão?
+6) O conteúdo hoje te traz conversas reais?”
+
+[75–90s | CONFRONTO + CTA]
+“Seu problema não é ‘postar pouco’ ou ‘postar muito’.
+É postar sem saber por que.
+Comenta ‘MODELO’ que eu te mando um checklist pra definir sua estratégia por ticket/esteira.
+Ou me chama no link da bio se você quer desenhar isso comigo.”</pre>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="h2"><span class="bar"></span><span>Copy e ganchos (variações rápidas)</span></div>
+        <div class="cols">
+          <div class="li">
+            <b>Hooks (escolha 1)</b>
+            <div class="meta" style="margin-top:8px">
+              1) “Seria uma sacanagem eu dizer que [resultado] postando [pouco]…”<br/>
+              2) “Se eu te falar que [atalho], eu vou te induzir ao erro…”<br/>
+              3) “Isso funciona… mas pode estar te quebrando se seu modelo for diferente.”
+            </div>
+          </div>
+          <div class="li">
+            <b>Frases de confronto (use 1 no final)</b>
+            <div class="meta" style="margin-top:8px">
+              • “Você não tem problema de conteúdo. Você tem problema de decisão.”<br/>
+              • “Você tá copiando tática sem entender a lógica.”<br/>
+              • “Enquanto você imita formato, seu concorrente domina argumento.”
+            </div>
+          </div>
+        </div>
+        <div class="li" style="margin-top:12px">
+          <b>Legenda (modelo curto)</b>
+          <div class="meta" style="margin-top:8px">
+            “A estratégia que funciona pra alguém pode ser veneno pro seu negócio. Antes de decidir frequência, formato ou ‘só reels’, olhe pra: ticket, esteira e ciclo de compra. Se quiser, comenta <b>MODELO</b> que eu te mando um checklist de diagnóstico.”
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="h2"><span class="bar"></span><span>CTA (escolha 1 e padronize)</span></div>
+        <ul class="list">
+          <li class="li"><b>CTA comentários (maior engajamento):</b><div class="meta">“Comenta ‘MODELO’ que eu te mando o checklist.”</div></li>
+          <li class="li"><b>CTA diagnóstico (gera discussão):</b><div class="meta">“Nos comentários: você vende high, low ou esteira mista?”</div></li>
+          <li class="li"><b>CTA consultivo (alto ticket/serviço):</b><div class="meta">“Quer uma estratégia coerente com seu modelo? Link na bio / me chama no direct.”</div></li>
+          <li class="li"><b>CTA lead magnet (captura):</b><div class="meta">“Baixa o checklist no link da bio.”</div></li>
+        </ul>
+
+        <div class="hr"></div>
+
+        <div class="h2"><span class="bar"></span><span>Checklist de criação (produção rápida)</span></div>
+        <ul class="list">
+          <li class="li"><b>Pré-roteiro (5 min)</b><div class="meta">Defina: (1) atalho/mito do público (2) variável de contexto (ticket/esteira/ciclo) (3) 3 cenários de segmentação.</div></li>
+          <li class="li"><b>Roteiro (10 min)</b><div class="meta">Preencha os colchetes do texto: [RESULTADO], [ATALHO], [OFERTA], [MÉTRICA REAL]. Garanta 1 mecanismo de 3 passos + 4–6 perguntas.</div></li>
+          <li class="li"><b>Gravação (15–25 min)</b><div class="meta">Grave em pé, câmera na altura do olho. Faça 2 tomadas: uma mais rápida, outra mais didática.</div></li>
+          <li class="li"><b>Edição (20–40 min)</b><div class="meta">Jump cut por frase; texto em tela por blocos (Hook / Depende / Casos / Perguntas / CTA). Destaque 3 palavras por cor (verde/azul/laranja).</div></li>
+          <li class="li"><b>Publicação</b><div class="meta">Capa: “DEPENDE DO MODELO” + “PARE DE COPIAR”. Primeira linha da legenda repete o gancho. Fixe um comentário com o CTA.</div></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="h2"><span class="bar"></span><span>Variações (para repetir sem cansar)</span></div>
+        <ul class="list">
+          <li class="li"><b>Variação 1 — Segmentação por maturidade</b><div class="meta">Iniciante (precisa de oferta clara) / Intermediário (precisa de prova e distribuição) / Avançado (precisa de sistema e pipeline).</div></li>
+          <li class="li"><b>Variação 2 — Segmentação por canal</b><div class="meta">Orgânico / tráfego pago / parcerias. Mostre como “estratégia de conteúdo” muda com fonte de demanda.</div></li>
+          <li class="li"><b>Variação 3 — Substitua “postar pouco” por outro mito</b><div class="meta">“Só reels” / “só tráfego pago” / “só branding” / “só frequência” / “só trend”.</div></li>
+          <li class="li"><b>Variação 4 — Prova de autoridade</b><div class="meta">Troque “resultado” por um dado real (ex.: “70% dos contratos vieram de 8 conversas, não de 80 mil views”).</div></li>
+        </ul>
+
+        <div class="hr"></div>
+        <div class="foot">
+          <div>Identidade: fundo escuro + cards suaves + destaques em degradê (verde/azul/laranja) • Layout high-tech</div>
+          <div style="font-family:var(--mono)">v1.0 • Dia 26</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('roteiroText');
+      btn.addEventListener('click', async () => {
+        const value = text.innerText;
+        try{
+          await navigator.clipboard.writeText(value);
+          const old = btn.innerHTML;
+          btn.innerHTML = '<span class="ico">✓</span>Roteiro copiado';
+          setTimeout(()=> btn.innerHTML = old, 1400);
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = value;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          const old = btn.innerHTML;
+          btn.innerHTML = '<span class="ico">✓</span>Roteiro copiado';
+          setTimeout(()=> btn.innerHTML = old, 1400);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
