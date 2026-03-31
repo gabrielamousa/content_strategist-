@@ -1,479 +1,511 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dia 15 — Roteiro reproduzível (Nicho Neutro)</title>
+  <title>Dia 15 — Roteiro Reels (Neutro)</title>
   <style>
     :root{
-      --bg:#0b0f17;
-      --panel:#0f1624;
-      --card:#0d1422;
-      --text:#e7eefc;
-      --muted:#a7b3cc;
-      --line:rgba(255,255,255,.10);
-      --line2:rgba(255,255,255,.14);
-      --shadow: 0 12px 40px rgba(0,0,0,.45);
-      --radius:18px;
-      --radius2:14px;
-      --g1: linear-gradient(90deg, #2ee59d 0%, #38bdf8 45%, #fb923c 100%);
-      --g2: radial-gradient(1200px 600px at 20% 10%, rgba(56,189,248,.22), transparent 55%),
-            radial-gradient(900px 560px at 90% 20%, rgba(251,146,60,.18), transparent 55%),
-            radial-gradient(820px 520px at 50% 95%, rgba(46,229,157,.18), transparent 55%);
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.04);
+      --stroke: rgba(255,255,255,.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.56);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r12: 16px;
+      --r16: 22px;
+      --g1: linear-gradient(135deg,#31F27A 0%, #18A0FB 55%, #FF8A1F 100%);
+      --g2: linear-gradient(135deg, rgba(49,242,122,.16), rgba(24,160,251,.12), rgba(255,138,31,.12));
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
 
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family:var(--sans);
-      color:var(--text);
-      background: var(--g2), var(--bg);
-      line-height:1.45;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(24,160,251,.20), transparent 60%),
+        radial-gradient(900px 600px at 85% 15%, rgba(49,242,122,.14), transparent 55%),
+        radial-gradient(900px 700px at 55% 95%, rgba(255,138,31,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
     }
-    a{color:#8be9ff;text-decoration:none}
-    a:hover{text-decoration:underline}
 
-    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 56px}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
 
     header{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      padding:18px 18px 16px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border-radius: var(--r16);
       box-shadow: var(--shadow);
-      position:relative;
+      padding:22px 22px;
+      position: relative;
       overflow:hidden;
     }
     header:before{
       content:"";
-      position:absolute;inset:-2px;
-      background: var(--g1);
-      opacity:.10;
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
       filter: blur(18px);
-      pointer-events:none;
+      opacity:.9;
+      z-index:0;
     }
-    .toprow{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between}
-    .kicker{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .pill{
-      border:1px solid var(--line2);
-      background: rgba(255,255,255,.04);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--muted)
-    }
-    .pill strong{color:var(--text);font-weight:650}
-    h1{
-      margin:10px 0 6px;
-      font-size:22px;
+    header > *{position:relative; z-index:1}
+
+    .topline{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+    .chiprow{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+    .chip{
+      padding:8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size: 12px;
       letter-spacing:.2px;
     }
-    .sub{
-      margin:0;
-      color:var(--muted);
-      font-size:13.5px;
-      max-width:78ch;
+    .chip strong{color: var(--text); font-weight: 650}
+
+    h1{margin:12px 0 8px; font-size: 24px; line-height: 1.15}
+    .subtitle{color: var(--muted); margin:0; font-size: 14px; line-height: 1.45}
+
+    a{color: #8ED6FF; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
     }
 
-    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
-    .btn{
-      border:1px solid var(--line2);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      font-size:13px;
-      transition: transform .06s ease, background .2s ease, border-color .2s ease;
-      user-select:none;
-    }
-    .btn:hover{background: rgba(255,255,255,.09);border-color: rgba(255,255,255,.18)}
-    .btn:active{transform: translateY(1px)}
-    .btn.primary{
-      background: rgba(56,189,248,.12);
-      border-color: rgba(56,189,248,.30);
-    }
-    .btn.primary:hover{background: rgba(56,189,248,.18)}
-
-    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:16px}
-    @media (min-width: 920px){
-      .grid{grid-template-columns: 1fr 1fr}
-      .span2{grid-column: 1 / -1}
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.1fr .9fr}
     }
 
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      padding:16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--r16);
       box-shadow: var(--shadow);
-      position:relative;
       overflow:hidden;
     }
-    .card .hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-    .card h2{font-size:14.5px;margin:0;letter-spacing:.2px}
-    .tag{
-      font-family:var(--mono);
-      font-size:11px;
-      color:#b9c7e6;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.15);
-      padding:4px 8px;
-      border-radius:999px;
+
+    .card .hd{
+      padding:16px 16px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+
+    .card .hd h2{margin:0; font-size: 15px; letter-spacing:.2px}
+    .badge{
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(234,240,255,.75);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      padding:7px 9px;
+      border-radius: 999px;
       white-space:nowrap;
     }
-    .card p{margin:0;color:var(--muted);font-size:13.5px}
 
-    .hr{height:1px;background:var(--line);margin:12px 0}
+    .card .bd{padding:14px 16px 16px}
 
-    ul{margin:0;padding-left:18px;color:var(--muted)}
-    li{margin:6px 0;font-size:13.5px}
+    .kvs{display:grid; grid-template-columns: 1fr; gap:10px}
+    .kv{padding:12px 12px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.035); border-radius: 14px}
+    .kv .k{font-size:12px; color: var(--muted2); margin-bottom:6px}
+    .kv .v{font-size:13px; color: var(--text); line-height:1.45}
 
-    .callout{
-      border:1px solid rgba(46,229,157,.22);
-      background: rgba(46,229,157,.06);
-      border-radius: var(--radius2);
-      padding:12px;
+    ul{margin:10px 0 0 18px; padding:0}
+    li{color: var(--muted); margin:8px 0; line-height:1.45}
+
+    .hint{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
       color: var(--muted);
-      font-size:13.5px;
-    }
-    .callout strong{color:var(--text)}
-
-    .code{
-      font-family: var(--mono);
-      font-size:12.5px;
-      color:#cfe3ff;
-      background: rgba(0,0,0,.26);
-      border:1px solid var(--line);
-      border-radius: var(--radius2);
-      padding:12px;
-      overflow:auto;
-      white-space:pre-wrap;
-      line-height:1.5;
+      font-size: 13px;
     }
 
-    .gradline{
-      height:2px;
+    .accent{
       background: var(--g1);
-      opacity:.7;
-      border-radius:999px;
-      margin:10px 0 0;
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      font-weight: 750;
     }
 
-    .twoCol{display:grid;grid-template-columns:1fr;gap:10px}
-    @media (min-width: 920px){
-      .twoCol{grid-template-columns:1fr 1fr}
+    .script{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: rgba(234,240,255,.86);
+      background: rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      padding: 14px;
+      white-space: pre-wrap;
+      overflow:auto;
     }
 
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:18px;
-      transform:translateX(-50%);
-      background: rgba(15,22,36,.92);
-      border:1px solid var(--line2);
-      box-shadow: var(--shadow);
-      padding:10px 12px;
-      border-radius:12px;
+    .btnrow{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    button{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.07);
       color: var(--text);
-      font-size:13px;
-      display:none;
-      max-width: min(560px, calc(100% - 24px));
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:650;
+      letter-spacing:.2px;
+    }
+    button:hover{background: rgba(255,255,255,.10)}
+    .ghost{background: transparent}
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 980px){
+      .two{grid-template-columns: 1fr 1fr}
+    }
+
+    .mini{
+      padding:12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.035);
+    }
+    .mini h3{margin:0 0 8px; font-size: 13px}
+    .mini p{margin:0; color: var(--muted); font-size: 13px; line-height:1.5}
+
+    .footer{
+      margin-top:14px;
+      color: rgba(234,240,255,.50);
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="toprow">
-        <div>
-          <div class="kicker">
-            <span class="pill"><strong>Nicho:</strong> Neutro</span>
-            <span class="pill"><strong>Dia:</strong> 15</span>
-            <span class="pill"><strong>Formato:</strong> Carrossel</span>
-            <span class="pill"><strong>Pilar:</strong> Checklist</span>
-          </div>
-          <h1>Template meme: 1 ação certa x 30 tentações</h1>
-          <p class="sub">Use a fórmula “meta → fricção → tentação → metáfora → punchline numérica” em linguagem de print/nota. Ideal para identificação e compartilhamento.</p>
-          <div class="gradline"></div>
-          <p class="sub" style="margin-top:10px">
-            Post original: <a href="https://www.instagram.com/p/DSFTNgpEVN8/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DSFTNgpEVN8/</a>
-          </p>
+      <div class="topline">
+        <div class="chiprow">
+          <div class="chip"><strong>Nicho:</strong> Neutro</div>
+          <div class="chip"><strong>Dia:</strong> 15</div>
+          <div class="chip"><strong>Formato:</strong> Reels</div>
+          <div class="chip"><strong>Pilar:</strong> Passo a passo</div>
         </div>
-        <div class="actions">
-          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
-          <a class="btn" href="https://www.instagram.com/p/DSFTNgpEVN8/" target="_blank" rel="noopener noreferrer">Abrir referência</a>
-        </div>
+        <div class="chip"><a href="https://www.instagram.com/p/DN4A_0jAQWI/" target="_blank" rel="noreferrer">Post original ↗</a></div>
       </div>
+      <h1><span class="accent">Bom vs Melhor</span>: 7 trocas simples que elevam o resultado</h1>
+      <p class="subtitle">Template neutro para qualquer área: você valida o “ok” e entrega o “upgrade” com ritmo rápido, padrão repetível e texto na tela (✅ vs ⭐) para maximizar retenção e salvamentos.</p>
     </header>
 
-    <main class="grid">
+    <div class="grid">
       <section class="card">
         <div class="hd">
           <h2>Resumo</h2>
-          <span class="tag">Objetivo: identificação + share</span>
+          <div class="badge">Objetivo: retenção + saves</div>
         </div>
-        <p>
-          Carrossel de humor em formato “desabafo/print”: você apresenta uma meta do público (algo que a pessoa quer fazer), empilha obstáculos realistas, adiciona uma tentação e termina com uma comparação curta e memorável do tipo “1 X vs 30 Y”.
-        </p>
-        <div class="hr"></div>
-        <div class="callout"><strong>Quando usar:</strong> datas sazonais, semanas corridas, lançamentos, mudança de rotina, períodos de muita demanda/compromissos.</div>
+        <div class="bd">
+          <div class="kvs">
+            <div class="kv">
+              <div class="k">Ideia central</div>
+              <div class="v">Mostre escolhas comuns que são <span class="accent">boas</span> e, em seguida, uma alternativa que é <span class="accent">melhor</span> para um objetivo específico (clareza, velocidade, qualidade percebida, resultado).</div>
+            </div>
+            <div class="kv">
+              <div class="k">Por que funciona</div>
+              <div class="v">Contraste + repetição (loop mental) + promessa de upgrade + aplicação simples (“troque X por Y”) + ritmo alto.</div>
+            </div>
+            <div class="kv">
+              <div class="k">Quando usar</div>
+              <div class="v">Para ensinar rapidamente, quebrar indecisão, posicionar padrão superior e gerar comentários (“qual você usa?”).</div>
+            </div>
+          </div>
+          <div class="hint"><strong>Note:</strong> mantenha o mesmo formato de frase em todos os blocos. O público entende a lógica em 1 segundo e fica para ver “qual é a próxima troca”.</div>
+        </div>
       </section>
 
       <section class="card">
         <div class="hd">
-          <h2>Estrutura (reproduzível)</h2>
-          <span class="tag">Fórmula</span>
+          <h2>Metadados do calendário</h2>
+          <div class="badge">Pronto para copiar</div>
         </div>
-        <ul>
-          <li><strong>1) Meta:</strong> “Eu tentando [META]…”</li>
-          <li><strong>2) Fricção:</strong> “mas tem [OBSTÁCULO 1], [OBSTÁCULO 2]…”</li>
-          <li><strong>3) Tentação:</strong> “e ainda aparece [TENTAÇÃO]”</li>
-          <li><strong>4) Metáfora/meme:</strong> “Minha vida tá tipo [REFERÊNCIA / SITUAÇÃO]”</li>
-          <li><strong>5) Punchline numérica:</strong> “1 [AÇÃO] x 30 [TENTAÇÕES]”</li>
-          <li><strong>6) CTA leve:</strong> comentário + marcação + salvamento</li>
-        </ul>
-      </section>
-
-      <section class="card span2" id="roteiroCard">
-        <div class="hd">
-          <h2>Roteiro (copiável)</h2>
-          <span class="tag">Cole e preencha</span>
-        </div>
-        <div class="code" id="roteiroText">CARROSSEL — “1 x 30” (print-style)
-
-[Slide 1 — Capa/Hook]
-É [ÉPOCA/SITUAÇÃO] e eu tentando [META PRINCIPAL]…
-
-[Slide 2 — Contexto/Fricção]
-mas é [OBSTÁCULO 1],
-é [OBSTÁCULO 2],
-é [OBSTÁCULO 3]…
-
-[Slide 3 — Identificação/Tentação]
-e ainda tem [TENTAÇÃO/INTERRUPÇÃO] [emoji opcional]
-
-[Slide 4 — Virada/Metáfora]
-minha vida tá tipo:
-“[METÁFORA CURTA / REFERÊNCIA DO COTIDIANO]”
-
-[Slide 5 — Punchline (curto e memorável)]
-1 [AÇÃO CERTA] x 30 [TENTAÇÕES]
-
-[Slide 6 — Fechamento + CTA]
-Quem mais tá assim?
-Comenta “EU” + marca alguém que vai rir disso.
-(Salva pra lembrar quando bater a vontade de desistir.)
-
-[Slide 7 — Assinatura]
-@seuperfil  •  [logo pequeno]  •  [frase curtinha de posicionamento]</div>
-      </section>
-
-      <section class="card">
-        <div class="hd">
-          <h2>Elementos visuais</h2>
-          <span class="tag">Design</span>
-        </div>
-        <div class="twoCol">
-          <div>
-            <ul>
-              <li><strong>Formato:</strong> 1080×1350 (4:5).</li>
-              <li><strong>Estilo:</strong> “nota/print” (minimalista, cara de texto).</li>
-              <li><strong>Layout:</strong> texto grande, alinhado à esquerda, margens generosas.</li>
-              <li><strong>Emojis:</strong> 0–2 por slide (só para pontuar).</li>
-            </ul>
-          </div>
-          <div>
-            <ul>
-              <li><strong>Tipografia:</strong> Inter/Montserrat/Helvetica, peso 600–800.</li>
-              <li><strong>Entrelinha:</strong> 1.2–1.35 (escaneável no mobile).</li>
-              <li><strong>Rodapé:</strong> assinatura discreta + logo pequeno.</li>
-              <li><strong>Consistência:</strong> mesmo grid em todos os slides.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="hr"></div>
-        <p><strong>Dica UX:</strong> quebre as frases para “tocar” a piada no timing certo (pausas com reticências e quebras de linha).</p>
-      </section>
-
-      <section class="card">
-        <div class="hd">
-          <h2>Copy e ganchos</h2>
-          <span class="tag">Hooks</span>
-        </div>
-        <ul>
-          <li><strong>Hook conversacional:</strong> “É [momento] e eu tentando [meta]…”</li>
-          <li><strong>Escalada de caos:</strong> “tem [A], tem [B], tem [C]…”</li>
-          <li><strong>Detalhe específico:</strong> cite um símbolo do período (sem depender de nicho).</li>
-          <li><strong>Contraste numérico:</strong> “1 coisa certa x 30 tentações” (meme fácil de compartilhar).</li>
-        </ul>
-        <div class="hr"></div>
-        <div class="code">Banco de palavras (neutro)
-
-[META]
-- organizar minha rotina
-- estudar com consistência
-- cuidar da saúde
-- terminar um projeto
-- voltar a produzir conteúdo
-
-[OBSTÁCULOS]
-- reunião em cima de reunião
-- mensagem/WhatsApp o dia inteiro
-- imprevisto do nada
-- cansaço acumulado
-- agenda lotada
-
-[TENTAÇÕES/INTERRUPÇÕES]
-- sofá me chamando
-- scroll infinito
-- um convite que “não dá pra recusar”
-- a notificação que aparece
-
-[AÇÃO CERTA]
-- 1 hora focado
-- 1 tarefa concluída
-- 1 decisão inteligente
-
-[TENTAÇÕES]
-- 30 distrações
-- 30 desculpas
-- 30 interrupções</div>
-      </section>
-
-      <section class="card">
-        <div class="hd">
-          <h2>CTA</h2>
-          <span class="tag">Baixa fricção</span>
-        </div>
-        <ul>
-          <li><strong>Comentário:</strong> “Quem mais? Comenta ‘EU’.”</li>
-          <li><strong>Marcação:</strong> “Marca a pessoa do ‘1 x 30’.”</li>
-          <li><strong>Salvamento:</strong> “Salva pra lembrar quando bater a tentação.”</li>
-          <li><strong>Direct (opcional):</strong> “Se quiser, me manda ‘TEMPLATE’ no direct que eu te envio mais variações.”</li>
-        </ul>
-      </section>
-
-      <section class="card span2">
-        <div class="hd">
-          <h2>Checklist de criação</h2>
-          <span class="tag">Produção</span>
-        </div>
-        <div class="twoCol">
-          <div>
-            <ul>
-              <li>Defina <strong>1 meta</strong> (curta e comum).</li>
-              <li>Liste <strong>3 obstáculos</strong> reais (quanto mais cotidiano, melhor).</li>
-              <li>Escolha <strong>1 tentação</strong> (distração universal).</li>
-              <li>Crie <strong>1 metáfora</strong> simples (sem depender de trend específica).</li>
-              <li>Finalize com <strong>contraste numérico</strong> (1 vs 30/50/100).</li>
-            </ul>
-          </div>
-          <div>
-            <ul>
-              <li>Use <strong>texto grande</strong> (leitura em 1–2s).</li>
-              <li>Mantenha <strong>margens amplas</strong> e alinhamento à esquerda.</li>
-              <li>Aplique <strong>reticências</strong> e quebras para timing cômico.</li>
-              <li>Inclua <strong>assinatura discreta</strong> (marca sem “gritar”).</li>
-              <li>Revise: dá para entender sem contexto? Está “shareável”?</li>
-            </ul>
+        <div class="bd">
+          <div class="kvs">
+            <div class="kv">
+              <div class="k">Título</div>
+              <div class="v">Bom vs Melhor: 7 trocas simples que elevam o resultado</div>
+            </div>
+            <div class="kv">
+              <div class="k">Instrução curta</div>
+              <div class="v">Escolha 1 objetivo e grave 5–7 comparações “X é bom… mas Y é melhor” com texto ✅ vs ⭐. Feche pedindo para salvar.</div>
+            </div>
+            <div class="kv">
+              <div class="k">Pilar</div>
+              <div class="v">Passo a passo</div>
+            </div>
+            <div class="kv">
+              <div class="k">Formato</div>
+              <div class="v">Reels</div>
+            </div>
           </div>
         </div>
       </section>
+    </div>
 
-      <section class="card span2">
-        <div class="hd">
-          <h2>Slides sugeridos (1..7)</h2>
-          <span class="tag">Carrossel</span>
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Estrutura</h2>
+        <div class="badge">12–20s • 5–7 blocos</div>
+      </div>
+      <div class="bd">
+        <div class="two">
+          <div class="mini">
+            <h3>1) Hook (1–2s)</h3>
+            <p>Frase curta com contraste: “Você tá fazendo certo… mas dá pra fazer melhor.”</p>
+          </div>
+          <div class="mini">
+            <h3>2) Contexto (0,5–1s)</h3>
+            <p>Defina o objetivo: “Se você quer <em>[resultado]</em> com uma troca simples…”</p>
+          </div>
+          <div class="mini">
+            <h3>3) Blocos repetíveis (5–7x)</h3>
+            <p>Valide o “bom” → entregue o “melhor” → indique o efeito (“fica mais claro/rápido/premium”).</p>
+          </div>
+          <div class="mini">
+            <h3>4) Fechamento + CTA (1–2s)</h3>
+            <p>“Quer mais trocas assim? Salva e comenta <strong>LISTA</strong>.”</p>
+          </div>
         </div>
+        <div class="hint"><strong>Regra de ouro:</strong> 1 bloco = 1 troca. Troque apenas <strong>um</strong> elemento por vez para reduzir fricção e aumentar aplicação.</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Roteiro (template neutro)</h2>
+        <div class="badge">Talking head + texto na tela</div>
+      </div>
+      <div class="bd">
+        <div class="btnrow" style="margin-bottom:10px">
+          <button id="copyBtn">Copiar roteiro</button>
+          <button class="ghost" id="selectBtn">Selecionar texto</button>
+          <span id="copyStatus" class="chip" style="display:none">Copiado.</span>
+        </div>
+
+        <div id="script" class="script">HOOK (1–2s)
+"Você tá fazendo certo… mas dá pra deixar MUITO melhor com trocas simples."
+
+PROMESSA (0,5–1s)
+"Vou te mostrar 7 upgrades rápidos pra ficar mais [OBJETIVO: claro/rápido/premium/consistente], sem complicar."
+
+REGRAS (0,5s)
+"Sempre: ✅ é bom. ⭐ é melhor."
+
+BLOCO 1
+"[X] é ✅ bom… MAS [Y] é ⭐ melhor: fica mais [ADJ1], [ADJ2] e [ADJ3]."
+
+BLOCO 2
+"[X] funciona… MAS troca por [Y] e fica mais [ADJ1], [ADJ2] — sem [OBJEÇÃO]."
+
+BLOCO 3
+"Se você quer mais [OBJETIVO], faz [Y] no lugar de [X]."
+
+BLOCO 4
+"✅ [X] é ok… ⭐ [Y] parece que você sabe exatamente o que tá fazendo."
+
+BLOCO 5
+"✅ [X] é seguro… ⭐ [Y] dá o mesmo resultado, só que mais [ADJ1] e [ADJ2]."
+
+BLOCO 6
+"✅ [X] é comum… ⭐ [Y] é o upgrade mais fácil pra [OBJETIVO]."
+
+BLOCO 7
+"✅ [X] é bom… ⭐ [Y] é melhor se o seu foco é [OBJETIVO]."
+
+FECHAMENTO + CTA (1–2s)
+"Quer mais trocas assim no seu tema? Salva pra usar depois e comenta 'LISTA' que eu te mando mais."</div>
+
+        <div class="hint"><strong>Como preencher rápido:</strong> escolha um objetivo → liste 7 escolhas comuns (X) → crie uma alternativa melhor (Y) → adicione 2–3 adjetivos → inclua 1 frase removendo uma objeção (ex.: “sem perder tempo”, “sem gastar mais”, “sem ficar complexo”).</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Elementos visuais</h2>
+        <div class="badge">Padrão ✅ vs ⭐</div>
+      </div>
+      <div class="bd">
         <ul>
-          <li><strong>Slide 1:</strong> Hook com época/situação + meta.</li>
-          <li><strong>Slide 2:</strong> 3 obstáculos (efeito “só piora”).</li>
-          <li><strong>Slide 3:</strong> Tentação/interrupção (detalhe específico).</li>
-          <li><strong>Slide 4:</strong> Metáfora/virada (1 frase).</li>
-          <li><strong>Slide 5:</strong> Punchline “1 X x 30 Y” (bem grande).</li>
-          <li><strong>Slide 6:</strong> CTA leve (comenta + marca + salva).</li>
-          <li><strong>Slide 7:</strong> Assinatura/branding discreto.</li>
+          <li><strong>Layout fixo na tela:</strong> Linha 1 “X ✅ (bom)”; Linha 2 “Y ⭐ (melhor)”; Linha 3 “Efeito: [adjetivos]”.</li>
+          <li><strong>Destaque do “MAS”:</strong> palavra “MAS” grande por 3–5 frames + corte seco.</li>
+          <li><strong>Edição:</strong> jump cuts; 0,8–1,5s por bloco; pausa mínima na virada.</li>
+          <li><strong>Captação:</strong> talking head + B-roll demonstrando X e Y (telas, exemplos, antes/depois, prints, objetos, gráficos).</li>
+          <li><strong>Consistência:</strong> mesma tipografia, mesmas posições, mesmas cores para ✅ e ⭐ em todos os blocos.</li>
+          <li><strong>Loop:</strong> finalize conectando ao início (“Quer mais trocas assim?”) para incentivar replay.</li>
         </ul>
-      </section>
+      </div>
+    </section>
 
-      <section class="card span2">
-        <div class="hd">
-          <h2>Variações (prontas para adaptar)</h2>
-          <span class="tag">5 opções</span>
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Copy e ganchos</h2>
+        <div class="badge">Modelos neutros</div>
+      </div>
+      <div class="bd">
+        <div class="two">
+          <div class="mini">
+            <h3>Hooks (1–2s)</h3>
+            <p>
+              1) “Isso é bom… mas isso aqui é melhor.”<br/>
+              2) “Você tá fazendo certo, só não do jeito mais eficiente.”<br/>
+              3) “Pare de fazer X desse jeito. Faz assim e pronto.”<br/>
+              4) “Trocas simples que deixam seu resultado mais [OBJETIVO].”
+            </p>
+          </div>
+          <div class="mini">
+            <h3>Adjetivos (use 2–3 por bloco)</h3>
+            <p>
+              claro, consistente, premium, enxuto, objetivo, moderno, inteligente, robusto, rápido, elegante, limpo, profissional.
+            </p>
+          </div>
+          <div class="mini">
+            <h3>Removedores de objeção</h3>
+            <p>
+              “sem gastar mais” • “sem complicar” • “sem perder tempo” • “sem ficar técnico” • “sem parecer forçado”
+            </p>
+          </div>
+          <div class="mini">
+            <h3>Frases de autoridade leve</h3>
+            <p>
+              “É a diferença entre ‘funciona’ e ‘funciona bem’.”<br/>
+              “Isso aumenta a qualidade percebida na hora.”<br/>
+              “É um ajuste pequeno com impacto grande.”
+            </p>
+          </div>
         </div>
-        <div class="code">1)
-É segunda-feira e eu tentando começar direito…
-mas tem coisa urgente, tem mensagem, tem “só mais uma reunião”…
-e ainda tem o scroll infinito.
-Minha vida tá tipo: “foco? nunca nem vi”.
-1 tarefa concluída x 30 distrações.
+      </div>
+    </section>
 
-2)
-É semana de entrega e eu tentando manter a calma…
-mas é prazo, é ajuste, é mudança de última hora…
-e ainda tem “rapidinho aqui” o dia inteiro.
-Minha vida tá tipo: aba aberta em aba aberta.
-1 decisão inteligente x 30 interrupções.
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>CTA</h2>
+        <div class="badge">1–2s + legenda</div>
+      </div>
+      <div class="bd">
+        <ul>
+          <li><strong>Salvar:</strong> “Salva pra usar como checklist quando for aplicar.”</li>
+          <li><strong>Comentário:</strong> “Comenta ‘LISTA’ que eu mando mais trocas desse tipo.”</li>
+          <li><strong>Enquete:</strong> “Qual você faz hoje: 1, 2, 3, 4, 5, 6 ou 7?”</li>
+          <li><strong>Personalização:</strong> “Me diz seu objetivo (ex.: mais rápido/premium) que eu adapto pro seu caso.”</li>
+        </ul>
+        <div class="hint"><strong>Legenda pronta (modelo):</strong> “✅ Bom vs ⭐ Melhor — aqui vão as 7 trocas em texto pra você salvar: 1) X→Y… 2) X→Y… (liste tudo).”</div>
+      </div>
+    </section>
 
-3)
-É início do mês e eu tentando organizar minha rotina…
-mas é compromisso, é imprevisto, é agenda lotada…
-e ainda tem um convite impossível de recusar.
-Minha vida tá tipo: modo avião quebrado.
-1 hora focado x 30 desculpas.
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Checklist de criação</h2>
+        <div class="badge">10 itens</div>
+      </div>
+      <div class="bd">
+        <ul>
+          <li><strong>Defina 1 objetivo</strong> (ex.: mais claro, mais rápido, mais premium, mais consistente).</li>
+          <li><strong>Liste 5–7 “escolhas seguras”</strong> do seu tema (o jeito comum de fazer).</li>
+          <li><strong>Crie 1 upgrade por item</strong> (mude só uma coisa: palavra, ferramenta, ordem, formato, canal, métrica, critério).</li>
+          <li><strong>Escreva no padrão fixo</strong>: “X é bom… mas Y é melhor (por quê/efeito)”.</li>
+          <li><strong>Adicione 2–3 adjetivos</strong> por upgrade (benefício percebido, não só técnico).</li>
+          <li><strong>Remova 1 objeção</strong> ao longo do vídeo (“sem complicar / sem gastar mais / sem perder tempo”).</li>
+          <li><strong>Grave em ritmo alto</strong>: 12–20s, sem pausas longas; pausa só no “MAS”.</li>
+          <li><strong>Texto na tela</strong> sincronizado: “X ✅” vs “Y ⭐” + “Efeito: …”.</li>
+          <li><strong>Finalize com 1 CTA</strong> principal (salvar) + 1 secundário (comentar).</li>
+          <li><strong>Legenda em lista</strong> repetindo as 7 trocas para aumentar salvamentos.</li>
+        </ul>
+      </div>
+    </section>
 
-4)
-É época de eventos e eu tentando seguir o plano…
-mas é convite, é deslocamento, é cansaço acumulado…
-e ainda aparece aquela notificação.
-Minha vida tá tipo: “só hoje”.
-1 ação certa x 30 tentações.
-
-5)
-É o dia que eu prometi recomeçar e eu tentando ser consistente…
-mas é correria, é pendência, é mil coisas ao mesmo tempo…
-e ainda tem o sofá me chamando.
-Minha vida tá tipo: carregando… 99%.
-1 passo pequeno x 30 motivos pra adiar.</div>
-      </section>
-    </main>
+    <section class="card" style="margin-top:14px">
+      <div class="hd">
+        <h2>Variações</h2>
+        <div class="badge">Para não saturar</div>
+      </div>
+      <div class="bd">
+        <div class="two">
+          <div class="mini">
+            <h3>Variação A — “Antes/Depois”</h3>
+            <p>Mostre X (antes) por 0,5s → corte → Y (depois) por 0,7s → “Efeito: …”.</p>
+          </div>
+          <div class="mini">
+            <h3>Variação B — “Regra de 1 troca”</h3>
+            <p>Abra com: “Hoje é só uma troca por bloco. Sem reinventar tudo.”</p>
+          </div>
+          <div class="mini">
+            <h3>Variação C — “Níveis”</h3>
+            <p>✅ básico → ⭐ avançado → 🚀 “se quiser ir além…” (use só em 2 blocos para não alongar).</p>
+          </div>
+          <div class="mini">
+            <h3>Variação D — “Públicos diferentes”</h3>
+            <p>Trocas para: iniciante / intermediário / avançado (3+2+2 blocos).</p>
+          </div>
+        </div>
+        <div class="footer">Dica: mantenha o mesmo template por 3–5 posts seguidos, mudando apenas o objetivo e os exemplos. Isso cria reconhecimento e expectativa.</div>
+      </div>
+    </section>
   </div>
 
-  <div class="toast" id="toast">Roteiro copiado para a área de transferência.</div>
-
   <script>
-    (function(){
-      const btn = document.getElementById('copyBtn');
-      const textEl = document.getElementById('roteiroText');
-      const toast = document.getElementById('toast');
+    const scriptEl = document.getElementById('script');
+    const copyBtn = document.getElementById('copyBtn');
+    const selectBtn = document.getElementById('selectBtn');
+    const statusEl = document.getElementById('copyStatus');
 
-      function showToast(msg){
-        toast.textContent = msg;
-        toast.style.display = 'block';
-        clearTimeout(window.__t);
-        window.__t = setTimeout(()=>{toast.style.display='none';}, 2200);
+    function showStatus(msg){
+      statusEl.textContent = msg;
+      statusEl.style.display = 'inline-flex';
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=>{ statusEl.style.display='none'; }, 1400);
+    }
+
+    selectBtn.addEventListener('click', () => {
+      const range = document.createRange();
+      range.selectNodeContents(scriptEl);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      showStatus('Texto selecionado.');
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const text = scriptEl.innerText;
+      try{
+        await navigator.clipboard.writeText(text);
+        showStatus('Copiado.');
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showStatus('Copiado (fallback).');
       }
-
-      btn.addEventListener('click', async () => {
-        const content = textEl.innerText;
-        try{
-          await navigator.clipboard.writeText(content);
-          showToast('Roteiro copiado para a área de transferência.');
-        }catch(e){
-          // fallback
-          const ta = document.createElement('textarea');
-          ta.value = content;
-          document.body.appendChild(ta);
-          ta.select();
-          try{ document.execCommand('copy'); showToast('Roteiro copiado (modo compatível).'); }
-          catch(err){ showToast('Não foi possível copiar automaticamente. Selecione e copie manualmente.'); }
-          document.body.removeChild(ta);
-        }
-      });
-    })();
+    });
   </script>
 </body>
 </html>
