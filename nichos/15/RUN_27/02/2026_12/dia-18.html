@@ -1,487 +1,458 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dia 18 — Roteiro Reproduzível</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 18 — Carrossel narrativo</title>
   <style>
     :root{
       --bg:#0b0f17;
-      --panel:#0f1626;
-      --panel2:#0c1322;
+      --panel:#0f1624;
+      --panel2:#0c1320;
       --text:#e7edf7;
-      --muted:#a8b3c7;
+      --muted:#9aa7bd;
       --border:rgba(255,255,255,.10);
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
-      --radius:16px;
-      --radius2:12px;
-      --g1: linear-gradient(135deg, #00e5a8 0%, #2f7dff 45%, #ff8a00 100%);
-      --g2: linear-gradient(135deg, rgba(0,229,168,.18) 0%, rgba(47,125,255,.16) 45%, rgba(255,138,0,.14) 100%);
-      --ok:#3cffb4;
-      --warn:#ffb020;
-      --chip:#101a2d;
+      --border2:rgba(255,255,255,.14);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r12: 14px;
+      --r16: 18px;
+      --g1: linear-gradient(90deg, #2ee59d, #3aa6ff, #ffb347);
+      --g2: linear-gradient(135deg, rgba(46,229,157,.18), rgba(58,166,255,.16), rgba(255,179,71,.14));
+      --accent:#3aa6ff;
+      --ok:#2ee59d;
+      --warn:#ffb347;
+      --danger:#ff5c7a;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family:var(--sans);
       background:
-        radial-gradient(900px 500px at 15% 10%, rgba(47,125,255,.18), transparent 55%),
-        radial-gradient(800px 450px at 90% 20%, rgba(0,229,168,.14), transparent 55%),
-        radial-gradient(900px 520px at 40% 95%, rgba(255,138,0,.10), transparent 60%),
+        radial-gradient(900px 600px at 10% -10%, rgba(58,166,255,.20), transparent 55%),
+        radial-gradient(900px 600px at 95% 0%, rgba(46,229,157,.14), transparent 55%),
+        radial-gradient(900px 600px at 80% 110%, rgba(255,179,71,.12), transparent 55%),
         var(--bg);
       color:var(--text);
       line-height:1.45;
     }
-    a{color:#7db4ff; text-decoration:none}
+    a{color:#9cd4ff; text-decoration:none}
     a:hover{text-decoration:underline}
-    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px;}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+
     header{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border:1px solid var(--border);
-      border-radius: calc(var(--radius) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius:var(--r16);
+      padding:18px 18px 14px;
       box-shadow: var(--shadow);
-      overflow:hidden;
       position:relative;
+      overflow:hidden;
     }
     header:before{
       content:"";
       position:absolute;
       inset:-2px;
       background: var(--g2);
-      filter: blur(10px);
-      opacity:.9;
+      filter: blur(16px);
+      opacity:.75;
       pointer-events:none;
     }
-    .head-in{
-      position:relative;
-      padding:18px 18px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      align-items:flex-start;
-      justify-content:space-between;
-    }
-    .titleblock{min-width:260px; flex:1}
-    .kicker{
-      display:flex;
+    header > *{position:relative}
+
+    .toprow{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+
+    .badge{
+      display:inline-flex;
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
-      color:var(--muted);
-      font-size:13px;
-    }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:6px 10px;
+      padding:10px 12px;
       border:1px solid var(--border);
-      background:rgba(16,26,45,.55);
       border-radius:999px;
-      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,.25);
+      backdrop-filter: blur(8px);
     }
     .dot{
-      width:8px;height:8px;border-radius:999px;
+      width:10px; height:10px; border-radius:999px;
       background: var(--g1);
-      box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+      box-shadow: 0 0 0 4px rgba(58,166,255,.10);
     }
+    .meta{color:var(--muted); font-size:13px}
+
     h1{
-      margin:10px 0 6px;
-      font-size:22px;
-      letter-spacing:.2px;
+      margin:14px 0 8px;
+      font-size:28px;
+      letter-spacing:-.02em;
     }
-    .sub{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      max-width:70ch;
-    }
-    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
+    .subtitle{margin:0; color:var(--muted); max-width:80ch}
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
     .btn{
-      border:1px solid var(--border);
-      border-radius:12px;
-      padding:10px 12px;
-      background:rgba(15,22,38,.6);
+      border:1px solid var(--border2);
+      background: rgba(255,255,255,.04);
       color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
       cursor:pointer;
-      font-weight:600;
-      font-size:13px;
+      transition:.18s ease;
       display:inline-flex;
       align-items:center;
       gap:10px;
-      box-shadow: 0 10px 22px rgba(0,0,0,.22);
-      transition: transform .08s ease, background .2s ease;
+      user-select:none;
     }
-    .btn:hover{background:rgba(15,22,38,.85)}
-    .btn:active{transform:translateY(1px)}
-    .btn-primary{
-      background: linear-gradient(135deg, rgba(0,229,168,.20), rgba(47,125,255,.18), rgba(255,138,0,.14));
-      border-color: rgba(255,255,255,.14);
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.20)}
+    .btn.primary{background: linear-gradient(180deg, rgba(58,166,255,.18), rgba(58,166,255,.08));}
+    .btn .kbd{font-family:var(--mono); font-size:12px; color:var(--muted)}
+
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      align-items:start;
     }
-    .btn small{color:var(--muted); font-weight:500}
-    .grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:16px;}
-    @media (min-width: 980px){
-      .grid{grid-template-columns: 1fr 1fr;}
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
     }
+
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
       border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius:var(--r16);
+      padding:16px;
+      box-shadow: 0 12px 34px rgba(0,0,0,.42);
       position:relative;
+      overflow:hidden;
     }
-    .card:before{
+    .card:after{
       content:"";
       position:absolute;
-      inset:0;
-      background: radial-gradient(700px 180px at 10% 0%, rgba(0,229,168,.10), transparent 60%),
-                  radial-gradient(700px 180px at 90% 0%, rgba(47,125,255,.10), transparent 60%),
-                  radial-gradient(700px 220px at 50% 100%, rgba(255,138,0,.08), transparent 60%);
-      pointer-events:none;
-    }
-    .card > .in{position:relative; padding:16px 16px 15px;}
-    h2{
-      margin:0 0 10px;
-      font-size:15px;
-      letter-spacing:.2px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .bar{
-      width:10px;height:10px;border-radius:3px;
+      top:0; left:0; right:0;
+      height:2px;
       background: var(--g1);
-      box-shadow: 0 0 0 3px rgba(255,255,255,.06);
-      flex:0 0 auto;
+      opacity:.75;
     }
-    .muted{color:var(--muted)}
-    ul{margin:10px 0 0 18px; padding:0}
-    li{margin:6px 0}
-    code, pre{
-      font-family:var(--mono);
-      font-size:12.8px;
-      color:#d7e6ff;
-    }
-    pre{
-      margin:10px 0 0;
-      white-space:pre-wrap;
-      background: rgba(10,15,25,.55);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius: 14px;
-      padding:12px 12px;
-      overflow:auto;
-    }
-    .pill{
-      display:inline-flex;
+
+    h2{margin:0 0 10px; font-size:16px; letter-spacing:.02em}
+    .small{color:var(--muted); font-size:13px}
+
+    .list{margin:10px 0 0; padding-left:18px; color:var(--text)}
+    .list li{margin:8px 0}
+
+    .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .chip{
+      font-size:12px;
+      color:var(--text);
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.22);
       padding:6px 10px;
       border-radius:999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(16,26,45,.45);
-      color: var(--muted);
-      font-size: 12px;
-      gap:8px;
-      align-items:center;
     }
-    .pill b{color:var(--text); font-weight:700}
-    .twoCol{display:grid; grid-template-columns:1fr; gap:10px;}
-    @media (min-width: 720px){
-      .twoCol{grid-template-columns:1fr 1fr;}
-    }
-    .hr{height:1px; background:rgba(255,255,255,.10); margin:12px 0;}
-    .callout{
+
+    .hr{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
+
+    .script{
+      margin-top:14px;
       border:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(135deg, rgba(0,229,168,.10), rgba(47,125,255,.08), rgba(255,138,0,.06));
-      border-radius: 14px;
-      padding:12px 12px;
-      color: var(--text);
-    }
-    .callout .muted{color:#c8d3e7}
-    .ok{color:var(--ok); font-weight:700}
-    .warn{color:var(--warn); font-weight:700}
-    .foot{
-      margin-top:16px;
-      color:var(--muted);
-      font-size:12px;
-      text-align:center;
-    }
-    textarea#scriptText{
-      width:100%;
-      min-height:260px;
-      resize:vertical;
-      background: rgba(10,15,25,.55);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 14px;
-      padding:12px 12px;
-      color: #d7e6ff;
+      background: rgba(0,0,0,.25);
+      border-radius:14px;
+      padding:14px;
       font-family: var(--mono);
-      font-size: 12.8px;
-      line-height: 1.45;
-      outline:none;
-    }
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:18px;
-      transform:translateX(-50%);
-      background: rgba(15,22,38,.92);
-      border: 1px solid rgba(255,255,255,.14);
-      color: var(--text);
-      padding:10px 12px;
-      border-radius: 999px;
-      box-shadow: var(--shadow);
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
       font-size:13px;
+      color:#dbe7ff;
+      overflow:auto;
+      white-space:pre-wrap;
     }
-    .toast.show{opacity:1; transform:translateX(-50%) translateY(-4px)}
+
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 720px){
+      .cols{grid-template-columns:1fr}
+    }
+
+    .callout{
+      border-left:3px solid rgba(46,229,157,.8);
+      background:rgba(46,229,157,.06);
+      padding:10px 12px;
+      border-radius:12px;
+      color:var(--text);
+    }
+
+    .warn{
+      border-left:3px solid rgba(255,179,71,.9);
+      background:rgba(255,179,71,.06);
+      padding:10px 12px;
+      border-radius:12px;
+      color:var(--text);
+    }
+
+    .footer{margin-top:16px; color:var(--muted); font-size:12px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="head-in">
-        <div class="titleblock">
-          <div class="kicker">
-            <span class="chip"><span class="dot"></span><span><b>Nicho:</b> Neutro</span></span>
-            <span class="chip"><span><b>Dia:</b> 18</span></span>
-            <span class="chip"><span><b>Formato:</b> Reels</span></span>
-            <span class="chip"><span><b>Pilar:</b> Passo a passo</span></span>
-          </div>
-          <h1>Troque 1 detalhe e ganhe um upgrade imediato</h1>
-          <p class="sub">Template reproduzível baseado em “contraste + surpresa”: valide o comum, entregue a troca melhor e nomeie o efeito (identidade/resultado). <span class="muted">Link do original:</span> <a href="https://www.instagram.com/p/DN4A_0jAQWI/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DN4A_0jAQWI/</a></p>
+      <div class="toprow">
+        <div class="badge">
+          <span class="dot"></span>
+          <div class="meta"><strong>Nicho:</strong> Neutro</div>
+          <div class="meta"><strong>Dia:</strong> 18</div>
+          <div class="meta"><strong>Formato:</strong> Carrossel (fotográfico/narrativo)</div>
+          <div class="meta"><strong>Pilar:</strong> Bastidores</div>
         </div>
-        <div class="actions">
-          <button class="btn btn-primary" id="copyBtn" type="button">Copiar roteiro <small>(texto abaixo)</small></button>
-          <a class="btn" href="https://www.instagram.com/p/DN4A_0jAQWI/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+        <div class="meta">
+          <strong>Post original:</strong> <a href="https://www.instagram.com/p/DV4r2L6kRaP/" target="_blank" rel="noopener">https://www.instagram.com/p/DV4r2L6kRaP/</a>
         </div>
+      </div>
+
+      <h1>Carrossel narrativo: conte um marco em 9 fotos</h1>
+      <p class="subtitle">Template neutro para qualquer área: uma sequência de imagens que conta uma história real (marco, processo e bastidores) com retenção por “capítulos”. Sem depender de cards de texto.</p>
+
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro <span class="kbd">(Ctrl/⌘+C)</span></button>
+        <a class="btn" href="#slides">Ver slides sugeridos</a>
+        <a class="btn" href="#checklist">Ir para checklist</a>
       </div>
     </header>
 
     <div class="grid">
-      <section class="card">
-        <div class="in">
-          <h2><span class="bar"></span>Resumo</h2>
-          <div class="callout">
-            <div><b>Ideia central:</b> “O jeito comum é bom… <span class="ok">mas</span> a troca certa é melhor.”</div>
-            <div class="muted" style="margin-top:6px">Você entrega valor rápido em lista, com repetição hipnótica e recompensa imediata (salvável/compartilhável). Funciona para qualquer tema em que exista <b>opção segura vs opção inteligente</b>.</div>
-          </div>
-          <div class="hr"></div>
-          <div class="twoCol">
-            <div class="pill"><b>Tempo</b> 15–25s</div>
-            <div class="pill"><b>Blocos</b> 5–7</div>
-            <div class="pill"><b>Cadência</b> 1 bloco / 2–3s</div>
-            <div class="pill"><b>Gancho</b> contraste + surpresa</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="in">
-          <h2><span class="bar"></span>Estrutura (reproduzível)</h2>
-          <ul>
-            <li><b>1) Tela 0–1s:</b> promessa curta (“Troque 1 detalhe e pareça mais ___”).</li>
-            <li><b>2) Blocos repetíveis (x5–7):</b> Comum → <b>MAS</b> → Upgrade + 2–3 efeitos.</li>
-            <li><b>3) Fechamento (últimos 2s):</b> CTA de comentário + salvamento.</li>
-          </ul>
-          <div class="hr"></div>
-          <p class="muted"><b>Regra do motor:</b> cada bloco precisa ter (a) validação, (b) virada clara, (c) recompensa identitária (“parece mais ___”).</p>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="in">
-          <h2><span class="bar"></span>Roteiro (template pronto para trocar o tema)</h2>
-          <p class="muted">Substitua os colchetes pelas suas escolhas. Se quiser, mantenha exatamente a mesma cadência.</p>
-          <textarea id="scriptText" spellcheck="false">ROTEIRO — REELS (15–25s) | Template “bom, mas melhor”
-
-[TELA 0–1s — TEXTO NA TELA]
-“Troque 1 [DETALHE] e pareça mais [RESULTADO]”
-
-[VOZ/LEGENDA — 1 frase]
-“Se você só faz o básico, isso aqui vai te dar um upgrade imediato.”
-
-[BLOCO 1 — 2–3s]
-“[OPÇÃO COMUM] é [elogio curto]. Mas [OPÇÃO UPGRADE] é [superlativo].”
-“Fica mais [efeito 1], mais [efeito 2], mais [efeito 3].”
-
-[BLOCO 2 — 2–3s]
-“[OPÇÃO COMUM] é [elogio curto]. Mas [OPÇÃO UPGRADE] é [superlativo].”
-“Fica mais [efeito 1], mais [efeito 2], mais [efeito 3].”
-
-[BLOCO 3 — 2–3s]
-“[OPÇÃO COMUM] é [elogio curto]. Mas [OPÇÃO UPGRADE] é [superlativo].”
-“Fica mais [efeito 1], mais [efeito 2], mais [efeito 3].”
-
-[BLOCO 4 — 2–3s]
-“[OPÇÃO COMUM] é [elogio curto]. Mas [OPÇÃO UPGRADE] é [superlativo].”
-“Fica mais [efeito 1], mais [efeito 2], mais [efeito 3].”
-
-[BLOCO 5 — 2–3s]
-“[OPÇÃO COMUM] é [elogio curto]. Mas [OPÇÃO UPGRADE] é [superlativo].”
-“Fica mais [efeito 1], mais [efeito 2], mais [efeito 3].”
-
-[FECHAMENTO — 2s]
-“Tento uma parte 2 com [SUBTEMA]?”
-“Comenta ‘[PALAVRA-CHAVE]’ e salva pra consultar depois.”
-
-[OBS DE EDIÇÃO]
-Cortes no beat + zoom leve no “MAS” + texto grande com comparação lado a lado.</textarea>
-          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; align-items:center;">
-            <span class="pill"><b>Fórmula do bloco</b> validar → virar → rotular efeito</span>
-            <span class="pill"><b>Tom</b> direto, sensorial, identitário</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="in">
-          <h2><span class="bar"></span>Elementos visuais</h2>
-          <ul>
-            <li><b>Comparação imediata:</b> tela dividida “seguro” vs “upgrade”.</li>
-            <li><b>Texto na tela (padrão fixo):</b> Linha 1 = opção comum; Linha 2 = upgrade; Linha 3 = efeitos.</li>
-            <li><b>Cortes:</b> 1 corte por bloco (a cada 2–3s).</li>
-            <li><b>Ênfase:</b> punch-in/zoom na palavra <b>“MAS”</b>.</li>
-            <li><b>SFX discreto:</b> pop/click quando entra o upgrade.</li>
-            <li><b>Legendas:</b> grandes e sincronizadas (frase por frase).</li>
-          </ul>
-          <div class="hr"></div>
-          <div class="callout">
-            <div><b>Regra de clareza:</b> a pessoa precisa entender a troca em <b>&lt; 1s</b> (tipografia grande + contraste + repetição).</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="in">
-          <h2><span class="bar"></span>Copy e ganchos</h2>
-          <div class="twoCol">
-            <div>
-              <p style="margin:0 0 6px"><b>Hooks (0–2s)</b></p>
-              <ul>
-                <li>“Isso aqui é bom… <b>mas</b> isso aqui é o upgrade.”</li>
-                <li>“Você faz assim e fica ok. Se trocar por isso, fica muito melhor.”</li>
-                <li>“O jeito seguro funciona. O jeito inteligente te destaca.”</li>
-                <li>“Se você só muda <b>1 detalhe</b>, já parece mais ___.”</li>
-              </ul>
+      <section class="card" id="resumo">
+        <h2>Resumo</h2>
+        <p class="small">Objetivo: gerar conexão + credibilidade mostrando um acontecimento real e o que existe por trás dele.</p>
+        <div class="cols">
+          <div>
+            <div class="callout">
+              <strong>Quando usar</strong><br/>
+              Marcos (evento, entrega, conquista), “dia de campo”, processo de criação, antes/depois de rotina, participação em equipe/comunidade.
             </div>
-            <div>
-              <p style="margin:0 0 6px"><b>Palavras de efeito (substituíveis)</b></p>
-              <ul>
-                <li><b>Leveza:</b> leve, fresh, limpo, moderno, respirado.</li>
-                <li><b>Status:</b> premium, chique, sofisticado, “bem resolvido”.</li>
-                <li><b>Personalidade:</b> descolado, fashion, autêntico, marcante.</li>
-                <li><b>Resultado:</b> mais claro, mais direto, mais rápido, mais eficiente.</li>
-              </ul>
+            <ul class="list">
+              <li><strong>Retenção:</strong> curiosidade narrativa + variação de planos + payoff com símbolo do marco.</li>
+              <li><strong>Persuasão:</strong> identidade → contexto → prova social → bastidores → fechamento positivo.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="warn">
+              <strong>Regra de ouro</strong><br/>
+              Mesmo sem texto, cada slide precisa “estar fazendo um trabalho”: contextualizar, provar, humanizar ou encerrar.
+            </div>
+            <div class="chips">
+              <span class="chip">7–10 fotos</span>
+              <span class="chip">Objeto-âncora (3–5x)</span>
+              <span class="chip">Close + aberto + grupo</span>
+              <span class="chip">1 bastidor obrigatório</span>
             </div>
           </div>
-          <div class="hr"></div>
-          <p class="muted"><b>Checklist de copy por bloco:</b> 1 elogio curto + 1 superlativo + 2–3 efeitos (identidade).</p>
         </div>
       </section>
 
-      <section class="card">
-        <div class="in">
-          <h2><span class="bar"></span>CTA (escolha 1 principal + 1 secundário)</h2>
-          <ul>
-            <li><b>Comentário (principal):</b> “Quer parte 2? Comenta ‘<b>[PALAVRA-CHAVE]</b>’.”</li>
-            <li><b>Salvar (secundário):</b> “Salva pra quando bater dúvida.”</li>
-            <li><b>Compartilhar:</b> “Manda pra alguém que sempre faz do jeito seguro.”</li>
-            <li><b>Follow:</b> “Segue pra mais atalhos rápidos de [tema].”</li>
-          </ul>
-          <div class="callout" style="margin-top:10px">
-            <div><b>Boa prática:</b> faça o CTA “combinar” com o motivo de salvar. Ex.: “salva pra consultar”, “comenta pra eu fazer a parte 2”.</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="in">
-          <h2><span class="bar"></span>Checklist de criação (produção + edição)</h2>
-          <ul>
-            <li>[ ] Definir <b>tema</b> em forma de contraste: “O comum vs o upgrade em [assunto]”.</li>
-            <li>[ ] Listar <b>5–7 itens</b> que tenham “opção segura” e “opção melhor”.</li>
-            <li>[ ] Escrever cada bloco com: <b>validação</b> → <b>MAS</b> → <b>upgrade</b> → <b>2–3 efeitos</b>.</li>
-            <li>[ ] Garantir <b>ritmo</b>: 1 bloco a cada 2–3s (sem pausas longas).</li>
-            <li>[ ] Planejar visual: <b>split screen</b> + textos grandes + cores/ícones consistentes.</li>
-            <li>[ ] Editar no beat: cortes por bloco + zoom no “MAS” + SFX discreto.</li>
-            <li>[ ] Primeira tela com promessa; última tela com CTA (comentário + salvar).</li>
-            <li>[ ] Revisão final: dá pra entender sem áudio? Se não, aumente clareza do texto.</li>
-          </ul>
-          <div class="hr"></div>
-          <p class="muted"><span class="warn">Erro comum:</span> upgrade “sem contraste”. Se a diferença não for óbvia, a retenção cai. Mostre lado a lado e nomeie o benefício.</p>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="in">
-          <h2><span class="bar"></span>Variações (adaptações que mantêm o impacto)</h2>
-          <div class="twoCol">
-            <div>
-              <p style="margin:0 0 6px"><b>Variação A — “Pare de fazer assim”</b></p>
-              <pre>“Para de usar [FORMA COMUM] achando que é o melhor.
-Troca por [FORMA UPGRADE] e fica mais [efeitos].”</pre>
-            </div>
-            <div>
-              <p style="margin:0 0 6px"><b>Variação B — “3 níveis” (bom → melhor → elite)</b></p>
-              <pre>“[Opção 1] é ok.
-[Opção 2] já é boa.
-Mas [Opção 3] é a que parece de quem sabe.”</pre>
-            </div>
-            <div>
-              <p style="margin:0 0 6px"><b>Variação C — “Mito vs Verdade” suave</b></p>
-              <pre>“Todo mundo acha que [crença].
-Verdade: [troca] te dá mais [benefício] com menos esforço.”</pre>
-            </div>
-            <div>
-              <p style="margin:0 0 6px"><b>Variação D — “Checklist rápido” (sem ‘MAS’)</b></p>
-              <pre>“Se você quer [resultado], faz isso:
-1) Troca [A] por [B]
-2) Evita [C]
-3) Prioriza [D]”</pre>
-            </div>
-          </div>
-          <div class="hr"></div>
-          <p class="muted"><b>Temas que encaixam perfeito:</b> escrita (frase comum vs frase forte), produtividade (hábito ok vs hábito alavanca), design (layout safe vs layout premium), treino (execução comum vs ajuste técnico), finanças (padrão automático vs regra simples), marketing (título ok vs título que prende).</p>
-        </div>
-      </section>
+      <aside class="card" id="estrutura">
+        <h2>Estrutura (sequência)</h2>
+        <ol class="list">
+          <li><strong>Capa emocional (herói):</strong> melhor foto (olhar/energia) + contexto visual.</li>
+          <li><strong>Contexto/Marco:</strong> “onde/por quê isso importa” (evento, entrega, momento-chave).</li>
+          <li><strong>Variação do herói:</strong> outro ângulo/ação (mantém ritmo).</li>
+          <li><strong>Prova social:</strong> com equipe, cliente, mentor, parceiro, comunidade (sem expor indevidamente).</li>
+          <li><strong>Símbolo do marco:</strong> objeto-âncora em destaque (resultado/artefato/placa/certificado/produto).</li>
+          <li><strong>Momento icônico:</strong> a “cena” que resume a história (palco, entrega, reunião, bastidor importante).</li>
+          <li><strong>Conexão humana:</strong> 1:1 (abraço, conversa, colaboração).</li>
+          <li><strong>Bastidores:</strong> preparação, setup, estudo, ferramentas, erros/ajustes.</li>
+          <li><strong>Fechamento:</strong> foto mais forte que sobrou ou mini-CTA (discreto) + legenda fecha.</li>
+        </ol>
+      </aside>
     </div>
 
-    <div class="foot">Use este roteiro como “molde”. Troque apenas o conteúdo dos blocos e mantenha a cadência + contraste.</div>
+    <section class="card" id="slides" style="margin-top:14px">
+      <h2>Slides sugeridos (1..9)</h2>
+      <p class="small">Use como “roteiro de fotos”. Você pode manter 9 ou adaptar para 7–10.</p>
+      <div class="hr"></div>
+      <ol class="list">
+        <li><strong>Slide 1 — Capa (herói):</strong> você em destaque. Opcional: texto curto (4–7 palavras) no mesmo canto sempre.</li>
+        <li><strong>Slide 2 — Contexto:</strong> local/ambiente/placa/público/mesa de trabalho (prova do acontecimento).</li>
+        <li><strong>Slide 3 — Close/ação:</strong> detalhe humano (mãos, expressão, você fazendo algo).</li>
+        <li><strong>Slide 4 — Prova social:</strong> com pessoas relevantes (equipe/cliente/turma/parceiro). Alternativa: ambiente cheio.</li>
+        <li><strong>Slide 5 — Símbolo:</strong> objeto-âncora (produto final, certificado, ferramenta, caderno, protótipo, slide de palestra).</li>
+        <li><strong>Slide 6 — Cena icônica:</strong> o “clímax” (entrega/publicação/apresentação/resultado).</li>
+        <li><strong>Slide 7 — Relação:</strong> momento de conexão (feedback, conversa, comemoração breve).</li>
+        <li><strong>Slide 8 — Bastidor:</strong> o que ninguém vê (setup, tentativa, erro, planejamento, deslocamento).</li>
+        <li><strong>Slide 9 — Final feliz:</strong> melhor foto extra + legenda fecha com CTA de conversa.</li>
+      </ol>
+    </section>
+
+    <section class="card" id="roteiro" style="margin-top:14px">
+      <h2>Roteiro (reproduzível)</h2>
+      <p class="small">Preencha os campos e execute. Funciona para qualquer nicho (serviço, produto, creator, carreira, projetos).</p>
+      <div class="script" id="scriptText">TEMA DO POST (1 frase): ________________________________
+PÚBLICO/CONTEXTO (para quem isso importa): __________________
+MARCO DO DIA (o que aconteceu): ____________________________
+OBJETO-ÂNCORA (aparece em 3–5 fotos): ______________________
+3 PALAVRAS DA VIBE: ( ) humano  ( ) premium  ( ) técnico  ( ) inspirador
+
+FOTOS (7–10) — sequência sugerida (9):
+1) CAPA/HERÓI — melhor foto sua
+   • Enquadramento: close ou plano médio
+   • Emoção: ______________________________
+
+2) CONTEXTO/PROVA — onde/como aconteceu
+   • Elemento de prova: placa, palco, mesa, público, tela, local
+
+3) VARIAÇÃO — outro ângulo (mantém ritmo)
+   • Ação: você caminhando, preparando, conversando, trabalhando
+
+4) PROVA SOCIAL — com pessoas-chave
+   • Quem aparece: equipe/cliente/parceiro/mentor/comunidade
+   • Observação: autorização/privacidade quando necessário
+
+5) SÍMBOLO DO MARCO — objeto-âncora em destaque
+   • Pode ser: certificado, produto, ferramenta, relatório, protótipo, entrega
+
+6) MOMENTO ICÔNICO — o “clímax” visual
+   • Cena: entrega, apresentação, publicação, assinatura, anúncio
+
+7) CONEXÃO HUMANA — 1:1
+   • Cena: feedback, agradecimento, comemoração, bastidor emocional
+
+8) BASTIDORES — o que não aparece
+   • Cena: setup, planejamento, estudo, tentativa/erro, logística
+
+9) FECHAMENTO — final feliz
+   • Melhor foto extra
+   • CTA fica na legenda (ou texto discreto no slide)
+
+LEGENDA (modelo neutro):
+Linha 1 (gancho): “Hoje eu quero te mostrar o que quase nunca aparece: ________.”
+Mini-história (3–5 linhas): contexto + desafio + virada (o que mudou / o que aprendeu).
+Lição prática (3 bullets):
+- 1) __________________
+- 2) __________________
+- 3) __________________
+CTA (1 linha): “Se você está em [situação], comenta ‘_____’ ou me chama no direct com ‘_____’.”</div>
+    </section>
+
+    <section class="card" id="visuais" style="margin-top:14px">
+      <h2>Elementos visuais</h2>
+      <div class="cols">
+        <div>
+          <h2 style="margin-top:0">Look &amp; feel</h2>
+          <ul class="list">
+            <li><strong>Estética:</strong> documental premium (real, sem cara de “arte pronta”).</li>
+            <li><strong>Unidade:</strong> 1 paleta dominante (roupas/cenário/props).</li>
+            <li><strong>Ritmo:</strong> alternar close → aberto → grupo → bastidor.</li>
+            <li><strong>Consistência:</strong> mesma temperatura de cor e contraste em todas.</li>
+          </ul>
+        </div>
+        <div>
+          <h2 style="margin-top:0">Componentes opcionais (texto mínimo)</h2>
+          <ul class="list">
+            <li><strong>Selo discreto:</strong> “Capítulo 1/9”, “Dia X”, “Bastidores”.</li>
+            <li><strong>Barra de progresso:</strong> 1–9 pontinhos/traços para estimular swipe.</li>
+            <li><strong>Moldura leve:</strong> 2–4px para padronizar fotos diferentes.</li>
+            <li><strong>Texto:</strong> 1 insight por slide (máx. 10–14 palavras) e sempre no mesmo canto.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="copy" style="margin-top:14px">
+      <h2>Copy e ganchos</h2>
+      <div class="cols">
+        <div>
+          <h2 style="margin-top:0">Títulos curtos (para legenda ou capa)</h2>
+          <ul class="list">
+            <li>“Um marco na minha jornada”</li>
+            <li>“O dia em que isso virou real”</li>
+            <li>“Por trás do resultado”</li>
+            <li>“Antes do aplauso, teve…”</li>
+            <li>“O que ninguém vê quando você vê a entrega”</li>
+          </ul>
+        </div>
+        <div>
+          <h2 style="margin-top:0">Ganchos (linha 1)</h2>
+          <ul class="list">
+            <li>“Isso aqui parece um momento bonito… e foi. Mas o bastidor foi assim:”</li>
+            <li>“Eu quase não registrei isso — ainda bem que registrei.”</li>
+            <li>“Se você só visse o ‘resultado’, perderia a melhor parte.”</li>
+            <li>“3 coisas que esse dia me ensinou (e eu vou levar pra sempre).”</li>
+            <li>“O que mudou depois desse marco: uma coisa prática que você pode aplicar hoje.”</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <p class="small"><strong>Fórmula reproduzível de headline:</strong> <span style="font-family:var(--mono)">[Marco/resultado] + [tempo] + [bastidor/lição]</span><br/>Ex.: “Minha primeira entrega em 30 dias: o que eu faria diferente hoje”.</p>
+    </section>
+
+    <section class="card" id="cta" style="margin-top:14px">
+      <h2>CTA (escolha 1)</h2>
+      <ul class="list">
+        <li><strong>Comentário (conversa):</strong> “Me conta: qual parte do seu processo hoje é mais difícil?”</li>
+        <li><strong>Comentário (voto rápido):</strong> “Você está no começo, no meio ou na fase de entrega? (1/2/3)”</li>
+        <li><strong>DM (palavra-chave):</strong> “Quer meu checklist de [tema]? Me chama no direct com ‘CHECKLIST’.”</li>
+        <li><strong>Compartilhar:</strong> “Se você conhece alguém passando por essa fase, envia esse carrossel.”</li>
+        <li><strong>Autoridade suave:</strong> “Quer mais bastidores desse tipo? Comenta ‘BASTIDORES’.”</li>
+      </ul>
+    </section>
+
+    <section class="card" id="checklist" style="margin-top:14px">
+      <h2>Checklist de criação</h2>
+      <div class="cols">
+        <div>
+          <h2 style="margin-top:0">Pré (planejamento)</h2>
+          <ul class="list">
+            <li>Definir <strong>marco</strong> (o que aconteceu) em 1 frase.</li>
+            <li>Escolher <strong>objeto-âncora</strong> (aparece em 3–5 fotos).</li>
+            <li>Listar 3 cenas obrigatórias: <strong>prova</strong>, <strong>prova social</strong>, <strong>bastidor</strong>.</li>
+            <li>Definir paleta/roupa para unidade.</li>
+            <li>Checar permissões (pessoas, locais, dados sensíveis).</li>
+          </ul>
+        </div>
+        <div>
+          <h2 style="margin-top:0">Execução (foto e edição)</h2>
+          <ul class="list">
+            <li>Captar variedade: close, plano médio, aberto, grupo, detalhe.</li>
+            <li>Garantir 1 “foto capa” muito forte (luz + expressão).</li>
+            <li>Editar com consistência (temperatura/contraste iguais).</li>
+            <li>Ordenar para ritmo (não repetir enquadramento em sequência).</li>
+            <li>Legenda: gancho + mini-história + 3 aprendizados + CTA.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="variacoes" style="margin-top:14px">
+      <h2>Variações (mesma lógica, outros temas)</h2>
+      <ul class="list">
+        <li><strong>“Dia de projeto/produção”:</strong> briefing → execução → entrega → feedback → bastidores.</li>
+        <li><strong>“Antes/depois de rotina”:</strong> sem promessas irreais; mostrar organização, processo, consistência.</li>
+        <li><strong>“Evento/viagem de trabalho”:</strong> chegada → preparação → momento principal → networking → bastidores.</li>
+        <li><strong>“Caso de bastidor (sem expor)”:</strong> cenário + ferramenta + aprendizado + o que faria diferente.</li>
+        <li><strong>Com texto mínimo:</strong> 1 frase curta em 3 slides (2, 5 e 9) para guiar leitura sem virar “card”.</li>
+      </ul>
+      <div class="footer">Dica: se você quiser aumentar a retenção, inclua um micro-gancho na legenda: “No slide 8 tem a parte mais real de todas”.</div>
+    </section>
   </div>
 
-  <div class="toast" id="toast">Roteiro copiado.</div>
-
   <script>
-    const btn = document.getElementById('copyBtn');
-    const ta = document.getElementById('scriptText');
-    const toast = document.getElementById('toast');
-
-    function showToast(msg){
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(()=>toast.classList.remove('show'), 1400);
-    }
-
-    btn.addEventListener('click', async () => {
-      try{
-        const text = ta.value;
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          await navigator.clipboard.writeText(text);
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const text = document.getElementById('scriptText');
+      function copy(){
+        const content = text.innerText;
+        if (navigator.clipboard && window.isSecureContext){
+          navigator.clipboard.writeText(content);
         } else {
-          ta.focus();
+          const ta = document.createElement('textarea');
+          ta.value = content;
+          document.body.appendChild(ta);
           ta.select();
           document.execCommand('copy');
+          document.body.removeChild(ta);
         }
-        showToast('Roteiro copiado.');
-      } catch(e){
-        showToast('Não foi possível copiar. Selecione e copie manualmente.');
+        btn.textContent = 'Roteiro copiado';
+        setTimeout(()=>{ btn.innerHTML = 'Copiar roteiro <span class="kbd">(Ctrl/⌘+C)</span>'; }, 1200);
       }
-    });
+      btn.addEventListener('click', copy);
+    })();
   </script>
 </body>
 </html>
