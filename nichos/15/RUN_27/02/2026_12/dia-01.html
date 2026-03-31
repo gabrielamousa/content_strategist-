@@ -1,420 +1,457 @@
-<!doctype html><html lang="pt-br"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Dia 1 — Carrossel Reproduzível (Nicho Neutro)</title><style>
-:root{
-  --bg0:#070A12;
-  --bg1:#0B1020;
-  --card:#0E1630;
-  --card2:#0A1228;
-  --text:#EAF0FF;
-  --muted:#A9B4D0;
-  --line:rgba(255,255,255,.08);
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
-  --r:16px;
-  --g1: linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
-  --g2: linear-gradient(135deg, rgba(34,197,94,.22), rgba(56,189,248,.18), rgba(251,146,60,.18));
-  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:var(--sans);
-  color:var(--text);
-  background: radial-gradient(1200px 600px at 30% -10%, rgba(56,189,248,.22), transparent 55%),
-              radial-gradient(900px 500px at 80% 10%, rgba(34,197,94,.18), transparent 60%),
-              radial-gradient(900px 500px at 40% 110%, rgba(251,146,60,.14), transparent 60%),
-              linear-gradient(180deg,var(--bg0),var(--bg1));
-}
-a{color:inherit;text-decoration:none}
-.container{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
-.header{
-  display:grid; gap:14px;
-  padding:18px 18px;
-  border:1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-  border-radius: calc(var(--r) + 6px);
-  box-shadow: var(--shadow);
-  position:relative;
-  overflow:hidden;
-}
-.header:before{
-  content:"";
-  position:absolute; inset:-2px;
-  background: var(--g2);
-  filter: blur(18px);
-  opacity:.9;
-  z-index:0;
-}
-.header > *{position:relative; z-index:1}
-.kicker{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.badge{
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.03);
-  padding:6px 10px;
-  border-radius: 999px;
-  font-size:12px;
-  color:var(--muted);
-}
-.h1{
-  font-size: clamp(20px, 2.4vw, 30px);
-  line-height:1.15;
-  font-weight:780;
-  letter-spacing:-0.02em;
-  margin:0;
-}
-.grad{
-  background: var(--g1);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-.sub{color:var(--muted); margin:0; line-height:1.5}
-.row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-.btn{
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.04);
-  color:var(--text);
-  padding:10px 12px;
-  border-radius: 12px;
-  font-weight:650;
-  cursor:pointer;
-  transition:.2s ease;
-}
-.btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
-.btnPri{
-  background: linear-gradient(135deg, rgba(34,197,94,.22), rgba(56,189,248,.18), rgba(251,146,60,.18));
-}
-.grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:16px}
-@media (min-width: 920px){
-  .grid{grid-template-columns: 1.15fr .85fr; align-items:start}
-}
-.card{
-  border:1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-  border-radius: var(--r);
-  box-shadow: var(--shadow);
-  overflow:hidden;
-}
-.card .hd{
-  padding:14px 16px;
-  border-bottom:1px solid var(--line);
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-}
-.card .hd h2{margin:0; font-size:14px; letter-spacing:.06em; text-transform:uppercase; color: #CFE2FF}
-.card .bd{padding:14px 16px}
-.p{margin:0; color:var(--muted); line-height:1.6}
-.ul{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:8px}
-.ul li{
-  padding:10px 10px;
-  border:1px solid var(--line);
-  border-radius: 12px;
-  background: rgba(14,22,48,.55);
-  color: #D7E4FF;
-}
-.tag{font-family:var(--mono); font-size:12px; color: #BBD3FF; opacity:.95}
-.sep{height:1px; background: var(--line); margin:12px 0}
-.code{
-  font-family:var(--mono);
-  font-size:12.5px;
-  line-height:1.55;
-  color:#DDE8FF;
-  background: rgba(10,18,40,.55);
-  border:1px solid var(--line);
-  border-radius: 12px;
-  padding:12px;
-  overflow:auto;
-  white-space:pre-wrap;
-}
-.small{font-size:12px; color:var(--muted)}
-.slides{counter-reset: slide; display:grid; gap:10px}
-.slide{
-  border:1px solid var(--line);
-  border-radius: 14px;
-  background: rgba(14,22,48,.48);
-  overflow:hidden;
-}
-.slide .top{
-  display:flex; justify-content:space-between; gap:10px; align-items:center;
-  padding:10px 12px;
-  border-bottom:1px solid var(--line);
-}
-.slide .num{font-family:var(--mono); font-size:12px; color:#BBD3FF}
-.slide .role{font-size:12px; color:var(--muted)}
-.slide .body{padding:12px}
-.hook{font-weight:820; letter-spacing:-0.02em}
-.martelo{display:inline-block; padding:2px 8px; border-radius:999px; background: rgba(56,189,248,.12); border:1px solid rgba(56,189,248,.25); color:#D7F0FF; font-weight:700}
-.hl{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:850}
-.footerNote{margin-top:12px; color:var(--muted); font-size:12.5px; line-height:1.55}
-</style></head><body><div class="container">
-  <header class="header">
-    <div class="kicker">
-      <span class="badge"><span class="tag">Nicho:</span> Neutro</span>
-      <span class="badge"><span class="tag">Dia:</span> 1</span>
-      <span class="badge"><span class="tag">Formato:</span> Carrossel</span>
-      <span class="badge"><span class="tag">Pilar:</span> Dor</span>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roteiro Reproduzível — Dia 1</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1730CC;
+      --stroke:#223057;
+      --text:#EAF0FF;
+      --muted:#A9B6D6;
+      --muted2:#7E8AAF;
+      --shadow: 0 18px 45px rgba(0,0,0,.45);
+      --r:18px;
+      --g1: linear-gradient(135deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+      --g2: linear-gradient(135deg,rgba(34,197,94,.18),rgba(56,189,248,.14),rgba(251,146,60,.12));
+      --g3: linear-gradient(135deg,#16a34a 0%, #0284c7 55%, #f97316 100%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 15% 20%, rgba(56,189,248,.12), transparent 60%),
+        radial-gradient(1000px 700px at 85% 35%, rgba(34,197,94,.10), transparent 62%),
+        radial-gradient(900px 650px at 55% 95%, rgba(251,146,60,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:#93c5fd; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 50px}
+
+    header{
+      border:1px solid rgba(34,48,87,.65);
+      background: linear-gradient(180deg, rgba(14,23,48,.72), rgba(14,23,48,.45));
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--r) + 6px);
+      overflow:hidden;
+      position:relative;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: var(--g2);
+      pointer-events:none;
+    }
+    .head{
+      position:relative;
+      padding:22px 22px 18px;
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+    .badge{
+      display:inline-flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      font-family:var(--mono);
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .pill{
+      border:1px solid rgba(126,138,175,.35);
+      background: rgba(7,10,18,.35);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+    h1{
+      margin:10px 0 6px;
+      font-size:22px;
+      line-height:1.2;
+      letter-spacing:-.02em;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      max-width:72ch;
+      font-size:14px;
+      line-height:1.55;
+    }
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      cursor:pointer;
+      border:1px solid rgba(34,48,87,.7);
+      background: rgba(7,10,18,.35);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+      font-size:13px;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+    }
+    .btn:hover{border-color: rgba(147,197,253,.55); background: rgba(14,23,48,.55)}
+    .btn:active{transform: translateY(1px)}
+    .btnPrimary{
+      border:0;
+      background: var(--g3);
+      box-shadow: 0 14px 35px rgba(2,132,199,.18);
+    }
+    .btnPrimary:hover{filter:saturate(1.05) brightness(1.02)}
+
+    .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px}
+    @media (min-width: 900px){
+      .grid{grid-template-columns: 1.05fr .95fr}
+    }
+
+    .card{
+      border:1px solid rgba(34,48,87,.65);
+      background: linear-gradient(180deg, rgba(14,23,48,.62), rgba(14,23,48,.38));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(600px 220px at 20% 0%, rgba(56,189,248,.10), transparent 60%),
+                  radial-gradient(520px 240px at 85% 10%, rgba(34,197,94,.08), transparent 60%);
+      pointer-events:none;
+    }
+    .cardInner{position:relative; padding:18px 18px 16px}
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      color:#DCE7FF;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+      font-weight:800;
+    }
+    .card p, .card li{color:var(--muted); font-size:14px; line-height:1.55}
+    .card ul{margin:10px 0 0; padding-left:18px}
+    .card li{margin:6px 0}
+
+    .hr{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(147,197,253,.35), rgba(34,197,94,.22), rgba(251,146,60,.22), transparent);
+      margin:14px 0;
+      border:0;
+    }
+
+    .code{
+      font-family:var(--mono);
+      background: rgba(7,10,18,.35);
+      border:1px solid rgba(34,48,87,.55);
+      border-radius: 14px;
+      padding:14px;
+      overflow:auto;
+      color:#D7E4FF;
+      line-height:1.5;
+      font-size:12.5px;
+      white-space:pre-wrap;
+    }
+
+    .kpi{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .chip{
+      border:1px solid rgba(126,138,175,.35);
+      background: rgba(7,10,18,.30);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .chip strong{color:var(--text); font-weight:800}
+
+    .twoCol{display:grid; grid-template-columns:1fr; gap:12px}
+    @media (min-width: 900px){
+      .twoCol{grid-template-columns:1fr 1fr}
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(14,23,48,.92);
+      border: 1px solid rgba(147,197,253,.35);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(-4px)}
+
+    .mutedSmall{color:var(--muted2); font-size:12px; line-height:1.55}
+    .highlight{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      background: var(--g1);
+      color:#06101b;
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:12px;
+      vertical-align:middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head">
+        <div>
+          <div class="badge">
+            <span class="pill">Nicho: <strong style="color:var(--text)">Neutro</strong></span>
+            <span class="pill">Dia: <strong style="color:var(--text)">1</strong></span>
+            <span class="pill">Pilar: <strong style="color:var(--text)">Passo a passo</strong></span>
+            <span class="pill">Formato: <strong style="color:var(--text)">Reels</strong></span>
+          </div>
+          <h1>“Bom vs Melhor”: 7 upgrades rápidos que dão resultado</h1>
+          <p class="sub">Template universal para qualquer tema: você valida o que a pessoa já faz (bom) e entrega uma troca simples (melhor), repetindo em 5–7 blocos com ritmo rápido. Ideal para aumentar <span class="highlight">retenção</span>, <span class="highlight">salvamentos</span> e <span class="highlight">compartilhamentos</span>.</p>
+          <p class="mutedSmall" style="margin:10px 0 0">Post original: <a href="https://www.instagram.com/p/DN4A_0jAQWI/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DN4A_0jAQWI/</a></p>
+        </div>
+        <div class="actions">
+          <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
+          <a class="btn" href="https://www.instagram.com/p/DN4A_0jAQWI/" target="_blank" rel="noopener noreferrer">Abrir post</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardInner">
+          <h2>Resumo</h2>
+          <p><strong>Ideia central:</strong> “Você está fazendo certo… mas existe um jeito melhor” (contraste + surpresa). A repetição cria um “loop mental” e mantém a pessoa assistindo até o final para ver as próximas trocas.</p>
+          <div class="kpi">
+            <span class="chip"><strong>Duração:</strong> 12–22s</span>
+            <span class="chip"><strong>Blocos:</strong> 5–7</span>
+            <span class="chip"><strong>Cadência:</strong> 0,8–1,6s por bloco</span>
+            <span class="chip"><strong>Entrega:</strong> “troque X por Y”</span>
+          </div>
+          <hr class="hr" />
+          <p><strong>Quando usar:</strong> quando você quer ensinar melhorias rápidas, quebrar “o básico” e posicionar sua visão como upgrade (sem parecer aula longa).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardInner">
+          <h2>Metadados (para calendário)</h2>
+          <ul>
+            <li><strong>Título:</strong> “Bom vs Melhor”: 7 upgrades rápidos que dão resultado</li>
+            <li><strong>Instrução curta:</strong> Grave 5–7 comparações curtas no formato “X é bom… mas Y é melhor”. Mantenha ritmo acelerado, texto na tela (✅ vs ⭐) e CTA para salvar/comentar.</li>
+            <li><strong>Pilar:</strong> Passo a passo</li>
+            <li><strong>Formato:</strong> Reels</li>
+          </ul>
+          <hr class="hr" />
+          <p class="mutedSmall"><strong>Nota:</strong> este roteiro é neutro. Substitua “X/Y” por escolhas do seu tema (ex.: ferramentas, hábitos, abordagens, formatos, scripts, rotinas, equipamentos, estilos, processos).</p>
+        </div>
+      </section>
     </div>
-    <h1 class="h1"><span class="grad">O fenômeno que ninguém nomeou</span> (e como virar o jogo)</h1>
-    <p class="sub">Baseado no post original: <a href="https://www.instagram.com/p/DHlEjCXN-Xy/" target="_blank" rel="noopener noreferrer" style="text-decoration:underline; text-underline-offset:3px;">https://www.instagram.com/p/DHlEjCXN-Xy/</a></p>
-    <div class="row">
-      <button class="btn btnPri" id="copyBtn">Copiar roteiro</button>
-      <span class="small" id="copyStatus"></span>
-    </div>
-  </header>
 
-  <main class="grid">
-    <section class="card">
-      <div class="hd"><h2>Resumo</h2><span class="badge">Objetivo: retenção + compartilhamento</span></div>
-      <div class="bd">
-        <p class="p">Carrossel narrativo de 10 slides para <b>nomear um padrão comportamental</b> (sem depender de um nicho), mostrar que existe uma <b>causa não óbvia</b>, explicar a consequência e entregar <b>ações pequenas e práticas</b>. Fecha com CTA social (comentar/enviar/salvar).</p>
-        <div class="sep"></div>
-        <ul class="ul">
-          <li><span class="martelo">Gancho:</span> referência cultural/fato recente + “alerta” + nome do fenômeno (2–4 palavras).</li>
-          <li><span class="martelo">Virada:</span> “não é só culpa de X” (quebra do óbvio).</li>
-          <li><span class="martelo">Entrega:</span> 4–6 micro-ações aplicáveis hoje.</li>
-        </ul>
-      </div>
-    </section>
-
-    <aside class="card">
-      <div class="hd"><h2>Metadados de criação</h2><span class="badge">4:5</span></div>
-      <div class="bd">
-        <ul class="ul">
-          <li><span class="tag">Canvas</span><br/>1080×1350 (4:5), margens 8–10%.</li>
-          <li><span class="tag">Ritmo</span><br/>1 ideia por slide + 1 frase-martelo no fim.</li>
-          <li><span class="tag">Tom</span><br/>documental/manifesto: direto, humano, sem jargão.</li>
-          <li><span class="tag">Leitura</span><br/>headlines curtas + parágrafos de 3–5 linhas + listas com 3–5 itens.</li>
-        </ul>
-      </div>
-    </aside>
-
-    <section class="card">
-      <div class="hd"><h2>Estrutura</h2><span class="badge">Storytelling → diagnóstico → solução</span></div>
-      <div class="bd">
-        <ul class="ul">
-          <li><b>1. Hook + promessa</b>: alerta + rótulo memorável + micro-CTA “vem entender”.</li>
-          <li><b>2. Cena + tese</b>: descreve o sintoma e afirma: “isso já é real”.</li>
-          <li><b>3. Diagnóstico social</b>: contraste forte (conectado em X, desconectado de Y).</li>
-          <li><b>4. Quebra do óbvio</b>: “não é só culpa de [vilão]” + causa estrutural/sistêmica.</li>
-          <li><b>5. Consequência</b>: impacto emocional/financeiro/relacional (dependendo do tema).</li>
-          <li><b>6. Tese central + conceito</b>: nomeie uma lente (seu “conceito proprietário”).</li>
-          <li><b>7. Exemplos práticos</b>: 4–6 ações simples e específicas.</li>
-          <li><b>8. Virada</b>: esperança realista + palavra destacada.</li>
-          <li><b>9. Síntese</b>: frase forte que fecha o raciocínio.</li>
-          <li><b>10. CTA</b>: comentário + salvar + enviar.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="hd"><h2>Roteiro</h2><span class="badge">Texto base reproduzível</span></div>
-      <div class="bd">
-        <div class="code" id="roteiroTxt">TEMPLATE (Nicho neutro) — Carrossel 10 slides
-
-[Escolha 1 referência cultural/fato recente]
-• uma série/filme/notícia
-• uma tendência no trabalho
-• uma mudança de algoritmo
-• um dado público
-
-[Escolha 1 fenômeno em 2–4 palavras]
-• “A síndrome do sempre-ocupado”
-• “A era do raso”
-• “O ciclo do improviso”
-• “A rotina sem foco”
-
-SLIDE 1 — HOOK + PROMESSA
-“(Referência/fato recente) trouxe um alerta.”
-“A [NOME DO FENÔMENO].”
-“Vem entender >>>”
-
-SLIDE 2 — CENA + TESE
-“Você já reparou que (sintoma do público)…”
-“Isso não é ‘impressão’.”
-“Isso já é real.”
-
-SLIDE 3 — DIAGNÓSTICO SOCIAL (CONTRASTE)
-“Hoje a gente está (muito conectado a X)…
-mas (cada vez mais distante de Y).”
-“E isso cobra um preço.”
-
-SLIDE 4 — QUEBRA DO ÓBVIO + CAUSA
-“E não é só culpa de (vilão óbvio: celular, falta de tempo, preguiça, mercado, etc.).”
-“Tem uma causa menos óbvia por trás:”
-— (causa 1: ambiente/sistema/processo)
-— (causa 2: incentivos/pressão)
-— (causa 3: hábito invisível)
-“E isso empurra a gente pro automático.”
-
-SLIDE 5 — CONSEQUÊNCIA (HEADLINE)
-“Menos (X). Mais (Y).”
-“Na prática, isso vira:
-(2–3 efeitos concretos no dia a dia)
-(1 efeito emocional/relacional)
-(1 efeito de resultado/performance)”
-
-SLIDE 6 — TESE CENTRAL + CONCEITO
-“(Seu sistema/ambiente/processo) influencia (seu resultado/relacionamento/saúde).”
-“Eu chamo isso de: ‘[NOME DO CONCEITO]’.”
-“Isso funciona assim:”
-— (pilar 1)
-— (pilar 2)
-— (pilar 3)
-“Não é só sobre (A). É sobre (B).”
-
-SLIDE 7 — EXEMPLOS PRÁTICOS (4–6)
-“Se você quer começar simples:”
-— (ação pequena #1)
-— (ação pequena #2)
-— (ação pequena #3)
-— (ação pequena #4)
-(+ opcional #5)
-“Isso é [NOME DO CONCEITO] na prática.”
-
-SLIDE 8 — VIRADA + PALAVRA DESTACADA
-“Pode ser que (insight realista, sem romantizar).”
-“Mas nunca é tarde para **[PALAVRA]**.”
-“Comece por (micro-passo de 5–10 minutos).”
-
-SLIDE 9 — SÍNTESE INSPIRACIONAL
-“Talvez (ação específica) seja o primeiro passo
-para (transformação concreta).”
-
-SLIDE 10 — CTA FINAL
-“Qual parte disso mais acontece com você?”
-“Comente 1 palavra.”
-“Salve pra aplicar depois e envie pra alguém que precisa ler isso.”</div>
-        <p class="footerNote">Como deixar neutro: substitua os campos entre parênteses por exemplos do seu contexto (vida, trabalho, estudos, hábitos, negócios). Evite termos técnicos; prefira cena do cotidiano.</p>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="hd"><h2>Slides sugeridos (1..10)</h2><span class="badge">Função + texto exemplo</span></div>
-      <div class="bd">
-        <div class="slides">
-          <div class="slide"><div class="top"><div class="num">Slide 1</div><div class="role">Hook + promessa</div></div><div class="body"><div class="hook">“(Fato recente) trouxe um alerta.”<br/><span class="hl">“A [NOME DO FENÔMENO].”</span><br/>“Vem entender >>>”</div><div class="small" style="margin-top:8px">Meta: curiosidade + rótulo memorável.</div></div></div>
-          <div class="slide"><div class="top"><div class="num">Slide 2</div><div class="role">Cena + tese</div></div><div class="body">“Você já reparou que (sintoma)…”<br/><span class="martelo">“Isso já é real.”</span></div></div>
-          <div class="slide"><div class="top"><div class="num">Slide 3</div><div class="role">Diagnóstico (contraste)</div></div><div class="body">“A gente está (conectado em X)…<br/>mas (distante de Y).”<br/>“E isso vira padrão.”</div></div>
-          <div class="slide"><div class="top"><div class="num">Slide 4</div><div class="role">Quebra do óbvio + causa</div></div><div class="body">“E não é só culpa de (vilão).”<br/>“Tem uma causa menos óbvia:”<br/>— item 1<br/>— item 2<br/>— item 3<br/><span class="martelo">“E isso puxa pro automático.”</span></div></div>
-          <div class="slide"><div class="top"><div class="num">Slide 5</div><div class="role">Consequência</div></div><div class="body"><span class="hl">“Menos X. Mais Y.”</span><br/>“O resultado aparece em (efeitos do dia a dia).”</div></div>
-          <div class="slide"><div class="top"><div class="num">Slide 6</div><div class="role">Tese + conceito</div></div><div class="body">“(Sistema/ambiente) influencia (resultado).”<br/>“Nome disso: <b>‘[CONCEITO]’</b>.”<br/>— pilar 1<br/>— pilar 2<br/>— pilar 3</div></div>
-          <div class="slide"><div class="top"><div class="num">Slide 7</div><div class="role">Ações práticas</div></div><div class="body">“Pra começar simples:”<br/>— ação 1<br/>— ação 2<br/>— ação 3<br/>— ação 4<br/><span class="martelo">“Isso é [CONCEITO] na prática.”</span></div></div>
-          <div class="slide"><div class="top"><div class="num">Slide 8</div><div class="role">Virada + palavra destaque</div></div><div class="body">“Pode ser que (insight).”<br/>“Mas nunca é tarde para <b>**[PALAVRA]**</b>.”<br/>“Comece por (micro-passo).”</div></div>
-          <div class="slide"><div class="top"><div class="num">Slide 9</div><div class="role">Síntese</div></div><div class="body">“Talvez (ação) seja o primeiro passo<br/>para (transformação).”</div></div>
-          <div class="slide"><div class="top"><div class="num">Slide 10</div><div class="role">CTA</div></div><div class="body">“Qual parte mais acontece com você?”<br/><b>“Comente 1 palavra.”</b><br/>“Salve e envie pra alguém.”</div></div>
+    <section class="card" style="margin-top:14px">
+      <div class="cardInner">
+        <h2>Estrutura</h2>
+        <div class="twoCol">
+          <div>
+            <p><strong>Sequência (simples e reproduzível):</strong></p>
+            <ul>
+              <li><strong>Hook (1–2s):</strong> “Tá bom… mas dá pra ficar muito melhor com uma troca.”</li>
+              <li><strong>Contexto (0,5–1s):</strong> “7 upgrades rápidos em [tema].”</li>
+              <li><strong>Blocos 1–7 (10–18s):</strong> repetir padrão “bom vs melhor”.</li>
+              <li><strong>Fechamento (1–2s):</strong> CTA de salvar + comentário com palavra-chave.</li>
+              <li><strong>Loop (opcional):</strong> última frase conecta ao hook (“Quer mais trocas assim?”).</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Bloco padrão (1 upgrade):</strong></p>
+            <ul>
+              <li><strong>Validação:</strong> “X é bom/funciona…”</li>
+              <li><strong>Virada:</strong> “mas Y é melhor porque…”</li>
+              <li><strong>Efeito percebido:</strong> 2–3 adjetivos/benefícios curtos</li>
+              <li><strong>Remove objeção:</strong> “sem complicar / sem gastar mais / sem parecer forçado”</li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="card">
-      <div class="hd"><h2>Elementos visuais</h2><span class="badge">Dark + high-tech</span></div>
-      <div class="bd">
-        <ul class="ul">
-          <li><b>Imagens</b>: cenas cotidianas que representem o “sintoma” (ex.: pessoa isolada, excesso de abas, mesa bagunçada, silêncio em grupo, etc.).</li>
-          <li><b>Overlay</b>: faixa escura/translúcida 35–55% onde tiver texto para legibilidade.</li>
-          <li><b>Hierarquia</b>: headline gigante (2–6 palavras) + bloco menor com explicação.</li>
-          <li><b>Destaque</b>: 1 palavra por slide em cor diferente (use o degradê como assinatura).</li>
-          <li><b>Consistência</b>: mesma margem, mesma posição de texto (alternar 2 layouts no máximo).</li>
-        </ul>
-        <div class="sep"></div>
-        <div class="code">Sugestão de tipografia
-- Headline: Anton / Bebas Neue / Oswald (Bold)
-- Texto: Inter / Montserrat (SemiBold)
+    <section class="card" style="margin-top:14px">
+      <div class="cardInner">
+        <h2>Roteiro (script pronto + campos para preencher)</h2>
+        <div class="code" id="script">
+HOOK (escolha 1):
+1) “Você tá fazendo certo… mas não do jeito mais eficiente.”
+2) “Isso é bom. Mas isso aqui é melhor.”
+3) “Quer melhorar [RESULTADO] com trocas simples?”
 
-Sugestão de tratamento
-- Contraste alto (texto claro)
-- Granulado leve (opcional) para “documental”
-- Desfoque suave no fundo para priorizar leitura</div>
+PROMESSA (1 linha):
+“Em 20 segundos: 7 upgrades rápidos em [TEMA], sem complicar.”
+
+BLOCOS (repita 5–7x):
+1) “[X] é bom… MAS [Y] é melhor: fica [BENEFÍCIO 1], [BENEFÍCIO 2] e [BENEFÍCIO 3].”
+2) “[X] funciona… MAS troca por [Y] e fica [BENEFÍCIO 1], sem [OBJEÇÃO].”
+3) “Se você quer [OBJETIVO], faz [Y] em vez de [X].”
+
+LISTA SUGERIDA (exemplo neutro — adapte ao seu tema):
+1) “Fazer do jeito ‘padrão’ é bom… MAS fazer com um checklist é melhor: mais rápido, consistente e sem retrabalho.”
+2) “Começar por ‘tudo ao mesmo tempo’ é bom… MAS começar pelo essencial é melhor: mais claro, leve e sustentável.”
+3) “Usar só uma fonte é bom… MAS combinar 2 referências é melhor: mais completo, mais seguro e mais confiável.”
+4) “Executar sem medir é bom… MAS medir 1 métrica-chave é melhor: você ajusta rápido, melhora e escala.”
+5) “Resolver no improviso é bom… MAS ter um template é melhor: padroniza, acelera e reduz erros.”
+6) “Fazer sozinho é bom… MAS pedir feedback cedo é melhor: economiza tempo, melhora qualidade e evita surpresa.”
+7) “Entregar ‘ok’ é bom… MAS entregar com 1 detalhe extra é melhor: mais profissional, memorável e compartilhável.”
+
+FECHAMENTO + LOOP:
+“Quer que eu faça uma versão disso pra [SEU CONTEXTO]? Comenta ‘UPGRADE’. E salva pra usar depois.”
+        </div>
+        <p class="mutedSmall" style="margin:10px 0 0"><strong>Dica de preenchimento rápido:</strong> escolha um objetivo (ex.: mais claro, mais rápido, mais profissional, mais barato, mais consistente) e mantenha os benefícios sempre no mesmo tom.</p>
       </div>
     </section>
 
-    <section class="card">
-      <div class="hd"><h2>Copy e ganchos</h2><span class="badge">Copiável</span></div>
-      <div class="bd">
-        <ul class="ul">
-          <li><b>Gancho “alerta”</b>: “Isso parece normal… até você ver o efeito colateral.”</li>
-          <li><b>Gancho “nomeia o fenômeno”</b>: “Tem um nome pro que você está vivendo: [fenômeno].”</li>
-          <li><b>Quebra do óbvio</b>: “E não é só culpa de [vilão].”</li>
-          <li><b>Contraste</b>: “Mais [X]. Menos [Y].”</li>
-          <li><b>Frase-martelo</b>: “O problema não é falta de vontade. É o sistema.”</li>
-          <li><b>Esperança realista</b>: “Você não resolve tudo hoje. Mas você começa hoje.”</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="hd"><h2>CTA</h2><span class="badge">Baixa fricção</span></div>
-      <div class="bd">
-        <ul class="ul">
-          <li><b>Slide 1 (micro-CTA)</b>: “Vem entender >>>” / “Desliza.”</li>
-          <li><b>Slide 10 (principal)</b>: “Comente 1 palavra: ‘eu’ / ‘sim’ / ‘preciso’.”</li>
-          <li><b>CTA de valor</b>: “Salve pra aplicar depois.”</li>
-          <li><b>CTA social</b>: “Envie pra alguém que vive isso.”</li>
-          <li><b>CTA de pesquisa</b>: “Qual item mais te pegou: 1, 2, 3 ou 4?”</li>
+    <section class="card" style="margin-top:14px">
+      <div class="cardInner">
+        <h2>Elementos visuais</h2>
+        <ul>
+          <li><strong>Formato:</strong> talking head + texto na tela, ou só texto + b-roll do tema.</li>
+          <li><strong>Layout fixo:</strong> linha 1 “X ✅ (bom)”; linha 2 “Y ⭐ (melhor)”; linha 3 (rápida) “Efeito: [3 palavras]”.</li>
+          <li><strong>Destaque do “MAS”:</strong> 3–5 frames com a palavra “MAS” grande.</li>
+          <li><strong>Ritmo:</strong> jump cuts + zoom sutil (2–4%) para manter energia.</li>
+          <li><strong>Paleta:</strong> use 1 cor para “✅ bom” e outra para “⭐ melhor” (consistente).</li>
+          <li><strong>Legenda na tela:</strong> sincronize apenas palavras-chave (X, Y, “MAS”, 2 adjetivos).</li>
         </ul>
       </div>
     </section>
 
-    <section class="card">
-      <div class="hd"><h2>Checklist</h2><span class="badge">Produção rápida</span></div>
-      <div class="bd">
-        <ul class="ul">
-          <li><b>Roteiro</b>: definiu (1) referência, (2) fenômeno em 2–4 palavras, (3) vilão óbvio, (4) causa não óbvia, (5) 4 ações.</li>
-          <li><b>Texto</b>: headlines com no máximo 6–8 palavras; parágrafos com 3–5 linhas; listas com 3–5 itens.</li>
-          <li><b>Retenção</b>: slide 4 tem “não é só culpa de…”; slide 7 entrega ações específicas.</li>
-          <li><b>Design</b>: contraste ok; overlay aplicado; 1 palavra destacada por slide; margens iguais.</li>
-          <li><b>Publicação</b>: legenda com 1 parágrafo + bullets + pergunta final; hashtags mínimas (3–8) e específicas (se houver nicho).</li>
-          <li><b>Revisão</b>: ortografia; tamanho do texto (não estourar); consistência de capitalização.</li>
+    <section class="card" style="margin-top:14px">
+      <div class="cardInner">
+        <h2>Copy e ganchos</h2>
+        <div class="twoCol">
+          <div>
+            <p><strong>Hooks (copiar/colar):</strong></p>
+            <ul>
+              <li>“Tá certo… mas dá pra ficar melhor com uma troca.”</li>
+              <li>“Se você faz [X], tenta [Y] hoje.”</li>
+              <li>“Isso é bom. Isso aqui é melhor. Vou te mostrar 7.”</li>
+              <li>“Pare de [X]. Faça [Y].” (mais provocativo)</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Adjetivos/efeitos (escolha 2–3 por bloco):</strong></p>
+            <ul>
+              <li>mais claro, mais rápido, mais leve</li>
+              <li>mais profissional, mais consistente, mais confiável</li>
+              <li>mais simples, mais direto, mais escalável</li>
+              <li>sem retrabalho, sem custo extra, sem “parecer complicado”</li>
+            </ul>
+          </div>
+        </div>
+        <hr class="hr" />
+        <p><strong>Legenda (modelo curto):</strong> “✅ Bom vs ⭐ Melhor (pra [OBJETIVO]). Salva pra consultar. Quer uma lista pro seu caso? Comenta ‘UPGRADE’ + seu contexto.”</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="cardInner">
+        <h2>CTA</h2>
+        <ul>
+          <li><strong>Salvar:</strong> “Salva pra usar quando você for fazer [ação do tema].”</li>
+          <li><strong>Comentário com palavra-chave:</strong> “Comenta ‘UPGRADE’ que eu mando mais 10 ideias.”</li>
+          <li><strong>Engajamento rápido:</strong> “Qual upgrade você vai testar hoje: 1, 2, 3, 4, 5, 6 ou 7?”</li>
+          <li><strong>Personalização:</strong> “Quer versão pro seu cenário? Me diz: [3 opções de contexto].”</li>
         </ul>
       </div>
     </section>
 
-    <section class="card">
-      <div class="hd"><h2>Variações</h2><span class="badge">Mesma estrutura, ângulos diferentes</span></div>
-      <div class="bd">
-        <ul class="ul">
-          <li><b>Variação A (Mito vs Verdade)</b>: slide 4 vira “Mito: é só [vilão]. Verdade: também é [causa].”</li>
-          <li><b>Variação B (Autoridade)</b>: inclua um dado/estudo/experiência no slide 3 (“eu observei isso em X casos”).</li>
-          <li><b>Variação C (Checklist)</b>: slide 7 vira checklist “se 3+ itens são sim, você está no fenômeno”.</li>
-          <li><b>Variação D (Prova)</b>: adicione antes/depois no slide 8 (como muda após 7 dias de micro-ações).</li>
+    <section class="card" style="margin-top:14px">
+      <div class="cardInner">
+        <h2>Checklist (criação e gravação)</h2>
+        <ul>
+          <li><strong>1) Objetivo:</strong> defina 1 resultado (ex.: mais rápido, mais claro, mais elegante, mais barato).</li>
+          <li><strong>2) Lista do “bom”:</strong> anote 5–7 escolhas comuns do seu tema (o que todo mundo já faz).</li>
+          <li><strong>3) O “melhor”:</strong> para cada item, crie 1 upgrade com <em>uma única troca</em> (sem mudar tudo).</li>
+          <li><strong>4) Escreva no template:</strong> “X é bom… mas Y é melhor: [2–3 benefícios].”</li>
+          <li><strong>5) Remova objeção:</strong> adicione 1 frase padrão (“sem complicar / sem gastar mais / sem parecer forçado”).</li>
+          <li><strong>6) Ritmo:</strong> grave em cortes rápidos (12–22s total).</li>
+          <li><strong>7) Texto na tela:</strong> padrão fixo “✅ vs ⭐” com 1 palavra por linha (evite parágrafos).</li>
+          <li><strong>8) Final:</strong> CTA de “salvar + comentar palavra-chave”.</li>
+          <li><strong>9) Legenda:</strong> repita os 7 upgrades em lista (aumenta salvamentos).</li>
+          <li><strong>10) Revisão:</strong> assista sem som: dá pra entender só pelo texto? Se não, simplifique.</li>
         </ul>
       </div>
     </section>
 
-  </main>
-</div>
+    <section class="card" style="margin-top:14px">
+      <div class="cardInner">
+        <h2>Variações</h2>
+        <ul>
+          <li><strong>Variação A (Mito vs Verdade):</strong> “Parece melhor fazer X… mas na prática Y dá mais resultado.”</li>
+          <li><strong>Variação B (Antes/Depois):</strong> mostre 1 exemplo visual por bloco (antes = ✅, depois = ⭐).</li>
+          <li><strong>Variação C (Ranking):</strong> “Do ok ao uau” (nível 1 a 7) mantendo a mesma lógica.</li>
+          <li><strong>Variação D (Para perfis diferentes):</strong> “Se você é [tipo 1], faça Y1; se é [tipo 2], faça Y2.”</li>
+          <li><strong>Variação E (Série):</strong> “Parte 1/3” com o mesmo template (perfeito para consistência semanal).</li>
+        </ul>
+      </div>
+    </section>
 
-<script>
-(function(){
-  const btn = document.getElementById('copyBtn');
-  const txt = document.getElementById('roteiroTxt');
-  const status = document.getElementById('copyStatus');
+    <div class="toast" id="toast">Roteiro copiado.</div>
+  </div>
 
-  function setStatus(msg){
-    status.textContent = msg;
-    setTimeout(()=>{ status.textContent = ''; }, 1800);
-  }
+  <script>
+    const btn = document.getElementById('copyBtn');
+    const scriptEl = document.getElementById('script');
+    const toast = document.getElementById('toast');
 
-  btn.addEventListener('click', async ()=>{
-    const content = txt.innerText.trim();
-    try{
-      await navigator.clipboard.writeText(content);
-      setStatus('Roteiro copiado.');
-    }catch(e){
-      // Fallback
-      const ta = document.createElement('textarea');
-      ta.value = content;
-      ta.style.position = 'fixed';
-      ta.style.left = '-9999px';
-      document.body.appendChild(ta);
-      ta.select();
-      try{
-        document.execCommand('copy');
-        setStatus('Roteiro copiado.');
-      }catch(err){
-        setStatus('Não foi possível copiar.');
-      }
-      document.body.removeChild(ta);
+    function showToast(){
+      toast.classList.add('show');
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=>toast.classList.remove('show'), 1400);
     }
-  });
-})();
-</script>
-</body></html>
+
+    async function copyText(text){
+      try{
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          ta.style.top = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        showToast();
+      } catch(e){
+        alert('Não foi possível copiar automaticamente. Selecione e copie manualmente.');
+      }
+    }
+
+    btn.addEventListener('click', ()=>{
+      const text = scriptEl.innerText.trim();
+      copyText(text);
+    });
+  </script>
+</body>
+</html>
