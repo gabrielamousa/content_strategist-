@@ -1,570 +1,505 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dia 22 — Roteiro reproduzível</title>
-  <style>
-    :root{
-      --bg0:#070A12;
-      --bg1:#0B1020;
-      --card: rgba(255,255,255,.06);
-      --card2: rgba(255,255,255,.08);
-      --text:#EAF0FF;
-      --muted: rgba(234,240,255,.72);
-      --muted2: rgba(234,240,255,.55);
-      --stroke: rgba(255,255,255,.12);
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
-      --r: 18px;
-      --g1: linear-gradient(90deg, #22c55e 0%, #38bdf8 45%, #fb923c 100%);
-      --g2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.14), rgba(251,146,60,.14));
-      --good:#34d399;
-      --warn:#fb923c;
-      --info:#38bdf8;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 22 — Roteiro Reels (Neutro)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0A1022;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.08);
+    --stroke: rgba(255,255,255,.10);
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,.72);
+    --muted2: rgba(234,240,255,.55);
+    --g1: linear-gradient(135deg, #22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --g2: linear-gradient(90deg, rgba(34,197,94,.25), rgba(56,189,248,.25), rgba(251,146,60,.25));
+    --shadow: 0 10px 30px rgba(0,0,0,.45);
+    --radius: 18px;
+    --radius2: 14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: var(--sans);
-      color: var(--text);
-      background:
-        radial-gradient(1200px 600px at 18% 10%, rgba(56,189,248,.18), transparent 55%),
-        radial-gradient(900px 500px at 82% 18%, rgba(34,197,94,.16), transparent 55%),
-        radial-gradient(800px 500px at 50% 85%, rgba(251,146,60,.14), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      min-height:100vh;
-    }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    font-family: var(--sans);
+    color: var(--text);
+    background:
+      radial-gradient(1000px 600px at 15% -10%, rgba(56,189,248,.18), transparent 60%),
+      radial-gradient(900px 550px at 90% 10%, rgba(34,197,94,.15), transparent 55%),
+      radial-gradient(900px 700px at 70% 110%, rgba(251,146,60,.14), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
 
-    a{color:inherit}
+  a{ color: #93c5fd; text-decoration: none; }
+  a:hover{ text-decoration: underline; }
 
-    .wrap{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
+  .wrap{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 26px 18px 60px;
+  }
 
-    header{
-      border: 1px solid var(--stroke);
-      background: var(--g2);
-      box-shadow: var(--shadow);
-      border-radius: calc(var(--r) + 6px);
-      padding: 18px 18px;
-      position: relative;
-      overflow:hidden;
-    }
-    header:before{
-      content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(700px 200px at 20% 0%, rgba(56,189,248,.22), transparent 60%),
-                  radial-gradient(600px 200px at 70% 0%, rgba(34,197,94,.20), transparent 60%),
-                  radial-gradient(500px 220px at 90% 40%, rgba(251,146,60,.16), transparent 60%);
-      filter: blur(8px);
-      opacity:.9;
-      pointer-events:none;
-    }
-    .hgrid{position:relative; display:grid; gap:12px; grid-template-columns: 1.2fr .8fr; align-items:start}
-    @media (max-width: 860px){ .hgrid{grid-template-columns:1fr; } }
+  header{
+    border: 1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    padding: 18px 18px;
+    position: relative;
+    overflow:hidden;
+  }
+  header::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g2);
+    opacity:.35;
+    filter: blur(18px);
+    pointer-events:none;
+  }
 
-    .k{
-      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .pill{
-      border:1px solid var(--stroke);
-      background: rgba(0,0,0,.18);
-      padding:6px 10px;
-      border-radius: 999px;
-      backdrop-filter: blur(10px);
-    }
-    .pill b{color: var(--text); font-weight: 600}
+  .toprow{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    position:relative;
+  }
 
-    h1{
-      margin: 10px 0 4px;
-      font-size: clamp(20px, 2.5vw, 28px);
-      letter-spacing: -.02em;
-      line-height:1.15;
-    }
-    .sub{
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 14px;
-    }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--stroke);
+    background: rgba(0,0,0,.25);
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing:.2px;
+  }
 
-    .actions{
-      position:relative;
-      display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; align-items:center;
-    }
-    @media (max-width: 860px){ .actions{justify-content:flex-start;} }
+  .dot{
+    width:10px; height:10px; border-radius:99px;
+    background: var(--g1);
+    box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+  }
 
-    .btn{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding:10px 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      font-size: 14px;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      transition: transform .08s ease, background .2s ease, border-color .2s ease;
-      user-select:none;
-    }
-    .btn:hover{background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18)}
-    .btn:active{transform: translateY(1px)}
-    .btn.primary{
-      background: rgba(0,0,0,.22);
-      border-color: rgba(255,255,255,.16);
-      position:relative;
-    }
-    .btn.primary:before{
-      content:"";
-      position:absolute; inset:-1px;
-      border-radius: 12px;
-      padding:1px;
-      background: var(--g1);
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events:none;
-      opacity:.9;
-    }
+  h1{
+    font-size: 20px;
+    margin: 12px 0 6px;
+    position:relative;
+  }
+  .subtitle{
+    color: var(--muted);
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    position:relative;
+  }
 
-    main{margin-top: 16px; display:grid; grid-template-columns: 1fr; gap: 14px;}
+  .grid{
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  @media (max-width: 920px){
+    .grid{ grid-template-columns: 1fr; }
+  }
 
-    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap: 14px;}
-    @media(max-width: 900px){ .grid2{grid-template-columns:1fr;} }
+  .card{
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,.05);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+  }
 
-    .card{
-      border: 1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.045));
-      box-shadow: var(--shadow);
-      border-radius: var(--r);
-      overflow:hidden;
-    }
-    .card .hd{
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .card .hd h2{margin:0; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted)}
-    .badge{
-      font-size:12px;
-      padding: 5px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      color: var(--muted);
-      white-space:nowrap;
-    }
-    .badge .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;background: var(--info); box-shadow: 0 0 0 3px rgba(56,189,248,.12)}
+  .card h2{
+    margin:0 0 10px;
+    font-size: 15px;
+    letter-spacing:.2px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
 
-    .bd{padding: 14px 16px 16px; color: var(--muted); line-height: 1.6; font-size: 14px;}
-    .bd b, .bd strong{color: var(--text)}
-    .bd ul{margin: 10px 0 0 18px; padding:0}
-    .bd li{margin: 6px 0}
-    .bd code{font-family: var(--mono); font-size: 12.5px; color: rgba(234,240,255,.86)}
+  .chip{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: rgba(234,240,255,.8);
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--stroke);
+    background: rgba(0,0,0,.28);
+  }
 
-    .callout{
-      margin-top: 10px;
-      border: 1px dashed rgba(255,255,255,.18);
-      background: rgba(0,0,0,.18);
-      border-radius: 14px;
-      padding: 12px 12px;
-    }
+  .lead{
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.6;
+    font-size: 14px;
+  }
 
-    .gradline{
-      height: 2px;
-      background: var(--g1);
-      opacity: .95;
-    }
+  ul{ margin: 10px 0 0 18px; color: var(--muted); }
+  li{ margin: 6px 0; line-height: 1.55; }
 
-    .script{
-      white-space: pre-wrap;
-      font-family: var(--mono);
-      font-size: 12.8px;
-      line-height: 1.65;
-      color: rgba(234,240,255,.88);
-      background: rgba(0,0,0,.22);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 14px;
-      padding: 14px;
-      margin: 10px 0 0;
-    }
+  .highlight{
+    background: var(--g1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 750;
+  }
 
-    .cols{display:grid; grid-template-columns: 1fr 1fr; gap: 12px;}
-    @media(max-width: 900px){ .cols{grid-template-columns:1fr;} }
+  .callout{
+    margin-top: 12px;
+    padding: 12px 12px;
+    border-radius: var(--radius2);
+    border: 1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
+  }
 
-    .tiny{font-size: 12px; color: var(--muted2)}
+  .cols{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 720px){
+    .cols{ grid-template-columns: 1fr; }
+  }
 
-    .toast{
-      position: fixed;
-      left: 50%;
-      bottom: 16px;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,.72);
-      border: 1px solid rgba(255,255,255,.18);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.45);
-      font-size: 13px;
-      opacity: 0;
-      pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
-      backdrop-filter: blur(10px);
-      max-width: min(560px, calc(100% - 24px));
-      text-align:center;
-    }
-    .toast.show{opacity: 1; transform: translateX(-50%) translateY(-2px);}
+  .pillrow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
 
-    .link{
-      color: rgba(234,240,255,.9);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(255,255,255,.22);
-    }
-    .link:hover{border-bottom-color: rgba(255,255,255,.5)}
+  .btnbar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top: 12px;
+  }
 
-  </style>
+  button{
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor:pointer;
+    font-weight: 650;
+    letter-spacing:.2px;
+  }
+  button:hover{ background: rgba(255,255,255,.09); }
+
+  .primary{
+    background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.16), rgba(251,146,60,.16));
+  }
+
+  pre{
+    margin: 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--stroke);
+    background: rgba(0,0,0,.28);
+    padding: 14px;
+    overflow:auto;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+  }
+
+  code{
+    font-family: var(--mono);
+    color: rgba(234,240,255,.86);
+    font-size: 12.5px;
+    line-height: 1.6;
+    white-space: pre;
+  }
+
+  .footer{
+    margin-top: 16px;
+    color: var(--muted2);
+    font-size: 12px;
+    line-height:1.6;
+  }
+
+  .kpi{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  @media (max-width: 720px){
+    .kpi{ grid-template-columns: 1fr; }
+  }
+
+  .kpi .mini{
+    padding: 12px;
+    border-radius: var(--radius2);
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+  }
+  .mini .t{ font-size: 12px; color: var(--muted2); margin:0 0 6px; }
+  .mini .v{ font-size: 14px; color: var(--muted); margin:0; }
+
+  .hr{
+    height:1px;
+    background: rgba(255,255,255,.10);
+    margin: 12px 0;
+  }
+</style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="hgrid">
-        <div>
-          <div class="k">
-            <span class="pill"><b>Nicho:</b> Neutro</span>
-            <span class="pill"><b>Dia:</b> 22</span>
-            <span class="pill"><b>Formato:</b> Reels</span>
-            <span class="pill"><b>Pilar:</b> Autoridade</span>
-          </div>
-          <h1>Por que esse Reels performou tão bem (modelo replicável)</h1>
-          <p class="sub">Objetivo: transformar um Reels “explicativo + provocativo” em um <strong>template reproduzível</strong> para qualquer tema, mantendo retenção, salvamentos e comentários.</p>
-          <p class="sub tiny">Post original: <a class="link" href="https://www.instagram.com/p/DSGSCgpEZwA/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DSGSCgpEZwA/</a></p>
-        </div>
-        <div class="actions">
-          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
-          <a class="btn" href="https://www.instagram.com/p/DSGSCgpEZwA/" target="_blank" rel="noopener noreferrer">Abrir post</a>
-        </div>
+      <div class="toprow">
+        <div class="badge"><span class="dot"></span><span><strong>Nicho:</strong> Neutro</span><span class="chip">Dia 22</span><span class="chip">Formato: Reels</span><span class="chip">Pilar: Passo a passo</span></div>
+        <div class="badge"><strong>Original:</strong> <a href="https://www.instagram.com/p/DVb7zVigW-n/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DVb7zVigW-n/</a></div>
       </div>
+      <h1><span class="highlight">O básico funciona (sem sofrer):</span> roteiro neutro reproduzível</h1>
+      <p class="subtitle">Modelo para qualquer área: educação, produtividade, finanças, estética, culinária, treino, carreira, marketing, etc. A lógica é: <strong>contraste + demo prática + opinião controlada + instrução salvável</strong>.</p>
     </header>
 
-    <main>
+    <div class="grid">
       <section class="card">
-        <div class="hd">
-          <h2>Resumo</h2>
-          <span class="badge"><span class="dot"></span>engenharia de performance</span>
+        <h2>Resumo <span class="chip">Objetivo</span></h2>
+        <p class="lead">Criar retenção e ações (salvar/compartilhar) mostrando que o “básico” dá resultado, mas <strong>não precisa ser chato/doloroso</strong>. Você entrega um <strong>método simples</strong> (passo a passo) e corta objeções com um <strong>reframe</strong> que gera comentários.</p>
+        <div class="kpi">
+          <div class="mini"><p class="t">Retenção</p><p class="v">cortes rápidos + payoff visual no final</p></div>
+          <div class="mini"><p class="t">Saves</p><p class="v">instrução específica (tempo, checklist, template)</p></div>
+          <div class="mini"><p class="t">Compartilhamento</p><p class="v">humor + “manda pra quem…”</p></div>
         </div>
-        <div class="gradline"></div>
-        <div class="bd">
-          <div class="cols">
-            <div>
-              <strong>O que faz performar:</strong>
-              <ul>
-                <li><strong>Hook com contradição</strong> (termo forte) + <strong>benefício claro</strong>.</li>
-                <li><strong>Permissão emocional</strong> que vira pedido de <strong>salvar</strong> (métrica-chave).</li>
-                <li><strong>Frases-lei</strong> curtas, recortáveis, que criam “picos” de retenção.</li>
-                <li><strong>Exemplo concreto</strong> (número/cotidiano) pra reduzir abstração.</li>
-                <li><strong>Vilão externo</strong> pra urgência (“se você não decide, alguém decide”).</li>
-                <li><strong>Crescendo</strong>: leve → direto → profundo (propósito/identidade).</li>
-              </ul>
-            </div>
-            <div>
-              <strong>Quando usar esse modelo:</strong>
-              <ul>
-                <li>Temas que pedem <strong>choque de realidade</strong> + motivação (rotina, saúde, estudos, vendas, carreira).</li>
-                <li>Quando você quer <strong>salvamentos</strong> e <strong>comentários</strong> (não só likes).</li>
-              </ul>
-              <div class="callout">
-                <strong>Resultado esperado:</strong> retenção alta (por “pontos de virada”), mais salvamentos (por permissão + utilidade) e comentários (CTA emocional).
-              </div>
-            </div>
-          </div>
+        <div class="callout">
+          <p class="lead"><strong class="highlight">Promessa neutra:</strong> “Você vai aplicar o básico com mais prazer/clareza e sem drama — com um passo a passo simples.”</p>
         </div>
       </section>
 
-      <div class="grid2">
-        <section class="card">
-          <div class="hd">
-            <h2>Estrutura (sequência replicável)</h2>
-            <span class="badge">11 blocos</span>
-          </div>
-          <div class="gradline"></div>
-          <div class="bd">
-            <ol style="margin:0 0 0 18px; padding:0">
-              <li><strong>Contradição + promessa</strong> (polêmico + benefício).</li>
-              <li><strong>Permissão emocional</strong> + <strong>gatilho de salvar</strong>.</li>
-              <li><strong>Regra central</strong> (1 frase, memorável).</li>
-              <li><strong>Exemplo simples</strong> (número/rotina).</li>
-              <li><strong>Dilema</strong> (dor agora vs dor depois).</li>
-              <li><strong>Vilão externo</strong> (quem decide por você).</li>
-              <li><strong>Frase-lei #1</strong> (mantra curto).</li>
-              <li><strong>Prova de plausibilidade</strong> (conta rápida).</li>
-              <li><strong>Reenquadramento de valor</strong> (prazer curto vs ganho longo).</li>
-              <li><strong>Fechamento aspiracional</strong> (identidade/propósito).</li>
-              <li><strong>CTA conversacional</strong> (opinião emocional + comentário).</li>
-            </ol>
-            <div class="callout">
-              <strong>Regra de ouro:</strong> alternar <strong>ordem → exemplo → consequência</strong> a cada 1–2 frases.
-            </div>
-          </div>
-        </section>
+      <section class="card">
+        <h2>Estrutura <span class="chip">Sequência</span></h2>
+        <ul>
+          <li><strong>0–2s:</strong> Hook de contraste (“Sim, X funciona… mas não precisa Y”).</li>
+          <li><strong>2–5s:</strong> Quem sou + posicionamento + micro-CTA de seguir.</li>
+          <li><strong>5–20s:</strong> Demonstração prática com visual forte (mãos/objeto/processo).</li>
+          <li><strong>20–35s:</strong> Técnica simples + “por que funciona” em 1 frase.</li>
+          <li><strong>35–50s:</strong> Objeção antecipada + opinião controlada (gera comentários sem extremismo).</li>
+          <li><strong>50–60s:</strong> Instrução salvável + CTA duplo (salvar + compartilhar).</li>
+        </ul>
+        <div class="pillrow">
+          <span class="chip">Contraste</span>
+          <span class="chip">Humor leve</span>
+          <span class="chip">Reframe</span>
+          <span class="chip">Payoff</span>
+          <span class="chip">Template</span>
+        </div>
+      </section>
+    </div>
 
-        <section class="card">
-          <div class="hd">
-            <h2>Elementos visuais</h2>
-            <span class="badge">edição e tela</span>
-          </div>
-          <div class="gradline"></div>
-          <div class="bd">
-            <strong>Padrões de edição (rápidos e reproduzíveis):</strong>
-            <ul>
-              <li><strong>Jump cuts</strong> a cada 1–2 frases (tirar respiros).</li>
-              <li><strong>Punch-in</strong> leve nas frases-lei (zoom 5–10%).</li>
-              <li><strong>SFX</strong> sutil (whoosh) nas viradas + pop em palavras-chave.</li>
-              <li><strong>Legendas dinâmicas</strong>: 1–3 palavras por linha; destacar o núcleo.</li>
-              <li><strong>Tela escura</strong> ou fundo simples nas frases mais fortes (silêncio visual).</li>
-            </ul>
-            <strong>Textos na tela (template):</strong>
-            <ul>
-              <li><code>CONSELHOS “{POLÊMICO}” pra {OBJETIVO}</code></li>
-              <li><code>{REGRA CENTRAL.}</code></li>
-              <li><code>{NÚMERO} no começo = {GANHO}</code></li>
-              <li><code>{NÚMERO} no fim = {TENTAÇÃO}</code></li>
-              <li><code>Se você não decide, {VILÃO} decide.</code></li>
-            </ul>
-          </div>
-        </section>
+    <section class="card" style="margin-top:14px;">
+      <h2>Roteiro <span class="chip">Copiável</span></h2>
+      <div class="btnbar">
+        <button class="primary" id="copyBtn">Copiar roteiro</button>
+        <button id="toggleBtn">Mostrar/ocultar roteiro</button>
       </div>
+      <div class="hr"></div>
+      <div id="scriptWrap">
+        <pre><code id="scriptText">ROTEIRO (REELS) — MODELO NEUTRO
 
-      <section class="card" id="roteiro">
-        <div class="hd">
-          <h2>Roteiro (modelo pronto para preencher)</h2>
-          <span class="badge">25–45s</span>
-        </div>
-        <div class="gradline"></div>
-        <div class="bd">
-          <div class="tiny">Preencha os campos entre chaves { } para adaptar a qualquer tema.</div>
-          <div class="script" id="scriptText">[HOOK — 1–2s]
-“Conselhos {POLÊMICOS/DUROS/PROIBIDOS} pra você {RESULTADO DESEJADO} muito antes do previsto.”
-“Se você não estiver pronto(a) hoje, salva e volta quando estiver.”
+[0–2s | HOOK / CONTRASTE]
+TEXTO NA TELA: “O básico funciona. Mas não precisa ser sofrido.”
+FALA: “Sim, o básico funciona… mas isso NÃO significa fazer do jeito mais chato possível.”
 
-[SETUP — 2–5s]
-“Porque se você faz do jeito ‘normal’, você {PROBLEMA RECORRENTE}.”
+[2–5s | POSICIONAMENTO + MICRO-CTA]
+TEXTO NA TELA: “Sem drama | passo a passo prático”
+FALA: “Eu sou [NOME] e aqui eu te ensino [RESULTADO] com [ABORDAGEM]. Segue pra ver mais ideias simples assim.”
 
-[REGRA CENTRAL — 5–10s]
-“{REGRA CENTRAL EM 1 FRASE}.”
-(Ex.: “Antes. Nunca depois.”)
+[5–20s | DEMONSTRAÇÃO (VISUAL FORTE)]
+CENA: você executa o básico + 1 ferramenta/ritual (ex.: planilha, template, atalho, checklist, ferramenta, app, organização no quadro, montagem, preparação).
+FALA (curta, em cortes):
+- “Olha isso aqui…”
+- “Em 10 segundos você resolve a parte chata.”
+HUMOR/OBJETO RECORRENTE (opcional): “Esse [OBJETO/FERRAMENTA] trabalha mais do que eu em dia de correria.”
 
-[EXEMPLO CONCRETO — 10–16s]
-“{NÚMERO PEQUENO} no começo = {BENEFÍCIO/PROTEÇÃO}.”
-“{NÚMERO PEQUENO} no fim = {TENTAÇÃO/ESCAPE}.”
+[20–35s | TÉCNICA + ‘POR QUE’]
+TEXTO NA TELA: “Truque: [TÉCNICA]”
+FALA: “O truque é [TÉCNICA SIMPLES]. Por quê? Porque isso [BENEFÍCIO DIRETO: economiza tempo / reduz erro / aumenta consistência / melhora qualidade].”
 
-[DILEMA — 16–22s]
-“{ESFORÇO AGORA}… ou {DOR/ARREPENDIMENTO DEPOIS}.”
+[35–50s | OBJEÇÃO + OPINIÃO CONTROLADA]
+TEXTO NA TELA: “Eu sei que vão dizer: ‘[OBJEÇÃO]’”
+FALA: “Eu sei que vai ter gente falando ‘[OBJEÇÃO]’… mas a real é: o problema não é [VILÃO COMUM]. É [CONTEXTO/PROCESSO].”
+(Exemplos neutros de reframe)
+- “Não é a ferramenta que te atrapalha; é você não ter um processo mínimo.”
+- “Não é falta de motivação; é falta de um sistema que caiba na sua rotina.”
+- “Não é ‘não ter tempo’; é não ter o básico preparado.”
 
-[VILÃO EXTERNO — 22–27s]
-“Se você não tem um plano, alguém tem: {VILÃO/AMBIENTE/SISTEMA}.”
+[50–60s | INSTRUÇÃO SALVÁVEL + CTA]
+TEXTO NA TELA (CHECKLIST):
+1) [PASSO 1]
+2) [PASSO 2]
+3) [PASSO 3]
+FALA: “Faz assim: [3 PASSOS]. Salva pra fazer depois e manda pra alguém que vive reclamando de [DOR] — ou que vai fazer isso por você.”
 
-[FRASES-LEI — 27–34s]
-“A ausência de decisão também é uma decisão.”
-“{FRASE-LEI #2 (curta e recortável)}.”
-“{FRASE-LEI #3 (curta e recortável)}.”
-
-[PROVA DE PLAUSIBILIDADE — 34–40s]
-“{VALOR/MÉTRICA} por {TEMPO} = {META TANGÍVEL}.”
-(Conta simples, rápida, crível.)
-
-[FECHAMENTO ASPIRACIONAL — 40–45s]
-“No fim, {RECOMPENSA MAIOR} é sobre {VALOR: escolha/liberdade/clareza/saúde/dignidade}.”
-
-[CTA — final]
-“Qual parte mais te pegou? Comenta: ‘1’, ‘2’ ou ‘3’.”
-“E salva pra rever {MOMENTO-CHAVE: começo do mês/segunda-feira/antes de dormir}.”</div>
-        </div>
-      </section>
-
-      <div class="grid2">
-        <section class="card">
-          <div class="hd">
-            <h2>Copy e ganchos (substituições)</h2>
-            <span class="badge">alta retenção</span>
-          </div>
-          <div class="gradline"></div>
-          <div class="bd">
-            <strong>Modelos de hook (escolha 1):</strong>
-            <ul>
-              <li>“Conselhos <strong>{polêmicos}</strong> pra você <strong>{resultado}</strong> antes do previsto.”</li>
-              <li>“O conselho que parece <strong>{cruel/errado}</strong>, mas é o que mais te faz <strong>{avançar}</strong>.”</li>
-              <li>“Você não precisa de <strong>mais motivação</strong>. Precisa de <strong>{uma decisão}</strong>.”</li>
-            </ul>
-
-            <strong>Permissão emocional (pra salvar sem parecer mendiga):</strong>
-            <ul>
-              <li>“Se hoje for um dia pesado, <strong>salva</strong> e volta quando der.”</li>
-              <li>“Se isso bater forte, <strong>salva</strong> pra rever com calma.”</li>
-            </ul>
-
-            <strong>Frases-lei (plug & play):</strong>
-            <ul>
-              <li>“Antes. Nunca depois.”</li>
-              <li>“O desconforto de hoje compra a paz de amanhã.”</li>
-              <li>“Você já paga o preço. Só escolhe <strong>qual</strong>.”</li>
-              <li>“O que você repete vira destino.”</li>
-            </ul>
-
-            <div class="callout">
-              <strong>Checklist de impacto da frase-lei:</strong> curta (até 7 palavras), binária (agora/depois), recortável (vira print), sem jargão.
-            </div>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="hd">
-            <h2>CTA</h2>
-            <span class="badge">comentário + salvar</span>
-          </div>
-          <div class="gradline"></div>
-          <div class="bd">
-            <strong>CTA principal (comentário emocional):</strong>
-            <ul>
-              <li>“Qual desses conselhos mais te pegou: <strong>1, 2 ou 3</strong>?”</li>
-              <li>“O que você precisava ouvir hoje?”</li>
-            </ul>
-
-            <strong>CTA secundário (salvar contextual):</strong>
-            <ul>
-              <li>“Salva pra rever <strong>no começo da semana</strong>.”</li>
-              <li>“Salva pra usar como checklist <strong>antes de decidir</strong>.”</li>
-            </ul>
-
-            <strong>CTA de compartilhamento (sem pressão):</strong>
-            <ul>
-              <li>“Manda pra alguém que sempre {COMPORTAMENTO}.”</li>
-            </ul>
-          </div>
-        </section>
+NOTAS DE PREENCHIMENTO (rápidas):
+- RESULTADO: o que a pessoa ganha (clareza, consistência, organização, economia, performance)
+- ABORDAGEM: “sem drama”, “na vida real”, “simples e eficaz”, “método leve”
+- TÉCNICA SIMPLES: 1 ação que muda o jogo (padronizar, automatizar, preparar, agrupar, template, checklist, rotina de 5 min)
+- VILÃO COMUM: crença/culpado fácil (ferramenta, falta de talento, perfeccionismo, motivação)
+- CONTEXTO/PROCESSO: o que realmente explica o resultado (processo, repetição, ambiente, priorização)
+</code></pre>
       </div>
+      <p class="footer">Dica de desempenho: mantenha frases curtas, cortes a cada 1–2s e feche com uma lista que a pessoa queira salvar.</p>
+    </section>
 
+    <div class="grid" style="margin-top:14px;">
       <section class="card">
-        <div class="hd">
-          <h2>Checklist de criação (reproduzível)</h2>
-          <span class="badge">pré + roteiro + edição</span>
-        </div>
-        <div class="gradline"></div>
-        <div class="bd">
-          <strong>Pré (clareza):</strong>
-          <ul>
-            <li>[ ] Definir <strong>tema</strong> e uma <strong>dor real</strong> (o que trava a pessoa na prática).</li>
-            <li>[ ] Definir <strong>resultado desejado</strong> em 1 linha (mensurável ou visual).</li>
-            <li>[ ] Escolher o <strong>vilão externo</strong> (o que sequestra a decisão da pessoa).</li>
-          </ul>
-
-          <strong>Roteiro (retenção):</strong>
-          <ul>
-            <li>[ ] Criar <strong>hook com contradição</strong> (palavra forte) + promessa.</li>
-            <li>[ ] Inserir “<strong>salva e volta</strong>” (permissão emocional) nos 3 primeiros segundos.</li>
-            <li>[ ] Escrever a <strong>regra central</strong> em 1 frase memorável.</li>
-            <li>[ ] Trazer <strong>1 exemplo concreto</strong> (número pequeno + tentação do cotidiano).</li>
-            <li>[ ] Criar <strong>dilema</strong> (dor agora vs dor depois).</li>
-            <li>[ ] Soltar <strong>2–4 frases-lei</strong> (curtas, recortáveis).</li>
-            <li>[ ] Fazer uma <strong>conta rápida</strong> (prova de plausibilidade).</li>
-            <li>[ ] Fechar com <strong>reenquadramento</strong> (valor/identidade).</li>
-            <li>[ ] CTA: <strong>pergunta emocional</strong> + pedido de <strong>salvar</strong>.</li>
-          </ul>
-
-          <strong>Edição (clareza visual):</strong>
-          <ul>
-            <li>[ ] Legendas com <strong>destaque</strong> (1–3 palavras por linha).</li>
-            <li>[ ] Jump cuts + punch-in nas frases-lei.</li>
-            <li>[ ] 1 padrão de cor/estilo (fundo escuro + palavras-chave em destaque).</li>
-          </ul>
+        <h2>Elementos visuais <span class="chip">High-retention</span></h2>
+        <ul>
+          <li><strong>Abertura sem enrolação:</strong> comece já no contraste (sem “oi gente”).</li>
+          <li><strong>Mudança de plano a cada 1–2s:</strong> rosto → mãos → tela → detalhe → rosto.</li>
+          <li><strong>Objeto recorrente:</strong> uma ferramenta vira “personagem” (notebook, app, planilha, quadro, timer, pasta, caderno).</li>
+          <li><strong>Payoff visual:</strong> o “antes/depois” ou “resultado final” nos últimos 2–3s.</li>
+          <li><strong>Texto na tela:</strong> 6–10 palavras por bloco, com 1 palavra destacada.</li>
+          <li><strong>SFX leves:</strong> cliques/woosh em cortes (sem poluir).</li>
+        </ul>
+        <div class="callout">
+          <p class="lead"><strong class="highlight">Tríade visual:</strong> (1) prova do processo, (2) prova do resultado, (3) prova de simplicidade (timer/3 passos).</p>
         </div>
       </section>
 
       <section class="card">
-        <div class="hd">
-          <h2>Variações (adaptações com o mesmo impacto)</h2>
-          <span class="badge">trocas seguras</span>
-        </div>
-        <div class="gradline"></div>
-        <div class="bd">
-          <strong>Trocas que mantêm a estrutura:</strong>
-          <ul>
-            <li><strong>“Tóxico”</strong> → duro / impopular / cruel / ninguém te fala / proibido.</li>
-            <li><strong>“Guardar dinheiro”</strong> → estudar / treinar / vender / produzir conteúdo / dormir melhor / sair da procrastinação.</li>
-            <li><strong>Exemplo numérico</strong> → tempo (15 min/dia), frequência (3x/semana), energia (1 escolha por dia).</li>
-            <li><strong>Vilão externo</strong> → algoritmo, agenda, chefe, família, delivery, notificações, cartão, ansiedade, ambiente.</li>
-          </ul>
-
-          <strong>3 “pacotes” prontos de adaptação (só substituir palavras):</strong>
-          <div class="cols">
-            <div class="callout">
-              <strong>Estudos</strong><br>
-              {resultado}: passar/constância<br>
-              {regra}: “primeiro 20 min, depois o resto”<br>
-              {vilão}: notificações/ansiedade<br>
-              {exemplo}: 20 min cedo = avanço; 20 min tarde = scroll
-            </div>
-            <div class="callout">
-              <strong>Fitness</strong><br>
-              {resultado}: voltar a treinar<br>
-              {regra}: “marca treino como compromisso, não como opção”<br>
-              {vilão}: rotina/autoengano<br>
-              {exemplo}: 30 min hoje = energia; 30 min depois = desculpa
-            </div>
-            <div class="callout">
-              <strong>Carreira/Vendas</strong><br>
-              {resultado}: fechar mais/ser promovido<br>
-              {regra}: “prospecta antes de organizar”<br>
-              {vilão}: perfeccionismo/medo<br>
-              {exemplo}: 5 contatos cedo = pipeline; 5 contatos tarde = desistência
-            </div>
-          </div>
-
+        <h2>Copy e ganchos <span class="chip">Prontos</span></h2>
+        <div class="cols">
           <div class="callout">
-            <strong>Regra de adaptação:</strong> mantenha a ordem: contradição → permissão → regra → exemplo → dilema → vilão → prova → identidade → CTA.
+            <p class="lead"><strong>Hooks (0–2s)</strong></p>
+            <ul>
+              <li>“O básico funciona. Mas não precisa ser um castigo.”</li>
+              <li>“Você não precisa fazer perfeito. Precisa fazer possível.”</li>
+              <li>“Se o básico ‘não funciona’ pra você, quase sempre é por causa disso…”</li>
+              <li>“Dá pra ter resultado com o simples — desde que você faça deste jeito.”</li>
+            </ul>
           </div>
+          <div class="callout">
+            <p class="lead"><strong>Opiniões controladas (35–50s)</strong></p>
+            <ul>
+              <li>“O problema não é [X]. É a falta de processo.”</li>
+              <li>“Você não precisa de mais informação. Precisa de um roteiro.”</li>
+              <li>“Não é sobre força de vontade. É sobre fricção: deixe o certo mais fácil.”</li>
+              <li>“O que derruba resultados é o ‘8 ou 80’, não o básico.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:12px;">
+          <p class="lead"><strong>Frases de autoridade sem pedantismo</strong></p>
+          <ul>
+            <li>“Minha regra: simples primeiro, sofisticado depois.”</li>
+            <li>“Se você consegue repetir, você consegue evoluir.”</li>
+            <li>“Consistência ganha de intensidade esporádica.”</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid" style="margin-top:14px;">
+      <section class="card">
+        <h2>CTA <span class="chip">Quando pedir</span></h2>
+        <ul>
+          <li><strong>Micro-CTA (2–5s):</strong> “Segue pra mais [benefício] sem drama.”</li>
+          <li><strong>CTA principal (final):</strong> “Salva pra aplicar depois.”</li>
+          <li><strong>Compartilhar (final):</strong> “Manda pra alguém que vive sofrendo com [dor].”</li>
+          <li><strong>Comentário (opcional):</strong> “Qual parte do básico você mais trava: [A], [B] ou [C]?”</li>
+        </ul>
+        <div class="callout">
+          <p class="lead"><strong class="highlight">Regra:</strong> CTA combina com o que você entrega. Se deu lista/tempo/template → peça <strong>salvar</strong>. Se teve humor + identificação → peça <strong>compartilhar</strong>.</p>
         </div>
       </section>
 
-    </main>
+      <section class="card">
+        <h2>Checklist <span class="chip">Criação rápida</span></h2>
+        <ul>
+          <li>[ ] Escolhi uma <strong>dor prática e específica</strong> (ex.: “não consigo manter rotina”, “sempre esqueço”, “fica confuso”, “demora demais”).</li>
+          <li>[ ] Defini <strong>1 promessa</strong> em 1 frase (benefício mensurável/colável na rotina).</li>
+          <li>[ ] Tenho <strong>1 demonstração visual</strong> (processo em mãos/tela + resultado).</li>
+          <li>[ ] Separei <strong>1 técnica simples</strong> (template, regra, atalho, rotina de 5 min, automação).</li>
+          <li>[ ] Escrevi <strong>1 objeção</strong> e a resposta (sem atacar pessoas).</li>
+          <li>[ ] Incluí <strong>algo salvável</strong> (3 passos, mini-checklist, lista curta, padrão).</li>
+          <li>[ ] Edição com <strong>cortes a cada 1–2s</strong> + texto grande no hook.</li>
+          <li>[ ] Final com <strong>payoff</strong> (antes/depois) + CTA (salvar/compartilhar).</li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <h2>Variações <span class="chip">3 ângulos prontos</span></h2>
+      <div class="cols">
+        <div class="callout">
+          <p class="lead"><strong>V1 — “Ferramenta não é o problema” (reframe)</strong></p>
+          <ul>
+            <li>Hook: “Sim, [ferramenta/método] funciona. Mas não precisa ser complicado.”</li>
+            <li>Demo: mostrar 1 configuração/atalho.</li>
+            <li>Reframe: “Não é a ferramenta; é o processo mínimo.”</li>
+            <li>Salvável: 3 passos para configurar.</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <p class="lead"><strong>V2 — “O básico fica leve com preparação”</strong></p>
+          <ul>
+            <li>Hook: “O básico dá resultado… mas só se você reduzir a fricção.”</li>
+            <li>Demo: organizar/agrupamento (batch), preparar kit, padronizar.</li>
+            <li>Reframe: “Motivação é bônus; ambiente é estratégia.”</li>
+            <li>Salvável: checklist do kit/rotina de 10 min.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:12px;">
+        <p class="lead"><strong>V3 — “Pare de demonizar [X]” (mito leve)</strong></p>
+        <ul>
+          <li>Hook: “O ‘vilão’ não é [X]. O vilão é [excesso/ausência de regra/zero padrão].”</li>
+          <li>Demo: mostrar como usar [X] dentro do processo.</li>
+          <li>Reframe: “Contexto &gt; culpa.”</li>
+          <li>CTA comentário: “Qual ‘vilão’ você já acreditou?”</li>
+        </ul>
+      </div>
+      <p class="footer">Ajuste o “vilão” para o seu tema (ex.: app, método, rotina, ferramenta, hábito, etapa). A ideia é quebrar crença sem ser absolutista.</p>
+    </section>
   </div>
 
-  <div class="toast" id="toast">Roteiro copiado.</div>
+<script>
+  (function(){
+    const copyBtn = document.getElementById('copyBtn');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const scriptText = document.getElementById('scriptText');
+    const scriptWrap = document.getElementById('scriptWrap');
 
-  <script>
-    (function(){
-      const btn = document.getElementById('copyBtn');
-      const text = document.getElementById('scriptText').innerText;
-      const toast = document.getElementById('toast');
-
-      function showToast(msg){
-        toast.textContent = msg;
-        toast.classList.add('show');
-        setTimeout(()=>toast.classList.remove('show'), 1400);
+    async function copy(){
+      const text = scriptText.innerText;
+      try{
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Copiado!';
+        setTimeout(()=> copyBtn.textContent = 'Copiar roteiro', 1200);
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        copyBtn.textContent = 'Copiado!';
+        setTimeout(()=> copyBtn.textContent = 'Copiar roteiro', 1200);
       }
+    }
 
-      btn.addEventListener('click', async () => {
-        try{
-          await navigator.clipboard.writeText(text);
-          showToast('Roteiro copiado.');
-        }catch(e){
-          // fallback
-          const ta = document.createElement('textarea');
-          ta.value = text;
-          document.body.appendChild(ta);
-          ta.select();
-          try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
-          catch(err){ showToast('Não foi possível copiar automaticamente.'); }
-          document.body.removeChild(ta);
-        }
-      });
-    })();
-  </script>
+    function toggle(){
+      const isHidden = scriptWrap.style.display === 'none';
+      scriptWrap.style.display = isHidden ? 'block' : 'none';
+      toggleBtn.textContent = isHidden ? 'Mostrar/ocultar roteiro' : 'Mostrar/ocultar roteiro';
+    }
+
+    copyBtn.addEventListener('click', copy);
+    toggleBtn.addEventListener('click', toggle);
+  })();
+</script>
 </body>
 </html>
