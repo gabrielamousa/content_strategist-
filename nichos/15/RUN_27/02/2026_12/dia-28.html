@@ -1,461 +1,531 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Dia 28 — Roteiro Reproduzível</title><style>
-:root{
-  --bg0:#070A12;
-  --bg1:#0B1020;
-  --card:rgba(255,255,255,.06);
-  --card2:rgba(255,255,255,.08);
-  --stroke:rgba(255,255,255,.12);
-  --stroke2:rgba(255,255,255,.18);
-  --text:#EAF0FF;
-  --muted:rgba(234,240,255,.72);
-  --muted2:rgba(234,240,255,.55);
-  --shadow: 0 18px 60px rgba(0,0,0,.55);
-  --r16:16px;
-  --r20:20px;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  --grad: linear-gradient(90deg, #22c55e 0%, #3b82f6 45%, #f59e0b 100%);
-  --gradSoft: linear-gradient(90deg, rgba(34,197,94,.18) 0%, rgba(59,130,246,.18) 45%, rgba(245,158,11,.18) 100%);
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family:var(--sans);
-  color:var(--text);
-  background:
-    radial-gradient(1200px 800px at 15% 10%, rgba(59,130,246,.18), transparent 60%),
-    radial-gradient(900px 700px at 85% 20%, rgba(245,158,11,.16), transparent 55%),
-    radial-gradient(900px 700px at 60% 90%, rgba(34,197,94,.14), transparent 55%),
-    linear-gradient(180deg, var(--bg0), var(--bg1));
-}
-a{color:inherit; text-decoration:none}
-a:hover{text-decoration:underline}
-.container{max-width:1100px; margin:0 auto; padding:28px 18px 64px}
-.header{
-  border:1px solid var(--stroke);
-  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-  box-shadow:var(--shadow);
-  border-radius:var(--r20);
-  padding:18px 18px 16px;
-  overflow:hidden;
-  position:relative;
-}
-.header:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:var(--gradSoft);
-  opacity:.8;
-  filter:blur(0px);
-  pointer-events:none;
-  mask-image: radial-gradient(700px 120px at 20% 0%, black, transparent 70%);
-}
-.topRow{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; position:relative}
-.badges{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-.badge{
-  display:inline-flex; align-items:center; gap:8px;
-  border:1px solid var(--stroke);
-  background:rgba(0,0,0,.18);
-  padding:8px 10px;
-  border-radius:999px;
-  font-size:13px;
-  color:var(--muted);
-}
-.badge b{color:var(--text)}
-.titleBlock{margin-top:10px; position:relative}
-.h1{
-  font-size: clamp(22px, 3.3vw, 34px);
-  line-height:1.08;
-  margin:0;
-  letter-spacing:-.02em;
-}
-.sub{
-  margin:10px 0 0;
-  color:var(--muted);
-  max-width:80ch;
-}
-.metaLinks{margin-top:12px; display:flex; gap:12px; flex-wrap:wrap; align-items:center}
-.link{
-  display:inline-flex; align-items:center; gap:8px;
-  border:1px solid var(--stroke);
-  background:rgba(255,255,255,.05);
-  padding:10px 12px;
-  border-radius:12px;
-  color:var(--muted);
-  font-size:13px;
-}
-.link .dot{width:7px; height:7px; border-radius:99px; background:var(--grad);}
-.actions{display:flex; gap:10px; flex-wrap:wrap}
-.btn{
-  border:1px solid var(--stroke2);
-  background: rgba(255,255,255,.08);
-  color:var(--text);
-  padding:10px 12px;
-  border-radius:12px;
-  font-weight:600;
-  font-size:13px;
-  cursor:pointer;
-  transition:transform .08s ease, background .2s ease, border-color .2s ease;
-}
-.btn:hover{background:rgba(255,255,255,.11); border-color:rgba(255,255,255,.22)}
-.btn:active{transform:translateY(1px)}
-.btn.primary{
-  background: linear-gradient(90deg, rgba(34,197,94,.22), rgba(59,130,246,.22), rgba(245,158,11,.22));
-  border-color: rgba(255,255,255,.20);
-}
-.grid{display:grid; grid-template-columns: 1fr; gap:14px; margin-top:16px}
-@media(min-width:920px){
-  .grid{grid-template-columns: 1.15fr .85fr; align-items:start}
-}
-.card{
-  border:1px solid var(--stroke);
-  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
-  border-radius:var(--r16);
-  box-shadow:var(--shadow);
-  overflow:hidden;
-}
-.cardHeader{
-  padding:14px 16px 10px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-}
-.cardHeader h2{margin:0; font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
-.cardBody{padding:14px 16px 16px}
-.kbd{font-family:var(--mono); font-size:12px; color:var(--muted); border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.25); padding:6px 8px; border-radius:10px}
-.p{margin:0; color:var(--muted); line-height:1.55}
-.list{margin:10px 0 0; padding:0; list-style:none; display:grid; gap:10px}
-.li{
-  padding:12px 12px;
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(0,0,0,.16);
-  border-radius:14px;
-}
-.li b{color:var(--text)}
-.hr{height:1px; background:rgba(255,255,255,.10); margin:12px 0}
-.tagRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
-.tag{font-size:12px; color:var(--muted); border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); padding:7px 9px; border-radius:999px}
-.highlight{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:750}
-pre{
-  margin:0;
-  white-space:pre-wrap;
-  word-wrap:break-word;
-  font-family:var(--mono);
-  font-size:12.6px;
-  line-height:1.55;
-  color:rgba(234,240,255,.86);
-}
-.small{font-size:12.5px; color:var(--muted2); line-height:1.5}
-.cols{display:grid; grid-template-columns:1fr; gap:12px}
-@media(min-width:920px){.cols{grid-template-columns:1fr 1fr}}
-.toast{
-  position:fixed;
-  left:50%; bottom:18px;
-  transform:translateX(-50%);
-  background:rgba(10,15,28,.78);
-  border:1px solid rgba(255,255,255,.14);
-  color:var(--text);
-  padding:10px 12px;
-  border-radius:999px;
-  box-shadow:var(--shadow);
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .2s ease, transform .2s ease;
-  font-size:13px;
-}
-.toast.show{opacity:1; transform:translateX(-50%) translateY(-2px)}
-</style></head><body><div class="container">
-  <section class="header">
-    <div class="topRow">
-      <div class="badges">
-        <div class="badge"><span class="dot" style="width:8px;height:8px;border-radius:99px;background:var(--grad)"></span><b>Nicho:</b>&nbsp;Neutro</div>
-        <div class="badge"><b>Dia:</b>&nbsp;28</div>
-        <div class="badge"><b>Formato:</b>&nbsp;Carrossel</div>
-        <div class="badge"><b>Pilar:</b>&nbsp;Mito vs Verdade</div>
-      </div>
-      <div class="actions">
-        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
-        <a class="btn" href="https://www.instagram.com/p/DGA2yRgsNA6/" target="_blank" rel="noopener">Abrir post original</a>
-      </div>
-    </div>
-    <div class="titleBlock">
-      <h1 class="h1">As cores de <span class="highlight">[OBRA]</span> revelam mais do que você imagina</h1>
-      <p class="sub">Template reproduzível para analisar uma paleta (obra, marca, campanha ou produto) com evidência visual + interpretação — e fechar com síntese e CTA.</p>
-      <div class="metaLinks">
-        <a class="link" href="https://www.instagram.com/p/DGA2yRgsNA6/" target="_blank" rel="noopener"><span class="dot"></span><span>Link do post original</span></a>
-        <span class="kbd">1080×1350 • 8 slides • 4:5</span>
-      </div>
-    </div>
-  </section>
-
-  <div class="grid">
-    <section class="card">
-      <div class="cardHeader"><h2>Resumo</h2><span class="kbd">Objetivo</span></div>
-      <div class="cardBody">
-        <p class="p">Carrossel em 8 slides que prova (com imagens e swatches) que a paleta não é aleatória. Você entrega um método simples: <b>cor → evidência → significado → impacto no tema</b>. Final: síntese (recompensa cognitiva) + pergunta (comentários) + convite (follow/salvar).</p>
-        <div class="tagRow">
-          <span class="tag">Curiosidade (camadas ocultas)</span>
-          <span class="tag">Prova visual (frames + paleta)</span>
-          <span class="tag">Padrão repetitivo com variação</span>
-          <span class="tag">Contraste (tensão narrativa)</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="cardHeader"><h2>Metadados (para calendário)</h2><span class="kbd">Preencher/editar</span></div>
-      <div class="cardBody">
-        <ul class="list">
-          <li class="li"><b>Título curto:</b> As cores de [OBRA] revelam mais do que você imagina</li>
-          <li class="li"><b>Instrução curta:</b> 8 slides: capa-hype, contexto+método, 3–4 cores com evidência e significado, síntese e CTA.</li>
-          <li class="li"><b>Pilar:</b> Mito vs Verdade ("não é estética: é linguagem")</li>
-          <li class="li"><b>Formato:</b> Carrossel</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="cardHeader"><h2>Estrutura</h2><span class="kbd">Sequência</span></div>
-      <div class="cardBody">
-        <ul class="list">
-          <li class="li"><b>Slide 1 (Capa):</b> Hook + promessa de insight + frame icônico.</li>
-          <li class="li"><b>Slide 2:</b> Contexto/autoridade + tese: “nada é por acaso” + o método que você vai usar.</li>
-          <li class="li"><b>Slides 3–6:</b> 1 cor por slide (3 cores) + 1 cor com dupla leitura (ou contraste).</li>
-          <li class="li"><b>Slide 7:</b> Síntese (big idea) amarrando as cores ao tema central.</li>
-          <li class="li"><b>Slide 8:</b> Pergunta + CTA (seguir/salvar) + gancho para o próximo.</li>
-        </ul>
-        <div class="hr"></div>
-        <p class="small"><b>Ritmo recomendado:</b> slides 2–7 mais densos (aula/prova) e slides 1 e 8 como “respiro” (impacto + convite).</p>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="cardHeader"><h2>Slides sugeridos (1..8)</h2><span class="kbd">Template</span></div>
-      <div class="cardBody">
-<pre id="slides">1) CAPA
-- Headline: “As cores de [OBRA] revelam mais do que você imagina”
-- Sub: “psicologia das cores / cinema / branding / design” (escolha 1)
-- Visual: 1 imagem forte + 1 detalhe marcado (círculo/sublinhado)
-
-2) CONTEXTO + MÉTODO
-- Frase: “[OBRA] é [opinião forte em 3–6 palavras].”
-- Tese: “Nada aqui é por acaso — nem as cores.”
-- Método: “Vou te mostrar o que cada cor comunica.”
-- Micro-CTA: “Arrasta →”
-
-3) COR 1 (BASE)
-- Título: “O [COR 1] domina [ambiente/situação].”
-- Prova: 2–3 imagens (mesma cena/mesmo clima)
-- Swatches: 5–7 tons (escuro → claro)
-- Leitura: 1 sensação + 1 função narrativa
-
-4) COR 2 (CONTRASTE)
-- Título: “[COR 2] aparece quando [quebra/ameaça/muda].”
-- Prova + swatches
-- Leitura: “passa de [sensação 1] para [sensação 2]”
-
-5) COR 3 (NEUTROS / AUSÊNCIA)
-- Título: “O [branco/cinza/preto] não é ‘neutro’.”
-- Prova + swatches suaves
-- Leitura: vazio, rotina, anonimato, padronização (escolha 1–2)
-
-6) COR 4 (DUPLA LEITURA)
-- Headline: “O [COR 4] pode significar duas coisas:”
-- Lista: (1) [leitura positiva] (2) [leitura irônica/negativa]
-- Nota manuscrita: 2–3 palavras-resumo
-
-7) SÍNTESE (BIG IDEA)
-- Frase: “Juntas, essas cores constroem visualmente: [tema central].”
-- 2–3 bullets do que muda na percepção
-- Visual: 1 imagem grande com tipografia por cima
-
-8) FECHAMENTO
-- Pergunta: “Você tinha notado isso?” / “Qual cor te chamou mais atenção?”
-- CTA: “Salva pra rever” + “Segue pra mais análises”
-- Gancho: “Quer que eu analise [OBRA 2]?”</pre>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="cardHeader"><h2>Roteiro</h2><span class="kbd">Copy pronta (editável)</span></div>
-      <div class="cardBody">
-<pre id="roteiro">PROMESSA CENTRAL (use no slide 1 e repita no 7)
-“Isso não é só estética. A paleta está contando a história por baixo do texto.”
-
-SLIDE 1 — CAPA
-Headline: “As cores de [OBRA] revelam mais do que você imagina”
-Linha fina: “Não é acaso: é linguagem visual.”
-
-SLIDE 2 — CONTEXTO + MÉTODO
-“[OBRA] é [uma das melhores / subestimada / visualmente cirúrgica].
-E o mais interessante: nada do que você vê é por acaso — principalmente as cores.
-Vou separar 4 cores e te mostrar o que elas comunicam.”
-
-SLIDE 3 — COR 1
-“O [COR 1] domina [lugar/rotina/ambiente].
-Sensação: [frieza / calma / distância / confiança].
-Função: reforça [controle / ordem / previsibilidade / profissionalismo].”
-
-SLIDE 4 — COR 2
-“Quando o [COR 2] aparece, algo está fora do eixo.
-Sensação: [tensão / urgência / desejo / alerta].
-Função: marca [ruptura / conflito / risco / rebeldia].”
-
-SLIDE 5 — COR 3 (NEUTRO)
-“O [BRANCO/CINZA/PRETO] aqui não é ‘limpo’ — é [vazio / padronização / silêncio].
-Função: apaga individualidade e deixa tudo com cara de [rotina / sistema / protocolo].”
-
-SLIDE 6 — COR 4 (DUPLA LEITURA)
-“O [COR 4] pode ser lido de duas formas:
-(1) [esperança / frescor / vida / crescimento]
-(2) [ironia / controle disfarçado / ‘bem-estar’ fabricado]
-Percebe como a mesma cor muda dependendo do contexto?”
-
-SLIDE 7 — SÍNTESE
-“Juntas, essas cores constroem visualmente: [TEMA CENTRAL].
-• [efeito 1: o mundo parece controlado]
-• [efeito 2: o conflito ‘vaza’ em pontos específicos]
-• [efeito 3: o vazio vira mensagem]
-
-SLIDE 8 — FECHAMENTO
-“Você já tinha notado esses detalhes?
-Qual cor foi a mais ‘barulhenta’ pra você?
-Salva pra rever e me segue pra mais análises nesse estilo.”</pre>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="cardHeader"><h2>Elementos visuais</h2><span class="kbd">DNA do design</span></div>
-      <div class="cardBody">
-        <ul class="list">
-          <li class="li"><b>Prova visual:</b> frames/fotos do tema + swatches (5–7 tons) por cor.</li>
-          <li class="li"><b>Assinatura high-tech/editorial:</b> microheaders, “etiquetas” tipo software, cursores/menus, grids.</li>
-          <li class="li"><b>Guias de olhar:</b> 2–3 marcações manuais por slide (círculo, seta, sublinhado).</li>
-          <li class="li"><b>Consistência:</b> moldura/padrão fixo (mesma posição de swatches e textos).</li>
-          <li class="li"><b>Contraste e respiro:</b> capa e fechamento com menos texto; slides do meio com estrutura repetível.</li>
-        </ul>
-        <div class="hr"></div>
-        <p class="small"><b>Dica prática:</b> se não tiver frames (direitos autorais/sem imagens), substitua por <b>moodboard</b>, fotos autorais, screenshots de sites, embalagens, ou layouts de campanha — mantendo o “cor → evidência → significado”.</p>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="cardHeader"><h2>Copy e ganchos</h2><span class="kbd">Substituições rápidas</span></div>
-      <div class="cardBody">
-        <div class="cols">
-          <div class="li">
-            <b>Ganchos de capa (escolha 1):</b>
-            <div class="small" style="margin-top:8px">
-              1) “As cores de [OBRA] revelam mais do que você imagina”<br/>
-              2) “O que a paleta de [OBRA] diz sobre [tema emocional]”<br/>
-              3) “Parece só estética — mas é narrativa”<br/>
-              4) “Você está lendo as cores errado (te mostro como)” 
-            </div>
-          </div>
-          <div class="li">
-            <b>Frases de prova (slide 2):</b>
-            <div class="small" style="margin-top:8px">
-              • “Nada aqui é por acaso.”<br/>
-              • “Repara onde essa cor aparece.”<br/>
-              • “Quando a paleta muda, o significado muda junto.”<br/>
-              • “Vamos separar por camadas: ambiente → cor → intenção.”
-            </div>
-          </div>
-        </div>
-        <div class="hr"></div>
-        <div class="li">
-          <b>Banco de interpretações (para adaptar sem travar):</b>
-          <div class="small" style="margin-top:8px">
-            <b>Azul:</b> controle, distância, tecnologia, confiança, frieza.<br/>
-            <b>Vermelho:</b> alerta, desejo, conflito, ruptura, coragem.<br/>
-            <b>Verde:</b> cura, esperança, natureza, ironia “bem-estar”, dinheiro/poder (depende do tom).<br/>
-            <b>Amarelo/Laranja:</b> urgência, otimismo, energia, instabilidade, artificialidade (neon).<br/>
-            <b>Branco/Cinza:</b> padronização, silêncio, vazio, rotina, protocolo.<br/>
-            <b>Preto:</b> poder, segredo, luto, sofisticação, ameaça.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="cardHeader"><h2>CTA</h2><span class="kbd">Engajamento + crescimento</span></div>
-      <div class="cardBody">
-        <ul class="list">
-          <li class="li"><b>Comentário (pergunta única):</b> “Qual cor te chamou mais atenção e por quê?”</li>
-          <li class="li"><b>Salvar:</b> “Salva pra rever quando assistir/estudar [OBRA].”</li>
-          <li class="li"><b>Follow:</b> “Me segue pra mais análises de [tema: cinema/branding/produtos/design].”</li>
-          <li class="li"><b>Próximo post (ponte):</b> “Quer a parte 2: símbolos/figurino/tipos de plano?”</li>
-        </ul>
-        <div class="hr"></div>
-        <p class="small"><b>Regra:</b> 1 pergunta + 1 ação (salvar ou seguir). Evite 3 CTAs no mesmo slide.</p>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="cardHeader"><h2>Checklist</h2><span class="kbd">Criação e publicação</span></div>
-      <div class="cardBody">
-        <ul class="list">
-          <li class="li"><b>Antes:</b> defina [OBRA/TEMA] + [tema central] (1 frase).</li>
-          <li class="li"><b>Assets:</b> separe 8–12 imagens (2–3 por cor) com a cor bem evidente.</li>
-          <li class="li"><b>Paleta:</b> extraia 5–7 tons por cor (do mais escuro ao mais claro).</li>
-          <li class="li"><b>Texto:</b> por cor: escreva <b>1 sensação</b> + <b>1 função</b> (máx. 2 linhas cada).</li>
-          <li class="li"><b>Consistência:</b> swatches sempre no mesmo lugar; microheader fixo; margens generosas.</li>
-          <li class="li"><b>Retenção:</b> repita o padrão “cor → evidência → significado” e varie no slide 6 (dupla leitura).</li>
-          <li class="li"><b>Final:</b> slide 7 amarra; slide 8 pergunta + CTA.</li>
-          <li class="li"><b>Legenda:</b> 3 blocos (tese / mini-resumo das cores / pergunta final). Inclua “Salva”.</li>
-          <li class="li"><b>Publicação:</b> capa legível em miniatura; teste contraste; revise ortografia; exporte em 1080×1350.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="cardHeader"><h2>Variações</h2><span class="kbd">Mesmo impacto, outro tema</span></div>
-      <div class="cardBody">
-        <ul class="list">
-          <li class="li"><b>Variação A (Marca/Produto):</b> cores da embalagem/site → “o que isso sinaliza sobre preço, público e promessa”.</li>
-          <li class="li"><b>Variação B (Ambiente/Arquitetura):</b> cores do espaço → “como a paleta guia comportamento (calma, urgência, consumo)”.</li>
-          <li class="li"><b>Variação C (Conteúdo pessoal):</b> “as cores que eu uso no meu perfil e o que elas comunicam”.</li>
-          <li class="li"><b>Variação D (Mito vs Verdade explícito):</b> Slide 2: “Mito: é só estética. Verdade: é direção de significado.”</li>
-          <li class="li"><b>Variação E (3 cores apenas):</b> Slides 3–5 (3 cores) + slide 6 vira “o detalhe invisível” (textura/luz/contraste) no lugar da 4ª cor.</li>
-          <li class="li"><b>Substituições rápidas:</b> “frames da obra” → “prints do site” / “fotos do produto” / “moodboard” mantendo swatches.</li>
-        </ul>
-        <div class="hr"></div>
-        <p class="small"><b>Atalho para adaptar:</b> troque apenas 4 campos: <span class="kbd">[OBRA]</span> <span class="kbd">[tema central]</span> <span class="kbd">[4 cores]</span> <span class="kbd">[onde aparece cada cor]</span>. O resto permanece.</p>
-      </div>
-    </section>
-
-  </div>
-</div>
-<div class="toast" id="toast">Roteiro copiado.</div>
-<script>
-(function(){
-  const btn = document.getElementById('copyBtn');
-  const toast = document.getElementById('toast');
-  const roteiro = document.getElementById('roteiro');
-  const slides = document.getElementById('slides');
-
-  function showToast(msg){
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(window.__t);
-    window.__t = setTimeout(()=>toast.classList.remove('show'), 1600);
-  }
-
-  btn.addEventListener('click', async ()=>{
-    const text = "ROTEIRO (Dia 28)\n\n" + slides.textContent.trim() + "\n\n" + roteiro.textContent.trim();
-    try{
-      await navigator.clipboard.writeText(text);
-      showToast('Roteiro copiado.');
-    }catch(e){
-      // fallback
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      try{document.execCommand('copy'); showToast('Roteiro copiado.');}
-      catch(err){showToast('Não foi possível copiar.');}
-      document.body.removeChild(ta);
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 28 — Roteiro Reels (Neutro)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630;
+      --card2:#0B132B;
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --line:rgba(255,255,255,.10);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --gradA: linear-gradient(90deg, #22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --gradB: radial-gradient(1200px 600px at 15% 0%, rgba(56,189,248,.22), transparent 55%),
+               radial-gradient(900px 500px at 85% 15%, rgba(34,197,94,.18), transparent 55%),
+               radial-gradient(900px 500px at 75% 90%, rgba(251,146,60,.14), transparent 52%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
     }
-  });
-})();
-</script></body></html>
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: var(--gradB), linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+    }
+    a{color:inherit}
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 56px;
+    }
+    header{
+      border:1px solid var(--line);
+      border-radius:var(--r20);
+      background: linear-gradient(180deg, rgba(14,22,48,.72), rgba(10,16,34,.65));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .headerTop{
+      padding:18px 18px 14px;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .badgeRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .badge{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .badge strong{color:var(--text); font-weight:650}
+    .titleBlock{min-width:min(640px, 100%)}
+    h1{
+      margin:8px 0 6px;
+      font-size:20px;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+      max-width:78ch;
+    }
+    .headerBottom{
+      padding:0 18px 18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .link{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      text-decoration:none;
+      font-size:13px;
+    }
+    .link span{color:var(--muted)}
+    .btn{
+      cursor:pointer;
+      user-select:none;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      color:var(--text);
+      font-weight:650;
+      font-size:13px;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn .dot{
+      width:10px;height:10px;border-radius:99px;
+      background: var(--gradA);
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.08fr .92fr}
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--r16);
+      background: linear-gradient(180deg, rgba(14,22,48,.75), rgba(10,16,34,.66));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.07);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .cardHd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.25px;
+    }
+    .chip{
+      font-family:var(--mono);
+      font-size:11px;
+      color:rgba(234,240,255,.86);
+      background: rgba(255,255,255,.05);
+      padding:6px 8px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .cardBd{padding:14px}
+    p,li{color:var(--muted); font-size:13px; line-height:1.55}
+    ul{margin:8px 0 0 18px}
+    .kpi{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:10px
+    }
+    .kpi .pill{
+      border-radius:999px;
+      padding:7px 10px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      font-size:12px;
+      color:rgba(234,240,255,.88);
+    }
+    .pill b{color:var(--text)}
+
+    .script{
+      font-family: var(--mono);
+      font-size:12px;
+      line-height:1.6;
+      color: rgba(234,240,255,.88);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .hl{
+      display:inline-block;
+      padding:0 .35em;
+      border-radius:.55em;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color: var(--text);
+    }
+    .hl.grad{
+      background: var(--gradA);
+      color:#061018;
+      border:none;
+      font-weight:750;
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 740px){
+      .twoCol{grid-template-columns: 1fr 1fr}
+    }
+
+    .checklist{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:8px;
+    }
+    @media (min-width: 740px){
+      .checklist{grid-template-columns: 1fr 1fr}
+    }
+    .checklist li{
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding:10px 10px;
+      color: rgba(234,240,255,.86);
+      font-size:12.5px;
+    }
+    .checklist li span{color:var(--muted)}
+
+    .footerNote{margin-top:12px; font-size:12px; color:rgba(169,180,208,.95)}
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background: rgba(10,16,34,.92);
+      border:1px solid rgba(255,255,255,.14);
+      color: rgba(234,240,255,.92);
+      padding:10px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+    }
+    .toast.show{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="headerTop">
+        <div class="titleBlock">
+          <div class="badgeRow">
+            <div class="badge"><strong>Nicho:</strong> Neutro</div>
+            <div class="badge"><strong>Dia:</strong> 28</div>
+            <div class="badge"><strong>Formato:</strong> Reels</div>
+            <div class="badge"><strong>Pilar:</strong> Mito vs Verdade</div>
+          </div>
+          <h1>Roteiro “refutação” que gera retenção e compartilhamentos</h1>
+          <p class="subtitle">Modelo neutro para qualquer área: você pega uma frase popular/errada, desmonta com base objetiva + consequência prática e fecha com ação clara (salvar/compartilhar/DM).</p>
+        </div>
+        <button class="btn" id="copyBtn" type="button" aria-label="Copiar roteiro">
+          <span class="dot" aria-hidden="true"></span>
+          Copiar roteiro
+        </button>
+      </div>
+      <div class="headerBottom">
+        <a class="link" href="https://www.instagram.com/p/DWB5XAnjklD/" target="_blank" rel="noopener noreferrer">
+          <strong>Post original</strong> <span>https://www.instagram.com/p/DWB5XAnjklD/</span>
+        </a>
+        <div class="badge"><strong>Objetivo:</strong> retenção + comentários + compartilhamento</div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <div class="cardHd">
+          <h2>Resumo</h2>
+          <div class="chip">O que funciona aqui</div>
+        </div>
+        <div class="cardBd">
+          <ul>
+            <li><span class="hl grad">Conflito imediato</span>: começa com uma discordância (“isso é falso / perigoso / simplificação”).</li>
+            <li><span class="hl">Estrutura de refutação</span>: responde ponto a ponto (tensão + progressão).</li>
+            <li><span class="hl">Base objetiva</span>: dado, regra, critério, benchmark, teste, processo, ou exemplo verificável.</li>
+            <li><span class="hl">Consequência prática</span>: o que muda na vida do público (tempo, dinheiro, risco, resultado).</li>
+            <li><span class="hl">Fecho mobilizador</span>: CTA coletivo (salvar/mandar pra alguém/“comenta X”).</li>
+          </ul>
+          <div class="kpi">
+            <div class="pill"><b>Duração:</b> 35–60s</div>
+            <div class="pill"><b>Cortes:</b> a cada 1 ideia</div>
+            <div class="pill"><b>Texto na tela:</b> 6–8 palavras</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHd">
+          <h2>Estrutura (sequência reproduzível)</h2>
+          <div class="chip">7 blocos</div>
+        </div>
+        <div class="cardBd">
+          <ol style="margin:8px 0 0 18px; color: var(--muted); font-size:13px; line-height:1.55">
+            <li><span class="hl grad">Hook</span> (3–6s): frase de confronto + promessa.</li>
+            <li><span class="hl">O que estão dizendo</span> (5–10s): cite o argumento sem dar palco.</li>
+            <li><span class="hl">Pergunta que desarma</span> (3–5s): “qual é a base?”</li>
+            <li><span class="hl">Contraponto central</span> (10–15s): 1 informação que muda o jogo.</li>
+            <li><span class="hl">Consequência real</span> (10–15s): impacto prático e direto.</li>
+            <li><span class="hl">Prova/credibilidade</span> (5–10s): exemplo típico/experiência/mini-caso (sem expor ninguém).</li>
+            <li><span class="hl grad">Fecho + CTA</span> (5–8s): resumo + ação.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="card" style="grid-column:1/-1">
+        <div class="cardHd">
+          <h2>Roteiro (template pronto para preencher)</h2>
+          <div class="chip">Cole e grave</div>
+        </div>
+        <div class="cardBd">
+          <div class="script" id="scriptText">[PRÉ-HOOK (0,5s) — TEXTO NA TELA]
+“‘[ARGUMENTO POPULAR]’ — sério?”
+
+[BLOCO 1 — HOOK (3–6s)]
+Se você acredita que “[ARGUMENTO POPULAR]”, cuidado: isso é uma simplificação que pode te levar a [RISCO/RESULTADO RUIM].
+Em 40 segundos eu vou te mostrar o detalhe que muda tudo.
+
+[BLOCO 2 — O QUE ESTÃO DIZENDO (5–10s)]
+Tem muita gente repetindo que [RESUMO DO ARGUMENTO EM 1 FRASE].
+E parece lógico… até você olhar o que realmente importa.
+
+[BLOCO 3 — PERGUNTA QUE DESARMA (3–5s)]
+Pergunta honesta: qual é a base disso?
+É dado? É regra? É experiência real? Ou é só “todo mundo diz”?
+
+[BLOCO 4 — CONTRAPONTO CENTRAL (10–15s)]
+O ponto decisivo é: [BASE OBJETIVA / CRITÉRIO / PRINCÍPIO / DADO].
+Na prática, o que conta é [O QUE O MERCADO/PROCESSO/MÉTRICA REALMENTE AVALIA].
+
+[BLOCO 5 — CONSEQUÊNCIA REAL (10–15s)]
+Se você segue “[ARGUMENTO POPULAR]” do jeito errado, você tende a:
+1) [CONSEQUÊNCIA 1]
+2) [CONSEQUÊNCIA 2]
+3) [CONSEQUÊNCIA 3]
+
+[BLOCO 6 — EXEMPLO / CREDIBILIDADE (5–10s)]
+Exemplo típico: [EXEMPLO GENÉRICO E CURTO].
+O erro mais comum aqui é [ERRO COMUM].
+
+[BLOCO 7 — FECHO + CTA (5–8s)]
+Resumo: não é sobre [FALSO FOCO]. É sobre [FOCO CERTO].
+Salva esse vídeo e manda pra alguém que ainda repete “[ARGUMENTO POPULAR]”.
+Se quiser, comenta “CHECKLIST” que eu deixo um passo a passo nos comentários.</div>
+          <p class="footerNote">Dica: mantenha “[ARGUMENTO POPULAR]” em uma única frase. A refutação fica mais tensa e mais compartilhável.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHd">
+          <h2>Elementos visuais</h2>
+          <div class="chip">High-tech & limpo</div>
+        </div>
+        <div class="cardBd">
+          <ul>
+            <li><span class="hl">Texto na tela em “capítulos”</span>: 1 ideia por tela (máx. 6–8 palavras).</li>
+            <li><span class="hl">Jump cuts</span>: corte a cada 1–2 frases curtas.</li>
+            <li><span class="hl">Zoom-in leve</span> no “detalhe que muda tudo”.</li>
+            <li><span class="hl">Prova visual opcional</span>: print de dado/processo/tela (com blur em infos sensíveis).</li>
+            <li><span class="hl">Legenda dinâmica</span>: destaque palavras-chave (não a frase inteira).</li>
+          </ul>
+          <div class="kpi">
+            <div class="pill"><b>Paleta:</b> fundo escuro + realces em gradiente</div>
+            <div class="pill"><b>Ritmo:</b> micro-pausa antes do ponto central</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHd">
+          <h2>Copy e ganchos</h2>
+          <div class="chip">Escolha 1</div>
+        </div>
+        <div class="cardBd">
+          <div class="twoCol">
+            <div>
+              <p><span class="hl grad">Ganchos (abre o vídeo)</span></p>
+              <ul>
+                <li>“Se você acha que <span class="hl">[ARGUMENTO]</span>, você tá ignorando o detalhe mais caro.”</li>
+                <li>“Isso aqui parece verdade… mas na prática dá <span class="hl">[PROBLEMA]</span>.”</li>
+                <li>“Não é opinião: é <span class="hl">critério</span>. E eu vou te mostrar agora.”</li>
+                <li>“Você tá comparando coisas diferentes e cai nessa armadilha.”</li>
+              </ul>
+            </div>
+            <div>
+              <p><span class="hl grad">Frases de retenção (durante)</span></p>
+              <ul>
+                <li>“Atenção nesse detalhe…”</li>
+                <li>“Só que tem uma pegadinha aqui.”</li>
+                <li>“Olha o que realmente conta:”</li>
+                <li>“E a consequência é essa:”</li>
+              </ul>
+            </div>
+          </div>
+          <p><span class="hl">Legenda (descrição) pronta</span>: “Desmontando ‘[ARGUMENTO POPULAR]’: o que realmente conta é [FOCO CERTO]. Quer o checklist? Comenta ‘CHECKLIST’.”</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHd">
+          <h2>CTA (seleção rápida)</h2>
+          <div class="chip">1 no final + 1 discreto no meio</div>
+        </div>
+        <div class="cardBd">
+          <ul>
+            <li><span class="hl grad">Salvar</span>: “Salva pra consultar quando você ouvir isso de novo.”</li>
+            <li><span class="hl grad">Compartilhar</span>: “Manda pra alguém que sempre fala ‘[ARGUMENTO]’.”</li>
+            <li><span class="hl">Comentário com palavra-chave</span>: “Comenta ‘CHECKLIST’ que eu deixo o passo a passo.”</li>
+            <li><span class="hl">Direct</span>: “Se você quer ajuda no seu cenário, me chama com ‘CASO’ (sem expor detalhes aqui).”</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="grid-column:1/-1">
+        <div class="cardHd">
+          <h2>Checklist de criação (do zero ao postado)</h2>
+          <div class="chip">Copiar e usar</div>
+        </div>
+        <div class="cardBd">
+          <ul class="checklist">
+            <li><b>Escolha do tema</b><br><span>[ ] Pegue 1 frase popular (errada ou incompleta) do seu assunto.</span></li>
+            <li><b>Promessa</b><br><span>[ ] Defina: “vou te mostrar o detalhe que muda tudo em 40s”.</span></li>
+            <li><b>Base objetiva</b><br><span>[ ] Separe 1 dado/regra/critério/processo/exemplo verificável.</span></li>
+            <li><b>Consequência</b><br><span>[ ] Liste 2–3 impactos práticos (tempo, dinheiro, risco, resultado).</span></li>
+            <li><b>Exemplo típico</b><br><span>[ ] Crie 1 mini-cenário genérico (sem nomes/prints sensíveis).</span></li>
+            <li><b>Texto na tela</b><br><span>[ ] Prepare 6 “capítulos” curtos (1 por bloco).</span></li>
+            <li><b>Gravação</b><br><span>[ ] Frases curtas + micro-pausa antes do contraponto central.</span></li>
+            <li><b>Edição</b><br><span>[ ] Jump cuts, zoom leve no ponto decisivo, legendas dinâmicas.</span></li>
+            <li><b>Descrição</b><br><span>[ ] 1 linha de resumo + CTA de comentar/salvar/compartilhar.</span></li>
+            <li><b>Comentário fixado</b><br><span>[ ] “Você já ouviu isso? Em que contexto?”</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="grid-column:1/-1">
+        <div class="cardHd">
+          <h2>Variações (para reaproveitar o mesmo formato)</h2>
+          <div class="chip">3 opções</div>
+        </div>
+        <div class="cardBd">
+          <div class="twoCol">
+            <div>
+              <p><span class="hl grad">Variação A — “Teste rápido”</span></p>
+              <ul>
+                <li>Hook: “Se você acredita em [ARGUMENTO], faz esse teste em 10s.”</li>
+                <li>Contraponto: “Se [CONDIÇÃO] não é verdadeira, o argumento cai.”</li>
+                <li>CTA: “Comenta ‘TESTE’ que eu mando mais 3.”</li>
+              </ul>
+            </div>
+            <div>
+              <p><span class="hl grad">Variação B — “Antes vs Depois”</span></p>
+              <ul>
+                <li>Mostre: “Antes eu pensava [ARGUMENTO]… depois de ver [BASE], mudei pra [FOCO].”</li>
+                <li>Consequência: o ganho/evitação de erro.</li>
+                <li>CTA: “Salva se você quer mudar esse padrão.”</li>
+              </ul>
+            </div>
+            <div>
+              <p><span class="hl grad">Variação C — “3 erros de quem repete isso”</span></p>
+              <ul>
+                <li>Hook: “3 erros de quem fala [ARGUMENTO] com convicção.”</li>
+                <li>Erros 1–3: rápidos, com 1 frase de correção cada.</li>
+                <li>CTA: “Compartilha com a pessoa do erro #2.”</li>
+              </ul>
+            </div>
+            <div>
+              <p><span class="hl">Modelos de títulos (capa)</span></p>
+              <ul>
+                <li>“Não caia nessa sobre <span class="hl">[TEMA]</span>”</li>
+                <li>“O detalhe que ninguém te conta sobre <span class="hl">[TEMA]</span>”</li>
+                <li>“Se você acredita em <span class="hl">[ARGUMENTO]</span>, veja isso”</li>
+              </ul>
+            </div>
+          </div>
+          <p class="footerNote">Recomendação: produza 3 reels em série com o mesmo formato, mudando apenas o argumento popular e a base objetiva.</p>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const script = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=>toast.classList.remove('show'), 1200);
+      }
+
+      async function copyText(){
+        const text = script.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        } catch(e){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          showToast('Roteiro copiado.');
+        }
+      }
+
+      btn.addEventListener('click', copyText);
+    })();
+  </script>
+</body>
+</html>
