@@ -2,727 +2,364 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Roteiro reproduzível — Carrossel</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dia 16 — Roteiro Reels (Nicho Neutro)</title>
   <style>
     :root{
       --bg0:#070A12;
-      --bg1:#0A1022;
-      --card: rgba(255,255,255,.06);
-      --card2: rgba(255,255,255,.04);
-      --border: rgba(255,255,255,.10);
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --stroke:rgba(255,255,255,.10);
       --text:#EAF0FF;
-      --muted:#A9B4D0;
-      --muted2:#7F89A6;
-      --shadow: 0 20px 60px rgba(0,0,0,.55);
-      --radius: 16px;
-      --radius2: 22px;
-      --g1: linear-gradient(90deg, #32d583 0%, #2e90fa 45%, #f79009 100%);
-      --g2: linear-gradient(135deg, rgba(50,213,131,.22), rgba(46,144,250,.18), rgba(247,144,9,.16));
-      --good:#32d583;
-      --blue:#2e90fa;
-      --orange:#f79009;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --r12:12px;
+      --r16:16px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --g: linear-gradient(90deg,#22c55e 0%, #3b82f6 45%, #f59e0b 100%);
+      --g2: radial-gradient(1200px 600px at 20% 10%, rgba(34,197,94,.18), transparent 55%),
+            radial-gradient(900px 500px at 80% 20%, rgba(59,130,246,.18), transparent 55%),
+            radial-gradient(900px 600px at 60% 90%, rgba(245,158,11,.14), transparent 55%);
     }
-
-    *{ box-sizing:border-box; }
+    *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: var(--sans);
-      color: var(--text);
-      background:
-        radial-gradient(1200px 700px at 10% 10%, rgba(46,144,250,.22), transparent 55%),
-        radial-gradient(900px 600px at 90% 20%, rgba(247,144,9,.14), transparent 60%),
-        radial-gradient(1000px 700px at 50% 100%, rgba(50,213,131,.14), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g2), radial-gradient(1200px 800px at 30% 30%, rgba(255,255,255,.04), transparent 60%), linear-gradient(180deg,var(--bg0),var(--bg1));
       min-height:100vh;
     }
-
-    .wrap{
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 28px 18px 60px;
-    }
+    a{color:inherit}
+    .wrap{max-width:1120px;margin:0 auto;padding:28px 18px 64px}
 
     header{
-      position: relative;
-      padding: 22px 22px;
-      border: 1px solid var(--border);
-      background: var(--g2);
-      border-radius: var(--radius2);
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius:var(--r16);
       box-shadow: var(--shadow);
+      padding:18px 18px 16px;
       overflow:hidden;
+      position:relative;
     }
-
     header:before{
       content:"";
       position:absolute;
       inset:-2px;
-      background: radial-gradient(900px 400px at 20% 0%, rgba(50,213,131,.22), transparent 60%),
-                  radial-gradient(900px 400px at 80% 20%, rgba(46,144,250,.20), transparent 60%),
-                  radial-gradient(900px 400px at 50% 100%, rgba(247,144,9,.16), transparent 60%);
-      filter: blur(10px);
-      opacity:.9;
+      background: var(--g);
+      opacity:.10;
+      filter: blur(16px);
       z-index:0;
     }
-
-    header > *{ position:relative; z-index:1; }
-
-    .topline{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
+    .hgrid{display:grid;grid-template-columns:1.4fr .6fr;gap:14px;position:relative;z-index:1}
+    .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2)}
+    .title{font-size:22px;line-height:1.15;margin:8px 0 10px}
+    .meta{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center;color:var(--muted);font-size:13px}
+    .pill{border:1px solid var(--stroke);background:rgba(0,0,0,.18);padding:6px 10px;border-radius:999px}
+    .link{
+      display:inline-flex; gap:10px; align-items:center;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.18);
+      padding:10px 12px;
+      border-radius:12px;
+      text-decoration:none;
       justify-content:space-between;
-      margin-bottom: 12px;
+    }
+    .link span{color:var(--muted)}
+
+    .actions{display:flex;gap:10px;justify-content:flex-end;align-items:flex-start;flex-wrap:wrap}
+    button{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--text);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      padding:10px 12px;
+      border-radius:12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.35);
+      font-weight:600;
+    }
+    button:hover{border-color:rgba(255,255,255,.22)}
+    .btnPrimary{
+      background: linear-gradient(90deg, rgba(34,197,94,.22), rgba(59,130,246,.20), rgba(245,158,11,.18));
     }
 
-    .chips{ display:flex; flex-wrap:wrap; gap:8px; }
-    .chip{
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      backdrop-filter: blur(6px);
-    }
-
-    h1{
-      margin: 0;
-      font-size: clamp(20px, 3vw, 28px);
-      letter-spacing: -0.02em;
-      line-height:1.15;
-    }
-
-    .sub{
-      margin-top: 10px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    a{
-      color: var(--text);
-      text-decoration: none;
-      border-bottom: 1px dashed rgba(255,255,255,.25);
-    }
-    a:hover{ border-bottom-color: rgba(255,255,255,.55); }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 14px;
-      margin-top: 14px;
-    }
-
-    @media (max-width: 920px){
-      .grid{ grid-template-columns: 1fr; }
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1fr 1fr}
+      .span2{grid-column:1 / -1}
     }
 
     .card{
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
-      border-radius: var(--radius);
-      box-shadow: 0 18px 45px rgba(0,0,0,.45);
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius:var(--r16);
+      box-shadow: var(--shadow);
+      padding:16px 16px 14px;
+      position:relative;
       overflow:hidden;
     }
+    .card:after{
+      content:"";
+      position:absolute;
+      height:2px; left:16px; right:16px; top:0;
+      background: var(--g);
+      opacity:.55;
+      border-radius:999px;
+    }
+    .card h2{font-size:15px;margin:0 0 10px;color:var(--text);letter-spacing:.01em}
+    .card p{margin:0 0 10px;color:var(--muted);line-height:1.55}
+    .card ul{margin:8px 0 0 18px;color:var(--muted);line-height:1.6}
+    .card li{margin:6px 0}
+    .small{font-size:12px;color:var(--muted2)}
 
-    .card .hd{
-      padding: 14px 16px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      border-bottom: 1px solid rgba(255,255,255,.09);
+    .script{
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.65;
+      color:rgba(234,240,255,.78);
       background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      padding:12px;
+      white-space:pre-wrap;
+      word-wrap:break-word;
     }
 
-    .card .hd h2{
-      margin:0;
-      font-size: 14px;
-      letter-spacing: .02em;
-      color: var(--text);
-      text-transform: uppercase;
-      font-family: var(--mono);
+    .twocol{display:grid;grid-template-columns:1fr;gap:10px}
+    @media (min-width: 720px){ .twocol{grid-template-columns:1fr 1fr} }
+
+    .hr{
+      height:1px; background: rgba(255,255,255,.10);
+      margin:10px 0 12px;
     }
 
-    .badge{
-      font-family: var(--mono);
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      color: var(--muted);
-      background: rgba(0,0,0,.20);
-    }
+    .tagrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .tag{font-family:var(--mono);font-size:11px;color:rgba(234,240,255,.72);border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.15);padding:6px 8px;border-radius:999px}
 
-    .card .bd{ padding: 16px; }
-
-    .kpi{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:10px;
-    }
-    @media (max-width: 520px){
-      .kpi{ grid-template-columns: 1fr; }
-    }
-
-    .kpi .item{
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-    }
-    .kpi .label{
-      font-size: 12px;
-      color: var(--muted2);
-      font-family: var(--mono);
-      text-transform: uppercase;
-      letter-spacing:.06em;
-      margin-bottom: 6px;
-    }
-    .kpi .value{
-      font-size: 14px;
-      color: var(--text);
-      font-weight: 650;
-      line-height:1.25;
-    }
-
-    .hr{ height:1px; background: rgba(255,255,255,.10); margin: 14px 0; }
-
-    ul{ margin: 10px 0 0 18px; color: var(--muted); }
-    li{ margin: 8px 0; }
-
-    .callout{
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-      color: var(--muted);
-    }
-
-    .callout strong{
-      color: var(--text);
-      background: var(--g1);
-      -webkit-background-clip:text;
-      background-clip:text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .btnrow{ display:flex; flex-wrap:wrap; gap:10px; margin-top: 12px; }
-    button{
-      cursor:pointer;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(0,0,0,.25);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing:.02em;
-    }
-    button:hover{ border-color: rgba(255,255,255,.28); background: rgba(0,0,0,.32); }
-
-    .primary{
-      border: 1px solid rgba(255,255,255,.18);
-      background: linear-gradient(180deg, rgba(46,144,250,.24), rgba(50,213,131,.16));
-    }
-
-    pre{
-      margin: 0;
-      padding: 14px;
-      background: rgba(0,0,0,.26);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 14px;
-      overflow:auto;
-      color: #DCE6FF;
-      font-size: 13px;
-      line-height: 1.35;
-      font-family: var(--mono);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .two{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 920px){
-      .two{ grid-template-columns: 1fr; }
-    }
-
-    .pill{
-      display:inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.16);
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 12px;
-      margin-right: 6px;
-      background: rgba(0,0,0,.18);
-    }
-
-    .gradtext{
-      background: var(--g1);
-      -webkit-background-clip:text;
-      background-clip:text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .footer{
-      margin-top: 14px;
-      color: var(--muted2);
-      font-size: 12px;
-      font-family: var(--mono);
-    }
-
-    textarea{
-      width: 100%;
-      min-height: 220px;
-      resize: vertical;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      color: var(--text);
-      padding: 12px;
-      outline: none;
-      font-family: var(--mono);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .miniNote{ color: var(--muted2); font-size: 12px; margin-top: 8px; }
+    .footerNote{margin-top:14px;color:var(--muted2);font-size:12px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="topline">
-        <div class="chips">
-          <span class="chip">Nicho: Neutro</span>
-          <span class="chip">Dia: 16</span>
-          <span class="chip">Formato: carrossel</span>
-          <span class="chip">Pilar: Mito vs Verdade</span>
+      <div class="hgrid">
+        <div>
+          <div class="kicker">Nicho: Neutro • Dia 16 • Formato: Reels • Pilar: Erro comum</div>
+          <div class="title">Como gerar lucro sem “fazer malfeito”: roteiro anti-atalhos</div>
+          <div class="meta">
+            <div class="pill">Duração: 25–45s</div>
+            <div class="pill">Estilo: confronto + solução + case</div>
+            <div class="pill">Ritmo: cortes a cada 0,7–1,5s</div>
+          </div>
+          <div style="margin-top:12px">
+            <a class="link" href="https://www.instagram.com/p/DU7-sgAjsyT/" target="_blank" rel="noreferrer">
+              <strong>Post original</strong>
+              <span>instagram.com/p/DU7-sgAjsyT/</span>
+            </a>
+          </div>
         </div>
-        <div class="chips">
-          <span class="chip"><span class="gradtext">Destaque</span>: verde → azul → laranja</span>
-        </div>
-      </div>
-      <h1>O nome que explica um comportamento que ninguém está vendo</h1>
-      <div class="sub">
-        <div>Post original: <a href="https://www.instagram.com/p/DHlEjCXN-Xy/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DHlEjCXN-Xy/</a></div>
-        <div class="chips">
-          <span class="chip">Canvas recomendado: 1080×1350 (4:5)</span>
+        <div class="actions">
+          <button class="btnPrimary" id="copyBtn">Copiar roteiro</button>
+          <button id="copyHooks">Copiar ganchos</button>
         </div>
       </div>
     </header>
 
-    <div class="grid">
-      <section class="card">
-        <div class="hd">
-          <h2>Resumo</h2>
-          <span class="badge">Use como template para qualquer tema</span>
-        </div>
-        <div class="bd">
-          <div class="kpi">
-            <div class="item">
-              <div class="label">Objetivo</div>
-              <div class="value">Nomear um fenômeno + quebrar a culpa do “vilão óbvio” + oferecer solução prática</div>
-            </div>
-            <div class="item">
-              <div class="label">Promessa</div>
-              <div class="value">Fazer a pessoa pensar: “isso descreve exatamente o que eu vejo”</div>
-            </div>
-            <div class="item">
-              <div class="label">Retenção</div>
-              <div class="value">Hook cultural → contraste → causa inesperada → exemplos → virada → CTA</div>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="callout">
-            <strong>Ideia-mãe reproduzível:</strong> “Você acha que é <span class="gradtext">[VILÃO ÓBVIO]</span>, mas a raiz é <span class="gradtext">[CAUSA ESTRUTURAL]</span>. E dá pra começar a resolver com <span class="gradtext">[3 AÇÕES SIMPLES]</span>.”
-          </div>
-
-          <div class="btnrow">
-            <button class="primary" id="copyBtn">Copiar roteiro</button>
-            <button id="copySlidesBtn">Copiar slides sugeridos</button>
-          </div>
-          <div class="miniNote" id="copyState">Dica: personalize os campos entre colchetes antes de postar.</div>
+    <main class="grid">
+      <section class="card span2">
+        <h2>Resumo</h2>
+        <p>Este Reels funciona porque cria <strong>polarização controlada</strong> (contra um atalho comum), entrega uma <strong>promessa ética + resultado</strong> e sustenta com <strong>um caso concreto com números</strong>, seguido de <strong>3–5 sacadas aplicáveis</strong>. Fecha com pergunta comparativa para comentários.</p>
+        <div class="tagrow">
+          <span class="tag">Confronto (sem atacar pessoas)</span>
+          <span class="tag">Números cedo</span>
+          <span class="tag">Sacadas em sequência</span>
+          <span class="tag">Autoridade leve</span>
+          <span class="tag">Pergunta no final</span>
         </div>
       </section>
 
-      <aside class="card">
-        <div class="hd">
-          <h2>Estrutura</h2>
-          <span class="badge">10 slides</span>
-        </div>
-        <div class="bd">
-          <ul>
-            <li><span class="pill">1</span><b>Hook + promessa</b> (referência cultural/fato + termo memorável + micro-CTA)</li>
-            <li><span class="pill">2</span><b>Definição + tese</b> (“isso já é real”)</li>
-            <li><span class="pill">3</span><b>Diagnóstico social</b> (contraste que dói)</li>
-            <li><span class="pill">4</span><b>Mito vs Verdade</b> (quebra do vilão óbvio + causa não óbvia)</li>
-            <li><span class="pill">5</span><b>Consequência emocional</b> (headline “Menos X, mais Y”)</li>
-            <li><span class="pill">6</span><b>Tese central + conceito</b> (nova lente + 3 pilares)</li>
-            <li><span class="pill">7</span><b>Exemplos acionáveis</b> (lista escaneável)</li>
-            <li><span class="pill">8</span><b>Virada + esperança</b> (palavra em destaque)</li>
-            <li><span class="pill">9</span><b>Síntese</b> (frase memorável)</li>
-            <li><span class="pill">10</span><b>CTA social</b> (comentar/compartilhar + salvar)</li>
-          </ul>
-        </div>
-      </aside>
-    </div>
+      <section class="card">
+        <h2>Estrutura (reproduzível e neutra)</h2>
+        <ul>
+          <li><strong>0–3s — Hook:</strong> confronte o “atalho”/má prática mais comum do seu nicho.</li>
+          <li><strong>3–6s — Tese:</strong> “dá para ter resultado sem apelar para isso”.</li>
+          <li><strong>6–12s — Caso + números:</strong> 2–3 números + 1 diferencial (o que torna o exemplo bom).</li>
+          <li><strong>12–30s — Sacadas (3–5):</strong> uma por frase, do geral ao específico.</li>
+          <li><strong>30–40s — Regra:</strong> transforme em princípio (“Se fizer X, priorize Y”).</li>
+          <li><strong>Últimos 2–4s — Pergunta:</strong> peça comparação/opinião para gerar comentários.</li>
+          <li><strong>Bônus:</strong> revele a “referência/nome do case” só no fim (segura retenção).</li>
+        </ul>
+      </section>
 
-    <section class="card" style="margin-top:14px;">
-      <div class="hd">
-        <h2>Slides sugeridos (1..10)</h2>
-        <span class="badge">Texto pronto + campos para substituir</span>
-      </div>
-      <div class="bd">
-        <pre id="slidesText">SLIDE 1 — HOOK + PROMESSA
-“[REFERÊNCIA CULTURAL / NOTÍCIA / FALA VIRAL] trouxe um alerta.”
-A “GERAÇÃO DO [RÓTULO]”
-Vem entender &gt;&gt;&gt;
+      <section class="card">
+        <h2>Roteiro (pronto para preencher)</h2>
+        <div class="small">Substitua os campos entre colchetes. Fale em frases curtas e com opinião.</div>
+        <div class="hr"></div>
+        <div class="script" id="scriptText">[HOOK | 0–3s]
+"Se você tá pensando em fazer [ATALHO/ERRO COMUM] pra conseguir [RESULTADO], para e olha isso." 
 
-SLIDE 2 — DEFINIÇÃO + TESE
-[Descreva o comportamento em 1–2 frases curtas.]
-“A [GERAÇÃO DO RÓTULO] já é real.”
+[TESE | 3–6s]
+"Pra ter [RESULTADO], você não precisa [ATALHO]. Dá pra fazer direito e ainda sair melhor no fim." 
 
-SLIDE 3 — DIAGNÓSTICO SOCIAL (CONTRASTE)
-“Hoje, [PÚBLICO] está [MUITO CONECTADO/OCUPADO] com [MUNDO EXTERNO]…
-…e [MUITO DESCONCTADO/DISTANTE] de [MUNDO PRÓXIMO].”
+[CASO + NÚMEROS | 6–12s]
+"Exemplo real: [CENÁRIO/LIMITE]. Com [NÚMERO 1], eles chegaram em [NÚMERO 2] e ainda [DIFERENCIAL]." 
 
-SLIDE 4 — MITO VS VERDADE (QUEBRA DO VILÃO ÓBVIO)
-“E não é só culpa de [VILÃO ÓBVIO].”
-“O que também empurra isso é [CAUSA ESTRUTURAL]:”
-— [mecanismo 1]
-— [mecanismo 2]
-— [mecanismo 3]
-“[FRASE-MARTELO CURTA].”
+[SACADAS (3–5) | 12–30s]
+"Sacada #1: [DECISÃO/ESTRATÉGIA 1] — isso resolve [BENEFÍCIO 1]."
+"Sacada #2: [DECISÃO/ESTRATÉGIA 2] — melhora [BENEFÍCIO 2] sem aumentar [CUSTO/TEMPO]."
+"Sacada #3: [DECISÃO/ESTRATÉGIA 3] — aumenta [VALOR PERCEBIDO/MARGEM/QUALIDADE]."
+"(Opcional) Sacada #4: [ESTRATÉGIA 4] — reduz [RISCO/RETRABALHO/CHURN]."
+"(Opcional) Sacada #5: [ESTRATÉGIA 5] — deixa o resultado mais [CONFIÁVEL/ESCALÁVEL]." 
 
-SLIDE 5 — CONSEQUÊNCIA (HEADLINE)
-“Menos [X], mais [Y].”
-[Explique em 3–5 linhas o impacto emocional/social/financeiro/saúde.]
+[REGRA | 30–40s]
+"Regra rápida: se você quer [RESULTADO], não corte caminho em [ATALHO]. Corte caminho em [OTIMIZAÇÃO INTELIGENTE]. Combinado?" 
 
-SLIDE 6 — TESE CENTRAL + CONCEITO
-“[SISTEMA/AMBIENTE/ROTINA] influencia [VÍNCULOS/RESULTADOS/DECISÕES].”
-“[NOME DO CONCEITO] propõe:”
-— [pilar 1]
-— [pilar 2]
-— [pilar 3]
-“Não é só sobre [A] — é sobre [B].”
+[PERGUNTA | últimos 2–4s]
+"Na sua área, você vê mais [EXEMPLOS BONS] ou mais [ATALHOS]? Comenta: 1 ou 2." 
 
-SLIDE 7 — EXEMPLOS PRÁTICOS (LISTA)
-Comece com isso:
-— [ação 1 simples]
-— [ação 2 simples]
-— [ação 3 simples]
-— [ação 4 simples]
-“Isso é [IDENTIDADE DO CONCEITO].”
+[REFERÊNCIA | opcional]
+"Se quiser, eu deixo o nome do case/ferramenta/modelo na legenda."</div>
+      </section>
 
-SLIDE 8 — VIRADA + PALAVRA EM DESTAQUE
-“Pode ser que [INSIGHT INCÔMODO].”
-“Mas nunca é tarde para **[PALAVRA-FORÇA]**.”
-“Comece por [MICRO-PASSO EM 5 MIN].”
+      <section class="card">
+        <h2>Elementos visuais (high-tech, simples de replicar)</h2>
+        <ul>
+          <li><strong>B-roll em ordem lógica:</strong> 1) resultado final, 2) “por dentro”/processo, 3) detalhe da sacada, 4) antes/depois, 5) prova (tela, planilha, print, protótipo), 6) resumo final.</li>
+          <li><strong>Texto na tela:</strong> só palavras-chave + números. Evite blocos longos.</li>
+          <li><strong>Guias visuais:</strong> setas/círculos/zoom para apontar “onde está a sacada”.</li>
+          <li><strong>Cortes:</strong> 0,7–1,5s nas sacadas; 2–3s no case com números (tempo de ler).</li>
+          <li><strong>Som:</strong> música baixa + SFX leve nas transições (não competir com voz).</li>
+        </ul>
+        <div class="footerNote">Dica neutra: se você não tem imagens do case, use: tela gravada, mockup, quadro branco, slides minimalistas, ou um “mini-diagrama” feito no Canva/Figma.</div>
+      </section>
 
-SLIDE 9 — SÍNTESE INSPIRACIONAL
-“Talvez [AÇÃO PEQUENA] seja o primeiro passo para [TRANSFORMAÇÃO GRANDE].”
-
-SLIDE 10 — CTA FINAL
-“Comente: qual parte do seu [CONTEXTO] mais te afasta/mais te aproxima?”
-“Salve e envie para alguém que precisa ler isso.”</pre>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px;">
-      <div class="hd">
-        <h2>Roteiro (com instruções de execução)</h2>
-        <span class="badge">Reproduzível</span>
-      </div>
-      <div class="bd">
-        <div class="two">
+      <section class="card">
+        <h2>Copy e ganchos (modelos neutros)</h2>
+        <div class="twocol">
           <div>
-            <div class="callout">
-              <strong>Como preencher rápido (5 min):</strong>
-              <ul>
-                <li><b>Rótulo memorável</b>: “A geração do(a) [X]” / “O efeito [X]” / “A síndrome do [X]”</li>
-                <li><b>Vilão óbvio</b>: o que todo mundo culpa primeiro</li>
-                <li><b>Causa estrutural</b>: a raiz menos comentada (ambiente, sistema, incentivo, hábito, cultura)</li>
-                <li><b>3 mecanismos</b>: por que isso acontece (bullets)</li>
-                <li><b>4 ações simples</b>: o começo do começo (baixo atrito)</li>
-              </ul>
-            </div>
-            <div class="hr"></div>
-            <div class="callout">
-              <strong>Ritmo e copy (para manter leitura):</strong>
-              <ul>
-                <li>1 ideia por slide</li>
-                <li>Frases curtas + quebras manuais</li>
-                <li>Feche cada slide com uma “frase-martelo”</li>
-                <li>Use <b>uma</b> palavra em destaque no slide 8</li>
-              </ul>
-            </div>
+            <p><strong>Hooks (escolha 1):</strong></p>
+            <ul id="hooksList">
+              <li>"Se você faz [ATALHO] pra conseguir [RESULTADO], isso aqui vai te poupar dor de cabeça."</li>
+              <li>"Mito: pra ter [RESULTADO], você precisa [ATALHO]. Verdade: você precisa disso aqui."</li>
+              <li>"[RESULTADO] não justifica [MÁ PRÁTICA]. Dá pra ganhar e fazer direito."</li>
+              <li>"Com [RESTRIÇÃO], deu pra chegar em [RESULTADO] — sem virar um desastre."</li>
+              <li>"O erro que mais parece ‘estratégia’ (mas tá te custando caro): [ATALHO]."</li>
+            </ul>
           </div>
           <div>
-            <textarea id="scriptText">TEMPLATE — CARROSSEL 10 SLIDES (storytelling + argumento + solução + CTA)
-
-1) Hook + promessa
-- Gatilho: [REFERÊNCIA CULTURAL / FATO RECENTE]
-- Termo: “[NOME DO FENÔMENO em 2–4 palavras]”
-- Micro-CTA: “Vem entender >>>”
-
-2) Definição + tese
-- Descrição do sintoma em 1–2 frases.
-- Tese curta: “Isso já é real.”
-
-3) Diagnóstico social (contraste)
-- Mostre o paradoxo do momento: “Muito [X], pouco [Y]”.
-
-4) Mito vs Verdade (quebra da culpa)
-- “Não é só culpa de [VILÃO ÓBVIO].”
-- Verdade: [CAUSA ESTRUTURAL] + 3 bullets.
-- Fecho: [FRASE-MARTELO].
-
-5) Consequência emocional
-- Headline: “Menos [X], mais [Y].”
-- Explicação: o que isso destrói/atrapalha (3–5 linhas).
-
-6) Tese central + conceito
-- “Quando [SISTEMA/AMBIENTE] muda, [COMPORTAMENTO/RESULTADO] muda.”
-- Conceito com nome: [NOME DO CONCEITO/LENTE]
-- 3 pilares em bullets.
-- Fecho: “Não é só sobre [A] — é sobre [B].”
-
-7) Exemplos práticos
-- 4 ações simples e aplicáveis.
-- Frase-âncora: “Isso é [IDENTIDADE].”
-
-8) Virada + esperança
-- “Pode ser que [INSIGHT].”
-- “Mas nunca é tarde para [PALAVRA-FORÇA].”
-- Convite: comece por [MICRO-PASSO].
-
-9) Síntese inspiracional
-- Frase final que dá sentido e fecha o arco.
-
-10) CTA
-- “Comente [pergunta específica].”
-- “Salve + envie para [tipo de pessoa].”</textarea>
-            <div class="miniNote">Este bloco é o que o botão “Copiar roteiro” copia.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px;">
-      <div class="hd">
-        <h2>Elementos visuais</h2>
-        <span class="badge">Dark + high-tech</span>
-      </div>
-      <div class="bd">
-        <div class="two">
-          <div class="callout">
-            <strong>Direção de arte (reproduzível):</strong>
+            <p><strong>Linhas de impacto (para inserir no meio):</strong></p>
             <ul>
-              <li>Fotos “documentais”: cenas reais do contexto do tema (ambiente, rotina, objetos)</li>
-              <li>Overlay escuro 35–55% atrás do texto quando a imagem for clara</li>
-              <li>Alternar slides: <b>headline-cartaz</b> ↔ <b>leitura com bullets</b></li>
-              <li>1 palavra em destaque (cor/gradient) por slide-chave</li>
-            </ul>
-          </div>
-          <div class="callout">
-            <strong>Checklist de composição:</strong>
-            <ul>
-              <li>Margem lateral: 8–10% (respiro)</li>
-              <li>Texto em 2 blocos: headline (topo/centro) + corpo (inferior)</li>
-              <li>Contraste: branco no texto + destaque em degradê (verde/azul/laranja)</li>
-              <li>Consistência: mesma hierarquia em todos os slides</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px;">
-      <div class="hd">
-        <h2>Copy e ganchos</h2>
-        <span class="badge">Fórmulas prontas</span>
-      </div>
-      <div class="bd">
-        <div class="two">
-          <div>
-            <div class="callout">
-              <strong>3 hooks que funcionam no slide 1:</strong>
-              <ul>
-                <li>“[FATO RECENTE] trouxe um alerta que quase ninguém está comentando.”</li>
-                <li>“Se você acha que é só [VILÃO ÓBVIO], você vai perder o ponto.”</li>
-                <li>“Existe um nome para isso: [NOME DO FENÔMENO].”</li>
-              </ul>
-            </div>
-            <div class="hr"></div>
-            <div class="callout">
-              <strong>Frases-martelo (fecho de slide):</strong>
-              <ul>
-                <li>“E isso muda tudo.”</li>
-                <li>“O problema não é ‘o que’ — é ‘como’.”</li>
-                <li>“O ambiente puxa o comportamento.”</li>
-                <li>“Comece pequeno. Mas comece.”</li>
-              </ul>
-            </div>
-          </div>
-          <div class="callout">
-            <strong>Quebra de objeção (slide 4) — substituições:</strong>
-            <ul>
-              <li>“Não é só culpa de [CELULAR/ALGORITMO/PREGUIÇA/FALTA DE TEMPO].”</li>
-              <li>“Também é sobre [INCENTIVOS/ROTINA/AMBIENTE/CULTURA/SISTEMA].”</li>
-              <li>“Quando [CONDICIONANTE] é o padrão, [COMPORTAMENTO] vira consequência.”</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px;">
-      <div class="hd">
-        <h2>CTA</h2>
-        <span class="badge">social + salvamento</span>
-      </div>
-      <div class="bd">
-        <div class="two">
-          <div class="callout">
-            <strong>CTA no slide 1 (micro-continuação):</strong>
-            <ul>
-              <li>“Vem entender &gt;&gt;&gt;”</li>
-              <li>“Segue os slides (vale a pena).”</li>
-              <li>“Antes de culpar [VILÃO], lê isso.”</li>
-            </ul>
-          </div>
-          <div class="callout">
-            <strong>CTA no slide 10 (escolha 1 principal + 1 secundário):</strong>
-            <ul>
-              <li><b>Comentários:</b> “Qual parte do seu [contexto] mais te aproxima / mais te afasta?”</li>
-              <li><b>Compartilhar:</b> “Envie para alguém que vive isso.”</li>
-              <li><b>Salvar:</b> “Salve para aplicar as 4 ações.”</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px;">
-      <div class="hd">
-        <h2>Checklist</h2>
-        <span class="badge">criação + publicação</span>
-      </div>
-      <div class="bd">
-        <div class="two">
-          <div class="callout">
-            <strong>Checklist de criação (antes do design):</strong>
-            <ul>
-              <li>Definir: [PÚBLICO] + [comportamento] + [rótulo do fenômeno]</li>
-              <li>Escrever: 1 frase por slide (primeiro rascunho sem estética)</li>
-              <li>Garantir: slide 4 tem <b>causa não óbvia</b> + 3 mecanismos</li>
-              <li>Listar: 4 ações simples (sem depender de ferramenta paga)</li>
-              <li>Inserir: 1 palavra em destaque (slide 8)</li>
-            </ul>
-          </div>
-          <div class="callout">
-            <strong>Checklist de design (finalização):</strong>
-            <ul>
-              <li>Legibilidade: nenhuma linha encosta na borda</li>
-              <li>Contraste: texto branco + destaque em gradient (sem poluir)</li>
-              <li>Consistência: mesma hierarquia e espaçamentos</li>
-              <li>Escaneabilidade: bullets com 3–5 itens no máximo</li>
-              <li>Export: 1080×1350, nitidez alta, compressão moderada</li>
+              <li>"Isso aumenta valor percebido sem aumentar complexidade."</li>
+              <li>"Parece detalhe, mas é isso que separa amador de profissional."</li>
+              <li>"Não é ‘truque’: é decisão simples bem encaixada."</li>
+              <li>"Você não precisa de milagre. Precisa de método."</li>
+              <li>"O objetivo não é só ganhar mais — é dar menos problema."</li>
             </ul>
           </div>
         </div>
         <div class="hr"></div>
-        <div class="callout">
-          <strong>Checklist de publicação:</strong>
-          <ul>
-            <li>Legenda: 1 parágrafo curto repetindo a tese + CTA de comentário</li>
-            <li>Hashtags: 3–8 específicas do tema (não genéricas)</li>
-            <li>Primeiro comentário: pergunta aberta (facilita respostas)</li>
-            <li>Stories: repost + enquete (“Você já viu isso acontecer?”)</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+        <p><strong>Legenda (modelo curto):</strong> Pare de chamar [ATALHO] de estratégia. Dá pra ter [RESULTADO] com decisões simples: (1) [SACADA 1], (2) [SACADA 2], (3) [SACADA 3]. Qual você mais vê por aí: 1) bem feito ou 2) malfeito? Comenta.</p>
+      </section>
 
-    <section class="card" style="margin-top:14px;">
-      <div class="hd">
-        <h2>Variações</h2>
-        <span class="badge">mesmo impacto, outros temas</span>
-      </div>
-      <div class="bd">
-        <div class="two">
-          <div class="callout">
-            <strong>Trocas que mantêm o “efeito viral”:</strong>
-            <ul>
-              <li><b>Referência cultural</b> → pode virar: “dado”, “notícia”, “tendência”, “conversa do momento”</li>
-              <li><b>Geração do quarto</b> → pode virar: “efeito [X]”, “era do [X]”, “paradoxo do [X]”</li>
-              <li><b>Arquitetura afetiva</b> → pode virar: “design de hábitos”, “sistema de decisão”, “ecologia do comportamento”</li>
-              <li><b>Não é só culpa do celular</b> → pode virar: “não é falta de esforço; é falta de estrutura”</li>
-            </ul>
+      <section class="card">
+        <h2>CTA (escolha 1 + 1)</h2>
+        <ul>
+          <li><strong>Comentário:</strong> "Na sua área tem mais exemplo bom ou mais atalho? Comenta 1 ou 2."</li>
+          <li><strong>Salvar:</strong> "Salva pra usar esse checklist antes de decidir por [ATALHO]."</li>
+          <li><strong>Compartilhar:</strong> "Manda pra alguém que tá quase escolhendo o caminho rápido."</li>
+          <li><strong>Seguir:</strong> "Segue pra mais exemplos de como melhorar resultado sem apelar."</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Checklist de criação (do zero ao post)</h2>
+        <ul>
+          <li><strong>Definir:</strong> 1 atalho/erro comum + por que ele é tentador (ganho rápido).</li>
+          <li><strong>Selecionar 1 case:</strong> pode ser seu, de cliente, ou referência pública.</li>
+          <li><strong>Separar 3 números:</strong> restrição (tempo/orçamento/limite), output (resultado), diferencial (o que fez funcionar).</li>
+          <li><strong>Listar 3–5 sacadas:</strong> (a) estratégia, (b) benefício humano/operacional, (c) impacto em custo/tempo/risco.</li>
+          <li><strong>Roteirizar em frases:</strong> 1 ideia por frase; sem parágrafo.</li>
+          <li><strong>Gravar:</strong> voz clara + b-roll que comprove cada sacada.</li>
+          <li><strong>Editar:</strong> cortes rápidos; palavras-chave na tela; setas/círculos; tela final com pergunta.</li>
+          <li><strong>Publicar:</strong> legenda curta + comentário fixado com pergunta de demanda: "Quer que eu analise [situação]?"></li>
+        </ul>
+      </section>
+
+      <section class="card span2">
+        <h2>Variações (para qualquer área)</h2>
+        <div class="twocol">
+          <div>
+            <p><strong>Variação A — “anti-gambiarra” (ética + qualidade):</strong></p>
+            <div class="script">"Se você tá resolvendo [PROBLEMA] com [GAMBIARRA], cuidado: isso vira custo escondido."
+"Vou te mostrar um jeito de chegar em [RESULTADO] sem comprometer [QUALIDADE/ÉTICA]."
+"Caso: [NÚMEROS]. Sacadas: [1], [2], [3]."
+"Pergunta: aí você vê mais solução de verdade ou mais remendo?"</div>
           </div>
-          <div class="callout">
-            <strong>Exemplos de adaptação por tema (plug and play):</strong>
-            <ul>
-              <li><b>Carreira:</b> vilão óbvio “falta de sorte” → causa estrutural “falta de posicionamento” → ações: portfólio, networking, rotina de aplicações</li>
-              <li><b>Finanças:</b> vilão “gastos supérfluos” → causa “sistema/ambiente de consumo” → ações: regra 24h, automatização, orçamento simples</li>
-              <li><b>Saúde:</b> vilão “falta de força de vontade” → causa “ambiente alimentar/sono” → ações: preparo, trilha de hábitos, exposição à luz</li>
-              <li><b>Estudos:</b> vilão “distração” → causa “método fraco” → ações: pomodoro, revisão espaçada, lista de erros</li>
-            </ul>
+          <div>
+            <p><strong>Variação B — “mito vs verdade” (menos confronto direto):</strong></p>
+            <div class="script">"Mito: pra ter [RESULTADO], você precisa [ATALHO]."
+"Verdade: você precisa de [PRINCÍPIO] + 3 decisões simples."
+"Exemplo com números: [NÚMEROS]."
+"Comenta: qual mito ainda tá forte no seu mercado?"</div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <div class="footer">Feito para copiar, adaptar e repetir com qualquer assunto mantendo a mesma arquitetura de retenção.</div>
+        <div class="hr"></div>
+        <div class="twocol">
+          <div>
+            <p><strong>Variação C — “3 decisões em 30s” (mais direto):</strong></p>
+            <div class="script">"Quer [RESULTADO] sem [ATALHO]? 3 decisões:"
+"1) [DECISÃO 1]"
+"2) [DECISÃO 2]"
+"3) [DECISÃO 3]"
+"Se eu analisar seu caso em 1 minuto, o que você me passaria de dados?"</div>
+          </div>
+          <div>
+            <p><strong>Variação D — “antes vs depois” (visual):</strong></p>
+            <div class="script">"Antes: [CENÁRIO RUIM]."
+"Depois: [CENÁRIO BOM]."
+"O que mudou? [SACADA 1], [SACADA 2], [SACADA 3]."
+"Qual versão você mais vê por aí?"</div>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script>
-    function copyFromElement(el){
-      const text = (el.value !== undefined) ? el.value : el.innerText;
-      return navigator.clipboard.writeText(text);
+    function copyToClipboard(text){
+      if(navigator.clipboard && window.isSecureContext){
+        return navigator.clipboard.writeText(text);
+      }
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.top = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try{ document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(ta);
+      return Promise.resolve();
     }
 
     const copyBtn = document.getElementById('copyBtn');
-    const copySlidesBtn = document.getElementById('copySlidesBtn');
-    const scriptText = document.getElementById('scriptText');
-    const slidesText = document.getElementById('slidesText');
-    const copyState = document.getElementById('copyState');
+    const copyHooks = document.getElementById('copyHooks');
 
     copyBtn.addEventListener('click', async () => {
-      try{
-        await copyFromElement(scriptText);
-        copyState.textContent = 'Roteiro copiado para a área de transferência.';
-      }catch(e){
-        copyState.textContent = 'Não foi possível copiar automaticamente. Selecione e copie manualmente.';
-      }
-      setTimeout(()=> copyState.textContent = 'Dica: personalize os campos entre colchetes antes de postar.', 2200);
+      const text = document.getElementById('scriptText').innerText.trim();
+      await copyToClipboard(text);
+      copyBtn.innerText = 'Copiado!';
+      setTimeout(()=> copyBtn.innerText = 'Copiar roteiro', 1200);
     });
 
-    copySlidesBtn.addEventListener('click', async () => {
-      try{
-        await copyFromElement(slidesText);
-        copyState.textContent = 'Slides sugeridos copiados para a área de transferência.';
-      }catch(e){
-        copyState.textContent = 'Não foi possível copiar automaticamente. Selecione e copie manualmente.';
-      }
-      setTimeout(()=> copyState.textContent = 'Dica: personalize os campos entre colchetes antes de postar.', 2200);
+    copyHooks.addEventListener('click', async () => {
+      const items = Array.from(document.querySelectorAll('#hooksList li')).map(li=>'- ' + li.innerText);
+      await copyToClipboard(items.join('\n'));
+      copyHooks.innerText = 'Copiado!';
+      setTimeout(()=> copyHooks.innerText = 'Copiar ganchos', 1200);
     });
   </script>
 </body>
