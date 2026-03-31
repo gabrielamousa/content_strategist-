@@ -1,458 +1,305 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!doctype html>
+<html lang="pt-br">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dia 14 — Carrossel reproduzível</title>
-<style>
-  :root{
-    --bg0:#070A12;
-    --bg1:#0B1220;
-    --card:#0E172A;
-    --card2:#0B1324;
-    --stroke: rgba(255,255,255,.10);
-    --stroke2: rgba(255,255,255,.16);
-    --text:#EAF0FF;
-    --muted: rgba(234,240,255,.72);
-    --muted2: rgba(234,240,255,.56);
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dia 14 — Roteiro Reels (Neutro)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.085);
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --shadow: 0 18px 55px rgba(0,0,0,.50);
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --g1: linear-gradient(90deg,#22C55E 0%, #38BDF8 50%, #FB923C 100%);
+      --g2: radial-gradient(1000px 500px at 15% -10%, rgba(56,189,248,.22), transparent 55%),
+            radial-gradient(900px 500px at 95% 0%, rgba(34,197,94,.18), transparent 52%),
+            radial-gradient(900px 500px at 40% 110%, rgba(251,146,60,.16), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
 
-    --g1: linear-gradient(90deg,#22C55E 0%, #38BDF8 45%, #F59E0B 100%);
-    --g2: radial-gradient(1200px 600px at 20% 0%, rgba(34,197,94,.18), transparent 60%),
-          radial-gradient(900px 500px at 80% 10%, rgba(56,189,248,.14), transparent 55%),
-          radial-gradient(900px 500px at 50% 100%, rgba(245,158,11,.12), transparent 60%);
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
+      color:var(--text);
+    }
 
-    --shadow: 0 18px 60px rgba(0,0,0,.55);
-    --shadow2: 0 10px 28px rgba(0,0,0,.45);
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 44px;}
 
-    --r12: 12px;
-    --r16: 16px;
-    --r20: 20px;
+    header{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      padding:18px;
+      border:1px solid var(--stroke);
+      border-radius:var(--r20);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
 
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  }
+    .h-left{min-width:0}
+    .kicker{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      color:var(--muted);
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+    .pill{
+      border:1px solid var(--stroke);
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+    }
+    .title{
+      margin:10px 0 6px;
+      font-size:22px;
+      line-height:1.2;
+      letter-spacing:-.2px;
+    }
+    .subtitle{margin:0; color:var(--muted); font-size:14px; line-height:1.45; max-width:75ch;}
 
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family: var(--sans);
-    color: var(--text);
-    background: var(--g2), linear-gradient(180deg,var(--bg0), var(--bg1));
-  }
+    .h-right{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
+    a.link{
+      color: var(--text);
+      text-decoration:none;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+    }
+    a.link:hover{border-color:var(--stroke2); background:rgba(255,255,255,.06)}
 
-  .wrap{
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 28px 18px 54px;
-  }
+    button{
+      cursor:pointer;
+      color: var(--text);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+    }
+    button:hover{border-color:var(--stroke2); background:rgba(255,255,255,.09)}
 
-  header{
-    display:flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 18px;
-    border: 1px solid var(--stroke);
-    border-radius: var(--r20);
-    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    box-shadow: var(--shadow2);
-    position: relative;
-    overflow:hidden;
-  }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
 
-  header:before{
-    content:"";
-    position:absolute;
-    inset:-2px;
-    background: conic-gradient(from 180deg at 50% 50%, rgba(34,197,94,.22), rgba(56,189,248,.18), rgba(245,158,11,.18), rgba(34,197,94,.22));
-    filter: blur(24px);
-    opacity: .35;
-    z-index:0;
-  }
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:var(--r20);
+      background: rgba(255,255,255,.05);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid var(--stroke);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+    .card .hd h2{margin:0; font-size:14px; letter-spacing:.2px;}
+    .tag{
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .card .bd{padding:14px 16px;}
 
-  header > *{position:relative; z-index:1;}
+    .accent{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:700;
+    }
 
-  .topline{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    align-items:center;
-    justify-content: space-between;
-  }
+    .list{margin:10px 0 0; padding:0; list-style:none;}
+    .list li{
+      margin:10px 0;
+      padding:10px 12px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius:var(--r16);
+      color:var(--muted);
+      line-height:1.45;
+    }
+    .list li b{color:var(--text)}
 
-  .badges{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
-  .badge{
-    padding: 8px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--stroke);
-    background: rgba(0,0,0,.18);
-    color: var(--muted);
-    font-size: 12px;
-    letter-spacing: .2px;
-  }
+    .two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 720px){ .two{grid-template-columns:1fr;} }
 
-  .title{
-    font-size: 22px;
-    line-height: 1.2;
-    margin: 0;
-  }
+    .code{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(234,240,255,.78);
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      padding:12px;
+      border-radius:var(--r16);
+      overflow:auto;
+      white-space:pre-wrap;
+      line-height:1.5;
+    }
 
-  .subtitle{
-    margin: 0;
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.55;
-  }
+    .divider{height:1px; background:rgba(255,255,255,.10); margin:12px 0;}
 
-  a{color: inherit;}
-  .link{
-    display:inline-flex;
-    gap:10px;
-    align-items:center;
-    padding: 10px 12px;
-    border-radius: 12px;
-    border: 1px solid var(--stroke);
-    background: rgba(0,0,0,.2);
-    text-decoration:none;
-    color: var(--muted);
-    font-size: 13px;
-    max-width: 100%;
-  }
-  .link span{
-    overflow:hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 62ch;
-  }
+    .mini{color:var(--muted2); font-size:12px; line-height:1.45; margin:8px 0 0;}
 
-  .grid{
-    margin-top: 16px;
-    display:grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
+    .footer{
+      margin-top:14px;
+      padding:14px 16px;
+      border:1px solid var(--stroke);
+      border-radius:var(--r20);
+      background:rgba(255,255,255,.04);
+      color:var(--muted2);
+      font-size:12px;
+    }
 
-  @media (min-width: 900px){
-    .grid{grid-template-columns: 1.05fr .95fr; align-items:start;}
-  }
-
-  .card{
-    border: 1px solid var(--stroke);
-    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    border-radius: var(--r16);
-    box-shadow: var(--shadow2);
-    overflow:hidden;
-  }
-
-  .card .hd{
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--stroke);
-    background: rgba(0,0,0,.18);
-  }
-
-  .card .hd h2{
-    margin:0;
-    font-size: 14px;
-    letter-spacing: .45px;
-    text-transform: uppercase;
-    color: rgba(234,240,255,.86);
-  }
-
-  .pill{
-    font-family: var(--mono);
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--stroke);
-    color: var(--muted);
-    background: rgba(0,0,0,.20);
-  }
-
-  .card .bd{padding: 14px 16px 16px;}
-
-  .callout{
-    border: 1px solid var(--stroke2);
-    border-radius: var(--r12);
-    background: rgba(0,0,0,.22);
-    padding: 12px;
-  }
-  .callout b{background: var(--g1); -webkit-background-clip:text; background-clip:text; color: transparent;}
-
-  .list{margin: 10px 0 0; padding-left: 18px; color: var(--muted);}
-  .list li{margin: 7px 0; line-height:1.55;}
-
-  .divider{height:1px; background: var(--stroke); margin: 14px 0;}
-
-  .kvs{
-    display:grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  @media (min-width: 900px){
-    .kvs{grid-template-columns: 1fr 1fr;}
-  }
-  .kv{
-    border: 1px solid var(--stroke);
-    background: rgba(0,0,0,.18);
-    border-radius: var(--r12);
-    padding: 12px;
-  }
-  .kv .k{font-size: 12px; color: var(--muted2); text-transform: uppercase; letter-spacing:.5px;}
-  .kv .v{margin-top:6px; color: var(--muted); line-height:1.5;}
-
-  .script{
-    font-family: var(--mono);
-    font-size: 12.5px;
-    line-height: 1.6;
-    color: rgba(234,240,255,.84);
-    background: rgba(0,0,0,.28);
-    border: 1px solid var(--stroke);
-    border-radius: var(--r12);
-    padding: 12px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-
-  .actions{
-    display:flex;
-    gap: 10px;
-    flex-wrap:wrap;
-    align-items:center;
-    justify-content: flex-end;
-  }
-
-  button{
-    cursor:pointer;
-    border: 1px solid var(--stroke);
-    background: rgba(0,0,0,.25);
-    color: var(--text);
-    padding: 10px 12px;
-    border-radius: 12px;
-    font-weight: 600;
-    letter-spacing: .2px;
-  }
-  button.primary{
-    border: 0;
-    background: var(--g1);
-    color: #071018;
-  }
-  button:active{transform: translateY(1px);}
-
-  .tag{
-    display:inline-block;
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--stroke);
-    background: rgba(0,0,0,.18);
-    color: var(--muted);
-    margin: 6px 8px 0 0;
-    font-size: 12px;
-  }
-
-  .slides{
-    display:grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  .slide{
-    border: 1px solid var(--stroke);
-    background: rgba(0,0,0,.18);
-    border-radius: var(--r12);
-    padding: 12px;
-  }
-  .slide .n{
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted2);
-  }
-  .slide .t{
-    margin-top: 6px;
-    font-weight: 700;
-  }
-  .slide .d{
-    margin-top: 6px;
-    color: var(--muted);
-    line-height: 1.55;
-  }
-
-  footer{
-    margin-top: 16px;
-    color: var(--muted2);
-    font-size: 12px;
-    text-align: center;
-  }
-</style>
+    .ok{display:none; margin-left:8px; font-size:12px; color:rgba(34,197,94,.95)}
+  </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="topline">
-        <div class="badges">
-          <div class="badge">Nicho: <b>Neutro</b></div>
-          <div class="badge">Dia: <b>14</b></div>
-          <div class="badge">Formato: <b>Carrossel</b></div>
-          <div class="badge">Pilar: <b>Passo a passo</b></div>
+      <div class="h-left">
+        <div class="kicker">
+          <span class="pill"><b>Nicho</b>: Neutro</span>
+          <span class="pill"><b>Dia</b>: 14</span>
+          <span class="pill"><b>Formato</b>: Reels</span>
+          <span class="pill"><b>Pilar</b>: Mito vs Verdade</span>
         </div>
-        <div class="actions">
-          <a class="link" href="https://www.instagram.com/p/DGA2yRgsNA6/" target="_blank" rel="noreferrer"><span>Post original: https://www.instagram.com/p/DGA2yRgsNA6/</span></a>
-        </div>
+        <h1 class="title">Roteiro de Reel: <span class="accent">refute um mito</span> e gere retenção</h1>
+        <p class="subtitle">Modelo neutro para qualquer área: você pega uma frase popular (meia-verdade), desmonta com 2 contrapontos + consequência prática, e fecha com uma ação clara (salvar/compartilhar/DM).</p>
       </div>
-
-      <h1 class="title">Como usar cores para contar uma história (carrossel pronto)</h1>
-      <p class="subtitle">Roteiro neutro para analisar qualquer tema usando <b style="background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;">evidência visual → significado → síntese</b>. Ideal para páginas de conteúdo, marcas, produtos, obras, cases ou bastidores.</p>
+      <div class="h-right">
+        <a class="link" href="https://www.instagram.com/p/DWB5XAnjklD/" target="_blank" rel="noreferrer">Abrir post original</a>
+        <button id="copyBtn">Copiar roteiro</button>
+        <span id="copied" class="ok">Copiado.</span>
+      </div>
     </header>
 
     <div class="grid">
       <section class="card">
         <div class="hd">
           <h2>Resumo</h2>
-          <div class="pill">8 slides • 1080×1350</div>
+          <span class="tag">Objetivo: atenção → confiança → ação</span>
         </div>
         <div class="bd">
-          <div class="callout">
-            <b>Ideia central:</b> use 4 cores (ou “pistas visuais”) do seu tema para revelar uma mensagem oculta, de forma simples e colecionável (a pessoa quer ver “todas as cores”).
-          </div>
           <ul class="list">
-            <li><b>Promessa</b> na capa + “nada é por acaso” no slide 2.</li>
-            <li><b>Slides 3–6</b>: padrão repetível (cor → evidência → o que comunica).</li>
-            <li><b>Slide 7</b>: síntese (big idea) para entregar recompensa cognitiva.</li>
-            <li><b>Slide 8</b>: pergunta + CTA de seguir/salvar.</li>
+            <li><b>O que é:</b> um Reel de <b>refutação (rebate)</b> com tensão narrativa.</li>
+            <li><b>Por que funciona:</b> começa com <b>conflito</b>, usa <b>progressão ponto a ponto</b>, inclui <b>concretude</b> (número, regra, exemplo) e fecha com <b>CTA coletivo</b>.</li>
+            <li><b>Quando usar:</b> quando existir um <b>mito repetido</b> que esteja fazendo sua audiência decidir errado, perder oportunidade ou assumir risco.</li>
           </ul>
-          <div class="divider"></div>
-          <div class="kvs">
-            <div class="kv">
-              <div class="k">Quando usar</div>
-              <div class="v">Quando você quer explicar algo visual (identidade, ambiente, produto, campanha, aula, processo) e gerar comentários com uma pergunta final.</div>
-            </div>
-            <div class="kv">
-              <div class="k">Resultado esperado</div>
-              <div class="v">Mais retenção (carrossel “coleção”), mais salvamentos (estrutura didática) e mais comentários (pergunta objetiva).</div>
-            </div>
-          </div>
+          <p class="mini"><b>Tempo recomendado:</b> 35–60s (até 75–90s se precisar, mantendo cortes rápidos).</p>
         </div>
       </section>
 
       <section class="card">
         <div class="hd">
           <h2>Estrutura</h2>
-          <div class="pill">Ritmo: denso + respiro</div>
+          <span class="tag">7 blocos + pré-hook</span>
         </div>
         <div class="bd">
           <ul class="list">
-            <li><b>Slide 1 (Capa):</b> hook + promessa (1 frase).</li>
-            <li><b>Slide 2 (Contexto + método):</b> por que isso importa + como você vai analisar.</li>
-            <li><b>Slides 3–6 (Cores 1–4):</b> evidência visual + paleta (swatches) + significado em 2 linhas.</li>
-            <li><b>Slide 6 (opcional “dupla leitura”):</b> mesma cor com 2 interpretações (1) e (2).</li>
-            <li><b>Slide 7 (Síntese):</b> o que a combinação revela + 2–3 bullets.</li>
-            <li><b>Slide 8 (Fechamento):</b> pergunta + CTA (seguir/salvar/comentar).</li>
+            <li><b>0) Pré-hook visual (0,5s):</b> tese polêmica em texto grande.</li>
+            <li><b>1) Hook (3–6s):</b> confronto + promessa.</li>
+            <li><b>2) O mito (5–10s):</b> “tem gente dizendo que…” (sem dar palco).</li>
+            <li><b>3) Pergunta que desarma (3–5s):</b> “qual é a base disso?”</li>
+            <li><b>4) Contraponto decisivo (10–15s):</b> 1 informação central (regra/dado/critério).</li>
+            <li><b>5) Consequência real (10–15s):</b> impacto prático (custo, prazo, risco, resultado).</li>
+            <li><b>6) Credibilidade humana (5–10s):</b> “na prática eu vejo…” (sem expor terceiros).</li>
+            <li><b>7) Fecho + CTA (5–8s):</b> resumo em 1 frase + ação.</li>
           </ul>
-          <div class="divider"></div>
-          <div class="callout">
-            <b>Regra de ouro:</b> cada slide de cor deve ter <b>1</b> evidência + <b>1</b> sensação + <b>1</b> função (o que isso causa/mostra/explica).
-          </div>
         </div>
       </section>
-    </div>
 
-    <section class="card" style="margin-top:14px;">
-      <div class="hd">
-        <h2>Roteiro (copiável)</h2>
-        <div class="actions">
-          <button class="primary" id="copyBtn">Copiar roteiro</button>
-          <button id="selectBtn">Selecionar texto</button>
+      <section class="card" id="roteiroCard">
+        <div class="hd">
+          <h2>Roteiro (texto para gravar)</h2>
+          <span class="tag">Substitua [colchetes]</span>
         </div>
-      </div>
-      <div class="bd">
-        <div id="script" class="script">TEMPLATE — CARROSSEL (8 SLIDES) — ANÁLISE POR CORES
+        <div class="bd">
+          <div class="code" id="roteiroTexto">PRÉ-HOOK (na tela, 0,5s)
+“‘[MITO EM 6–10 PALAVRAS]’ — sério?”
 
-[Preencha antes]
-- Tema analisado: [obra/produto/marca/aula/case/processo]
-- Objetivo do post: [educar / vender / posicionar / entretenimento]
-- Público: [iniciante / intermediário / avançado]
-- 4 cores/pistas visuais escolhidas: [Cor A], [Cor B], [Cor C], [Cor D]
+1) HOOK (3–6s)
+“Se você acredita que [MITO], você pode estar [RISCO/ERRO] sem perceber. Em 30 segundos eu te mostro o detalhe que muda tudo.”
 
-SLIDE 1 — CAPA (HOOK + PROMESSA)
-Headline (escolha 1):
-1) “As cores de [TEMA] dizem mais do que você imagina”
-2) “O que a paleta de [TEMA] revela sobre [EMOÇÃO/IDEIA]”
-3) “Você está lendo [TEMA] do jeito errado — comece pelas cores”
-Sub (micro): “Análise visual • em 60s de leitura”
-Rodapé: “Arraste →”
+2) O QUE ESTÃO DIZENDO (5–10s)
+“Eu vejo muita gente repetindo: ‘[CITAÇÃO CURTA DO MITO]’. Parece lógico… mas é uma simplificação perigosa.”
 
-SLIDE 2 — CONTEXTO + MÉTODO (SETUP)
-Frase grande: “[TEMA] parece simples. Mas nada aqui é por acaso.”
-Texto curto: “Vou te mostrar 4 cores (com evidência) e o que elas comunicam.”
-Mini-gancho: “No final, a combinação entrega o tema central.”
+3) PERGUNTA QUE DESARMA (3–5s)
+“Pergunta rápida: qual é a base disso? Dado? Regra? Experiência real? Ou só ‘todo mundo fala’?”
 
-SLIDE 3 — COR 1 (COR → EVIDÊNCIA → SIGNIFICADO)
-Título: “[COR A] = [PALAVRA-CHAVE]”
-Evidência: “Repare em [cena/elemento/tela/embalagem/ambiente]”
-Significado (2 linhas):
-- Sensação: “[COR A] passa [sensação].”
-- Função: “Isso reforça [efeito: controle / clareza / urgência / conforto / status / etc.].”
+4) CONTRAPONTO #1 (10–15s)
+“O que quase ninguém considera é: [FATO/REGRA/CRITÉRIO PRINCIPAL].
+Quando você olha por esse ângulo, [O MITO] já não fecha.”
 
-SLIDE 4 — COR 2 (CONTRASTE)
-Título: “[COR B] = [PALAVRA-CHAVE]”
-Evidência: “Ela aparece quando [situação/virada/objeção] acontece.”
-Significado:
-- Sensação: “[COR B] traz [sensação].”
-- Função: “Funciona como contraste com [COR A], criando [tensão/desejo/alerta].”
+5) CONTRAPONTO #2 + CONSEQUÊNCIA (10–15s)
+“Na prática, isso dá em [CONSEQUÊNCIA 1] e [CONSEQUÊNCIA 2].
+E o pior: você pode acabar [PERDA/RISCO/OPORTUNIDADE].”
 
-SLIDE 5 — COR 3 (NEUTROS / AUSÊNCIA / SILÊNCIO)
-Título: “[COR C] = [PALAVRA-CHAVE]”
-Evidência: “Os neutros dominam [ambiente/tela/material] para [intenção].”
-Significado:
-- Sensação: “Menos cor = [vazio/foco/rigidez/limpeza].”
-- Função: “Abre espaço para você notar [detalhe/ação/chamada].”
+6) CREDIBILIDADE (5–10s)
+“Eu vejo isso acontecer quando [CENÁRIO TÍPICO]. O erro mais comum é [ERRO COMUM].”
 
-SLIDE 6 — COR 4 (DUPLA LEITURA)
-Título: “[COR D] pode significar duas coisas:”
-1) “[interpretação positiva/funcional]”
-2) “[interpretação crítica/irônica]”
-Fecho: “Depende do contexto em que ela aparece.”
+7) FECHO + CTA (5–8s)
+“Resumo: não é sobre [VERSÃO SIMPLES DO MITO], é sobre [PRINCÍPIO REAL].
+Se isso te ajudou, salva e envia pra alguém que ainda repete esse mito. Quer um checklist? Comenta ‘CHECKLIST’.”
 
-SLIDE 7 — SÍNTESE (BIG IDEA)
-Headline: “Juntas, essas cores constroem: [TEMA CENTRAL EM 5–8 PALAVRAS]”
-Bullets (2–3):
-- “[Cor A] puxa para [ideia]”
-- “[Cor B] quebra com [ideia]”
-- “[Cor C] sustenta [ideia]”
-- “[Cor D] reinterpreta [ideia]”
-Frase final curta: “Você não vê só estética — você vê intenção.”
+(CTA discreto no meio — opcional)
+“Se você quer a versão em checklist, comenta ‘CHECKLIST’ que eu libero.”</div>
+          <div class="divider"></div>
+          <p class="mini"><b>Dica de performance:</b> faça 1 micro-pausa antes do “detalhe que muda tudo” para aumentar retenção.</p>
+        </div>
+      </section>
 
-SLIDE 8 — FECHAMENTO (PERGUNTA + CTA)
-Pergunta (escolha 1):
-1) “Qual cor mais mudou sua leitura de [TEMA]?”
-2) “Você já tinha percebido essa lógica?”
-3) “Quer a versão disso aplicada em [opção A] ou [opção B]?”
-CTA: “Salve para usar como referência e me siga para mais análises replicáveis.”
-Opcional: “Comente ‘CORES’ que eu te mando uma lista de ferramentas.”</div>
-      </div>
-    </section>
-
-    <div class="grid" style="margin-top:14px;">
       <section class="card">
         <div class="hd">
           <h2>Elementos visuais</h2>
-          <div class="pill">DNA high-tech + editorial</div>
+          <span class="tag">Edição simples, cara de “high-trust”</span>
         </div>
         <div class="bd">
-          <div class="callout"><b>Objetivo:</b> parecer uma “análise técnica” (prova) sem ficar pesado.</div>
-          <ul class="list">
-            <li><b>Fundo</b>: escuro (grafite/azul-noite) + leve ruído/grain.</li>
-            <li><b>Cards</b>: borda suave + sombra discreta (camadas).</li>
-            <li><b>Destaques</b>: use um degradê (verde → azul → laranja) para palavras-chave e barras finas.</li>
-            <li><b>Swatches</b>: 5–7 retângulos por cor (do tom mais escuro ao mais claro).</li>
-            <li><b>Marcações</b>: círculos, sublinhados e setas (2–3 por slide, no máximo).</li>
-            <li><b>Prova visual</b>: prints, fotos, frames, interface, recortes (sempre com legenda curta).</li>
-          </ul>
-          <div class="divider"></div>
-          <div class="kvs">
-            <div class="kv"><div class="k">Grid sugerido</div><div class="v">Imagem (70%) + swatches (30%) + texto no rodapé.</div></div>
-            <div class="kv"><div class="k">Tipografia</div><div class="v">Título impactante + corpo muito legível (frases curtas, poucas linhas).</div></div>
+          <div class="two">
+            <div>
+              <ul class="list">
+                <li><b>Jump cuts:</b> a cada 1 ideia (1–2 frases).</li>
+                <li><b>Texto na tela:</b> “capítulos” com 6–8 palavras.</li>
+                <li><b>Zoom-in leve:</b> no contraponto #1 (o ponto decisivo).</li>
+                <li><b>Legenda dinâmica:</b> destaque de palavras-chave.</li>
+              </ul>
+            </div>
+            <div>
+              <ul class="list">
+                <li><b>B-roll mínimo (opcional):</b> gráfico, print, headline, tela borrada de documento, produto, dashboard (sem dados sensíveis).</li>
+                <li><b>Paleta:</b> fundo escuro + destaques em verde/azul/laranja.</li>
+                <li><b>Ritmo:</b> acelera no mito, desacelera no “detalhe”.</li>
+                <li><b>Áudio:</b> voz em primeiro plano; música baixa e contínua.</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -460,141 +307,136 @@ Opcional: “Comente ‘CORES’ que eu te mando uma lista de ferramentas.”</d
       <section class="card">
         <div class="hd">
           <h2>Copy e ganchos</h2>
-          <div class="pill">Colecionável + curioso</div>
+          <span class="tag">Escolha 1 por vídeo</span>
         </div>
         <div class="bd">
-          <div>
-            <span class="tag">“Nada é por acaso.”</span>
-            <span class="tag">“Repare neste detalhe.”</span>
-            <span class="tag">“Agora junta tudo…”</span>
-            <span class="tag">“Essa cor aparece quando…”</span>
-          </div>
-          <div class="divider"></div>
           <ul class="list">
-            <li><b>Hook (capa):</b> “As cores de [TEMA] dizem mais do que você imagina.”</li>
-            <li><b>Autoridade sutil:</b> “Deixa eu te mostrar o padrão que quase ninguém nota.”</li>
-            <li><b>Método:</b> “Cor → evidência → o que comunica.”</li>
-            <li><b>Contraste:</b> “Quando [X] acontece, a paleta muda — e isso altera a sensação.”</li>
-            <li><b>Recompensa:</b> “No final, a combinação entrega a mensagem.”</li>
+            <li><b>Confronto:</b> “Se você acredita em [MITO], você tá sendo enganado por uma simplificação.”</li>
+            <li><b>Correção rápida:</b> “[MITO] é falso — e eu te provo em 30s.”</li>
+            <li><b>Pergunta-desafio:</b> “De onde vem essa certeza sobre [TEMA]?”</li>
+            <li><b>Indignação técnica:</b> “Isso não é opinião. Isso muda o resultado na prática.”</li>
+            <li><b>Quebra de expectativa:</b> “O problema não é [X]. O problema é [Y].”</li>
           </ul>
+          <div class="divider"></div>
+          <div class="code">Modelos de texto na tela (capítulos)
+1) “Estão repetindo isso sobre [TEMA]…”
+2) “Pergunta: qual é a base disso?”
+3) “O detalhe que muda tudo:”
+4) “Na prática, o risco é:”
+5) “O que fazer agora:”
+6) “Salva e manda pra quem precisa”</div>
         </div>
       </section>
-    </div>
 
-    <div class="grid" style="margin-top:14px;">
       <section class="card">
         <div class="hd">
           <h2>CTA</h2>
-          <div class="pill">Comentário + salvar</div>
+          <span class="tag">1–2 no final + 1 discreto</span>
         </div>
         <div class="bd">
           <ul class="list">
-            <li><b>Para comentários:</b> “Qual cor mais te chamou atenção — e por quê?”</li>
-            <li><b>Para salvar:</b> “Salve para usar como referência no seu próximo post.”</li>
-            <li><b>Para seguir:</b> “Me siga para mais templates replicáveis (sem depender do nicho).”</li>
-            <li><b>Para direcionar pauta:</b> “Quer que eu aplique esse template em [A] ou [B]?”</li>
+            <li><b>Salvar:</b> “Salva porque você vai usar isso de novo.”</li>
+            <li><b>Compartilhar:</b> “Manda pra alguém que ainda repete esse mito.”</li>
+            <li><b>Comentário-chave:</b> “Comenta ‘CHECKLIST’ que eu libero o passo a passo.”</li>
+            <li><b>DM:</b> “Se você quer ajuda com seu cenário, me chama com ‘CASO’.”</li>
+            <li><b>Enquete (Stories pós-Reel):</b> “Você já acreditou nesse mito? (Sim/Não)”</li>
           </ul>
-          <div class="callout"><b>Dica:</b> escolha <b>1 CTA primário</b> (comentário OU salvar). O secundário pode ser “seguir”.</div>
+          <p class="mini"><b>Fixe um comentário:</b> “Qual mito sobre [TEMA] você quer que eu desmonte no próximo?”</p>
         </div>
       </section>
 
       <section class="card">
         <div class="hd">
-          <h2>Checklist</h2>
-          <div class="pill">Criação rápida</div>
+          <h2>Checklist de criação</h2>
+          <span class="tag">Copiar e colar</span>
+        </div>
+        <div class="bd">
+          <div class="code">ANTES DE GRAVAR
+[ ] Escolhi 1 mito/frase popular (1 linha)
+[ ] Defini a promessa (o que a pessoa ganha em 30–60s)
+[ ] Separei 1 base objetiva (dado, regra, critério, processo, benchmark)
+[ ] Separei 1 consequência prática (custo, prazo, risco, resultado)
+[ ] Separei 1 exemplo típico (sem expor ninguém)
+
+ROTEIRO
+[ ] Pré-hook visual (tese polêmica)
+[ ] Hook (confronto + promessa)
+[ ] Apresento o mito sem dar palco demais
+[ ] Pergunta que desarma (“qual a base?”)
+[ ] Contraponto #1 (o ponto decisivo)
+[ ] Contraponto #2 (efeito prático)
+[ ] Credibilidade humana (experiência/cenário)
+[ ] Resumo em 1 frase + CTA
+
+GRAVAÇÃO
+[ ] Frases curtas (1 ideia por frase)
+[ ] 2–3 interpelações (“atenção”, “olha isso”, “detalhe”)
+[ ] Micro-pausa antes do ponto decisivo
+
+EDIÇÃO
+[ ] Corte a cada ideia
+[ ] Texto na tela em capítulos (6–8 palavras)
+[ ] Zoom leve no contraponto #1
+[ ] Legenda dinâmica
+
+PUBLICAÇÃO
+[ ] Título do Reel em forma de tese: “Não caia nessa sobre [TEMA]”
+[ ] Descrição: 1 linha de resumo + CTA
+[ ] Comentário fixado com pergunta</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="tag">3 versões do mesmo molde</span>
         </div>
         <div class="bd">
           <ul class="list">
-            <li>Definir <b>tema</b> e <b>mensagem central</b> (1 frase).</li>
-            <li>Selecionar <b>8–12 evidências visuais</b> (prints/fotos/frames).</li>
-            <li>Escolher <b>4 cores</b> que aparecem com frequência (ou 4 pistas visuais).</li>
-            <li>Extrair <b>5–7 tons</b> por cor (swatches consistentes).</li>
-            <li>Escrever para cada cor: <b>1 sensação</b> + <b>1 função</b> (máx. 2 linhas).</li>
-            <li>Aplicar <b>marcações</b> (2–3 por slide) para guiar o olhar.</li>
-            <li>Garantir <b>consistência</b>: topo/rodapé fixos + mesma hierarquia.</li>
-            <li>Fechar com <b>síntese</b> (slide 7) + <b>pergunta</b> (slide 8).</li>
-            <li>Revisar legibilidade em 100% (celular): poucas linhas, contraste alto.</li>
+            <li><b>Variação A — “Ponto a ponto”:</b> liste 3 frases do mito e responda em 1 frase cada (rápido, ritmo alto).</li>
+            <li><b>Variação B — “Antes/Depois”:</b> “Antes eu achava [mito]. Depois que vi [critério], mudou para [verdade].”</li>
+            <li><b>Variação C — “Teste de realidade”:</b> “Se isso fosse verdade, então [consequência absurda]. E não é isso que acontece. O que acontece é [verdade].”</li>
           </ul>
+          <div class="divider"></div>
+          <div class="code">Sugestões de temas (neutros)
+- “Mais caro = melhor”
+- “Ferramenta X resolve tudo”
+- “Você só precisa de disciplina”
+- “Dá pra fazer em 1 dia”
+- “É só copiar o que funciona pros outros”</div>
         </div>
       </section>
     </div>
 
-    <section class="card" style="margin-top:14px;">
-      <div class="hd">
-        <h2>Slides sugeridos (1..8)</h2>
-        <div class="pill">Modelo pronto</div>
-      </div>
-      <div class="bd">
-        <div class="slides">
-          <div class="slide"><div class="n">Slide 1</div><div class="t">Capa: promessa + curiosidade</div><div class="d">Headline forte + 1 imagem icônica do tema + highlight em degradê.</div></div>
-          <div class="slide"><div class="n">Slide 2</div><div class="t">Contexto: “nada é por acaso” + método</div><div class="d">Explique em 2–3 linhas o critério da análise e o que a pessoa vai ganhar no final.</div></div>
-          <div class="slide"><div class="n">Slide 3</div><div class="t">Cor 1: base/controle/ambiente</div><div class="d">Evidência + swatches + sensação + função (curto, didático).</div></div>
-          <div class="slide"><div class="n">Slide 4</div><div class="t">Cor 2: contraste/ruptura/atenção</div><div class="d">Mostre quando ela aparece e como muda a leitura do tema.</div></div>
-          <div class="slide"><div class="n">Slide 5</div><div class="t">Cor 3: neutros/silêncio/foco</div><div class="d">Use a “ausência de cor” como argumento (rotina, limpeza, monotonia, minimalismo etc.).</div></div>
-          <div class="slide"><div class="n">Slide 6</div><div class="t">Cor 4: dupla leitura</div><div class="d">Duas interpretações (1) e (2) para gerar conversa nos comentários.</div></div>
-          <div class="slide"><div class="n">Slide 7</div><div class="t">Síntese: big idea</div><div class="d">A frase que amarra tudo + 2–3 bullets. Entregue a “moral” visual.</div></div>
-          <div class="slide"><div class="n">Slide 8</div><div class="t">Fechamento: pergunta + CTA</div><div class="d">Pergunta direta + “salve/ siga/ comente”. Visual mais limpo (respiro).</div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px;">
-      <div class="hd">
-        <h2>Variações</h2>
-        <div class="pill">Pra não enjoar</div>
-      </div>
-      <div class="bd">
-        <ul class="list">
-          <li><b>Variação A (3 cores):</b> faça 7 slides (capa, contexto, 3 cores, síntese, CTA).</li>
-          <li><b>Variação B (5 cores):</b> faça 9–10 slides, mas mantenha texto ainda menor por slide.</li>
-          <li><b>Variação C (antes/depois):</b> em cada cor, mostre “sem correção” vs “com correção” (ótimo para design/foto/produto).</li>
-          <li><b>Variação D (erro comum):</b> substitua uma cor por “O erro que essa cor causa quando mal usada”.</li>
-          <li><b>Variação E (prova):</b> inclua um slide extra com métricas/resultados/case (se houver).</li>
-        </ul>
-        <div class="callout"><b>Atalho de criação:</b> se você não tem “frames”, use: prints de site/app, fotos do produto, slides de aula, trechos de material, bastidores do processo.</div>
-      </div>
-    </section>
-
-    <footer>
-      UX note: mantenha frases curtas, contraste alto e consistência por slide. Ajuste o template ao seu tema mantendo a estrutura.
-    </footer>
+    <div class="footer">
+      <b>Como adaptar rápido:</b> substitua [MITO], [TEMA], [FATO/REGRA], [CONSEQUÊNCIA] e [CENÁRIO TÍPICO] para seu assunto. Mantenha o conflito no início, a concretude no meio e um CTA único no final.
+    </div>
   </div>
 
-<script>
-  const copyBtn = document.getElementById('copyBtn');
-  const selectBtn = document.getElementById('selectBtn');
-  const scriptEl = document.getElementById('script');
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const ok = document.getElementById('copied');
+      const texto = document.getElementById('roteiroTexto');
 
-  function getText(){
-    return scriptEl.innerText;
-  }
+      async function copy(){
+        const content = texto.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(content);
+        }catch(e){
+          const t = document.createElement('textarea');
+          t.value = content;
+          document.body.appendChild(t);
+          t.select();
+          document.execCommand('copy');
+          document.body.removeChild(t);
+        }
+        ok.style.display = 'inline';
+        setTimeout(()=> ok.style.display = 'none', 1600);
+      }
 
-  copyBtn.addEventListener('click', async () => {
-    try{
-      await navigator.clipboard.writeText(getText());
-      copyBtn.textContent = 'Copiado!';
-      setTimeout(() => (copyBtn.textContent = 'Copiar roteiro'), 1400);
-    }catch(e){
-      // fallback
-      const range = document.createRange();
-      range.selectNodeContents(scriptEl);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-      document.execCommand('copy');
-      sel.removeAllRanges();
-      copyBtn.textContent = 'Copiado!';
-      setTimeout(() => (copyBtn.textContent = 'Copiar roteiro'), 1400);
-    }
-  });
-
-  selectBtn.addEventListener('click', () => {
-    const range = document.createRange();
-    range.selectNodeContents(scriptEl);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-  });
-</script>
+      btn.addEventListener('click', copy);
+    })();
+  </script>
 </body>
 </html>
