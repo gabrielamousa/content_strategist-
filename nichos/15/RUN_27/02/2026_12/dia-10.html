@@ -1,48 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dia 10 — Roteiro reproduzível (Nicho Neutro)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dia 10 — Roteiro Reels (Nicho Neutro)</title>
   <style>
     :root{
       --bg0:#070A12;
       --bg1:#0B1020;
-      --card:#0E1630cc;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
       --stroke:rgba(255,255,255,.10);
-      --stroke2:rgba(255,255,255,.14);
       --text:#EAF0FF;
       --muted:rgba(234,240,255,.72);
       --muted2:rgba(234,240,255,.55);
-      --shadow: 0 18px 50px rgba(0,0,0,.55);
-      --r:18px;
-      --g1: linear-gradient(90deg, #22C55E 0%, #38BDF8 45%, #FB923C 100%);
-      --g2: radial-gradient(800px 380px at 10% 10%, rgba(56,189,248,.22), transparent 60%),
-            radial-gradient(700px 360px at 90% 20%, rgba(34,197,94,.18), transparent 55%),
-            radial-gradient(700px 420px at 60% 100%, rgba(251,146,60,.16), transparent 55%);
+      --shadow: 0 12px 40px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg,#34D399 0%, #60A5FA 45%, #F59E0B 100%);
+      --g2: radial-gradient(1200px 700px at 20% 10%, rgba(96,165,250,.22), transparent 55%),
+            radial-gradient(900px 600px at 80% 30%, rgba(52,211,153,.18), transparent 60%),
+            radial-gradient(900px 700px at 50% 95%, rgba(245,158,11,.16), transparent 55%);
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      background: var(--g2), linear-gradient(180deg, var(--bg0), var(--bg1));
-      color:var(--text);
       font-family:var(--sans);
-      line-height:1.45;
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
+      min-height:100vh;
     }
-    a{color:#9AE6FF; text-decoration:none}
-    a:hover{ text-decoration:underline }
-
-    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 54px;}
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
 
     header{
-      border:1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(14,22,48,.85), rgba(14,22,48,.55));
-      box-shadow:var(--shadow);
-      border-radius: calc(var(--r) + 6px);
-      padding:22px 22px 18px;
       position:relative;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--radius) + 6px);
+      padding:22px 22px;
       overflow:hidden;
     }
     header:before{
@@ -50,311 +49,432 @@
       position:absolute;
       inset:-2px;
       background: var(--g1);
-      opacity:.14;
-      filter: blur(14px);
-      pointer-events:none;
+      opacity:.18;
+      filter: blur(18px);
+      z-index:0;
     }
-    .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; position:relative}
-    .chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
-    .chip{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.05);
-      padding:6px 10px;
-      border-radius: 999px;
-      font-size:12px;
-      color: var(--muted);
-      backdrop-filter: blur(8px);
-    }
-    .chip strong{color:var(--text); font-weight:650}
-
-    h1{margin:10px 0 6px; font-size:22px; letter-spacing:.2px; position:relative}
-    .sub{color: var(--muted); font-size:13.5px; position:relative}
-
-    .bar{
-      height: 3px;
-      background: var(--g1);
-      border-radius: 99px;
-      margin-top:14px;
-      opacity:.9;
+    .hdr{
       position:relative;
-    }
-
-    .grid{
-      margin-top:16px;
       display:grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1.2fr .8fr;
       gap:14px;
+      align-items:start;
+      z-index:1;
     }
-    @media (min-width: 940px){
-      .grid{grid-template-columns: 1.06fr .94fr;}
+    .kpis{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-end;
+      padding-top:2px;
     }
-
-    .card{
+    .pill{
       border:1px solid var(--stroke);
-      background: rgba(14,22,48,.62);
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
-      padding:18px;
+      background: rgba(0,0,0,.18);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      display:flex; gap:8px; align-items:center;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:50%;
+      background: var(--g1);
+      box-shadow: 0 0 18px rgba(96,165,250,.4);
+    }
+    h1{margin:0; font-size:22px; line-height:1.2; letter-spacing:.2px}
+    .sub{margin-top:8px; color:var(--muted); font-size:13.5px; line-height:1.45}
+    .linkrow{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16)}
+    .btnPrimary{
+      background: rgba(0,0,0,.2);
       position:relative;
       overflow:hidden;
     }
-    .card:before{
+    .btnPrimary:before{
       content:"";
-      position:absolute;
-      left:-80px;
-      top:-80px;
-      width:220px;
-      height:220px;
-      background: radial-gradient(circle at 30% 30%, rgba(56,189,248,.18), transparent 60%);
-      filter: blur(2px);
-      pointer-events:none;
-    }
-    .card h2{
-      margin:0 0 10px;
-      font-size:15px;
-      letter-spacing:.3px;
-      text-transform:uppercase;
-      color: rgba(234,240,255,.88);
-    }
-    .card p{margin:0 0 10px; color:var(--muted)}
-    .card ul{margin:0; padding-left:18px; color:var(--muted)}
-    .card li{margin:7px 0}
-
-    .hi{
-      display:inline-block;
-      padding:.1em .45em;
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border:1px solid var(--stroke);
-      position:relative;
-      color: var(--text);
-    }
-    .hi:after{
-      content:"";
-      position:absolute;
-      inset:-1px;
-      border-radius:999px;
+      position:absolute; inset:0;
       background: var(--g1);
-      opacity:.18;
-      pointer-events:none;
+      opacity:.22;
+      z-index:0;
     }
+    .btnPrimary span{position:relative; z-index:1}
 
-    .code{
-      font-family: var(--mono);
-      font-size: 12.5px;
-      background: rgba(0,0,0,.28);
-      border:1px solid var(--stroke);
-      border-radius: 14px;
-      padding:14px;
-      color: rgba(234,240,255,.86);
-      white-space: pre-wrap;
-      overflow:auto;
-    }
-
-    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-    button{
-      border:1px solid var(--stroke2);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding:10px 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      font-weight:650;
-      letter-spacing:.2px;
-    }
-    button.primary{
-      background: linear-gradient(180deg, rgba(34,197,94,.18), rgba(56,189,248,.12));
-      border-color: rgba(56,189,248,.25);
-    }
-    button:hover{filter: brightness(1.06)}
-
-    .two{
+    .grid{
+      margin-top:18px;
       display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
     }
-    @media (min-width: 940px){
-      .two{grid-template-columns:1fr 1fr;}
-    }
-
-    .mini{
+    .card{
       border:1px solid var(--stroke);
-      border-radius: 14px;
-      padding:12px;
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      padding:16px 16px;
+      overflow:hidden;
+      position:relative;
     }
-    .mini strong{color:var(--text)}
+    .card .hd{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .card h2{margin:0; font-size:14px; letter-spacing:.5px; text-transform:uppercase; color:rgba(234,240,255,.86)}
+    .tag{
+      font-family:var(--mono);
+      font-size:11px;
+      color:rgba(234,240,255,.72);
+      padding:6px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+    }
+    .card p, .card li{color:var(--muted); font-size:13.5px; line-height:1.55}
+    .card ul{margin:10px 0 0; padding-left:18px}
+    .card li{margin:6px 0}
 
-    .footerNote{margin-top:14px; font-size:12px; color:var(--muted2)}
+    .full{grid-column: 1 / -1}
 
-    .kbd{font-family:var(--mono); font-size:12px; padding:2px 6px; border:1px solid var(--stroke); background:rgba(0,0,0,.25); border-radius:8px;}
+    .script{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      padding:14px;
+      margin-top:10px;
+      font-family: var(--mono);
+      font-size:12.5px;
+      color: rgba(234,240,255,.86);
+      line-height:1.6;
+      white-space:pre-wrap;
+    }
+
+    .cols{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+
+    .callout{
+      margin-top:10px;
+      padding:12px 12px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.24));
+      position:relative;
+      overflow:hidden;
+    }
+    .callout:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.14;
+      filter: blur(16px);
+    }
+    .callout > div{position:relative; z-index:1}
+
+    .mini{color:var(--muted2); font-size:12.5px}
+
+    @media (max-width: 860px){
+      .hdr{grid-template-columns:1fr}
+      .kpis{justify-content:flex-start}
+      .grid{grid-template-columns:1fr}
+      .cols{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="topline">
-        <div class="chips">
-          <span class="chip"><strong>Nicho:</strong> Neutro</span>
-          <span class="chip"><strong>Dia:</strong> 10</span>
-          <span class="chip"><strong>Formato:</strong> Reels</span>
-          <span class="chip"><strong>Pilar:</strong> Passo a passo</span>
+      <div class="hdr">
+        <div>
+          <h1>Dia 10 — Como simplificar algo “difícil” e gerar salvamentos</h1>
+          <div class="sub">Template neutro de Reel: quebra de crença + micro-história + passo a passo simples + 2 variações + CTA de salvar e enviar. Funciona para qualquer nicho (produto, serviço, rotina, estudo, treino, finanças, carreira, etc.).</div>
+          <div class="linkrow">
+            <a class="btn" href="https://www.instagram.com/p/DTvy_bUgZp0/" target="_blank" rel="noopener">Abrir post original</a>
+            <button class="btn btnPrimary" id="copyBtn"><span>Copiar roteiro</span></button>
+            <span class="mini" id="copyStatus"></span>
+          </div>
         </div>
-        <div class="chips">
-          <span class="chip"><strong>Original:</strong> <a href="https://www.instagram.com/p/C_6WFQkvIfs/" target="_blank" rel="noreferrer">abrir post</a></span>
+        <div class="kpis">
+          <div class="pill"><span class="dot"></span><strong>Nicho:</strong>&nbsp;<span>Neutro</span></div>
+          <div class="pill"><span class="dot"></span><strong>Formato:</strong>&nbsp;<span>Reels</span></div>
+          <div class="pill"><span class="dot"></span><strong>Pilar:</strong>&nbsp;<span>Passo a passo</span></div>
+          <div class="pill"><span class="dot"></span><strong>Duração:</strong>&nbsp;<span>45–60s</span></div>
         </div>
       </div>
-      <h1>A Regra 50/30/20 para organizar qualquer rotina em 3 partes</h1>
-      <div class="sub">Framework numérico + exemplos concretos + CTA de utilidade (salvar/enviar). Troque “salário/dinheiro” por <span class="hi">qualquer recurso</span>: tempo, energia, orçamento, atenção, equipe, prioridades.</div>
-      <div class="bar"></div>
     </header>
 
-    <div class="grid">
+    <main class="grid">
+      <section class="card full">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">O que este post faz</span>
+        </div>
+        <ul>
+          <li><strong>Prende atenção</strong> com uma quebra de crença (“isso é mais simples do que parece”).</li>
+          <li><strong>Cria vínculo</strong> com identidade + emoção (nostalgia, “vida adulta”, rotina corrida, pressão, etc.).</li>
+          <li><strong>Entrega valor rápido</strong> via um passo a passo curto (2–4 passos) com resultado previsível.</li>
+          <li><strong>Ganha credibilidade</strong> com 1 dado específico (tempo, % de economia, antes/depois, números de esforço).</li>
+          <li><strong>Aumenta salvamentos</strong> com “detalhes na legenda” e promessa de replicação.</li>
+          <li><strong>Aumenta compartilhamento</strong> com CTA leve/humorado (“manda pra quem vai fazer por você”).</li>
+        </ul>
+        <div class="callout"><div>
+          <div style="font-weight:700; margin-bottom:6px;">Onde funciona melhor</div>
+          <div class="mini">Qualquer tema que o público acredita ser “complicado/caro/demorado”: aprender algo, organizar rotina, criar conteúdo, planejar, melhorar performance, implementar ferramenta, cuidar de si, etc.</div>
+        </div></div>
+      </section>
+
       <section class="card">
-        <h2>Resumo</h2>
-        <p>Este roteiro ensina um método de divisão em <span class="hi">3 blocos</span> com números fáceis de lembrar. A retenção vem da progressão previsível (A → B → C) e da lista de exemplos que reduz a dúvida do público.</p>
-        <div class="two">
-          <div class="mini"><strong>Objetivo:</strong> fazer a pessoa aplicar hoje (conteúdo “salvável”).</div>
-          <div class="mini"><strong>Promessa:</strong> “Em menos de 30s, você aprende a organizar <em>X</em> com a regra 50/30/20.”</div>
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="tag">Sequência</span>
+        </div>
+        <ul>
+          <li><strong>0–3s:</strong> Hook (quebra de crença + tensão).</li>
+          <li><strong>3–8s:</strong> Reenquadramento (culpa → leveza).</li>
+          <li><strong>8–18s:</strong> Identificação (micro-história: “antes vs agora”).</li>
+          <li><strong>18–30s:</strong> Solução (o “atalho” + 1 dado).</li>
+          <li><strong>30–45s:</strong> Demonstração (2–4 passos).</li>
+          <li><strong>45–55s:</strong> 2 variações (pra não enjoar / adaptar).</li>
+          <li><strong>55–60s:</strong> Fecho + CTA (salvar, enviar, comentar).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="tag">Edição</span>
+        </div>
+        <ul>
+          <li><strong>Cortes secos</strong> e mudanças de cena a cada 1–2s na parte prática.</li>
+          <li><strong>Alternância</strong>: rosto na câmera (conexão) ↔ mãos/tela (prova).</li>
+          <li><strong>Close no “resultado”</strong>: tela final, antes/depois, comparativo, entrega.</li>
+          <li><strong>Texto grande</strong> com keywords (SIMPLES, 3 PASSOS, 2 VARIAÇÕES, EM 5 MIN).</li>
+          <li><strong>SFX sutis</strong> (clique, teclado, marcador, transições de corte) + música baixa.</li>
+          <li><strong>Speed ramp</strong> na execução (1,2x–1,5x) para dinamismo.</li>
+        </ul>
+      </section>
+
+      <section class="card full">
+        <div class="hd">
+          <h2>Roteiro</h2>
+          <span class="tag">Template reproduzível</span>
+        </div>
+        <div class="cols">
+          <div>
+            <div class="mini" style="margin-bottom:6px;">Preencha os campos: [TEMA], [RESULTADO], [DADO], [PASSO 1..4], [VAR 1..2]</div>
+            <div class="script" id="scriptText">(0–3s) HOOK — quebra de crença
+“Isso aqui vai soar estranho, mas [TEMA] pode ser MUITO mais simples do que te falaram.”
+
+(3–8s) REENQUADRAMENTO — leveza
+“O que costuma complicar é: [1 erro comum / excesso de opções / falta de um passo-chave].”
+
+(8–18s) IDENTIFICAÇÃO — micro-história (antes vs agora)
+“Eu também achava que [crença antiga]. Aí na [rotina/vida adulta/correria], eu precisava de um jeito de [RESULTADO] sem [sacrifício: perder tempo/gastar muito/ficar confuso].”
+
+(18–30s) SOLUÇÃO — o ‘atalho’ + 1 dado
+“O pulo do gato é [a alavanca: ferramenta/regra/estrutura/atalho].
+E pra você ter noção: [DADO específico: ‘economiza X minutos’, ‘reduz em X%’, ‘leva 3 etapas’, ‘custa R$X’, ‘funciona em 10 min’].”
+
+(30–45s) PASSO A PASSO — 2 a 4 passos
+“Faz assim:
+1) [PASSO 1]
+2) [PASSO 2]
+3) [PASSO 3]
+(4) [PASSO 4 — opcional]
+Pronto: [resultado visível/benefício].”
+
+(45–55s) VARIAÇÕES — 2 opções
+“Se você quiser adaptar:
+• Variação 1: [VAR 1]
+• Variação 2: [VAR 2]”
+
+(55–60s) FECHO + CTA
+“No fim, [mensagem: ‘não precisa ser pesado’, ‘não precisa ser perfeito’, ‘o simples consistente vence’].
+Detalhes na legenda. Salva pra fazer depois e manda pra alguém que vive dizendo que ‘não tem tempo’."</div>
+          </div>
+          <div>
+            <div class="callout"><div>
+              <div style="font-weight:700; margin-bottom:6px;">Sugestões de “dados” (use só 1)</div>
+              <ul style="margin:0; padding-left:18px">
+                <li>Tempo real (ex.: “em 7 minutos”).</li>
+                <li>Comparação antes/depois (ex.: “de 6 passos para 3”).</li>
+                <li>Economia (R$ / horas / cliques).</li>
+                <li>Percentual (ex.: “reduz em ~30% o retrabalho”).</li>
+                <li>Quantidade (ex.: “2 arquivos, 1 checklist, 1 rotina”).</li>
+              </ul>
+            </div></div>
+            <div class="callout"><div>
+              <div style="font-weight:700; margin-bottom:6px;">Mini-ganchos (para manter retenção)</div>
+              <ul style="margin:0; padding-left:18px">
+                <li>“E o melhor: …”</li>
+                <li>“O que ninguém te fala é …”</li>
+                <li>“A parte mais importante é a etapa 2 …”</li>
+                <li>“Daqui a pouco eu te mostro 2 variações …”</li>
+              </ul>
+            </div></div>
+          </div>
         </div>
       </section>
 
       <section class="card">
-        <h2>Estrutura (sequência vencedora)</h2>
-        <ul>
-          <li><strong>Hook (1–2s):</strong> nomeie a regra + benefício imediato.</li>
-          <li><strong>Setup (2–4s):</strong> “São 3 partes” (cria mapa mental).</li>
-          <li><strong>Bloco 1 — 50% (6–8s):</strong> “Essenciais” + 3–5 exemplos.</li>
-          <li><strong>Bloco 2 — 30% (6–8s):</strong> “Flexível” + 3–5 exemplos + limite (“apenas”).</li>
-          <li><strong>Bloco 3 — 20% (6–8s):</strong> “Futuro/Proteção” + prioridade + 2–4 objetivos.</li>
-          <li><strong>Fechamento (2–4s):</strong> frase aspiracional + CTA (salvar/enviar/seguir).</li>
-        </ul>
-      </section>
-
-      <section class="card">
-        <h2>Roteiro (pronto para gravar)</h2>
-        <p><strong>Como neutralizar:</strong> substitua “salário” por <span class="hi">RECURSO</span> e ajuste exemplos para seu tema.</p>
-        <div class="code" id="roteiro">HOOK (0:00–0:02)
-“Se você sente que seu RECURSO some no mês, usa a Regra 50/30/20.”
-
-SETUP (0:02–0:05)
-“Você divide em 3 partes. Simples. E você sempre sabe onde encaixar cada coisa.”
-
-50% — ESSENCIAIS (0:05–0:13)
-“50% é o que mantém o básico rodando: [essencial 1], [essencial 2], [essencial 3].
-Exemplos: manutenção, rotina obrigatória, compromissos fixos, base do processo.”
-
-30% — FLEXÍVEL / PRAZER / EXPANSÃO (0:13–0:21)
-“30% é o flexível: melhorias, extras e coisas que você escolhe.
-Só cuidado: é aqui que estoura se você não colocar um limite.”
-
-20% — FUTURO / PROTEÇÃO (0:21–0:29)
-“20% é futuro: primeiro uma ‘reserva’ (margem de segurança), depois metas.
-Exemplos: otimização, aprendizado, upgrades, projetos de longo prazo.”
-
-FECHAMENTO + CTA (0:29–0:35)
-“Se você aplicar isso por 30 dias, seu RECURSO para de ser um mistério.
-Salve pra copiar, e envie pra alguém que vive no modo improviso.”</div>
-        <div class="actions">
-          <button class="primary" id="copyBtn">Copiar roteiro</button>
-          <button id="copyHooksBtn">Copiar ganchos</button>
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="tag">Modelos prontos</span>
         </div>
-        <div class="footerNote">Dica de ritmo: troque de bloco a cada 4–6s. Frases curtas. Texto grande com “50 / 30 / 20” sempre na tela.</div>
-      </section>
-
-      <section class="card">
-        <h2>Elementos visuais (high-tech + claros)</h2>
         <ul>
-          <li><strong>Três cores por bloco:</strong> 50% (verde), 30% (laranja), 20% (azul).</li>
-          <li><strong>UI na tela:</strong> barras/progress preenchendo 50 → 30 → 20 conforme a fala.</li>
-          <li><strong>Texto fixo:</strong> “REGRA 50/30/20” + subtítulo “para organizar [RECURSO]”.</li>
-          <li><strong>Ícones/B-roll neutros:</strong> checklist (essenciais), sparkle/plus (extras), escudo/gráfico (futuro).</li>
-          <li><strong>Destaques:</strong> zoom leve em “apenas 30%” e “primeiro reserva”.</li>
-          <li><strong>Legenda dinâmica:</strong> palavras-chave em negrito/cor (ESSENCIAIS / FLEXÍVEL / FUTURO).</li>
+          <li><strong>Quebra de crença:</strong> “Você não precisa de [X] pra conseguir [resultado].”</li>
+          <li><strong>Contraste:</strong> “Parece avançado, mas é só [3 passos].”</li>
+          <li><strong>Alívio da culpa:</strong> “Se você não consegue manter, o problema não é você — é o método.”</li>
+          <li><strong>Curiosidade:</strong> “Isso parece [algo complexo], mas é [simples].”</li>
+          <li><strong>Identidade:</strong> “Vida adulta é: pouco tempo, muita demanda. Então eu faço assim…”</li>
         </ul>
       </section>
 
       <section class="card">
-        <h2>Copy e ganchos (variações)</h2>
-        <div class="code" id="ganchos">GANCHOS (1–2s)
-1) “A forma mais simples de organizar [RECURSO] em 3 partes.”
-2) “Se você vive apagando incêndio, faz isso: 50/30/20.”
-3) “Uma regra numérica que corta a indecisão na hora de priorizar.”
-4) “Quer parar de ‘chutar’ prioridades? Usa 50/30/20.”
-
-PROMESSAS (1 frase)
-- “Em 30 segundos, você sai com um mapa pronto pra decidir o que entra e o que sai.”
-- “Você vai saber exatamente onde colocar cada tarefa/custo/esforço.”
-
-FECHAMENTOS
-- “Simples, repetível e fácil de ajustar.”
-- “O ponto não é perfeição: é consistência.”</div>
-        <p class="footerNote">Personalize o <span class="kbd">[RECURSO]</span>: tempo, agenda, orçamento, energia, conteúdo, estudos, equipe, prioridades da semana.</p>
-      </section>
-
-      <section class="card">
-        <h2>CTA (escolha 1 primário + 1 secundário)</h2>
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="tag">Salvar / Enviar / Comentar</span>
+        </div>
         <ul>
-          <li><strong>Primário (melhor):</strong> “Salve pra aplicar no próximo ciclo (semana/mês).”</li>
-          <li><strong>Secundário (compartilhamento):</strong> “Envie pra alguém que precisa de um método simples.”</li>
-          <li><strong>Secundário (crescimento):</strong> “Me siga pra mais frameworks rápidos e aplicáveis.”</li>
-          <li><strong>Opcional (comentário):</strong> “Comente ‘REGRA’ que eu te mando um template.”</li>
+          <li><strong>Salvamento:</strong> “Salva pra aplicar na próxima vez que você for [situação].”</li>
+          <li><strong>Compartilhamento:</strong> “Manda pra alguém que sempre fala que [objeção: ‘não tem tempo’ / ‘é complicado’].”</li>
+          <li><strong>Comentário:</strong> “Você trava mais no passo 1 ou no passo 2?”</li>
+          <li><strong>DM:</strong> “Quer um modelo pronto? Comenta ‘QUERO’ que eu te mando.”</li>
         </ul>
       </section>
 
-      <section class="card">
-        <h2>Checklist de criação (reproduzível)</h2>
-        <ul>
-          <li><strong>Pré:</strong> escolha um framework com números (3 partes). Defina o <span class="hi">RECURSO</span> e o objetivo (controle, clareza, consistência).</li>
-          <li><strong>Roteiro:</strong> hook nomeável + “são 3 partes” + 3 blocos com 3–5 exemplos + prioridade no 3º bloco + CTA salvar/enviar.</li>
-          <li><strong>Captação:</strong> grave em pé, enquadramento médio, áudio limpo, energia alta (20–35s).</li>
-          <li><strong>Edição:</strong> cortes a cada frase, números grandes na tela, cores por bloco, barra de progresso, legendas destacando termos.</li>
-          <li><strong>Publicação:</strong> capa com “REGRA 50/30/20” + subtítulo do recurso; legenda curta com exemplos; 3–5 hashtags amplas do tema.</li>
-        </ul>
+      <section class="card full">
+        <div class="hd">
+          <h2>Checklist</h2>
+          <span class="tag">Criação e publicação</span>
+        </div>
+        <div class="cols">
+          <div>
+            <div style="font-weight:700; margin-bottom:6px;">Pré-roteiro</div>
+            <ul>
+              <li>[ ] Definir 1 crença comum pra quebrar ("é caro", "é difícil", "leva muito tempo").</li>
+              <li>[ ] Definir 1 emoção/identidade (nostalgia, correria, insegurança, ambição, recomeço).</li>
+              <li>[ ] Definir 1 promessa clara: <em>simples + replicável + benefício</em>.</li>
+              <li>[ ] Separar 1 dado específico (tempo, custo, etapas, %).</li>
+              <li>[ ] Escolher 2 variações (para perfis diferentes) sem aumentar complexidade.</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-weight:700; margin-bottom:6px;">Gravação + edição</div>
+            <ul>
+              <li>[ ] Primeiro frame com texto grande (hook) e contraste visual.</li>
+              <li>[ ] Alternar rosto ↔ execução (tela/mãos) para prova.</li>
+              <li>[ ] Cortes a cada 1–2s na parte prática.</li>
+              <li>[ ] Inserir 3 textos-chave: SIMPLES / 3 PASSOS / 2 VARIAÇÕES.</li>
+              <li>[ ] Tela final: “Detalhes na legenda + SALVA”.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="cols">
+          <div>
+            <div style="font-weight:700; margin-bottom:6px;">Legenda (para gerar salvamentos)</div>
+            <ul>
+              <li>[ ] Repetir a promessa em 1 linha.</li>
+              <li>[ ] Listar os passos em bullets curtos.</li>
+              <li>[ ] Incluir as 2 variações + quando usar cada uma.</li>
+              <li>[ ] Finalizar com CTA: salvar + enviar + comentar.</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-weight:700; margin-bottom:6px;">Publicação</div>
+            <ul>
+              <li>[ ] Comentário fixado com as variações (ou links/modelos).</li>
+              <li>[ ] Responder comentários com pergunta (puxa conversa).</li>
+              <li>[ ] Se performar bem: repost nos Stories com enquete ("Quer parte 2?").</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
-      <section class="card">
-        <h2>Variações (mesmo formato, novos temas)</h2>
-        <ul>
-          <li><strong>Tempo/agenda:</strong> 50% obrigações, 30% crescimento/relacionamentos, 20% planejamento/recuperação.</li>
-          <li><strong>Projetos:</strong> 50% execução core, 30% melhorias/experimentos, 20% prevenção (documentação, testes, riscos).</li>
-          <li><strong>Conteúdo:</strong> 50% valor eterno, 30% tendências, 20% bastidores/prova.</li>
-          <li><strong>Estudos:</strong> 50% fundamentos, 30% exercícios, 20% revisão/flashcards/simulados.</li>
-          <li><strong>Saúde/hábitos:</strong> 50% base (sono/alimentação), 30% performance, 20% prevenção (check-ups/mobilidade).</li>
-        </ul>
-        <p class="footerNote">Regra de ouro: o número cria memorização; os exemplos criam aplicação; o CTA cria compartilhamento.</p>
+      <section class="card full">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="tag">Mesma estrutura, novos ângulos</span>
+        </div>
+        <div class="cols">
+          <div>
+            <div style="font-weight:700; margin-bottom:6px;">Variação A — “3 erros que te travam”</div>
+            <ul>
+              <li>Hook: “Se [tema] parece difícil, você provavelmente tá errando isso aqui.”</li>
+              <li>Mostra 3 erros (rápido), depois ensina o passo a passo corrigido.</li>
+              <li>CTA: “Salva pra conferir antes de fazer de novo.”</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-weight:700; margin-bottom:6px;">Variação B — “Antes e depois (prova)”</div>
+            <ul>
+              <li>Começa com comparação (antes/depois) em 1s.</li>
+              <li>Explica 1 mudança-chave + dado (tempo/economia/resultados).</li>
+              <li>CTA: “Quer o modelo? Comenta ‘MODELO’.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="cols">
+          <div>
+            <div style="font-weight:700; margin-bottom:6px;">Variação C — “Setup pronto (kit/rotina)”</div>
+            <ul>
+              <li>Hook: “Eu deixo isso pronto em 10 min pra semana.”</li>
+              <li>Mostra preparação + 2 usos possíveis.</li>
+              <li>CTA: “Salva e manda pra quem precisa de praticidade.”</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-weight:700; margin-bottom:6px;">Variação D — “Checklist falado”</div>
+            <ul>
+              <li>Hook: “Se você só fizer isso aqui, já melhora muito.”</li>
+              <li>Formato lista (5 itens) com B-roll.</li>
+              <li>CTA: “Salva como checklist.”</li>
+            </ul>
+          </div>
+        </div>
       </section>
-    </div>
+    </main>
   </div>
 
   <script>
-    async function copyText(text){
-      try{
-        await navigator.clipboard.writeText(text);
-      }catch(e){
-        const ta=document.createElement('textarea');
-        ta.value=text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        ta.remove();
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const status = document.getElementById('copyStatus');
+      const text = document.getElementById('scriptText').innerText;
+
+      async function copy(){
+        try{
+          await navigator.clipboard.writeText(text);
+          status.textContent = 'Roteiro copiado.';
+          setTimeout(()=> status.textContent = '', 1800);
+        }catch(e){
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          status.textContent = 'Roteiro copiado.';
+          setTimeout(()=> status.textContent = '', 1800);
+        }
       }
-    }
-
-    document.getElementById('copyBtn').addEventListener('click', async () => {
-      const text = document.getElementById('roteiro').innerText.trim();
-      await copyText(text);
-      document.getElementById('copyBtn').innerText = 'Roteiro copiado';
-      setTimeout(()=> document.getElementById('copyBtn').innerText = 'Copiar roteiro', 1200);
-    });
-
-    document.getElementById('copyHooksBtn').addEventListener('click', async () => {
-      const text = document.getElementById('ganchos').innerText.trim();
-      await copyText(text);
-      document.getElementById('copyHooksBtn').innerText = 'Ganchos copiados';
-      setTimeout(()=> document.getElementById('copyHooksBtn').innerText = 'Copiar ganchos', 1200);
-    });
+      btn.addEventListener('click', copy);
+    })();
   </script>
 </body>
 </html>
