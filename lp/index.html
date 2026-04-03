@@ -57,6 +57,82 @@
             }
         }
     </script>
+
+    <!-- Meta Pixel -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+    (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '212698257382826');
+    fbq('track', 'PageView');
+    </script>
+    <noscript>
+      <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=212698257382826&ev=PageView&noscript=1"/>
+    </noscript>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VVTTYF4JYW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-VVTTYF4JYW');
+    </script>
+
+    <!-- UTM Capture + n8n Webhook -->
+    <script>
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const utmKeys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+      utmKeys.forEach(key => {
+        if (params.get(key)) localStorage.setItem(key, params.get(key));
+      });
+      const fbclid = params.get('fbclid');
+      if (fbclid) {
+        localStorage.setItem('fbc', 'fb.1.' + Date.now() + '.' + fbclid);
+      }
+      if (!sessionStorage.getItem('event_id')) {
+        sessionStorage.setItem('event_id', 'ic_' + Date.now() + '_' + Math.random().toString(36).substring(2,9));
+      }
+    })();
+
+    function getFbp() {
+      const match = document.cookie.match(/_fbp=([^;]+)/);
+      return match ? match[1] : '';
+    }
+
+    function getGaCid() {
+      const match = document.cookie.match(/_ga=GA\d+\.\d+\.(\d+\.\d+)/);
+      return match ? match[1] : '';
+    }
+
+    window.dispararInitiateCheckout = function(email) {
+      const payload = {
+        email: email || '',
+        event_id: sessionStorage.getItem('event_id') || '',
+        utm_source:   localStorage.getItem('utm_source')   || '(not set)',
+        utm_medium:   localStorage.getItem('utm_medium')   || '(not set)',
+        utm_campaign: localStorage.getItem('utm_campaign') || '(not set)',
+        utm_content:  localStorage.getItem('utm_content')  || null,
+        utm_term:     localStorage.getItem('utm_term')     || null,
+        fbp: getFbp(),
+        fbc: localStorage.getItem('fbc') || '',
+        ga_cid: getGaCid(),
+        page_url: window.location.href
+      };
+      fetch('https://dev.webhook.contentia.com.br/webhook/initiate-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (window.fbq) fbq('track', 'InitiateCheckout');
+      if (window.gtag) gtag('event', 'begin_checkout');
+    };
+    </script>
+
 </head>
 <body class="antialiased selection:bg-notebook-blue selection:text-white">
 
@@ -876,7 +952,7 @@
                     </ul>
                     
                     <!-- BOTÃO CHECKOUT MENSAL -->
-                    <a href="#link-do-checkout-mensal" target="_blank" class="block text-center w-full bg-white text-black border-2 border-black text-lg font-bold px-8 py-5 rounded-full hover:bg-gray-50 transition transform hover:-translate-y-1 mt-auto">
+                    <a href="https://insta30ai.circle.so/checkout/insta30ai" target="_blank" onclick="dispararInitiateCheckout('')" class="block text-center w-full bg-white text-black border-2 border-black text-lg font-bold px-8 py-5 rounded-full hover:bg-gray-50 transition transform hover:-translate-y-1 mt-auto">
                         QUERO ENTRAR AGORA →
                     </a>
                 </div>
@@ -909,7 +985,7 @@
                     </ul>
                     
                     <!-- BOTÃO CHECKOUT ANUAL -->
-                    <a href="#link-do-checkout-anual" target="_blank" class="block text-center w-full bg-gradient-to-r from-notebook-blue to-notebook-purple text-white text-lg font-bold px-8 py-5 rounded-full hover:opacity-90 shadow-xl shadow-blue-900/20 transition transform hover:-translate-y-1 mt-auto">
+                    <a href="https://chk.eduzz.com/E05XZ217WX" target="_blank" onclick="dispararInitiateCheckout('')" class="block text-center w-full bg-gradient-to-r from-notebook-blue to-notebook-purple text-white text-lg font-bold px-8 py-5 rounded-full hover:opacity-90 shadow-xl shadow-blue-900/20 transition transform hover:-translate-y-1 mt-auto">
                         QUERO ENTRAR AGORA →
                     </a>
                 </div>
@@ -1099,22 +1175,25 @@
     <script>
         lucide.createIcons();
     </script>
+
+    <!-- UTM para links Eduzz -->
     <script>
     (function () {
-        const utmParamQueryString = new URLSearchParams(window.location.search);
-        if (utmParamQueryString.toString()) {
-            var navLinks = document.querySelectorAll('a');
-            navLinks.forEach(function(item) {
-                if (item.href.indexOf('sun.eduzz.com') !== -1) {
-                    if (item.href.indexOf('?') === -1) {
-                        item.href += '?' + utmParamQueryString.toString();
-                    } else {
-                        item.href += '&' + utmParamQueryString.toString();
-                    }
-                }
-            });
-        }
+      const utmParamQueryString = new URLSearchParams(window.location.search);
+      if (utmParamQueryString.toString()) {
+        var navLinks = document.querySelectorAll('a');
+        navLinks.forEach(function(item) {
+          if (item.href.indexOf('sun.eduzz.com') !== -1) {
+            if (item.href.indexOf('?') === -1) {
+              item.href += '?' + utmParamQueryString.toString();
+            } else {
+              item.href += '&' + utmParamQueryString.toString();
+            }
+          }
+        });
+      }
     })();
     </script>
+
 </body>
 </html>
