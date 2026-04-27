@@ -987,9 +987,15 @@ CAPTURA DE UTMs + fbc + fbp + ViewContent
                     </ul>
                     
                     <!-- BOTÃO CHECKOUT MENSAL -->
-                    <a href="https://insta30ai.circle.so/checkout/insta30ai" target="_blank" onclick="dispararInitiateCheckout('')" class="block text-center w-full bg-white text-black border-2 border-black text-lg font-bold px-8 py-5 rounded-full hover:bg-gray-50 transition transform hover:-translate-y-1 mt-auto">
-                        QUERO ENTRAR AGORA →
-                    </a>
+                    <button
+                      type="button"
+                      data-plano="mensal"
+                      data-checkout-url="https://sun.eduzz.com/D0RAV6519Y"
+                      data-valor="59.00"
+                      onclick="irParaCheckout(this)"
+                      class="block text-center w-full bg-black text-white text-lg font-bold px-8 py-5 rounded-full hover:bg-gray-800 transition transform hover:-translate-y-1 mt-auto">
+                      QUERO ENTRAR AGORA →
+                    </button>
                 </div>
 
                 <!-- ANUAL -->
@@ -1020,9 +1026,15 @@ CAPTURA DE UTMs + fbc + fbp + ViewContent
                     </ul>
                     
                     <!-- BOTÃO CHECKOUT ANUAL -->
-                    <a href="https://chk.eduzz.com/E05XZ217WX" target="_blank" onclick="irParaCheckout(this)"" class="block text-center w-full bg-gradient-to-r from-notebook-blue to-notebook-purple text-white text-lg font-bold px-8 py-5 rounded-full hover:opacity-90 shadow-xl shadow-blue-900/20 transition transform hover:-translate-y-1 mt-auto">
-                        QUERO ENTRAR AGORA →
-                    </a>
+                    <button
+                      type="button"
+                      data-plano="anual"
+                      data-checkout-url="https://chk.eduzz.com/E05XZ217WX"
+                      data-valor="557.70"
+                      onclick="irParaCheckout(this)"
+                      class="block text-center w-full bg-gradient-to-r from-notebook-blue to-notebook-purple text-white text-lg font-bold px-8 py-5 rounded-full hover:opacity-90 shadow-xl shadow-blue-900/20 transition transform hover:-translate-y-1 mt-auto">
+                      QUERO ENTRAR AGORA →
+                    </button>
                 </div>
             </div>
 
@@ -1206,6 +1218,62 @@ CAPTURA DE UTMs + fbc + fbp + ViewContent
         </div>
     </footer>
 
+    <!-- FUNÇÃO DE CHECKOUT EDUZZ COM TRACKING -->
+    <script>
+    function irParaCheckout(botao) {
+      const plano = botao.dataset.plano;
+      const checkoutUrl = botao.dataset.checkoutUrl;
+      const valor = parseFloat(botao.dataset.valor);
+
+      const tracking = JSON.parse(sessionStorage.getItem('tracking_data') || '{}');
+
+      const purchaseEventId = 'purchase_' + Date.now() +
+        '_' + Math.random().toString(36).substr(2,9);
+
+      sessionStorage.setItem('purchase_event_id', purchaseEventId);
+      sessionStorage.setItem('plano_selecionado', plano);
+      sessionStorage.setItem('valor_plano', valor);
+
+      const icId = 'ic_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
+
+      if (window.fbq) {
+        fbq('track', 'InitiateCheckout', {
+          content_name: 'Clube Insta30 - ' + plano,
+          value: valor,
+          currency: 'BRL',
+          num_items: 1
+        }, { eventID: icId });
+      }
+
+      if (window.gtag) {
+        gtag('event', 'begin_checkout', {
+          currency: 'BRL',
+          value: valor,
+          items: [{
+            item_name: 'Clube Insta30 - ' + plano
+          }]
+        });
+      }
+
+      const url = new URL(checkoutUrl);
+
+      if (tracking.utm_source)   url.searchParams.set('utm_source', tracking.utm_source);
+      if (tracking.utm_medium)   url.searchParams.set('utm_medium', tracking.utm_medium);
+      if (tracking.utm_campaign) url.searchParams.set('utm_campaign', tracking.utm_campaign);
+      if (tracking.utm_content)  url.searchParams.set('utm_content', tracking.utm_content);
+      if (tracking.utm_term)     url.searchParams.set('utm_term', tracking.utm_term);
+
+      if (tracking.fbc) url.searchParams.set('trk', tracking.fbc);
+      if (tracking.fbp) url.searchParams.set('trk2', tracking.fbp);
+
+      url.searchParams.set('trk3', purchaseEventId);
+
+      botao.disabled = true;
+      botao.textContent = 'Redirecionando...';
+
+      window.location.href = url.toString();
+    }
+    </script>
     <!-- Initialize Lucide Icons -->
     <script>
         lucide.createIcons();
