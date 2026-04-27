@@ -2,6 +2,25 @@
 <html lang="pt-BR" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
+    <!-- META PIXEL BASE CODE -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+ fbq('init', '212698257382826');
+fbq('track', 'PageView');
+</script>
+
+<noscript>
+  <img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=SEU_PIXEL_ID&ev=PageView&noscript=1"/>
+</noscript>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clube Insta30.AI: Acelerador de Conteúdo</title>
     
@@ -83,55 +102,71 @@
     </script>
 
     <!-- UTM Capture + n8n Webhook -->
-    <script>
-    (function() {
-      const params = new URLSearchParams(window.location.search);
-      const utmKeys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
-      utmKeys.forEach(key => {
-        if (params.get(key)) localStorage.setItem(key, params.get(key));
-      });
-      const fbclid = params.get('fbclid');
-      if (fbclid) {
-        localStorage.setItem('fbc', 'fb.1.' + Date.now() + '.' + fbclid);
-      }
-      if (!sessionStorage.getItem('event_id')) {
-        sessionStorage.setItem('event_id', 'ic_' + Date.now() + '_' + Math.random().toString(36).substring(2,9));
-      }
-    })();
+    <!-- ====================================
+CAPTURA DE UTMs + fbc + fbp + ViewContent
+(Substitui o bloco antigo de n8n)
+==================================== -->
+<script>
+(function() {
 
-    function getFbp() {
-      const match = document.cookie.match(/_fbp=([^;]+)/);
-      return match ? match[1] : '';
+  // 1. Captura UTMs da URL
+  const p = new URLSearchParams(window.location.search);
+  const utms = {
+    utm_source:   p.get('utm_source')   || '',
+    utm_medium:   p.get('utm_medium')   || '',
+    utm_campaign: p.get('utm_campaign') || '',
+    utm_content:  p.get('utm_content')  || '',
+    utm_term:     p.get('utm_term')     || '',
+  };
+
+  // 2. Captura fbc (clique do Facebook)
+  const fbclid = p.get('fbclid');
+  let fbc = '';
+
+  if (fbclid) {
+    fbc = `fb.1.${Date.now()}.${fbclid}`;
+    document.cookie = `_fbc=${fbc}; path=/; max-age=7776000`;
+  } else {
+    const c = document.cookie.split(';').find(x => x.trim().startsWith('_fbc='));
+    fbc = c ? c.split('=')[1] : '';
+  }
+
+  // 3. Captura fbp
+  function getFbp() {
+    const c = document.cookie.split(';').find(x => x.trim().startsWith('_fbp='));
+    return c ? c.split('=')[1].trim() : '';
+  }
+
+  // 4. Salva tudo na sessão
+  sessionStorage.setItem('tracking_data', JSON.stringify({
+    ...utms,
+    fbc,
+    fbp: getFbp(),
+    page_url: window.location.href,
+    referrer: document.referrer,
+  }));
+
+  // Espera o Pixel criar o fbp (caso ainda não exista)
+  setTimeout(() => {
+    const d = JSON.parse(sessionStorage.getItem('tracking_data') || '{}');
+    if (!d.fbp) {
+      d.fbp = getFbp();
+      sessionStorage.setItem('tracking_data', JSON.stringify(d));
     }
+  }, 500);
 
-    function getGaCid() {
-      const match = document.cookie.match(/_ga=GA\d+\.\d+\.(\d+\.\d+)/);
-      return match ? match[1] : '';
-    }
+  // 5. Dispara ViewContent
+  const vcId = 'vc_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
+  sessionStorage.setItem('vc_event_id', vcId);
 
-    window.dispararInitiateCheckout = function(email) {
-      const payload = {
-        email: email || '',
-        event_id: sessionStorage.getItem('event_id') || '',
-        utm_source:   localStorage.getItem('utm_source')   || '(not set)',
-        utm_medium:   localStorage.getItem('utm_medium')   || '(not set)',
-        utm_campaign: localStorage.getItem('utm_campaign') || '(not set)',
-        utm_content:  localStorage.getItem('utm_content')  || null,
-        utm_term:     localStorage.getItem('utm_term')     || null,
-        fbp: getFbp(),
-        fbc: localStorage.getItem('fbc') || '',
-        ga_cid: getGaCid(),
-        page_url: window.location.href
-      };
-      fetch('https://dev.webhook.contentia.com.br/webhook/initiate-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (window.fbq) fbq('track', 'InitiateCheckout');
-      if (window.gtag) gtag('event', 'begin_checkout');
-    };
-    </script>
+  fbq('track', 'ViewContent', {
+    content_name: 'Clube Insta30 - Página de Vendas',
+    content_type: 'product',
+    currency: 'BRL'
+  }, { eventID: vcId });
+
+})();
+</script>
 
 </head>
 <body class="antialiased selection:bg-notebook-blue selection:text-white">
@@ -985,7 +1020,7 @@
                     </ul>
                     
                     <!-- BOTÃO CHECKOUT ANUAL -->
-                    <a href="https://chk.eduzz.com/E05XZ217WX" target="_blank" onclick="dispararInitiateCheckout('')" class="block text-center w-full bg-gradient-to-r from-notebook-blue to-notebook-purple text-white text-lg font-bold px-8 py-5 rounded-full hover:opacity-90 shadow-xl shadow-blue-900/20 transition transform hover:-translate-y-1 mt-auto">
+                    <a href="https://chk.eduzz.com/E05XZ217WX" target="_blank" onclick="irParaCheckout(this)"" class="block text-center w-full bg-gradient-to-r from-notebook-blue to-notebook-purple text-white text-lg font-bold px-8 py-5 rounded-full hover:opacity-90 shadow-xl shadow-blue-900/20 transition transform hover:-translate-y-1 mt-auto">
                         QUERO ENTRAR AGORA →
                     </a>
                 </div>
