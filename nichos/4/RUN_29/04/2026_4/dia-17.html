@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dia 17 — Velho X, Novo Y</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1624;
+      --panel2:#0c1220;
+      --text:#e7eefc;
+      --muted:#a8b3c7;
+      --border:rgba(255,255,255,.10);
+      --border2:rgba(255,255,255,.06);
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg,#22c55e 0%, #38bdf8 52%, #fb923c 100%);
+      --g2: linear-gradient(135deg,rgba(34,197,94,.18) 0%, rgba(56,189,248,.16) 48%, rgba(251,146,60,.18) 100%);
+      --g3: linear-gradient(90deg,rgba(34,197,94,.85),rgba(56,189,248,.85),rgba(251,146,60,.85));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1000px 600px at 15% 10%, rgba(56,189,248,.14), transparent 55%),
+        radial-gradient(900px 520px at 85% 0%, rgba(34,197,94,.12), transparent 56%),
+        radial-gradient(900px 520px at 80% 95%, rgba(251,146,60,.10), transparent 56%),
+        linear-gradient(180deg, #070a11 0%, var(--bg) 45%, #070a11 100%);
+      line-height:1.35;
+    }
+    a{color:#93c5fd; text-decoration:none;}
+    a:hover{text-decoration:underline;}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px;}
+
+    header{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius:24px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g2);
+      opacity:.9;
+      filter: blur(18px);
+      z-index:0;
+    }
+    header .inner{position:relative; z-index:1;}
+
+    .topline{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px 12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
+    }
+    .badgeRow{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+    .badge{
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.25);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .badge strong{color:var(--text); font-weight:600;}
+
+    h1{
+      margin:0 0 8px 0;
+      font-size:22px;
+      letter-spacing:-.2px;
+    }
+    .subtitle{margin:0; color:var(--muted); font-size:14px; max-width:72ch;}
+
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px;}
+    .btn{
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      font-weight:600;
+      font-size:13px;
+    }
+    .btn:hover{border-color:rgba(147,197,253,.6); background:rgba(59,130,246,.10);}
+    .btn:active{transform:translateY(1px);}
+
+    .btnPrimary{
+      background:rgba(0,0,0,.22);
+      position:relative;
+      overflow:hidden;
+    }
+    .btnPrimary:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:var(--g1);
+      opacity:.22;
+    }
+    .btnPrimary span{position:relative; z-index:1;}
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media (min-width: 920px){
+      .grid{grid-template-columns: 1fr 1fr; gap:14px;}
+      .span2{grid-column:1 / -1;}
+    }
+
+    .card{
+      border:1px solid var(--border2);
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.018));
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.28);
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      top:-1px; left:-1px; right:-1px;
+      height:2px;
+      background:var(--g3);
+      opacity:.65;
+    }
+
+    .card h2{
+      margin:0 0 8px 0;
+      font-size:15px;
+      letter-spacing:.2px;
+    }
+    .card p{margin:0 0 10px 0; color:var(--muted); font-size:13px;}
+
+    ul{margin:10px 0 0 18px; padding:0; color:var(--muted); font-size:13px;}
+    li{margin:6px 0;}
+
+    .kpi{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+    .pill{
+      border:1px solid var(--border2);
+      background:rgba(0,0,0,.22);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .pill b{color:var(--text); font-weight:700;}
+
+    .code{
+      margin-top:10px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(0,0,0,.25);
+      border-radius:14px;
+      padding:12px;
+      font-family:var(--mono);
+      font-size:12.5px;
+      color:#dbeafe;
+      overflow:auto;
+      white-space:pre;
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (min-width: 640px){
+      .twoCol{grid-template-columns:1fr 1fr;}
+    }
+
+    .hr{
+      height:1px;
+      background:rgba(255,255,255,.07);
+      margin:12px 0;
+    }
+
+    .note{
+      border-left:3px solid transparent;
+      border-image: var(--g3) 1;
+      background: rgba(255,255,255,.03);
+      padding:10px 12px;
+      border-radius:12px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .small{font-size:12px; color:var(--muted);}
+
+    .copyToast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,.70);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+      z-index:999;
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+    }
+    .copyToast.show{opacity:1; transform:translateX(-50%) translateY(-2px);}
+
+    .mutedLink{color:var(--muted);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="inner">
+        <div class="topline">
+          <div class="badgeRow">
+            <div class="badge"><strong>Nicho:</strong> Finanças e Negócios</div>
+            <div class="badge"><strong>Dia:</strong> 17</div>
+            <div class="badge"><strong>Formato:</strong> Reels</div>
+            <div class="badge"><strong>Pilar:</strong> Passo a passo</div>
+          </div>
+          <div class="badge">
+            <strong>Original:</strong> <a href="https://www.instagram.com/p/DWrackgACQN/" target="_blank" rel="noreferrer">ver post</a>
+          </div>
+        </div>
+
+        <h1>Velho X, Novo Y: o Reels curto que gera replay e ação</h1>
+        <p class="subtitle">Modelo replicável de Reels (10–20s) para entregar um reframe + 1–3 exemplos práticos e terminar com CTA de comentário/salvar. Funciona por curiosidade, contraste e baixa fricção.</p>
+
+        <div class="actions">
+          <button class="btn btnPrimary" id="copyBtn"><span>Copiar roteiro</span></button>
+          <a class="btn" href="#roteiro">Ir para o roteiro</a>
+          <a class="btn" href="#checklist">Checklist</a>
+          <a class="btn" href="#variacoes">Variações</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card span2" id="resumo">
+        <h2>Resumo</h2>
+        <p>Este formato explora um <b>paradoxo curto</b> (“Velho/Velha X, Novo/Nova Y”) para abrir uma lacuna de informação, entregar um <b>reframe</b> e provar com exemplos de 1 linha (“antes → depois”). Ideal para finanças e negócios porque promete <b>resultado novo usando ativos/processos atuais</b> (margem, caixa, custos, oferta).</p>
+        <div class="kpi">
+          <div class="pill"><b>Objetivo:</b> retenção + comentários</div>
+          <div class="pill"><b>Duração:</b> 10–20s</div>
+          <div class="pill"><b>Estrutura:</b> Hook → Reframe → 1–3 exemplos → CTA</div>
+          <div class="pill"><b>Entrega:</b> frases de 3–7 palavras</div>
+        </div>
+      </section>
+
+      <section class="card" id="estrutura">
+        <h2>Estrutura (reproduzível)</h2>
+        <p>Use esta sequência sempre, trocando apenas X/Y e os exemplos.</p>
+        <ul>
+          <li><b>Hook (0–2s):</b> 2–4 palavras com contraste.</li>
+          <li><b>Reframe (2–6s):</b> “Não é sobre ___; é sobre ___.”</li>
+          <li><b>Prova rápida (6–15s):</b> 1–3 exemplos “antes → depois”.</li>
+          <li><b>Fechamento (15–20s):</b> uma pergunta + CTA (comentar/salvar).</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="note"><b>Critério de qualidade:</b> se alguém entender a ideia <i>sem áudio</i> apenas lendo a tela, está pronto.</div>
+      </section>
+
+      <section class="card" id="roteiro">
+        <h2>Roteiro (template + versão Finanças/Negócios)</h2>
+        <p><b>Como usar:</b> copie o template, preencha os campos [entre colchetes] e grave com cortes rápidos.</p>
+
+        <div class="twoCol">
+          <div>
+            <p class="small"><b>Template universal (10–20s)</b></p>
+            <div class="code" id="roteiroTexto">HOOK (tela cheia, 0–1s)
+"Velho(a) [X]. Novo(a) [Y]."
+
+REFRAME (1–5s)
+"Não é sobre [fazer mais/comprar mais/ter mais]."
+"É sobre [usar melhor/reposicionar/mudar a regra]."
+
+EXEMPLOS (5–14s) — escolha 1 a 3
+"Velho(a) [X1] → novo(a) [Y1]."
+"Velho(a) [X2] → novo(a) [Y2]."
+"Velho(a) [X3] → novo(a) [Y3]."
+
+FECHAMENTO + CTA (14–20s)
+"Quer que eu aplique isso no seu caso?"
+"Comenta: [PALAVRA]" OU "Salva pra usar depois."</div>
+          </div>
+          <div>
+            <p class="small"><b>Exemplo pronto (Finanças e Negócios)</b></p>
+            <div class="code">HOOK
+"Velho preço. Nova margem."
+
+REFRAME
+"Não é sobre vender mais."
+"É sobre cobrar melhor."
+
+EXEMPLOS
+"Velho serviço → novo pacote."
+"Velho desconto → nova condição."
+"Velho processo → nova regra de custo."
+
+CTA
+"Comenta ‘NOVO’ e diz seu setor."</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="elementos-visuais">
+        <h2>Elementos visuais (high-tech + retenção)</h2>
+        <ul>
+          <li><b>Abertura:</b> texto grande central (0,5–1s).</li>
+          <li><b>Cortes:</b> jump cuts a cada 0,5–1,5s (sem introdução).</li>
+          <li><b>Legenda dinâmica:</b> destaque 1 palavra por cena (VELHO / NOVO / CAIXA / MARGEM).</li>
+          <li><b>Setas:</b> use “→” para reforçar transformação.</li>
+          <li><b>B-roll:</b> antes/depois (etiqueta, vitrine, planilha, caixa, cartão, estoque, precificação).</li>
+          <li><b>SFX:</b> whoosh/click sutil nas viradas do “velho → novo”.</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="note"><b>Regra visual:</b> cada frase deve caber em <b>uma tela</b>. Evite texto longo.</div>
+      </section>
+
+      <section class="card" id="copy-ganchos">
+        <h2>Copy e ganchos (biblioteca para substituir)</h2>
+        <p>Escolha 1 gancho e 1 reframe. O impacto vem do contraste + promessa de ganho sem “começar do zero”.</p>
+
+        <div class="twoCol">
+          <div>
+            <p class="small"><b>Ganchos (modelos)</b></p>
+            <ul>
+              <li>“Velho(a) [X]. Novo(a) [Y].”</li>
+              <li>“Mesmo [X]. Nova forma de usar.”</li>
+              <li>“É o mesmo [X]. Agora dá [resultado].”</li>
+              <li>“Você não precisa de [X] novo. Precisa de [Y] novo.”</li>
+              <li>“O problema não é [X]. É [Y].”</li>
+            </ul>
+          </div>
+          <div>
+            <p class="small"><b>Reframes (modelos)</b></p>
+            <ul>
+              <li>“Não é sobre [crescer]. É sobre [otimizar].”</li>
+              <li>“Não é falta de [dinheiro]. É vazamento em [processo].”</li>
+              <li>“Não é mais trabalho. É [prioridade/regra/rotina].”</li>
+              <li>“Não é trocar o produto. É trocar a oferta.”</li>
+              <li>“Não é cortar tudo. É cortar o que não compra resultado.”</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+        <p class="small"><b>Exemplos rápidos (Finanças/Negócios)</b></p>
+        <ul>
+          <li>“Velho gasto → nova regra (teto semanal).”</li>
+          <li>“Velha dívida → novo plano (boleto/renegociação).”</li>
+          <li>“Velho cliente → novo ticket (upsell).”</li>
+          <li>“Velho estoque → novo caixa (combo / queima planejada).”</li>
+          <li>“Velho tempo → nova entrega (SOP / checklist).”</li>
+        </ul>
+      </section>
+
+      <section class="card" id="cta">
+        <h2>CTA (escolha 1)</h2>
+        <p>Use um CTA só. Ele precisa combinar com o objetivo: comentários (diagnóstico), salvamentos (checklist) ou DM (material).</p>
+        <ul>
+          <li><b>Comentário (alto engajamento):</b> “Comenta ‘NOVO’ + seu setor que eu te mando 1 ajuste.”</li>
+          <li><b>Salvamento (alcance recorrente):</b> “Salva pra aplicar na próxima semana.”</li>
+          <li><b>Pesquisa de audiência:</b> “Comenta o seu nicho que eu faço a parte 2.”</li>
+          <li><b>DM (lead):</b> “Me chama no DM com ‘NOVO’ que eu envio um checklist.”</li>
+        </ul>
+        <div class="note"><b>Dica:</b> se pedir comentário, faça a pergunta <i>específica</i>: “qual é o seu [produto/gasto/processo]?”</div>
+      </section>
+
+      <section class="card span2" id="checklist">
+        <h2>Checklist de criação (do zero ao post)</h2>
+        <div class="twoCol">
+          <div>
+            <p class="small"><b>Pré-roteiro (5 min)</b></p>
+            <ul>
+              <li>Defina o tema: [oferta | custo | margem | caixa | processo | investimento].</li>
+              <li>Escolha o contraste: “Velho(a) X / Novo(a) Y”.</li>
+              <li>Escreva 1 reframe: “Não é sobre ___. É sobre ___.”</li>
+              <li>Liste 3 “antes → depois” de 3–6 palavras.</li>
+              <li>Escolha 1 CTA e 1 palavra de comentário.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="small"><b>Gravação + edição (20–35 min)</b></p>
+            <ul>
+              <li>Grave em pé, 1080×1920, iluminação frontal.</li>
+              <li>Fale em frases curtas; pause 0,2s entre linhas.</li>
+              <li>Insira texto grande no hook (tela cheia).</li>
+              <li>Faça cortes a cada frase (0,5–1,5s).</li>
+              <li>Destaque palavras-chave com cor/gradiente.</li>
+              <li>Finalize com CTA em tela + falado.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <p class="small"><b>Revisão final (antes de postar)</b></p>
+        <ul>
+          <li>O vídeo funciona sem áudio? (texto e setas explicam)</li>
+          <li>O hook tem 2–4 palavras e contraste?</li>
+          <li>Tem no máximo 3 exemplos?</li>
+          <li>Tem só 1 CTA claro?</li>
+          <li>Tempo total ≤ 20s?</li>
+        </ul>
+      </section>
+
+      <section class="card span2" id="variacoes">
+        <h2>Variações (mesmo impacto, outros temas)</h2>
+        <p>Para adaptar a qualquer assunto, mantenha o motor: <b>contraste</b> + <b>reframe</b> + <b>prova em 1 linha</b>. Abaixo, “substituições” seguras que preservam a performance.</p>
+
+        <div class="twoCol">
+          <div>
+            <p class="small"><b>Substituições de X/Y (universal)</b></p>
+            <ul>
+              <li><b>Velho hábito → nova rotina</b> (vida/saúde/produtividade)</li>
+              <li><b>Velho conteúdo → nova distribuição</b> (marketing)</li>
+              <li><b>Velho argumento → nova oferta</b> (vendas)</li>
+              <li><b>Velho processo → nova métrica</b> (gestão)</li>
+              <li><b>Velho medo → nova regra</b> (carreira)</li>
+            </ul>
+          </div>
+          <div>
+            <p class="small"><b>Variações de estrutura (quando quiser fazer diferente)</b></p>
+            <ul>
+              <li><b>Hook → Pergunta → 2 exemplos → CTA:</b> aumenta comentários.</li>
+              <li><b>Hook → “Erro comum” → 1 exemplo → CTA:</b> mais direto.</li>
+              <li><b>Hook → “Checklist 3 itens” → CTA salvar:</b> mais salvamentos.</li>
+              <li><b>Hook → mini-história (1 frase) → lição → CTA:</b> mais conexão.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+        <div class="note"><b>Banco rápido (preencha):</b> “Velho(a) ___, novo(a) ___” funciona melhor quando o “novo” é um <b>resultado</b> (margem, caixa, controle, clareza) e o “velho” é um <b>recurso atual</b> (produto, rotina, processo, preço).</div>
+      </section>
+
+      <section class="card span2" id="extras">
+        <h2>Extras (opcional) — legenda e primeiro comentário</h2>
+        <div class="twoCol">
+          <div>
+            <p class="small"><b>Legenda curta (modelo)</b></p>
+            <div class="code">Você não precisa de um [X] novo.
+Precisa de um [Y] novo.
+
+3 ajustes que dão resultado sem começar do zero:
+1) [antes → depois]
+2) [antes → depois]
+3) [antes → depois]
+
+Comenta “NOVO” + seu setor que eu respondo com 1 ajuste.</div>
+          </div>
+          <div>
+            <p class="small"><b>Primeiro comentário (modelo)</b></p>
+            <div class="code">Se você comentar:
+- Seu setor
+- Seu produto/serviço
+- Seu maior “vazamento” (custo, tempo, margem ou caixa)
+
+Eu te respondo com uma ideia no formato “velho → novo”.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <p class="small" style="margin-top:16px; text-align:center;">
+      <a class="mutedLink" href="#resumo">Voltar ao topo</a>
+    </p>
+  </div>
+
+  <div class="copyToast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const txt = document.getElementById('roteiroTexto');
+      const toast = document.getElementById('toast');
+
+      function showToast(message){
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=> toast.classList.remove('show'), 1600);
+      }
+
+      btn.addEventListener('click', async () => {
+        const content = txt.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(content);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = content;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado (fallback).');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
