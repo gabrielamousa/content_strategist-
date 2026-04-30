@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 22 — Finanças e Negócios — Sem salário fixo: o erro que destrói seu caixa</title>
+  <style>
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1020;
+      --card:#0E1630cc;
+      --card2:#0C1226cc;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted:#AAB6D6;
+      --muted2:#7F8BB0;
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --r:18px;
+      --r2:14px;
+      --grad: linear-gradient(90deg, #22C55E 0%, #3B82F6 45%, #F97316 100%);
+      --grad2: radial-gradient(900px 500px at 20% 10%, rgba(34,197,94,.18), transparent 55%),
+               radial-gradient(800px 480px at 70% 20%, rgba(59,130,246,.18), transparent 55%),
+               radial-gradient(650px 420px at 55% 75%, rgba(249,115,22,.14), transparent 55%);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--grad2), linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
+
+    header{
+      position:relative;
+      padding:22px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(14,22,48,.72), rgba(12,18,38,.60));
+      border-radius: calc(var(--r) + 6px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: var(--grad);
+      opacity:.10;
+      filter: blur(10px);
+      pointer-events:none;
+    }
+    .topline{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .badges{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .badge{
+      border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .badge strong{color:var(--text); font-weight:650}
+    .title{
+      margin:14px 0 8px;
+      font-size:26px;
+      line-height:1.2;
+      letter-spacing:-.3px;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      max-width:84ch;
+    }
+    .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:16px}
+    .btn{
+      appearance:none; border:1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:650;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.26); background: rgba(255,255,255,.06)}
+    .btn.primary{
+      border:none;
+      background: var(--grad);
+      color:#071018;
+      box-shadow: 0 12px 26px rgba(59,130,246,.16);
+    }
+    .btn.primary:hover{filter:saturate(1.05)}
+    .link{
+      font-size:13px;
+      color:var(--muted);
+      text-decoration:none;
+      border-bottom:1px dashed rgba(255,255,255,.22);
+      padding-bottom:2px;
+    }
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+      .title{font-size:24px}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius: var(--r);
+      background: linear-gradient(180deg, rgba(14,22,48,.62), rgba(12,18,38,.50));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:16px 16px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+    }
+    .card h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.18px;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .chip{
+      font-family: var(--mono);
+      font-size:12px;
+      color:#0B1016;
+      background: var(--grad);
+      border-radius:999px;
+      padding:6px 10px;
+      white-space:nowrap;
+    }
+    .card .bd{padding:14px 16px 16px}
+
+    .kpis{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px}
+    @media (max-width: 640px){.kpis{grid-template-columns:1fr}}
+    .kpi{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--r2);
+      padding:12px;
+    }
+    .kpi .label{color:var(--muted2); font-size:12px; margin-bottom:6px}
+    .kpi .value{font-weight:750; font-size:14px; line-height:1.25}
+
+    .list{margin:0; padding-left:18px; color:var(--text)}
+    .list li{margin:8px 0; color:var(--text)}
+    .muted{color:var(--muted)}
+    .note{color:var(--muted); font-size:13px; line-height:1.55}
+
+    .script{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(5,8,16,.55);
+      border-radius: var(--r);
+      padding:14px;
+      font-family: var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color: rgba(234,240,255,.94);
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 820px){.cols{grid-template-columns:1fr}}
+
+    .hooks{display:flex; flex-wrap:wrap; gap:8px}
+    .tag{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:12.5px;
+    }
+    .tag b{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%) translateY(20px);
+      opacity:0;
+      background: rgba(6,10,18,.86);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      padding:10px 12px;
+      color: var(--text);
+      font-size:13px;
+      box-shadow: var(--shadow);
+      transition: opacity .18s ease, transform .18s ease;
+      pointer-events:none;
+      backdrop-filter: blur(8px);
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+    footer{margin-top:16px; color:var(--muted2); font-size:12px; text-align:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="badges">
+          <span class="badge"><strong>Nicho</strong>: Finanças e Negócios</span>
+          <span class="badge"><strong>Dia</strong>: 22</span>
+          <span class="badge"><strong>Formato</strong>: Reels</span>
+          <span class="badge"><strong>Pilar</strong>: Erro comum</span>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DXFoJC1kbQ-/" target="_blank" rel="noopener noreferrer">Ver post original</a>
+      </div>
+      <h1 class="title">Sem salário fixo: o erro que destrói seu caixa</h1>
+      <p class="subtitle">Roteiro reproduzível (adaptável para outros temas) baseado no “motor” de engajamento: hook agressivo + confrontar crença + método prático em 3 passos + objeções encenadas + CTA orgânico.</p>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <button class="btn" id="copyHooksBtn">Copiar hooks</button>
+        <button class="btn" id="copyChecklistBtn">Copiar checklist</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" aria-label="Resumo">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <div class="chip">Objetivo: retenção + comentários</div>
+        </div>
+        <div class="bd">
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">Promessa</div>
+              <div class="value">Trocar “caixa montanha-russa” por previsibilidade em 3 passos</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Gatilho principal</div>
+              <div class="value">Confronto de crença + choque de realidade</div>
+            </div>
+            <div class="kpi">
+              <div class="label">CTA</div>
+              <div class="value">Palavra-chave nos comentários + salvar/compartilhar</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <p class="note"><span style="background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800">Ideia central:</span> o conteúdo não “ensina fofo”. Ele <b>puxa a audiência pela gola</b>, prova com termos técnicos e fecha com um recurso prático.</p>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Estrutura">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <div class="chip">60–90s (recomendado)</div>
+        </div>
+        <div class="bd">
+          <ol class="list">
+            <li><b>Hook/choque</b> (0–2s)</li>
+            <li><b>Identificação</b> (2–5s)</li>
+            <li><b>Causa raiz</b> (5–12s)</li>
+            <li><b>Quebra de crença</b> (12–20s)</li>
+            <li><b>Regra simples</b> (20–30s)</li>
+            <li><b>Consequências</b> (30–40s)</li>
+            <li><b>Solução em 3 passos</b> (40–65s)</li>
+            <li><b>Objeções encenadas</b> (65–80s)</li>
+            <li><b>Visão do “depois”</b> (80–88s)</li>
+            <li><b>Fechamento polarizador + CTA</b> (88–90s)</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Roteiro">
+        <div class="hd">
+          <h2>Roteiro (pronto para gravar)</h2>
+          <div class="chip">Cole, ajuste X/Y/3 passos</div>
+        </div>
+        <div class="bd">
+          <div class="script" id="roteiroText">[B1 — HOOK | 0–2s]
+“Se você NÃO tem salário fixo, você não tá ‘livre’… você tá a 2 meses de quebrar empresa e casa.”
+
+[B2 — IDENTIFICAÇÃO | 2–5s]
+“Sabe esse caixa montanha-russa? Um mês sobra, no outro você tá no limite… isso não é azar.”
+
+[B3 — CAUSA RAIZ | 5–12s]
+“Você tá tratando o caixa da empresa como se fosse sua carteira pessoal.”
+
+[B4 — QUEBRA DE CRENÇA | 12–20s]
+“Você chama isso de liberdade. Eu chamo de falta de processo. E falta de processo cobra juros.”
+
+[B5 — REGRA SIMPLES | 20–30s]
+“Regra de adulto: todo dono tem retirada fixa. Dá nome: pró-labore / salário do dono.”
+
+[B6 — CONSEQUÊNCIAS | 30–40s]
+“Sem isso, você: (1) perde previsibilidade, (2) fura o ponto de equilíbrio sem perceber, (3) vira refém de dívida e de inadimplência.”
+
+[B7 — SOLUÇÃO EM 3 PASSOS | 40–65s]
+“Em 3 passos:
+1) Quanto custa sua vida HOJE? (moradia, comida, contas, escola, etc.)
+2) Isso vira custo operacional: entra no seu ponto de equilíbrio.
+3) Antes de tirar ‘extra’, cria reserva: separa X% pro colchão / capital de giro.”
+
+[B8 — OBJEÇÕES (ENCENADAS) | 65–80s]
+“‘Ah, mas meu faturamento é variável…’ — Ótimo. Então seu processo tem que ser MAIS firme, não mais frouxo.
+‘Ah, mas eu preciso de liberdade…’ — Liberdade é ter caixa e não ter susto. Surto é confundir os dois.”
+
+[B9 — VISÃO DO DEPOIS | 80–88s]
+“Quando você faz isso, o mês para de te mandar. Você sabe o mínimo, sabe a meta, e decide com clareza.”
+
+[B10 — FECHAMENTO + CTA | 88–90s]
+“Você quer paz financeira ou quer continuar no caos?
+Comenta ‘SALÁRIO’ que eu te mando o checklist do pró-labore + reserva. E salva esse vídeo.”
+
+[TROCAS RÁPIDAS (para adaptar o tema)]
+X (comportamento): misturar PF/PJ → trocar por: precificar no achismo / vender sem margem / parcelar sem calcular / gastar imposto / não ter reserva / não acompanhar inadimplência.
+Y (consequência): quebra/caos → trocar por: lucro falso / endividamento / estagnação / burnout.
+3 passos: (diagnóstico → regra → execução) → manter sempre em 3 itens com 1 número.</div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Elementos visuais">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <div class="chip">Edição: cortes + legendas</div>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <p class="note"><b>Texto na tela (sequência):</b></p>
+              <ol class="list">
+                <li>“SEM SALÁRIO FIXO = CAOS”</li>
+                <li>“Caixa PJ ≠ sua carteira PF”</li>
+                <li>“Regra: retirada fixa”</li>
+                <li>“Passo 1: custo de vida”</li>
+                <li>“Passo 2: ponto de equilíbrio”</li>
+                <li>“Passo 3: reserva / capital de giro”</li>
+                <li>“Paz ou surto financeiro?”</li>
+              </ol>
+            </div>
+            <div>
+              <p class="note"><b>Ritmo/edição (pra repetir em qualquer tema):</b></p>
+              <ul class="list">
+                <li>Jump cuts a cada 1–2 frases (sem respiro)</li>
+                <li>Zoom-in leve nos confrontos (“Isso não é liberdade…”) </li>
+                <li>SFX discreto em viradas (entrando a solução)</li>
+                <li>Quebra de padrão nas objeções: mude posição/olhar</li>
+                <li>Legenda destacando 3 palavras por bloco (CAIXA, REGRA, RESERVA)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Copy e ganchos">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <div class="chip">Escolha 1 hook + 2 micro-ganchos</div>
+        </div>
+        <div class="bd">
+          <p class="note"><b>Hooks (abrir o vídeo):</b></p>
+          <div class="hooks" id="hooksText">
+            <span class="tag"><b>Ameaça</b>: “Se você faz X, você não perde só dinheiro — você destrói Y.”</span>
+            <span class="tag"><b>Rótulo</b>: “Você chama isso de liberdade. Eu chamo de irresponsabilidade.”</span>
+            <span class="tag"><b>Identificação</b>: “Essa montanha-russa no seu caixa tem uma causa específica.”</span>
+            <span class="tag"><b>Binário</b>: “Você quer paz ou quer continuar vivendo no caos?”</span>
+          </div>
+          <div class="divider"></div>
+          <div class="cols">
+            <div>
+              <p class="note"><b>Micro-ganchos (a cada 5–8s):</b></p>
+              <ul class="list">
+                <li>“Respira. Agora olha isso…”</li>
+                <li>“Tá vendo como parece ‘liberdade’, mas é armadilha?”</li>
+                <li>“Ok, posso continuar a aula em 10 segundos?”</li>
+                <li>“Isso aqui é o que ninguém te fala quando…”</li>
+              </ul>
+            </div>
+            <div>
+              <p class="note"><b>Frases de autoridade (técnico sem virar aula):</b></p>
+              <ul class="list">
+                <li>“Seu ponto de equilíbrio não perdoa emoção.”</li>
+                <li>“Lucro sem reserva é lucro de mentira.”</li>
+                <li>“Variável no faturamento pede fixo no processo.”</li>
+                <li>“Inadimplência é custo. Só que invisível.”</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="CTA">
+        <div class="hd">
+          <h2>CTA</h2>
+          <div class="chip">Comentável + salvável</div>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><b>CTA principal (comentário):</b> “Comenta ‘SALÁRIO’ que eu te mando o checklist/modelo.”</li>
+            <li><b>CTA de save:</b> “Salva pra aplicar no próximo fechamento do mês.”</li>
+            <li><b>CTA de share:</b> “Manda pra um sócio que vive ‘metendo a mão no caixa’.”</li>
+            <li><b>CTA orgânico (descrição):</b> “Deixei a planilha/guia na descrição.”</li>
+          </ul>
+          <p class="note"><b>Dica de conversão:</b> fixe um comentário com a palavra-chave + instrução (“comente SALÁRIO”) e responda com um padrão curto para ganhar volume rápido.</p>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Checklist">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <div class="chip">Operacional (do zero ao post)</div>
+        </div>
+        <div class="bd">
+          <div class="cols">
+            <div>
+              <p class="note"><b>Antes de gravar</b></p>
+              <ul class="list" id="checklistText">
+                <li>Escolher 1 comportamento comum que dá prejuízo (X).</li>
+                <li>Escrever 1 consequência forte e específica (Y).</li>
+                <li>Definir 1 crença popular pra confrontar (“isso é liberdade”).</li>
+                <li>Preparar 1 regra simples + método em 3 passos.</li>
+                <li>Inserir 1 número concreto (X%, 30 dias, 3 meses, etc.).</li>
+              </ul>
+            </div>
+            <div>
+              <p class="note"><b>Gravação/edição/publicação</b></p>
+              <ul class="list">
+                <li>Frases curtas (1 ideia por frase) + energia alta.</li>
+                <li>Trocar entonação a cada 5–8 segundos (pergunta → bronca → técnico → humor).</li>
+                <li>Jump cuts frequentes + legendas com palavras-chave.</li>
+                <li>Encenar 2–3 objeções (mudando posição/olhar).</li>
+                <li>Fechar com binário + CTA por palavra-chave.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Variações">
+        <div class="hd">
+          <h2>Variações (mesmo impacto, outro tema)</h2>
+          <div class="chip">Substituições guiadas</div>
+        </div>
+        <div class="bd">
+          <p class="note"><b>Template de adaptação (substitua os campos):</b> “Se você <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800">[X]</span>, você vai <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800">[Y]</span>. O problema não é sorte: é <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800">[CAUSA]</span>. A regra é <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800">[REGRA]</span>. Faz assim em 3 passos: <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800">[1]</span>, <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800">[2]</span>, <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800">[3]</span>.”</p>
+          <div class="divider"></div>
+          <div class="cols">
+            <div>
+              <p class="note"><b>Trocas prontas (Finanças/Negócios):</b></p>
+              <ul class="list">
+                <li><b>Tema:</b> Precificação → <b>X:</b> “precificar no achismo” → <b>Y:</b> “lucro falso” → <b>3 passos:</b> custos + margem + meta de volume.</li>
+                <li><b>Tema:</b> Impostos → <b>X:</b> “gastar dinheiro do imposto” → <b>Y:</b> “parcelamento e juros” → <b>3 passos:</b> separar % + calendário + reserva de imposto.</li>
+                <li><b>Tema:</b> Cartão/parcelamento → <b>X:</b> “parcelar sem calcular taxa/prazo” → <b>Y:</b> “capital de giro some” → <b>3 passos:</b> taxa real + fluxo + limite por margem.</li>
+                <li><b>Tema:</b> Vendas → <b>X:</b> “dar desconto pra fechar” → <b>Y:</b> “margem morre” → <b>3 passos:</b> âncora de valor + concessão condicional + pacote.</li>
+              </ul>
+            </div>
+            <div>
+              <p class="note"><b>Variações de tom (sem perder retenção):</b></p>
+              <ul class="list">
+                <li><b>Mentoria firme:</b> bronca + “respira” + regra.</li>
+                <li><b>Investigativo:</b> “Vamos achar o vazamento do seu caixa.”</li>
+                <li><b>Debate:</b> “Mito: X. Verdade: Y.” (mesma estrutura, só renomeia o bloco B4).</li>
+                <li><b>Checklist:</b> mantém hook agressivo e transforma a solução em lista numerada com tela inteira.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      Identidade: fundo escuro + cards suaves + destaques em degradê (verde/azul/laranja) • HTML pronto para sua biblioteca interna.
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">Copiado.</div>
+
+  <script>
+    const toast = document.getElementById('toast');
+    function showToast(msg){
+      toast.textContent = msg || 'Copiado.';
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), 1200);
+    }
+    async function copyText(text, okMsg){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast(okMsg || 'Copiado para a área de transferência.');
+      }catch(e){
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast(okMsg || 'Copiado (modo compatível).');
+      }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', ()=>{
+      const t = document.getElementById('roteiroText').innerText;
+      copyText(t, 'Roteiro copiado.');
+    });
+
+    document.getElementById('copyHooksBtn').addEventListener('click', ()=>{
+      const tags = [...document.querySelectorAll('#hooksText .tag')].map(el=>el.innerText).join('\n');
+      copyText(tags, 'Hooks copiados.');
+    });
+
+    document.getElementById('copyChecklistBtn').addEventListener('click', ()=>{
+      const items = [...document.querySelectorAll('#checklistText li')].map(el=>'[ ] ' + el.innerText).join('\n');
+      copyText(items, 'Checklist copiado.');
+    });
+  </script>
+</body>
+</html>
