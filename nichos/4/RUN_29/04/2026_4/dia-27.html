@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dia 27 — Roteiro reproduzível (Finanças e Negócios)</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0A1022;
+      --card:#0B1224CC;
+      --card2:#0C1630CC;
+      --stroke:#1B2B52;
+      --text:#EAF0FF;
+      --muted:#ADB9D6;
+      --muted2:#7F8DB1;
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --r:18px;
+      --r2:14px;
+      --g: linear-gradient(90deg, #22c55e 0%, #00d4ff 45%, #ff8a00 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.20) 0%, rgba(0,212,255,.18) 45%, rgba(255,138,0,.18) 100%);
+      --ok:#22c55e;
+      --bad:#ff5d5d;
+      --warn:#ff8a00;
+      --cyan:#00d4ff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(0,212,255,.12), transparent 55%),
+        radial-gradient(900px 500px at 80% 0%, rgba(34,197,94,.10), transparent 55%),
+        radial-gradient(900px 600px at 70% 95%, rgba(255,138,0,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; padding:28px 18px 54px; margin:0 auto;}
+
+    header{
+      border:1px solid rgba(27,43,82,.7);
+      background: linear-gradient(180deg, rgba(11,18,36,.88), rgba(11,18,36,.60));
+      box-shadow: var(--shadow);
+      border-radius: calc(var(--r) + 4px);
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      filter: blur(10px);
+      opacity:.65;
+      z-index:0;
+    }
+    header > *{position:relative; z-index:1;}
+
+    .topline{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;}
+    .chips{display:flex; flex-wrap:wrap; gap:10px;}
+    .chip{
+      padding:8px 10px;
+      border:1px solid rgba(27,43,82,.8);
+      border-radius:999px;
+      background: rgba(7,10,18,.35);
+      color:var(--muted);
+      font-size:12.5px;
+      letter-spacing:.2px;
+    }
+    .chip strong{color:var(--text); font-weight:650;}
+
+    h1{
+      margin:12px 0 8px;
+      font-size:22px;
+      line-height:1.15;
+      letter-spacing:-.3px;
+    }
+    .subhead{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;}
+    .link{
+      text-decoration:none;
+      border-bottom:1px solid rgba(0,212,255,.35);
+      color: rgba(234,240,255,.92);
+      padding-bottom:2px;
+      font-size:13px;
+    }
+    .hint{color:var(--muted); font-size:13px; max-width:72ch;}
+
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; margin-top:14px;}
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      border:1px solid rgba(27,43,82,.7);
+      background: linear-gradient(180deg, rgba(11,18,36,.82), rgba(12,22,48,.62));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding:16px;
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(700px 220px at 20% 0%, rgba(0,212,255,.10), transparent 55%),
+                  radial-gradient(700px 220px at 80% 0%, rgba(34,197,94,.10), transparent 55%);
+      opacity:.75;
+      pointer-events:none;
+    }
+    .card > *{position:relative; z-index:1;}
+
+    .titleRow{display:flex; align-items:flex-end; justify-content:space-between; gap:12px;}
+    h2{margin:0; font-size:16px; letter-spacing:.2px;}
+    .badge{
+      font-size:12px;
+      color: rgba(234,240,255,.90);
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(27,43,82,.75);
+      background: rgba(7,10,18,.35);
+    }
+    .badge .grad{background:var(--g); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:700;}
+
+    .p{margin:10px 0 0; color:var(--muted); font-size:13.5px; line-height:1.55;}
+    .list{margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:13.5px; line-height:1.55;}
+    .list li{margin:6px 0;}
+
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
+    @media (max-width: 620px){ .twoCol{grid-template-columns:1fr;} }
+    .mini{
+      border:1px solid rgba(27,43,82,.65);
+      background: rgba(7,10,18,.25);
+      border-radius: var(--r2);
+      padding:12px;
+    }
+    .mini h3{margin:0 0 6px; font-size:13.5px; color:rgba(234,240,255,.95)}
+    .mini .k{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;}
+    .pill{font-size:12px; padding:6px 8px; border-radius:999px; border:1px solid rgba(27,43,82,.7); color:var(--muted);
+      background: rgba(11,18,36,.45);
+    }
+    .pill.ok{border-color: rgba(34,197,94,.35); color: rgba(202,255,225,.9)}
+    .pill.bad{border-color: rgba(255,93,93,.35); color: rgba(255,210,210,.9)}
+
+    .divider{height:1px; background: rgba(27,43,82,.8); margin:14px 0;}
+
+    .codeWrap{margin-top:10px;}
+    textarea{
+      width:100%;
+      min-height: 360px;
+      resize: vertical;
+      padding:12px;
+      border-radius: var(--r2);
+      border:1px solid rgba(27,43,82,.75);
+      background: rgba(7,10,18,.35);
+      color: rgba(234,240,255,.92);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12.5px;
+      line-height: 1.55;
+      outline:none;
+    }
+    textarea:focus{border-color: rgba(0,212,255,.55); box-shadow: 0 0 0 3px rgba(0,212,255,.12);}
+
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px;}
+    button{
+      border:1px solid rgba(27,43,82,.85);
+      background: rgba(11,18,36,.68);
+      color: rgba(234,240,255,.92);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:600;
+      letter-spacing:.2px;
+    }
+    button.primary{
+      background: linear-gradient(180deg, rgba(0,212,255,.16), rgba(34,197,94,.10));
+      border-color: rgba(0,212,255,.38);
+    }
+    button:hover{transform: translateY(-1px);}
+    .status{color:var(--muted2); font-size:12.5px;}
+
+    .slides{margin-top:10px; display:grid; gap:10px;}
+    .slide{
+      border:1px solid rgba(27,43,82,.65);
+      background: rgba(7,10,18,.22);
+      border-radius: var(--r2);
+      padding:12px;
+    }
+    .slideHead{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+    .num{
+      width:34px;height:34px; display:grid; place-items:center;
+      border-radius:10px;
+      border:1px solid rgba(27,43,82,.75);
+      background: rgba(11,18,36,.55);
+      font-weight:750;
+      color: rgba(234,240,255,.92);
+    }
+    .slideHead h4{margin:0; font-size:13.5px; letter-spacing:.2px;}
+    .meta{color:var(--muted2); font-size:12px;}
+    .slide p{margin:8px 0 0; color:var(--muted); font-size:13.2px; line-height:1.55;}
+    .kv{margin-top:8px; display:flex; flex-wrap:wrap; gap:8px;}
+    .kv span{font-size:12px; padding:6px 8px; border-radius:999px; border:1px solid rgba(27,43,82,.7); color:var(--muted);
+      background: rgba(11,18,36,.4);
+    }
+
+    footer{
+      margin-top:16px;
+      color: var(--muted2);
+      font-size: 12.5px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <div class="chip"><strong>Nicho:</strong> Finanças e Negócios</div>
+          <div class="chip"><strong>Dia:</strong> 27</div>
+          <div class="chip"><strong>Formato:</strong> Carrossel</div>
+          <div class="chip"><strong>Pilar:</strong> Passo a passo</div>
+        </div>
+        <div class="chip"><strong>Objetivo:</strong> retenção + leads por comentário</div>
+      </div>
+      <h1>Dois perfis, mesmo começo: em anos a diferença explode</h1>
+      <div class="subhead">
+        <div class="hint">Modelo reproduzível: 2 perfis com mesma condição inicial → escolhas diferentes → marcos de tempo com números crescendo → moral + CTA (palavra-chave).</div>
+        <a class="link" href="https://www.instagram.com/p/DXfdgsumbbn/" target="_blank" rel="noreferrer">Post original</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="titleRow">
+          <h2>Resumo</h2>
+          <div class="badge"><span class="grad">Comparação + progressão temporal</span></div>
+        </div>
+        <p class="p">Você conta uma história inevitável: duas pessoas/empresas começam iguais, mas um único hábito repetido cria um “gap” grande ao longo do tempo. O cérebro quer descobrir “qual perfil sou eu?” e continua passando os slides para ver o próximo marco.</p>
+        <div class="twoCol">
+          <div class="mini">
+            <h3>Promessa central (editável)</h3>
+            <div class="p">“Dois <strong>[perfis]</strong>, mesma <strong>[condição inicial]</strong>. Em <strong>[prazo]</strong>, a diferença fica absurda.”</div>
+            <div class="k">
+              <span class="pill ok">simetria A vs B</span>
+              <span class="pill ok">números crescentes</span>
+              <span class="pill ok">marcos de tempo</span>
+            </div>
+          </div>
+          <div class="mini">
+            <h3>Quando usar</h3>
+            <ul class="list">
+              <li>Finanças pessoais: orçamento, aportes, reserva, dívidas.</li>
+              <li>Negócios: fluxo de caixa, margem, precificação, CRM, processos.</li>
+              <li>Carreira/vendas: rotina, qualificação, pipeline, metas.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>Estrutura (reproduzível)</h2>
+          <div class="badge">Padrão <span class="grad">5–8 slides</span></div>
+        </div>
+        <ul class="list">
+          <li><strong>Slide 1:</strong> Hook com condição inicial igual + “em X anos a diferença explode”.</li>
+          <li><strong>Slide 2:</strong> Marco 1 (curto prazo): 1 decisão diferente (sem moralizar).</li>
+          <li><strong>Slide 3:</strong> Marco 2 (meio): lista ❌ vs ✅ + 1º número forte.</li>
+          <li><strong>Slide 4:</strong> Marco 3 (emoção): consequências visíveis + 1 prova concreta.</li>
+          <li><strong>Slide 5:</strong> Clímax: número grande final + 2–3 efeitos na vida/negócio.</li>
+          <li><strong>Slide 6:</strong> Moral (“não foi sorte”) + CTA com palavra-chave + promessa do recurso.</li>
+        </ul>
+        <div class="divider"></div>
+        <div class="mini">
+          <h3>Regra de ouro</h3>
+          <div class="p">Mantenha <strong>1 comportamento-chave</strong> (ex.: “aportar todo mês” / “separar PF e PJ” / “controlar margem”) e repita nos marcos. Clareza vence complexidade: <strong>1 número por slide</strong> (máximo 2).</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>Slides sugeridos (1..6)</h2>
+          <div class="badge">Pronto para <span class="grad">substituir</span></div>
+        </div>
+        <div class="slides">
+          <div class="slide">
+            <div class="slideHead">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="num">1</div>
+                <div>
+                  <h4>Hook / Setup</h4>
+                  <div class="meta">comparação imediata</div>
+                </div>
+              </div>
+              <div class="meta">Objetivo: parar o scroll</div>
+            </div>
+            <p><strong>Título:</strong> “DOIS [PERFIS], MESMA [CONDIÇÃO] ([FASE])”<br/>
+               <strong>Sub:</strong> “Ambos têm [mesmo ponto de partida]”<br/>
+               <strong>Fecho:</strong> “Em [PRAZO], a diferença é absurda.”</p>
+            <div class="kv">
+              <span>Divisão 50/50</span><span>Tags A/B</span><span>Bordão repetível</span>
+            </div>
+          </div>
+          <div class="slide">
+            <div class="slideHead">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="num">2</div>
+                <div>
+                  <h4>Marco 1 (curto prazo)</h4>
+                  <div class="meta">primeira diferença</div>
+                </div>
+              </div>
+              <div class="meta">Objetivo: identificação</div>
+            </div>
+            <p><strong>Topo:</strong> “[IDADE/FASE 1]”<br/>
+               <strong>A:</strong> “faz [hábito que drena]”<br/>
+               <strong>B:</strong> “faz [versão controlada/consistente]”<br/>
+               <strong>Microtextos:</strong> “disciplina”, “metas”, “processo”, “sem cartão”, “DRE”.</p>
+          </div>
+          <div class="slide">
+            <div class="slideHead">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="num">3</div>
+                <div>
+                  <h4>Marco 2 (lista + 1º número)</h4>
+                  <div class="meta">acúmulo começa a aparecer</div>
+                </div>
+              </div>
+              <div class="meta">Objetivo: prova + progressão</div>
+            </div>
+            <p><strong>Topo:</strong> “[IDADE/FASE 2]”<br/>
+               <strong>❌ A (3–5 itens):</strong> “parcelas”, “mistura PF/PJ”, “sem reserva”, “compra impulso”, “precifica no achismo”.<br/>
+               <strong>✅ B (3–5 itens):</strong> “aporta/retém”, “separa contas”, “reserva”, “revisa margem”, “acompanha KPI”.<br/>
+               <strong>Número:</strong> “Patrimônio/Caixa/Lucro: R$ ___”.</p>
+          </div>
+          <div class="slide">
+            <div class="slideHead">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="num">4</div>
+                <div>
+                  <h4>Marco 3 (emoção + consequência)</h4>
+                  <div class="meta">tensão vs tranquilidade</div>
+                </div>
+              </div>
+              <div class="meta">Objetivo: “eu não quero isso”</div>
+            </div>
+            <p><strong>A:</strong> “ansiedade / dívida / apagar incêndio / retrabalho” + 1 prova (“sem reserva”, “juros”, “margem 0”).<br/>
+               <strong>B:</strong> “previsibilidade / liberdade / escolha” + 1 prova (“X meses de caixa”, “dividendos”, “pipeline previsível”).</p>
+          </div>
+          <div class="slide">
+            <div class="slideHead">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="num">5</div>
+                <div>
+                  <h4>Clímax (número grande final)</h4>
+                  <div class="meta">resultado inevitável</div>
+                </div>
+              </div>
+              <div class="meta">Objetivo: “quero ser o B”</div>
+            </div>
+            <p><strong>Card:</strong> “Resultado: R$ ___” (patrimônio / lucro anual / caixa / valuation).<br/>
+               <strong>Bullets:</strong> “poder de escolha”, “menos risco”, “crescimento com calma” (ou “viagem / aposentadoria / tempo”).</p>
+          </div>
+          <div class="slide">
+            <div class="slideHead">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="num">6</div>
+                <div>
+                  <h4>Moral + CTA</h4>
+                  <div class="meta">ação simples</div>
+                </div>
+              </div>
+              <div class="meta">Objetivo: comentário/lead</div>
+            </div>
+            <p><strong>Head:</strong> “A diferença não foi sorte.”<br/>
+               <strong>Sub:</strong> “Foram decisões simples repetidas por anos.”<br/>
+               <strong>Esperança:</strong> “Você ainda tem tempo de mudar isso.”<br/>
+               <strong>CTA:</strong> “Comente <strong>[PALAVRA]</strong> e eu te envio <strong>[RECURSO]</strong>.”</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>Roteiro (copiável)</h2>
+          <div class="badge"><span class="grad">Preencha os campos</span></div>
+        </div>
+        <p class="p">Copie e substitua os colchetes. Dica: escolha <strong>um</strong> comportamento-chave (B) e o oposto (A). O resto é cenário e consequência.</p>
+        <div class="codeWrap">
+          <textarea id="roteiro" spellcheck="false">CARROSSEL — MODELO “2 PERFIS, MESMO COMEÇO” (6 SLIDES)
+
+[CONFIG]
+- Tema: [ex.: investimento mensal / fluxo de caixa / precificação / controle de custos]
+- Condição inicial igual: [mesma idade / mesmo salário / mesma receita / mesmo tráfego / mesmo orçamento]
+- Perfis:
+  - Perfil A (drena): [decisão ruim comum]
+  - Perfil B (constrói): [decisão simples consistente]
+- Horizonte: [6 meses / 1 ano / 3 anos / 10 anos]
+- Número-chave: [R$ aporte / % margem / % economia / meses de caixa]
+- Recurso do CTA: [planilha / checklist / calculadora / aula]
+- Palavra-chave do CTA: [PLANILHA / CAIXA / MARGEM / JUROS / METAS]
+
+SLIDE 1 — HOOK
+Título: DOIS [PERFIS], MESMA [CONDIÇÃO INICIAL] ([FASE])
+Sub: Ambos têm [ponto de partida igual].
+Tags:
+- A: [Perfil A] — [decisão ruim]
+- B: [Perfil B] — [decisão boa]
+Rodapé (bordão): Em [PRAZO], a diferença é absurda.
+
+SLIDE 2 — MARCO 1 (CURTO PRAZO)
+Topo: [IDADE/FASE 1]
+A: [mesmo contexto], mas [hábito que drena] (ex.: “parcela tudo”, “não registra gastos”, “mistura PF/PJ”).
+B: [mesmo contexto], mas [hábito que constrói] (ex.: “registra tudo”, “separa contas”, “aporta todo mês”).
+Microtextos no cenário: [3 palavras] (ex.: “processo”, “disciplina”, “metas”).
+
+SLIDE 3 — MARCO 2 (LISTA + 1º NÚMERO)
+Topo: [IDADE/FASE 2]
+A (❌ 3–5 itens):
+- [item 1]
+- [item 2]
+- [item 3]
+B (✅ 3–5 itens):
+- [item 1]
+- [item 2]
+- [item 3]
+Número (1): [Patrimônio/Caixa/Lucro] = R$ [___]
+
+SLIDE 4 — MARCO 3 (EMOÇÃO + PROVA)
+Topo: [IDADE/FASE 3]
+A (consequência): [stress/juros/apagar incêndio] + prova: [ex.: “0 reserva”, “juros do cartão”, “margem apertada”].
+B (consequência): [previsibilidade/escolha/liberdade] + prova: [ex.: “X meses de caixa”, “aportes automáticos”, “margem saudável”].
+
+SLIDE 5 — MARCO 4 (CLÍMAX)
+Topo: [IDADE/FASE 4]
+Card grande:
+Resultado A: R$ [___] (ou “endividado / sem caixa / sem patrimônio”)
+Resultado B: R$ [___]
+Bullets (2–3):
+- [benefício 1]
+- [benefício 2]
+- [benefício 3]
+
+SLIDE 6 — MORAL + CTA
+Head: A diferença não foi sorte.
+Sub: Foram decisões simples repetidas.
+Frase de agência: Você ainda tem tempo de mudar isso.
+CTA: Comente [PALAVRA-CHAVE] e eu te envio [RECURSO] pra você aplicar hoje.
+
+LEGENDA (OPCIONAL)
+- 1ª linha: “Se você faz [hábito A], o tempo vira seu inimigo.”
+- 2ª linha: “Se você faz [hábito B], o tempo vira seu sócio.”
+- Mini-passo: “Escolha 1 coisa pra automatizar esta semana: [ação].”
+- CTA repetido: “Comente [PALAVRA].”</textarea>
+          <div class="btnRow">
+            <button class="primary" onclick="copyRoteiro()">Copiar roteiro</button>
+            <button onclick="selectAllRoteiro()">Selecionar tudo</button>
+            <span id="status" class="status"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>Elementos visuais</h2>
+          <div class="badge">Look <span class="grad">high-tech</span> + narrativo</div>
+        </div>
+        <ul class="list">
+          <li><strong>Layout fixo:</strong> tela 50/50 (A esquerda, B direita) em todos os slides.</li>
+          <li><strong>Cores:</strong> A em vermelho/laranja (alerta), B em verde (progresso). Destaques em degradê (verde→azul→laranja).</li>
+          <li><strong>Topo:</strong> placa/etiqueta com “IDADE/FASE” (35, 45… ou “Mês 1 / Mês 6 / Ano 3”).</li>
+          <li><strong>Props (easter eggs):</strong> boletos, planilha, meta, caderno, cartão, carrinho, gráfico, recibos; textos pequenos como “processo”, “margem”, “caixa”.</li>
+          <li><strong>Números:</strong> 1 por slide (grande e com contraste). Use card de resultado no clímax.</li>
+        </ul>
+        <div class="divider"></div>
+        <div class="twoCol">
+          <div class="mini">
+            <h3>Tipografia (hierarquia)</h3>
+            <ul class="list">
+              <li>N1: idade/fase (maior).</li>
+              <li>N2: tags A/B (cápsulas).</li>
+              <li>N3: ação principal com verbo + número.</li>
+              <li>N4: microtextos nos objetos.</li>
+              <li>N5: CTA simples com palavra-chave.</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Retenção (gatilhos)</h3>
+            <div class="k">
+              <span class="pill">progressão temporal</span>
+              <span class="pill">comparação binária</span>
+              <span class="pill">números crescendo</span>
+              <span class="pill">contraste emocional</span>
+              <span class="pill">bordão repetido</span>
+              <span class="pill">cliffhanger</span>
+            </div>
+            <p class="p">Faça o público “apostar” no próximo marco: se no meio já há diferença, no final a pessoa quer ver o número grande.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>Copy e ganchos</h2>
+          <div class="badge">Banco de <span class="grad">substituições</span></div>
+        </div>
+        <div class="twoCol">
+          <div class="mini">
+            <h3>Headlines (Slide 1)</h3>
+            <ul class="list">
+              <li>“Dois [perfis], mesma [condição]. Em [prazo], vira outro jogo.”</li>
+              <li>“Mesmo começo. Decisões diferentes. Resultado inevitável.”</li>
+              <li>“O que separa [Perfil A] de [Perfil B] não é sorte: é rotina.”</li>
+              <li>“Se você fizer isso por [prazo], o gap aparece.”</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Frases de tensão (Slide 4)</h3>
+            <ul class="list">
+              <li>“O problema não é o valor. É a repetição.”</li>
+              <li>“O custo invisível: juros, ansiedade e decisões ruins por pressão.”</li>
+              <li>“Quem não mede, administra no escuro.”</li>
+              <li>“Sem processo, todo mês vira ‘apagar incêndio’.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="mini">
+          <h3>Substituições que mantêm o impacto</h3>
+          <ul class="list">
+            <li><strong>Condição inicial:</strong> salário ↔ receita ↔ tráfego ↔ equipe ↔ orçamento ↔ tempo disponível.</li>
+            <li><strong>Comportamento-chave:</strong> aportar ↔ controlar caixa ↔ revisar margem ↔ registrar gastos ↔ seguir CRM ↔ padronizar processo.</li>
+            <li><strong>Resultado:</strong> patrimônio ↔ lucro ↔ caixa ↔ valuation ↔ tempo livre ↔ previsibilidade.</li>
+            <li><strong>Marcos:</strong> idades (35/45/60) ↔ meses (1/3/6/12) ↔ trimestres (Q1/Q2/Q4).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>CTA</h2>
+          <div class="badge">1 passo, <span class="grad">baixo atrito</span></div>
+        </div>
+        <div class="mini">
+          <h3>Estrutura (padrão)</h3>
+          <p class="p"><strong>Não foi sorte.</strong> Foram decisões simples repetidas. <strong>Você ainda tem tempo.</strong><br/>Comente <strong>[PALAVRA]</strong> e eu te envio <strong>[RECURSO]</strong>.</p>
+        </div>
+        <div class="twoCol">
+          <div class="mini">
+            <h3>CTAs para Finanças</h3>
+            <ul class="list">
+              <li>“Comente <strong>PLANILHA</strong> e receba meu orçamento mensal.”</li>
+              <li>“Comente <strong>JUROS</strong> e receba a calculadora de aportes.”</li>
+              <li>“Comente <strong>DIVIDAS</strong> e receba o plano 7 dias pra organizar.”</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>CTAs para Negócios</h3>
+            <ul class="list">
+              <li>“Comente <strong>CAIXA</strong> e receba o template de fluxo de caixa.”</li>
+              <li>“Comente <strong>MARGEM</strong> e receba o checklist de precificação.”</li>
+              <li>“Comente <strong>DRE</strong> e receba a DRE simplificada.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>Checklist de criação</h2>
+          <div class="badge"><span class="grad">Produção rápida</span></div>
+        </div>
+        <div class="twoCol">
+          <div class="mini">
+            <h3>Antes de escrever</h3>
+            <ul class="list">
+              <li>Defina <strong>tema</strong> e <strong>um comportamento-chave</strong>.</li>
+              <li>Escolha <strong>condição inicial igual</strong> (remove desculpa).</li>
+              <li>Selecione <strong>4 marcos</strong> (idades/meses/trimestres).</li>
+              <li>Determine <strong>1 métrica</strong> (patrimônio/caixa/lucro/margem).</li>
+              <li>Prepare o <strong>recurso</strong> e a <strong>palavra-chave</strong>.</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <h3>Na hora do design</h3>
+            <ul class="list">
+              <li>Dupla A/B com <strong>layout idêntico</strong> (simetria).</li>
+              <li>Cápsulas de nome + linha de comportamento (A vs B).</li>
+              <li>1 número por slide; destaque no clímax com card.</li>
+              <li>Inclua 3–5 “easter eggs” (microtextos) por slide.</li>
+              <li>Teste legibilidade: celular a 60% de zoom.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="mini">
+          <h3>Checklist final (publicação)</h3>
+          <div class="k">
+            <span class="pill ok">Hook claro em 1s</span>
+            <span class="pill ok">Bordão consistente</span>
+            <span class="pill ok">Progressão (números sobem)</span>
+            <span class="pill ok">CTA com palavra única</span>
+            <span class="pill ok">Recurso pronto pra enviar</span>
+            <span class="pill bad">Sem textão ou 3 números por slide</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="titleRow">
+          <h2>Variações (mesmo impacto)</h2>
+          <div class="badge">Troque o tema, <span class="grad">mantenha o mecanismo</span></div>
+        </div>
+        <div class="slides">
+          <div class="slide">
+            <div class="slideHead">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="num">A</div>
+                <div>
+                  <h4>Versão “Empresas” (PJ)</h4>
+                  <div class="meta">receita igual → caixa diferente</div>
+                </div>
+              </div>
+              <div class="meta">KPI: caixa/margem</div>
+            </div>
+            <p><strong>Condição inicial:</strong> “Duas empresas, mesma receita (R$ 80k/mês)”.<br/>
+               <strong>Comportamento-chave:</strong> separar PF/PJ + DRE mensal.<br/>
+               <strong>Clímax:</strong> “Empresa B tem 6 meses de caixa + margem X%”.</p>
+          </div>
+          <div class="slide">
+            <div class="slideHead">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="num">B</div>
+                <div>
+                  <h4>Versão “Carreira”</h4>
+                  <div class="meta">tempo igual → valor diferente</div>
+                </div>
+              </div>
+              <div class="meta">KPI: renda/portfólio</div>
+            </div>
+            <p><strong>Condição inicial:</strong> “Duas pessoas, mesma função e salário”.<br/>
+               <strong>Comportamento-chave:</strong> estudo aplicado + networking + projetos.<br/>
+               <strong>Clímax:</strong> “B dobra a renda; A estagna.”</p>
+          </div>
+          <div class="slide">
+            <div class="slideHead">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="num">C</div>
+                <div>
+                  <h4>Versão “Vendas”</h4>
+                  <div class="meta">leads iguais → conversão diferente</div>
+                </div>
+              </div>
+              <div class="meta">KPI: conversão/ticket</div>
+            </div>
+            <p><strong>Condição inicial:</strong> “Dois vendedores, mesmo volume de leads”.<br/>
+               <strong>Comportamento-chave:</strong> follow-up + CRM + script.<br/>
+               <strong>Clímax:</strong> “B fecha X% a mais todo mês.”</p>
+          </div>
+          <div class="slide">
+            <div class="slideHead">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="num">D</div>
+                <div>
+                  <h4>Versão “Finanças pessoais”</h4>
+                  <div class="meta">salário igual → patrimônio diferente</div>
+                </div>
+              </div>
+              <div class="meta">KPI: aporte/patrimônio</div>
+            </div>
+            <p><strong>Condição inicial:</strong> “Dois CLTs, mesmo salário (R$ 6k)”.<br/>
+               <strong>Comportamento-chave:</strong> aporte automático + corte de vazamentos.<br/>
+               <strong>Clímax:</strong> “B acumula R$ ___; A segue no aperto.”</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <div>Use este template para qualquer tema: mantenha “<strong>igualdade inicial</strong> + <strong>uma decisão</strong> + <strong>marcos</strong> + <strong>números</strong> + <strong>moral</strong> + <strong>CTA</strong>”.</div>
+    </footer>
+  </div>
+
+  <script>
+    function copyRoteiro(){
+      const el = document.getElementById('roteiro');
+      el.select();
+      el.setSelectionRange(0, el.value.length);
+      const ok = document.execCommand('copy');
+      const s = document.getElementById('status');
+      if(ok){
+        s.textContent = 'Roteiro copiado.';
+      } else {
+        navigator.clipboard.writeText(el.value).then(()=>{
+          s.textContent = 'Roteiro copiado.';
+        }).catch(()=>{
+          s.textContent = 'Não foi possível copiar automaticamente. Selecione e copie.';
+        });
+      }
+      setTimeout(()=>{ s.textContent=''; }, 1800);
+    }
+    function selectAllRoteiro(){
+      const el = document.getElementById('roteiro');
+      el.focus();
+      el.select();
+      document.getElementById('status').textContent = 'Texto selecionado.';
+      setTimeout(()=>{ document.getElementById('status').textContent=''; }, 1200);
+    }
+  </script>
+</body>
+</html>
