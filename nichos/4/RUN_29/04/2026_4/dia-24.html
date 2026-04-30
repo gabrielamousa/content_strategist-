@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ficha Reproduzível — Carrossel A vs B</title>
+<style>
+  :root{
+    --bg0:#070A0F;
+    --bg1:#0B1220;
+    --card:#0E1729;
+    --card2:#0B1324;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.16);
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.72);
+    --muted2:rgba(234,240,255,.56);
+
+    --g1:linear-gradient(135deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --g2:linear-gradient(135deg,rgba(34,197,94,.28),rgba(56,189,248,.22),rgba(251,146,60,.18));
+
+    --ok:#22c55e;
+    --bad:#fb7185;
+    --warn:#fb923c;
+    --info:#38bdf8;
+
+    --shadow: 0 12px 30px rgba(0,0,0,.45);
+    --radius: 18px;
+    --radius2: 14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:
+      radial-gradient(800px 500px at 15% 10%, rgba(56,189,248,.14), transparent 55%),
+      radial-gradient(900px 520px at 85% 12%, rgba(34,197,94,.12), transparent 55%),
+      radial-gradient(900px 520px at 50% 95%, rgba(251,146,60,.12), transparent 55%),
+      linear-gradient(180deg,var(--bg0),var(--bg1));
+    min-height:100vh;
+  }
+  a{color:#8be9ff;text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+
+  header{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    box-shadow:var(--shadow);
+    border-radius:var(--radius);
+    padding:18px;
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background:var(--g2);
+    filter:blur(18px);
+    opacity:.55;
+    pointer-events:none;
+  }
+  header > *{position:relative}
+
+  .topRow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  .badgeRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .badge{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.2px;
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background:rgba(255,255,255,.04);
+    color:var(--muted);
+  }
+  .badge strong{color:var(--text);font-weight:700}
+
+  h1{margin:10px 0 6px;font-size:22px;line-height:1.25}
+  .sub{color:var(--muted);margin:0;font-size:14px;line-height:1.6}
+
+  .grid{
+    margin-top:16px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+  }
+  @media (min-width: 980px){
+    .grid{grid-template-columns: 1.1fr .9fr}
+  }
+
+  .card{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .card .head{
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01));
+  }
+  .card .head h2{margin:0;font-size:14px;letter-spacing:.35px;text-transform:uppercase;color:var(--muted)}
+  .chip{
+    font-family:var(--mono);
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke2);
+    background:rgba(0,0,0,.25);
+  }
+  .chip .dot{display:inline-block;width:8px;height:8px;border-radius:99px;margin-right:8px;vertical-align:middle;background:var(--g1)}
+
+  .content{padding:14px 16px 16px}
+  .content p{margin:0 0 10px;color:var(--muted);line-height:1.65;font-size:14px}
+  .content ul{margin:10px 0 0;padding-left:18px;color:var(--muted);line-height:1.7;font-size:14px}
+  .content li{margin:6px 0}
+
+  .callout{
+    margin-top:12px;
+    padding:12px 12px;
+    border-radius:var(--radius2);
+    border:1px solid rgba(56,189,248,.28);
+    background:linear-gradient(135deg, rgba(56,189,248,.12), rgba(34,197,94,.08), rgba(251,146,60,.07));
+    color:var(--muted);
+  }
+  .callout b{color:var(--text)}
+
+  .hr{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+
+  .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+  .kpi .mini{
+    padding:10px 10px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(0,0,0,.20);
+  }
+  .mini .label{font-size:11px;color:var(--muted2);font-family:var(--mono);text-transform:uppercase;letter-spacing:.35px}
+  .mini .val{margin-top:6px;font-size:14px;color:var(--text);font-weight:650}
+
+  .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  button{
+    appearance:none;border:none;cursor:pointer;
+    padding:10px 12px;border-radius:12px;
+    font-weight:650;
+    color:#061018;
+    background:var(--g1);
+    box-shadow: 0 10px 30px rgba(56,189,248,.12);
+  }
+  button.secondary{
+    color:var(--text);
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow:none;
+  }
+  button:active{transform:translateY(1px)}
+
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.55;
+    color:rgba(234,240,255,.82);
+    background:rgba(0,0,0,.26);
+    border:1px solid rgba(255,255,255,.10);
+    padding:12px;
+    border-radius:14px;
+  }
+
+  .twoCol{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:860px){
+    .twoCol{grid-template-columns:1fr 1fr}
+  }
+
+  .tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-family:var(--mono);
+    padding:6px 10px;border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(0,0,0,.22);
+    color:var(--muted);
+    margin:4px 6px 0 0;
+  }
+  .sw{width:10px;height:10px;border-radius:99px;background:var(--g1)}
+
+  .ok{color:rgba(34,197,94,.95);font-weight:700}
+  .bad{color:rgba(251,113,133,.98);font-weight:700}
+  .info{color:rgba(56,189,248,.98);font-weight:700}
+  .warn{color:rgba(251,146,60,.98);font-weight:700}
+
+  footer{margin-top:18px;color:var(--muted2);font-size:12px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topRow">
+        <div class="badgeRow">
+          <div class="badge"><strong>Nicho:</strong> Finanças e Negócios</div>
+          <div class="badge"><strong>Dia:</strong> 24</div>
+          <div class="badge"><strong>Formato:</strong> Carrossel</div>
+          <div class="badge"><strong>Pilar:</strong> Mito vs Verdade</div>
+        </div>
+        <div class="badge">
+          <strong>Original:</strong> <a href="https://www.instagram.com/p/DXmfiCCEWNT/" target="_blank" rel="noreferrer">abrir post</a>
+        </div>
+      </div>
+      <h1>Carrossel reproduzível: “Isso é X / Isso é Y” (contraste A vs B)</h1>
+      <p class="sub">Modelo para educar rápido com comparação imediata: mesma headline em todos os slides + situações diferentes + 1 slide de prova + fechamento com X/✓ e CTA de 1 palavra.</p>
+      <div class="btnRow">
+        <button id="copyBtn" onclick="copyRoteiro()">Copiar roteiro</button>
+        <button class="secondary" onclick="window.open('https://www.instagram.com/p/DXmfiCCEWNT/','_blank')">Ver post original</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="head">
+          <h2>Resumo</h2>
+          <div class="chip"><span class="dot"></span>Alta retenção por repetição com variação</div>
+        </div>
+        <div class="content">
+          <p><b>Ideia central:</b> o carrossel cria um <span class="info">choque de percepção</span> ao separar “o que parece” de “o que é de verdade”. Cada slide tem <b>duas cenas</b> (topo e base) para o cérebro comparar em 1 segundo.</p>
+          <p><b>Quando usar:</b> para desmontar confusões comuns (ex.: <i>faturar vs lucrar</i>, <i>crescer vs crescer com margem</i>, <i>vender vs ter caixa</i>), ou qualquer tema com “ilusão” e “realidade”.</p>
+          <div class="kpi">
+            <div class="mini"><div class="label">Meta de slides</div><div class="val">7–9</div></div>
+            <div class="mini"><div class="label">Texto por slide</div><div class="val">≤ 10 palavras</div></div>
+            <div class="mini"><div class="label">Prova obrigatória</div><div class="val">1 slide com número/KPI</div></div>
+          </div>
+          <div class="callout"><b>Regra de ouro:</b> a headline quase não muda. Quem muda é a <b>situação</b> (cena), para escalar produção sem perder impacto.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="head">
+          <h2>Estrutura</h2>
+          <div class="chip"><span class="dot"></span>Macro + micro replicável</div>
+        </div>
+        <div class="content">
+          <p><b>Macro (sequência):</b></p>
+          <ul>
+            <li><b>1) Hook</b> com padrão repetível (A/B) + contraste forte.</li>
+            <li><b>2–4) Repetição com variações</b> (cenários do dia a dia da audiência).</li>
+            <li><b>5) Prova/Diagnóstico</b> com número, KPI, gráfico, print (pode ser borrado).</li>
+            <li><b>6) Virada</b>: “o que muda” (processo/critério/rotina).</li>
+            <li><b>7) Síntese</b> com <span class="bad">❌</span> vs <span class="ok">✅</span> + CTA de 1 palavra.</li>
+          </ul>
+          <div class="hr"></div>
+          <p><b>Micro (por slide):</b></p>
+          <ul>
+            <li><b>Faixa superior:</b> “ISSO É [X]” (o que parece/ilusão).</li>
+            <li><b>Cena A:</b> símbolo do erro (comportamento, ambiente, resultado).</li>
+            <li><b>Faixa inferior:</b> “ISSO É [Y]” (o que é de verdade).</li>
+            <li><b>Cena B:</b> símbolo do acerto (processo, critério, prova).</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <div class="head">
+        <h2>Slides sugeridos (1..9)</h2>
+        <div class="chip"><span class="dot"></span>Exemplo em Finanças & Negócios (adaptável)</div>
+      </div>
+      <div class="content">
+        <p><b>Tema exemplo:</b> <span class="info">Faturar ≠ Lucrar</span> (você pode trocar por qualquer par de conceitos com contraste).</p>
+        <div class="twoCol">
+          <div>
+            <p><b>Slide 1 — Hook:</b></p>
+            <pre>Topo: ISSO É FATURAR
+Base: ISSO É TER LUCRO
+Cena A (topo): notificações de vendas/PIX, euforia, “muito entrando”.
+Cena B (base): DRE simples, margem, caixa, calma.</pre>
+          </div>
+          <div>
+            <p><b>Slide 2 — Realidade do dia a dia:</b></p>
+            <pre>Topo: ISSO É FATURAR
+Base: ISSO É TER LUCRO
+Cena A: entrega correndo, retrabalho, desconto toda hora.
+Cena B: preço defendido + processo + poucas urgências.</pre>
+          </div>
+          <div>
+            <p><b>Slide 3 — Custo oculto:</b></p>
+            <pre>Topo: ISSO É FATURAR
+Base: ISSO É TER LUCRO
+Cena A: fim do mês “cadê o dinheiro?” + boletos.
+Cena B: provisões feitas + metas de margem.</pre>
+          </div>
+          <div>
+            <p><b>Slide 4 — Erro que parece esperteza:</b></p>
+            <pre>Topo: ISSO É FATURAR
+Base: ISSO É TER LUCRO
+Cena A: “crescer” com promoções e taxa de cartão comendo.
+Cena B: unit economics acompanhados (CAC, CMV, margem).</pre>
+          </div>
+          <div>
+            <p><b>Slide 5 — Prova/Diagnóstico (obrigatório):</b></p>
+            <pre>Topo: ISSO É FATURAR
+Base: ISSO É TER LUCRO
+Cena A: gráfico de receita subindo.
+Cena B: gráfico de margem caindo / caixa negativo.
+Texto pequeno (opcional): Receita ≠ Resultado.</pre>
+          </div>
+          <div>
+            <p><b>Slide 6 — A virada (o que muda):</b></p>
+            <pre>Topo: ISSO É FATURAR
+Base: ISSO É TER LUCRO
+Cena A: decisões no "feeling".
+Cena B: rotina semanal: DRE, caixa, preço, metas.</pre>
+          </div>
+          <div>
+            <p><b>Slide 7 — Identidade / aspiração realista:</b></p>
+            <pre>Topo: ISSO É FATURAR
+Base: ISSO É TER LUCRO
+Cena A: agenda lotada + urgência.
+Cena B: agenda organizada + foco no que dá margem.</pre>
+          </div>
+          <div>
+            <p><b>Slide 8 — Síntese com critério:</b></p>
+            <pre>Título: A diferença não é sorte. É MÉTODO.
+❌ Aumentar receita sem saber custos e margem.
+✅ Crescer com precificação + controle de despesas + caixa.</pre>
+          </div>
+          <div>
+            <p><b>Slide 9 — CTA (1 palavra):</b></p>
+            <pre>Quer o checklist + modelo de DRE simplificado?
+Comente: MARGEM</pre>
+          </div>
+        </div>
+        <div class="callout"><b>Trocas rápidas:</b> substitua “FATURAR/LUCRO” por qualquer par: <i>VENDER/TER CAIXA</i>, <i>CRESCER/CRESCER COM MARGEM</i>, <i>INVESTIR/INVESTIR COM MÉTODO</i>, <i>TRABALHAR/PRODUZIR RESULTADO</i>.</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="head">
+        <h2>Roteiro (template preenchível)</h2>
+        <div class="chip"><span class="dot"></span>Copiar, substituir, publicar</div>
+      </div>
+      <div class="content">
+        <p>Use este template para qualquer tema com “ilusão vs realidade”. Preencha os campos entre colchetes.</p>
+        <pre id="roteiroTexto">BRIEF (60s)
+- Público: [dono de negócio | profissional liberal | investidor iniciante]
+- Dor principal: [ex.: vende, mas não sobra]
+- Desejo: [ex.: previsibilidade e caixa]
+- Par de contraste: X=[o que parece] / Y=[o que é de verdade]
+- Prova visual (1 slide): [KPI, DRE, extrato, gráfico, funil, agenda]
+
+PADRÃO DE HEADLINE (fixo)
+- Topo: "ISSO É [X]"
+- Base: "ISSO É [Y]"
+
+SLIDES (7–9)
+1) HOOK — contraste máximo
+   Cena A (X): [situação comum + emoção]
+   Cena B (Y): [situação madura + clareza]
+
+2) VARIAÇÃO #1 — cotidiano da audiência
+   Cena A: [microerro repetido]
+   Cena B: [microacerto equivalente]
+
+3) VARIAÇÃO #2 — custo oculto
+   Cena A: [consequência: stress, retrabalho, dívida, volatilidade]
+   Cena B: [benefício: paz, previsibilidade, foco]
+
+4) VARIAÇÃO #3 — erro que “parece certo”
+   Cena A: [atalho, gambiarra, desconto, urgência]
+   Cena B: [critério, regra, processo]
+
+5) PROVA / DIAGNÓSTICO
+   Mostrar: [número/KPI antes vs depois | gráfico | print editado]
+   Nota: se sensível, use valor fictício ou borrado.
+
+6) VIRADA (o que muda)
+   X acontece quando: [falta de rotina/critério]
+   Y acontece quando: [processo semanal simples]
+
+7) IDENTIDADE
+   Cena aspiracional realista: [hábitos, planilha, calendário, reunião, KPI]
+
+8) SÍNTESE (X/✓)
+   Tese: "A diferença não é sorte. É [PROCESSO]."
+   ❌ [erro 1]
+   ✅ [prática 1]
+   (opcional) ❌ [erro 2]
+   (opcional) ✅ [prática 2]
+
+9) CTA
+   "Comente [PALAVRA] que eu te envio [recurso]."</pre>
+        <div class="btnRow">
+          <button onclick="copyRoteiro()">Copiar roteiro</button>
+          <button class="secondary" onclick="scrollToSection('copyHooks')">Ver ganchos</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="head">
+        <h2>Elementos visuais</h2>
+        <div class="chip"><span class="dot"></span>Look limpo + prova ancorada</div>
+      </div>
+      <div class="content">
+        <ul>
+          <li><b>Layout fixo:</b> duas faixas (topo/base) + 2 cenas por slide (A e B).</li>
+          <li><b>Contraste:</b> em A use ruído/pressa/caos; em B use foco/claridade/ordem.</li>
+          <li><b>Prova:</b> inclua 1 slide com <span class="info">KPI/gráfico/print</span> (mesmo que fictício/borrado).</li>
+          <li><b>Textos curtos:</b> headline em CAIXA ALTA; evite parágrafos dentro do slide.</li>
+          <li><b>Âncora de cor:</b> destaque 1 palavra por slide (ex.: <span class="ok">MARGEM</span>, <span class="warn">CAIXA</span>, <span class="info">MÉTODO</span>).</li>
+        </ul>
+        <div class="callout"><b>Substituições sem perder impacto:</b> ilustração → foto; foto → mockup; mockup → ícones + gráfico simples. O essencial é <b>comparação imediata</b> + <b>prova</b>.</div>
+        <div>
+          <span class="tag"><span class="sw"></span>Fundo escuro</span>
+          <span class="tag"><span class="sw"></span>Borda suave</span>
+          <span class="tag"><span class="sw"></span>Palavra em destaque</span>
+          <span class="tag"><span class="sw"></span>Slide com KPI</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="copyHooks">
+      <div class="head">
+        <h2>Copy e ganchos</h2>
+        <div class="chip"><span class="dot"></span>Frases prontas + padrões</div>
+      </div>
+      <div class="content">
+        <p><b>Padrões de título (capa):</b></p>
+        <ul>
+          <li>“Isso é <b>[X]</b> / Isso é <b>[Y]</b>”</li>
+          <li>“Parece <b>[X]</b>. Na prática é <b>[Y]</b>.”</li>
+          <li>“Você acha que é <b>[X]</b>. O jogo de verdade é <b>[Y]</b>.”</li>
+        </ul>
+        <div class="hr"></div>
+        <p><b>Textos curtos (legenda) — escolha 1:</b></p>
+        <pre>Opção 1 (tese direta)
+A diferença entre [resultado ruim] e [resultado bom] não é sorte.
+É [método/processo].
+
+Opção 2 (dor + virada)
+Se você [sintoma], não é falta de esforço.
+É falta de critério.
+
+Opção 3 (prova)
+Receita alta sem margem vira trabalho + ansiedade.
+Margem + caixa viram liberdade de decisão.</pre>
+        <p><b>Ganchos para o primeiro comentário/pinned:</b></p>
+        <ul>
+          <li>“Qual desses você está vivendo hoje: X ou Y?”</li>
+          <li>“Quer que eu te mande o modelo que eu uso? Comenta a palavra do CTA.”</li>
+          <li>“Se isso te deu um estalo, salva — você vai precisar revisar no fim do mês.”</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="head">
+        <h2>CTA</h2>
+        <div class="chip"><span class="dot"></span>1 palavra, rastreável, fácil</div>
+      </div>
+      <div class="content">
+        <p><b>Regra:</b> CTA de <b>uma palavra</b> + recompensa específica.</p>
+        <ul>
+          <li>“Comente <b>MARGEM</b> que eu envio o checklist.”</li>
+          <li>“Comente <b>CAIXA</b> que eu mando o modelo de controle semanal.”</li>
+          <li>“Comente <b>PREÇO</b> para receber a planilha de precificação.”</li>
+          <li>“Me chama no DM com <b>DIAGNÓSTICO</b> que eu te mando as perguntas.”</li>
+        </ul>
+        <div class="callout"><b>Dica de performance:</b> a recompensa deve ser “plugável” (checklist, template, modelo, perguntas). Isso aumenta comentários sem parecer genérico.</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="head">
+        <h2>Checklist de criação</h2>
+        <div class="chip"><span class="dot"></span>Controle de qualidade antes de postar</div>
+      </div>
+      <div class="content">
+        <ul>
+          <li>[ ] Headline fixa (Topo “ISSO É X” / Base “ISSO É Y”) em todos os slides</li>
+          <li>[ ] 2 cenas por slide (comparação imediata)</li>
+          <li>[ ] Cenários diferentes a cada slide (variação real do cotidiano)</li>
+          <li>[ ] 1 palavra destacada por slide (âncora visual)</li>
+          <li>[ ] 1 slide com prova: número/KPI/gráfico/print (mesmo borrado)</li>
+          <li>[ ] Progressão: sintoma → custo → prova → virada → tese</li>
+          <li>[ ] Slide final com <span class="bad">❌</span>/<span class="ok">✅</span> + CTA de 1 palavra</li>
+          <li>[ ] Margens seguras (topo/base) pensando em cortes do feed</li>
+          <li>[ ] Legenda com tese + convite para salvar/comentar</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="head">
+        <h2>Variações (mesmo impacto, outros temas)</h2>
+        <div class="chip"><span class="dot"></span>Substituições prontas</div>
+      </div>
+      <div class="content">
+        <p><b>1) Variação por pilar (sem mudar o formato):</b></p>
+        <ul>
+          <li><b>Mito vs Verdade:</b> “Isso parece [X]. Isso é [Y].”</li>
+          <li><b>Erro comum:</b> “Isso é [erro]. Isso é [correção].”</li>
+          <li><b>Passo a passo:</b> “Isso é improviso. Isso é método (passo 1..3 no slide final).”</li>
+          <li><b>Objeção:</b> “Isso é ‘não tenho tempo’. Isso é prioridade (1 ajuste prático).”</li>
+        </ul>
+        <div class="hr"></div>
+        <p><b>2) Pares de contraste (copiar e usar):</b></p>
+        <ul>
+          <li>“Isso é <b>vender</b> / Isso é <b>ter caixa</b>”</li>
+          <li>“Isso é <b>crescer</b> / Isso é <b>crescer com margem</b>”</li>
+          <li>“Isso é <b>reduzir custo</b> / Isso é <b>aumentar eficiência</b>”</li>
+          <li>“Isso é <b>trabalhar muito</b> / Isso é <b>produzir resultado</b>”</li>
+          <li>“Isso é <b>investir</b> / Isso é <b>investir com plano</b>”</li>
+        </ul>
+        <div class="hr"></div>
+        <p><b>3) Trocas de cena (sem perder a lógica):</b></p>
+        <ul>
+          <li><b>Se não tiver prints reais:</b> use dashboards fictícios (valores redondos) + legenda “exemplo”.</li>
+          <li><b>Se não quiser aparecer:</b> use mãos, tela, mesa, caderno, ícones e gráficos.</li>
+          <li><b>Se o tema for sensível:</b> use blur + “dados ilustrativos”.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <div class="hr"></div>
+      <div>Identidade visual sugerida: fundo escuro, cards com borda suave, destaques em degradê (verde/azul/laranja), layout limpo e high-tech.</div>
+    </footer>
+  </div>
+
+<script>
+  function copyRoteiro(){
+    const el = document.getElementById('roteiroTexto');
+    const text = el ? el.innerText : '';
+    if(!text) return;
+    navigator.clipboard.writeText(text).then(()=>{
+      const btn = document.getElementById('copyBtn');
+      if(btn){
+        const old = btn.innerText;
+        btn.innerText = 'Roteiro copiado';
+        setTimeout(()=>btn.innerText = old, 1200);
+      }
+    });
+  }
+  function scrollToSection(id){
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+</script>
+</body>
+</html>
