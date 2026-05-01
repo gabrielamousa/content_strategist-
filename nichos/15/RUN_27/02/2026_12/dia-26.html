@@ -1,422 +1,509 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Dia 26 — Roteiro reproduzível (Nicho Neutro)</title>
-<style>
-  :root{
-    --bg0:#070A12;
-    --bg1:#0B1020;
-    --card:#0E1630;
-    --card2:#0B132B;
-    --text:#EAF0FF;
-    --muted:#A7B4D8;
-    --stroke:rgba(255,255,255,.10);
-    --stroke2:rgba(255,255,255,.16);
-    --shadow: 0 18px 60px rgba(0,0,0,.55);
-    --r12: 14px;
-    --r16: 18px;
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-    --g1: linear-gradient(90deg, #1FE08A 0%, #39A0FF 45%, #FF8A2A 100%);
-    --g2: linear-gradient(180deg, rgba(31,224,138,.18), rgba(57,160,255,.10) 55%, rgba(255,138,42,.08));
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family:var(--sans);
-    color:var(--text);
-    background:
-      radial-gradient(1200px 800px at 15% 10%, rgba(57,160,255,.18), transparent 60%),
-      radial-gradient(900px 700px at 80% 30%, rgba(31,224,138,.14), transparent 55%),
-      radial-gradient(1000px 700px at 55% 95%, rgba(255,138,42,.10), transparent 60%),
-      linear-gradient(180deg, var(--bg0), var(--bg1));
-    line-height:1.35;
-  }
-  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
-  header{
-    display:grid;
-    grid-template-columns: 1.2fr .8fr;
-    gap:16px;
-    align-items:stretch;
-    margin-bottom:18px;
-  }
-  .hero{
-    border:1px solid var(--stroke);
-    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-    border-radius:var(--r16);
-    box-shadow:var(--shadow);
-    padding:18px 18px 16px;
-    position:relative;
-    overflow:hidden;
-  }
-  .hero::before{
-    content:"";
-    position:absolute;inset:-2px;
-    background:var(--g2);
-    opacity:.75;
-    pointer-events:none;
-  }
-  .hero > *{position:relative;z-index:1}
-  .kicker{
-    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
-    font-family:var(--mono);
-    color:var(--muted);
-    font-size:12.5px;
-  }
-  .pill{
-    border:1px solid var(--stroke2);
-    padding:6px 10px;
-    border-radius:999px;
-    background:rgba(0,0,0,.18);
-  }
-  h1{margin:10px 0 8px;font-size:22px;letter-spacing:.2px}
-  .sub{margin:0;color:var(--muted);max-width:70ch}
-  .actions{
-    border:1px solid var(--stroke);
-    background:rgba(14,22,48,.55);
-    border-radius:var(--r16);
-    box-shadow:var(--shadow);
-    padding:16px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  .btn{
-    appearance:none;border:1px solid var(--stroke2);
-    background:rgba(255,255,255,.06);
-    color:var(--text);
-    padding:10px 12px;
-    border-radius:12px;
-    cursor:pointer;
-    font-weight:650;
-    letter-spacing:.2px;
-    transition:.15s ease;
-  }
-  .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.09)}
-  .btn.primary{
-    border:0;
-    background:var(--g1);
-    color:#06131B;
-  }
-  .btn.primary:hover{filter:saturate(1.05) brightness(1.02)}
-  a.link{color:#9ED4FF;text-decoration:none;border-bottom:1px dashed rgba(158,212,255,.45)}
-  a.link:hover{border-bottom-color:rgba(158,212,255,.85)}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 26 — Ranking por categoria (Template Neutro)</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1626;
+      --card:#0e1524;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.14);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.55);
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(135deg,#22c55e 0%, #38bdf8 50%, #fb923c 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.25), rgba(56,189,248,.20), rgba(251,146,60,.20));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
 
-  .grid{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:14px;
-    margin-top:14px;
-  }
-  .card{
-    border:1px solid var(--stroke);
-    background:rgba(14,22,48,.55);
-    border-radius:var(--r16);
-    padding:16px;
-    box-shadow:var(--shadow);
-    position:relative;
-    overflow:hidden;
-  }
-  .card.compact{padding:14px}
-  .card::after{
-    content:"";
-    position:absolute;inset:auto -60px -60px auto;
-    width:180px;height:180px;
-    background:conic-gradient(from 200deg, rgba(31,224,138,.0), rgba(31,224,138,.25), rgba(57,160,255,.18), rgba(255,138,42,.18), rgba(31,224,138,.0));
-    filter:blur(14px);
-    opacity:.9;
-    transform:rotate(12deg);
-  }
-  .card > *{position:relative;z-index:1}
-  .titleRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-  h2{font-size:14px;margin:0;letter-spacing:.14em;text-transform:uppercase;color:#CFE2FF}
-  .tag{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--muted);
-    padding:6px 10px;
-    border-radius:999px;
-    border:1px solid var(--stroke2);
-    background:rgba(0,0,0,.18);
-    white-space:nowrap;
-  }
-  ul{margin:10px 0 0 18px;color:var(--text)}
-  li{margin:8px 0;color:var(--text)}
-  .muted{color:var(--muted)}
-  .hr{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
-  .code{
-    font-family:var(--mono);
-    font-size:12.5px;
-    background:rgba(0,0,0,.25);
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:12px;
-    padding:12px 12px;
-    overflow:auto;
-    white-space:pre;
-  }
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .callout{
-    border:1px solid rgba(255,255,255,.10);
-    background:linear-gradient(180deg, rgba(31,224,138,.10), rgba(57,160,255,.06) 60%, rgba(255,138,42,.05));
-    border-radius:14px;
-    padding:12px;
-  }
-  .callout b{background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent}
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(56,189,248,.12), transparent 55%),
+        radial-gradient(900px 600px at 85% 15%, rgba(34,197,94,.12), transparent 55%),
+        radial-gradient(900px 650px at 50% 95%, rgba(251,146,60,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
 
-  .scriptWrap{grid-column:1/-1}
-  .scriptHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-  .small{font-size:12.5px;color:var(--muted)}
+    a{color:inherit; text-decoration:none;}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 16px 60px;}
 
-  @media (max-width: 920px){
-    header{grid-template-columns:1fr}
-    .grid{grid-template-columns:1fr}
-    .cols{grid-template-columns:1fr}
-  }
-</style>
+    .header{
+      position:relative;
+      padding:22px 20px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:var(--g2);
+      filter: blur(18px);
+      opacity:.8;
+      z-index:0;
+    }
+    .header > *{position:relative; z-index:1;}
+
+    .topline{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .chips{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+    .chip{
+      font-size:12px;
+      letter-spacing:.2px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      backdrop-filter: blur(8px);
+    }
+    .chip strong{color:var(--text); font-weight:650;}
+
+    .title{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+      justify-content:space-between;
+    }
+    h1{margin:0; font-size:22px; line-height:1.15; letter-spacing:-.2px;}
+    .subtitle{margin:6px 0 0; color:var(--muted); font-size:14px; max-width:72ch;}
+
+    .actions{display:flex; gap:10px; align-items:center;}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke2);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{transform: translateY(-1px); background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.20);}
+    .btn.primary{
+      background:rgba(255,255,255,.08);
+      border-color:rgba(255,255,255,.22);
+      position:relative;
+    }
+    .btn.primary:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius:12px;
+      padding:1px;
+      background:var(--g1);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity:.85;
+      pointer-events:none;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 940px){
+      .grid{grid-template-columns:1fr;}
+      .actions{width:100%; justify-content:flex-start;}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:rgba(14,21,36,.72);
+      border-radius:var(--radius);
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid var(--stroke);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+    }
+    .card .hd .k{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.25px;
+      text-transform:uppercase;
+    }
+    .card .bd{padding:14px 16px;}
+
+    .list{margin:0; padding-left:18px; color:var(--muted);}
+    .list li{margin:8px 0;}
+
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+    @media (max-width: 640px){ .twoCol{grid-template-columns:1fr;} }
+
+    .callout{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      border-radius:var(--radius2);
+      padding:12px 12px;
+    }
+    .callout .t{font-size:13px; color:var(--text); font-weight:650; margin:0 0 6px;}
+    .callout .p{font-size:13px; color:var(--muted); margin:0; line-height:1.45;}
+
+    .script{
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color:rgba(255,255,255,.86);
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:16px;
+      padding:14px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .footnote{color:var(--muted2); font-size:12px; margin-top:10px;}
+
+    .badgeLink{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--stroke);
+      border-radius:12px;
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .badgeLink code{font-family:var(--mono); font-size:12px; color:rgba(255,255,255,.82);}
+
+    .section{margin-top:14px;}
+    .section h2{margin:0; font-size:14px; letter-spacing:.2px;}
+
+    .hr{height:1px; background:rgba(255,255,255,.10); margin:12px 0;}
+
+    .toast{
+      position:fixed;
+      bottom:18px;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(15,22,38,.92);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 20px 50px rgba(0,0,0,.55);
+      padding:10px 12px;
+      border-radius:14px;
+      color:rgba(255,255,255,.86);
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-4px);}
+  </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="hero">
-        <div class="kicker">
-          <span class="pill">Nicho: <b style="color: #EAF0FF; font-family: var(--mono);">Neutro</b></span>
-          <span class="pill">Dia: <b style="color: #EAF0FF; font-family: var(--mono);">26</b></span>
-          <span class="pill">Formato: <b style="color: #EAF0FF; font-family: var(--mono);">Reels</b></span>
-          <span class="pill">Pilar: <b style="color: #EAF0FF; font-family: var(--mono);">Passo a passo</b></span>
+    <header class="header">
+      <div class="topline">
+        <div class="chips">
+          <span class="chip"><strong>Nicho:</strong> Neutro</span>
+          <span class="chip"><strong>Dia:</strong> 26</span>
+          <span class="chip"><strong>Formato:</strong> Carrossel</span>
+          <span class="chip"><strong>Pilar:</strong> Checklist</span>
         </div>
-        <h1>Parece X, mas não é: o template de Reel mais compartilhável</h1>
-        <p class="sub">Roteiro neutro (para qualquer tema) baseado em: contraste + validação emocional + número específico + execução simples + “upgrade” + CTA de compartilhamento.</p>
-        <p class="sub" style="margin-top:10px;">
-          Post original: <a class="link" href="https://www.instagram.com/p/DUrDL1AgXSN/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DUrDL1AgXSN/</a>
-        </p>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DV9ro5kEd2V/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn" type="button">Copiar roteiro</button>
+        </div>
       </div>
 
-      <div class="actions">
-        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
-        <button class="btn" id="toggleBtn">Mostrar/ocultar roteiro</button>
-        <div class="hr"></div>
-        <div class="small">
-          Duração-alvo: <b>20–35s</b> • Cortes: <b>0,5–1,5s</b> • Estrutura: <b>Desejo → encaixe → número → facilidade → diferencial → CTA</b>
+      <div class="title">
+        <div>
+          <h1>Ranking por categoria: Top 3 escolhas (modelo neutro)</h1>
+          <p class="subtitle">Template universal para qualquer tema: você divide em categorias (cenários) e recomenda 3 opções por categoria com justificativas curtas. Alta retenção por repetição de padrão.</p>
+          <div style="margin-top:10px">
+            <a class="badgeLink" href="https://www.instagram.com/p/DV9ro5kEd2V/" target="_blank" rel="noopener noreferrer">Link fonte: <code>instagram.com/p/DV9ro5kEd2V</code></a>
+          </div>
         </div>
       </div>
     </header>
 
-    <section class="grid">
-      <div class="card">
-        <div class="titleRow">
-          <h2>Resumo</h2>
-          <div class="tag">Objetivo: retenção + compartilhamento</div>
-        </div>
-        <ul>
-          <li><b>Hook de contraste:</b> “Parece <span class="muted">[coisa desejada]</span>, mas não é.”</li>
-          <li><b>Validação emocional:</b> “Praquele dia que você não quer <span class="muted">[o difícil/chato]</span>.”</li>
-          <li><b>Prova rápida:</b> 1 número específico (tempo, custo, passos, resultado, diferença).</li>
-          <li><b>Entrega simples:</b> lista curta + execução em cortes rápidos.</li>
-          <li><b>Diferencial:</b> “upgrade” (um detalhe extra) + “hack” (salvar, reaproveitar, automatizar).</li>
-          <li><b>CTA:</b> salvar + enviar pra alguém (com humor/identificação social).</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <div class="titleRow">
-          <h2>Estrutura</h2>
-          <div class="tag">Template (A→H)</div>
-        </div>
-        <ol style="margin:10px 0 0 18px;">
-          <li><b>A.</b> Quebra de expectativa (0–2s)</li>
-          <li><b>B.</b> Cenário + identificação (2–5s)</li>
-          <li><b>C.</b> Benefício + prova numérica (5–7s)</li>
-          <li><b>D.</b> Transição “vem comigo” (7–8s)</li>
-          <li><b>E.</b> Passos/itens em lista rápida (8–16s)</li>
-          <li><b>F.</b> Diferencial (16–20s)</li>
-          <li><b>G.</b> Execução + tempo (20–28s)</li>
-          <li><b>H.</b> Fechamento + CTA (28–35s)</li>
-        </ol>
-        <div class="hr"></div>
-        <div class="callout">
-          <div class="small"><b>Regra de ouro:</b> sempre ter <b>1 número</b> + <b>1 “cereja do bolo”</b>.</div>
-        </div>
-      </div>
-
-      <div class="card scriptWrap" id="scriptSection">
-        <div class="scriptHeader">
+    <div class="grid">
+      <main class="card">
+        <div class="hd">
           <div>
-            <h2>Roteiro (reproduzível)</h2>
-            <div class="small">Substitua os campos entre colchetes. Leia como fala natural (frases curtas).</div>
+            <div class="k">Roteiro reproduzível</div>
           </div>
-          <div class="tag">Pronto para gravar</div>
         </div>
-        <div class="code" id="scriptText">[CENA 1 — CLOSE DO RESULTADO / ANTES E DEPOIS | 0–2s]
-TEXTO NA TELA: “Parece [X], mas não é.”
-FALA: “Parece [X], mas não é. É [Y] — e resolve [benefício principal].”
+        <div class="bd">
 
-[CENA 2 — IDENTIFICAÇÃO | 2–5s]
-TEXTO NA TELA: “Pra dias sem energia pra [tarefa chata]”
-FALA: “Sabe aqueles dias que você não quer [tarefa chata / processo longo], mas quer [resultado desejado]?”
+          <section class="section">
+            <h2>Resumo</h2>
+            <div class="hr"></div>
+            <div class="twoCol">
+              <div class="callout">
+                <p class="t">O que é</p>
+                <p class="p">Carrossel “ranking/recomendação por categoria”: cada slide do miolo traz um cenário (categoria) + Top 3 opções + 1 linha de critério.</p>
+              </div>
+              <div class="callout">
+                <p class="t">Por que funciona</p>
+                <p class="p">Padrão repetível reduz esforço cognitivo e cria curiosidade pelo “1º lugar” de cada categoria. Excelente para salvar e compartilhar.</p>
+              </div>
+            </div>
+          </section>
 
-[CENA 3 — PROVA RÁPIDA | 5–7s]
-TEXTO NA TELA: “Em [N] min • [NÚMERO-CHAVE]”
-FALA: “Fica pronto em [N] minutos e dá [número-chave: economia/resultado/padrão/ganho].”
-
-[CENA 4 — TRANSIÇÃO | 7–8s]
-FALA: “Olha isso — rapidinho.”
-
-[CENA 5 — LISTA CURTA (ITENS OU PASSOS) | 8–16s]
-TEXTO NA TELA: “Só precisa de:”
-FALA (em ritmo): “Você só precisa de: [item/passo 1], [item/passo 2], [item/passo 3]… e pronto.”
-
-[CENA 6 — DIFERENCIAL + ‘CEREJA DO BOLO’ | 16–20s]
-TEXTO NA TELA: “Diferencial: [hack] + [upgrade]”
-FALA: “O pulo do gato: [hack de praticidade]. E o upgrade: [detalhe sensorial/extra/feature] que faz parecer ‘de verdade’.”
-
-[CENA 7 — EXECUÇÃO (MOSTRAR) | 20–28s]
-TEXTO NA TELA: “[modo] • [tempo]”
-FALA: “Agora é só [ação 1], [ação 2] e [ação 3]. Em [tempo], tá pronto.”
-
-[CENA 8 — FECHAMENTO + CTA | 28–35s]
-TEXTO NA TELA: “Salva + envia”
-FALA: “Salva pra fazer quando bater [situação]. E manda pra [pessoa/grupo] que vai amar — ou que vai fazer pra você.”</div>
-      </div>
-
-      <div class="card">
-        <div class="titleRow">
-          <h2>Elementos visuais</h2>
-          <div class="tag">Edição high-retention</div>
-        </div>
-        <ul>
-          <li><b>Abertura:</b> close “apetitoso/impactante” do resultado (ou antes/depois) + texto grande do hook.</li>
-          <li><b>Jump cuts:</b> remova silêncios; troque de plano a cada 0,5–1,5s na parte de lista.</li>
-          <li><b>B-roll:</b> mãos fazendo, detalhe do “upgrade”, e 1 take “satisfatório” (corte, clique, transformação).</li>
-          <li><b>Texto na tela:</b> sempre reforçar <span style="background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:750;">número</span> + <span style="background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:750;">tempo</span> + <span style="background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:750;">diferencial</span>.</li>
-          <li><b>Áudio:</b> voz clara; música baixa; SFX pontuais se fizer sentido (clique, corte, “pop”, etc.).</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <div class="titleRow">
-          <h2>Copy e ganchos</h2>
-          <div class="tag">Modelos prontos</div>
-        </div>
-        <div class="cols">
-          <div>
-            <div class="callout"><div class="small"><b>Hooks (0–2s)</b></div></div>
-            <ul>
-              <li>“Parece <span class="muted">[X]</span>, mas é <span class="muted">[Y]</span>.”</li>
-              <li>“Você jura que é <span class="muted">[X]</span>… só que tem <span class="muted">[benefício]</span>.”</li>
-              <li>“Isso aqui salva seu <span class="muted">[momento crítico]</span> sem <span class="muted">[custo/sofrimento]</span>.”</li>
+          <section class="section">
+            <h2>Estrutura</h2>
+            <div class="hr"></div>
+            <ul class="list">
+              <li><strong>Slides (9–10):</strong> 1 capa + 6–7 categorias + 1 fechamento com CTA.</li>
+              <li><strong>Miolo fixo:</strong> “Categoria → 🥇🥈🥉 Opção + para quem é + por que + observação”.</li>
+              <li><strong>Ordem recomendada:</strong> do mais amplo → específico → volta para amplo (CTA).</li>
             </ul>
-          </div>
-          <div>
-            <div class="callout"><div class="small"><b>Linhas de retenção (meio do vídeo)</b></div></div>
-            <ul>
-              <li>“O segredo é <span class="muted">[hack]</span>.”</li>
-              <li>“Em <span class="muted">[N]</span> minutos você tem <span class="muted">[resultado]</span>.”</li>
-              <li>“E agora vem a melhor parte: <span class="muted">[upgrade]</span>.”</li>
+          </section>
+
+          <section class="section">
+            <h2>Roteiro</h2>
+            <div class="hr"></div>
+            <div class="script" id="scriptText">TEMPLATE — CARROSSEL “RANKING POR CATEGORIA” (NEUTRO)
+
+CONFIGURAÇÃO RÁPIDA
+- Tema central: [TEMA PRINCIPAL]
+- Público/segmento: [PARA QUEM]
+- Critério do ranking (1 linha): [CRITÉRIO: custo-benefício | facilidade | performance | risco | velocidade | etc.]
+- Nº de categorias: 6–7
+- Em cada categoria: Top 3 opções (🥇🥈🥉) + justificativas curtas
+
+SLIDE 1 — CAPA (HOOK + PROMESSA)
+Texto (1–2 linhas, grande):
+“Meu RANKING: Top 3 [COISAS] para [OBJETIVO]”
+Complemento (pequeno): “por [SEU PAPEL/EXPERIÊNCIA]” (ex.: “por quem testa/implementa/estuda isso no dia a dia”)
+Subtexto opcional: “dividido por categorias para você escolher rápido”
+
+SLIDE 2 — COMO LER (OPCIONAL, SE PRECISAR)
+Título: “Como usar este ranking”
+Bullets:
+- “Escolha a categoria que combina com seu cenário”
+- “Veja 🥇🥈🥉 e o motivo em 1 linha”
+- “Salve para consultar depois”
+
+SLIDES 2/3 ATÉ 8/9 — CATEGORIAS (PADRÃO REPETÍVEL)
+Para cada categoria, usar o mesmo layout e tamanho de texto.
+
+Título do slide: [CATEGORIA #]
+Subtítulo (opcional): “Se você quer [BENEFÍCIO] / se você tem [CONTEXTO]”
+
+🥇 [OPÇÃO 1]
+- Para quem é: [PERFIL/CONTEXTO]
+- Por que entra no ranking: [1 DIFERENCIAL]
+- Observação: [LIMITE/QUANDO NÃO USAR/PRÉ-REQUISITO]
+
+🥈 [OPÇÃO 2]
+- Para quem é: [PERFIL/CONTEXTO]
+- Por que entra no ranking: [1 DIFERENCIAL]
+- Observação: [LIMITE]
+
+🥉 [OPÇÃO 3]
+- Para quem é: [PERFIL/CONTEXTO]
+- Por que entra no ranking: [1 DIFERENCIAL]
+- Observação: [LIMITE]
+
+LISTA DE CATEGORIAS (EXEMPLOS NEUTROS — ESCOLHA 6–7)
+1) Para iniciantes vs avançados
+2) Para pouco tempo (rápido) vs mais tempo (completo)
+3) Baixo orçamento vs investimento
+4) Melhor custo-benefício
+5) Menor risco / mais previsível
+6) Melhor para resultados rápidos
+7) Melhor para longo prazo / consistência
+
+SLIDE FINAL — FECHAMENTO (CTA)
+Texto principal:
+“Quer mais rankings práticos por categoria? Siga o perfil.”
+CTA principal (escolha 1):
+- “Salve para consultar quando precisar.”
+CTA secundário (discreto):
+- “Comente: qual é seu cenário hoje? ([A/B/C])”
+Assinatura: @seuperfil + mini frase de posicionamento</div>
+            <p class="footnote">Dica: manter 1 ideia por linha. Em mobile, legibilidade vence detalhes.</p>
+          </section>
+
+          <section class="section">
+            <h2>Elementos visuais</h2>
+            <div class="hr"></div>
+            <div class="twoCol">
+              <div class="callout">
+                <p class="t">Identidade (neutra)</p>
+                <p class="p">Fundo claro no miolo (estilo “catálogo”) ou fundo escuro minimalista; use 1 cor líder + medalhas consistentes (🥇🥈🥉 ou ícones).</p>
+              </div>
+              <div class="callout">
+                <p class="t">Layout (alta retenção)</p>
+                <p class="p">Grade 3 colunas: medalha (topo) → visual/ícone da opção (centro) → nome (destaque) → 2–3 linhas (para quem/por que).</p>
+              </div>
+              <div class="callout">
+                <p class="t">Tipografia</p>
+                <p class="p">Título grande (1–2 linhas). Corpo menor com espaçamento. Evite parágrafos; prefira bullets para escaneabilidade.</p>
+              </div>
+              <div class="callout">
+                <p class="t">Consistência</p>
+                <p class="p">Mesmo posicionamento de medalhas, tamanhos semelhantes de imagens, e margens fixas. O “padrão” é parte do gancho.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2>Copy e ganchos</h2>
+            <div class="hr"></div>
+            <ul class="list">
+              <li><strong>Fórmulas de capa:</strong> “Meu ranking: Top 3 [X] para [Y]”, “Top 3 para [Y] por categoria”, “Se você está em [CENÁRIO], veja isso”.</li>
+              <li><strong>Gancho de retenção:</strong> “Qual vai ser o 🥇 de cada categoria?”</li>
+              <li><strong>Critério em 1 linha:</strong> “Avaliei por: [critério]”. Isso dá autoridade sem texto longo.</li>
+              <li><strong>Microjustificativa padrão:</strong> “Para quem é + diferencial + observação”.</li>
             </ul>
-          </div>
-        </div>
-        <div class="hr"></div>
-        <div class="small"><b>Escolha do número (prova):</b> tempo, custo, quantidade de itens, % de melhora, passos, antes/depois, “de X para Y”, “em N tentativas”.</div>
-      </div>
+          </section>
 
-      <div class="card">
-        <div class="titleRow">
-          <h2>CTA</h2>
-          <div class="tag">Compartilhável</div>
-        </div>
-        <ul>
-          <li><b>Salvar:</b> “Salva isso pra quando bater <span class="muted">[situação]</span>.”</li>
-          <li><b>Enviar:</b> “Manda pra <span class="muted">[pessoa]</span> que sempre pede <span class="muted">[resultado]</span>.”</li>
-          <li><b>Comentário (palavra-chave):</b> “Comenta <span class="muted">‘TEMPLATE’</span> que eu te mando <span class="muted">[checklist/arquivo]</span>.”</li>
-          <li><b>Qualificação:</b> “Quer versão pra <span class="muted">[cenário A]</span> ou <span class="muted">[cenário B]</span>? Comenta.”</li>
-        </ul>
-      </div>
+          <section class="section">
+            <h2>CTA</h2>
+            <div class="hr"></div>
+            <div class="twoCol">
+              <div class="callout">
+                <p class="t">CTA principal (escolha 1)</p>
+                <p class="p">Salvar: “Salve este ranking para consultar quando precisar.”</p>
+              </div>
+              <div class="callout">
+                <p class="t">CTA secundário (discreto)</p>
+                <p class="p">Comentário: “Comente seu cenário (A/B/C) que eu sugiro a melhor categoria para começar.”</p>
+              </div>
+            </div>
+          </section>
 
-      <div class="card">
-        <div class="titleRow">
-          <h2>Checklist</h2>
-          <div class="tag">Criação sem travar</div>
-        </div>
-        <ul>
-          <li>[ ] Defini <b>X (desejado)</b> e <b>Y (alternativa inteligente)</b>.</li>
-          <li>[ ] Escrevi 1 frase de <b>validação emocional</b> (o “dia que você não quer…”).</li>
-          <li>[ ] Separei <b>1 número específico</b> (tempo/custo/resultado).</li>
-          <li>[ ] Listei <b>3–5 itens</b> (ou <b>3–5 passos</b>) no máximo.</li>
-          <li>[ ] Tenho 1 <b>hack</b> (salvar tempo/automatizar/reutilizar) + 1 <b>upgrade</b> (detalhe que dá desejo).</li>
-          <li>[ ] Gravei abertura com <b>close impactante</b> do resultado.</li>
-          <li>[ ] Coloquei texto na tela com <b>hook + número + diferencial</b>.</li>
-          <li>[ ] Fechei com <b>salvar + enviar</b> (copia e cola).</li>
-        </ul>
-      </div>
-
-      <div class="card scriptWrap">
-        <div class="titleRow">
-          <h2>Variações</h2>
-          <div class="tag">3 ângulos prontos</div>
-        </div>
-        <div class="cols">
-          <div class="callout">
-            <div class="small"><b>Variação 1 — “Sem culpa” (emocional)</b></div>
-            <div class="small" style="margin-top:8px;">“Praquele dia que você não dá conta de <span class="muted">[tarefa]</span>. Isso aqui te entrega <span class="muted">[resultado]</span> em <span class="muted">[N]</span> minutos.”</div>
-          </div>
-          <div class="callout">
-            <div class="small"><b>Variação 2 — “Número primeiro” (lógico)</b></div>
-            <div class="small" style="margin-top:8px;">“<span class="muted">[Resultado]</span> em <span class="muted">[N]</span> minutos, com só <span class="muted">[N]</span> passos — e ainda tem <span class="muted">[diferencial]</span>.”</div>
-          </div>
-          <div class="callout">
-            <div class="small"><b>Variação 3 — “Upgrade” (desejo)</b></div>
-            <div class="small" style="margin-top:8px;">“Parece <span class="muted">[X]</span>. O que muda tudo é <span class="muted">[upgrade]</span>. Vou te mostrar em 20 segundos.”</div>
-          </div>
-          <div class="callout" style="grid-column:1/-1;">
-            <div class="small"><b>Substituições rápidas (para qualquer nicho)</b></div>
-            <ul>
-              <li><b>X (parece):</b> “produto premium”, “resultado difícil”, “coisa de especialista”, “feito à mão”, “caro”, “demorado”.</li>
-              <li><b>Y (mas é):</b> “atalho prático”, “template”, “processo em 3 passos”, “automação”, “versão simples”, “setup rápido”.</li>
-              <li><b>Número:</b> tempo, preço, passos, ganho, redução, taxa, antes/depois.</li>
-              <li><b>Hack:</b> reaproveitar, salvar preset, checklist, copiar/colar, batch, congelar/armazenar (metáfora).</li>
-              <li><b>Upgrade:</b> detalhe visual, acabamento, recurso bônus, “toque final”.</li>
+          <section class="section">
+            <h2>Checklist</h2>
+            <div class="hr"></div>
+            <ul class="list">
+              <li><strong>Definir:</strong> [tema], [público], [critério do ranking].</li>
+              <li><strong>Categorias:</strong> escolher 6–7 cenários que cubram do amplo ao específico.</li>
+              <li><strong>Top 3 por categoria:</strong> opções reais, aplicáveis e comparáveis (sem “depende” vazio).</li>
+              <li><strong>Texto por opção:</strong> 1 linha “para quem”, 1 linha “por que”, 1 linha “observação”.</li>
+              <li><strong>Design:</strong> mesmo grid em todos os slides; medalhas e hierarquia tipográfica fixas.</li>
+              <li><strong>Legibilidade:</strong> testar em tela pequena (zoom out) antes de publicar.</li>
+              <li><strong>Legenda:</strong> 3 linhas — critério + como usar + CTA.</li>
             </ul>
-          </div>
-        </div>
-      </div>
+          </section>
 
-    </section>
+          <section class="section">
+            <h2>Variações</h2>
+            <div class="hr"></div>
+            <div class="twoCol">
+              <div class="callout">
+                <p class="t">Variação 1 — “Top 3 + erros a evitar”</p>
+                <p class="p">Após cada categoria, adicione 1 linha: “Evite: [erro comum]”.</p>
+              </div>
+              <div class="callout">
+                <p class="t">Variação 2 — “Escolha seu caminho”</p>
+                <p class="p">Slide 2 vira um “mapa”: “Se você é [A] vá para slide 3; se [B], slide 5…”.</p>
+              </div>
+              <div class="callout">
+                <p class="t">Variação 3 — “Ranking com critérios visuais”</p>
+                <p class="p">Adicionar selos pequenos: “+ rápido”, “+ barato”, “+ robusto”, “+ simples”.</p>
+              </div>
+              <div class="callout">
+                <p class="t">Variação 4 — “Antes e depois do processo”</p>
+                <p class="p">Categorias viram etapas: Planejar → Executar → Revisar → Otimizar (Top 3 ferramentas/dicas por etapa).</p>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </main>
+
+      <aside class="card">
+        <div class="hd">
+          <div class="k">Slides sugeridos (1..10)</div>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li><strong>Slide 1:</strong> Capa — “Meu ranking: Top 3 [X] para [Y]” + autoridade curta.</li>
+            <li><strong>Slide 2:</strong> Categoria 1 (mais ampla) — Top 3 + justificativas.</li>
+            <li><strong>Slide 3:</strong> Categoria 2 — Top 3 + justificativas.</li>
+            <li><strong>Slide 4:</strong> Categoria 3 — Top 3 + justificativas.</li>
+            <li><strong>Slide 5:</strong> Categoria 4 — Top 3 + justificativas.</li>
+            <li><strong>Slide 6:</strong> Categoria 5 — Top 3 + justificativas.</li>
+            <li><strong>Slide 7:</strong> Categoria 6 — Top 3 + justificativas.</li>
+            <li><strong>Slide 8 (opcional):</strong> Categoria 7 (mais específica) — Top 3 + justificativas.</li>
+            <li><strong>Slide 9:</strong> Recap rápido — “Se você é [A] → escolha [categoria]” (opcional).</li>
+            <li><strong>Slide 10:</strong> Fechamento — CTA salvar + seguir + pergunta.</li>
+          </ul>
+
+          <div class="hr"></div>
+
+          <div class="callout">
+            <p class="t">Legenda (modelo curto)</p>
+            <p class="p">“Eu avaliei [X] por [critério]. Se você está em [cenário], comece pelo slide [n]. Salve para consultar e comente seu caso (A/B/C).”</p>
+          </div>
+
+          <p class="footnote">Formato pensado para 1080×1350 (4:5). Mantém leitura e taxa de salvamento alta.</p>
+        </div>
+      </aside>
+    </div>
   </div>
 
-<script>
-  (function(){
-    const btn = document.getElementById('copyBtn');
-    const toggle = document.getElementById('toggleBtn');
-    const scriptSection = document.getElementById('scriptSection');
-    const scriptText = document.getElementById('scriptText');
+  <div class="toast" id="toast">Roteiro copiado.</div>
 
-    btn.addEventListener('click', async () => {
-      const text = scriptText.innerText.trim();
-      try{
-        await navigator.clipboard.writeText(text);
-        btn.textContent = 'Copiado!';
-        setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
-      }catch(e){
-        // fallback
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        btn.textContent = 'Copiado!';
-        setTimeout(()=> btn.textContent = 'Copiar roteiro', 1400);
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=>toast.classList.remove('show'), 1400);
       }
-    });
 
-    toggle.addEventListener('click', () => {
-      const hidden = scriptSection.style.display === 'none';
-      scriptSection.style.display = hidden ? '' : 'none';
-      toggle.textContent = hidden ? 'Mostrar/ocultar roteiro' : 'Mostrar/ocultar roteiro';
-    });
-  })();
-</script>
+      btn.addEventListener('click', async () => {
+        const text = textEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); showToast('Roteiro copiado.'); }
+          catch(err){ showToast('Não foi possível copiar automaticamente.'); }
+          document.body.removeChild(ta);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
