@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 8 — Estética — Desinfluenciando</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0B1020;
+      --card:#0D1428;
+      --card2:#0A1226;
+      --text:#EAF0FF;
+      --muted:#A9B4D0;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.14);
+      --shadow: 0 16px 50px rgba(0,0,0,.50);
+      --radius:18px;
+      --radius2:14px;
+      --grad: linear-gradient(90deg, #35F5A1 0%, #56A8FF 45%, #FF9A3D 100%);
+      --grad2: radial-gradient(70% 120% at 15% 10%, rgba(53,245,161,.20) 0%, rgba(86,168,255,.10) 45%, rgba(255,154,61,.08) 100%);
+      --good:#35F5A1;
+      --info:#56A8FF;
+      --warn:#FF9A3D;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+      line-height:1.35;
+    }
+    a{color:inherit; text-decoration:none}
+
+    .wrap{
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 28px 18px 64px;
+    }
+
+    .header{
+      position:relative;
+      background: var(--grad2);
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 4px);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--grad);
+      opacity:.18;
+      filter: blur(22px);
+      pointer-events:none;
+    }
+    .header-top{
+      position:relative;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .badge-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .badge{
+      border:1px solid var(--line2);
+      background: rgba(255,255,255,.03);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .badge b{color:var(--text); font-weight:650}
+
+    h1{
+      position:relative;
+      margin: 12px 0 8px;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+    .sub{
+      position:relative;
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions{
+      position:relative;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      margin-top: 6px;
+    }
+    .btn{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line2);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      font-size: 13px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.05)}
+    .btn.primary{
+      border: 0;
+      background: var(--grad);
+      color:#061018;
+      font-weight: 750;
+    }
+    .btn .dot{
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(6,16,24,.65);
+    }
+
+    .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 920px){
+      .grid{ grid-template-columns: 1.05fr .95fr; }
+      .span-2{ grid-column: 1 / -1; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.32);
+    }
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color: rgba(234,240,255,.88);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .pip{
+      width:10px;height:10px;border-radius:3px;
+      background: var(--grad);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.03);
+    }
+
+    .card p, .card li{color: var(--muted); font-size: 14px;}
+    .card b{color: var(--text)}
+
+    .list{
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 920px){
+      .split{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line2);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 6px 0 0;
+    }
+    .sw{width:10px;height:10px;border-radius:999px;}
+    .sw.good{background: var(--good)}
+    .sw.info{background: var(--info)}
+    .sw.warn{background: var(--warn)}
+
+    .code{
+      background: rgba(0,0,0,.28);
+      border: 1px solid var(--line);
+      border-radius: var(--radius2);
+      padding: 12px;
+      color: rgba(234,240,255,.92);
+      font-size: 13px;
+      overflow:auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .divider{
+      height:1px;
+      background: var(--line);
+      margin: 12px 0;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(10,16,30,.92);
+      border: 1px solid var(--line2);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+      font-size: 13px;
+    }
+    .toast.show{ opacity:1; transform: translateX(-50%) translateY(-6px); }
+
+    .kpi{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .kpi .box{
+      flex: 1 1 160px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      background: rgba(255,255,255,.02);
+    }
+    .kpi .t{font-size:12px;color:var(--muted)}
+    .kpi .v{margin-top:6px;font-weight:800;letter-spacing:-.02em}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="header">
+      <div class="header-top">
+        <div>
+          <div class="badge-row">
+            <span class="badge"><b>Nicho</b>: Estética</span>
+            <span class="badge"><b>Dia</b>: 8</span>
+            <span class="badge"><b>Formato</b>: Carrossel</span>
+            <span class="badge"><b>Pilar</b>: Mito vs Verdade</span>
+          </div>
+          <h1>Desinfluenciando: pare de gastar com estética que não precisa</h1>
+          <p class="sub">Original: <a href="https://www.instagram.com/p/DWWnRKzkUMt/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DWWnRKzkUMt/</a></p>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DWWnRKzkUMt/" target="_blank" rel="noreferrer"><span class="dot"></span>Abrir post</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+
+      <div class="kpi">
+        <div class="box">
+          <div class="t">Objetivo do post</div>
+          <div class="v">Reduzir compras desnecessárias + gerar confiança</div>
+        </div>
+        <div class="box">
+          <div class="t">Promessa</div>
+          <div class="v">Mais resultado com menos passos</div>
+        </div>
+        <div class="box">
+          <div class="t">CTA principal</div>
+          <div class="v">Salvar + comentar palavra-chave</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2><span class="pip"></span>Resumo</h2>
+        <p><b>Ideia central:</b> você está sendo empurrada(o) a comprar “extras” que não mudam o resultado — e às vezes atrapalham. Você vai “desinfluenciar” com autoridade leve e linguagem simples, entregando uma lista de dispensáveis + o que priorizar no lugar.</p>
+        <div class="divider"></div>
+        <p><b>Quando usar:</b> skincare, protocolos corporais, depilação, pós-procedimentos, acne, melasma, flacidez/celulite, rotina para pele sensível, etc.</p>
+        <p>
+          <span class="pill"><span class="sw warn"></span>Tom: direto e libertador</span>
+          <span class="pill"><span class="sw info"></span>Didática: 1 ideia por slide</span>
+          <span class="pill"><span class="sw good"></span>Autoridade: “por uma profissional” + lógica</span>
+        </p>
+      </section>
+
+      <section class="card">
+        <h2><span class="pip"></span>Estrutura</h2>
+        <ul class="list">
+          <li><b>Formato:</b> selfie/vida real + texto grande sobreposto (estilo “story printado”).</li>
+          <li><b>Nº de slides:</b> 6 (padrão ouro). Se o tema pedir, pode ir a 7–8 mantendo ritmo.</li>
+          <li><b>Padrão narrativo:</b> Promessa → 3 “desinfluências” → custo/consequência → prioridade → CTA.</li>
+          <li><b>Regra de clareza:</b> 12–25 palavras por slide, com contorno/alto contraste.</li>
+        </ul>
+      </section>
+
+      <section class="card span-2">
+        <h2><span class="pip"></span>Slides sugeridos (1..6)</h2>
+        <div class="split">
+          <div>
+            <p><b>Slide 1 — Hook + promessa + autoridade leve</b></p>
+            <div class="code">Topo: DESINFLUENCIANDO você a comprar
+Base: (por uma profissional de Estética)
+Linha extra (opcional): Vou te poupar dinheiro e irritação—sem perder resultado.</div>
+            <p><b>Visual:</b> selfie com produtos/ambiente (bancada, consultório, nécessaire).</p>
+          </div>
+          <div>
+            <p><b>Slide 2 — Mito #1 (o “você não precisa…” #1)</b></p>
+            <div class="code">Topo: Você não precisa de [X] pra ter [benefício]
+Meio: Se sua rotina já tem [pilar/ingrediente], isso já acontece.
+Rodapé: (o “extra” só vira custo — e às vezes irrita)</div>
+            <p><b>Exemplos de X:</b> toner caro, água micelar todo dia (pra quem não usa make pesado), vários séruns iguais.</p>
+          </div>
+          <div>
+            <p><b>Slide 3 — Mito #2 (princípio geral)</b></p>
+            <div class="code">Topo: Mais produtos ≠ mais resultado
+Meio: O que muda jogo é: constância + produto certo pro seu objetivo.
+Rodapé: Rotina “enxuta” = mais adesão.</div>
+            <p><b>Objetivo:</b> ensinar a regra que organiza todas as compras.</p>
+          </div>
+          <div>
+            <p><b>Slide 4 — Custo/consistência (ponto racional)</b></p>
+            <div class="code">Topo (alerta): Você paga 2x quando faz [erro comum]
+Meio: 1) compra sem necessidade
+2) gasta pra corrigir irritação/efeito rebote
+Rodapé: Prevenção + indicação certa custa menos.</div>
+            <p><b>Erros comuns:</b> misturar ácidos, trocar produto toda semana, “copiar rotina” de influencer.</p>
+          </div>
+          <div>
+            <p><b>Slide 5 — Mito #3 + benefício colateral (punchline)</b></p>
+            <div class="code">Topo (didático): Você não precisa de [Y]
+Meio: Priorize [pilar 1] + [pilar 2] antes de pensar em “extra”.
+Rodapé: E ainda: menos espinhas/menos sensibilidade/mais resultado.</div>
+            <p><b>Exemplos de pilares:</b> avaliação, fotoproteção, limpeza adequada, hidratação, protocolo correto.</p>
+          </div>
+          <div>
+            <p><b>Slide 6 — Fechamento + CTA</b></p>
+            <div class="code">Pergunta: Quer investir no que realmente importa?
+CTA 1: Salva esse post pra usar como checklist na próxima compra.
+CTA 2: Comenta “ROTINA” que eu te digo o 1º passo no seu caso.
+CTA 3 (soft): Quer plano enxuto? Me chama no direct: “AVALIAÇÃO”.</div>
+            <p><b>Visual:</b> selfie perto da porta/na rua/consultório (humano, “fim de conversa”).</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span-2">
+        <h2><span class="pip"></span>Roteiro (texto reproduzível para copiar)</h2>
+        <div class="code" id="scriptText">CARROSSEL (6 slides) — “Desinfluenciando você a comprar” (Estética)
+
+SLIDE 1 — HOOK
+Topo: DESINFLUENCIANDO você a comprar
+Base: (por uma profissional de Estética)
+Linha opcional: Vou te poupar dinheiro/tempo sem perder resultado.
+
+SLIDE 2 — DESNECESSÁRIO #1
+Topo: Você não precisa de [X] pra ter [benefício]
+Meio: Se você já faz [pilar] + usa [produto/ingrediente-chave], isso já acontece.
+Rodapé: (o extra vira custo — e pode irritar)
+
+SLIDE 3 — PRINCÍPIO
+Topo: Mais produtos ≠ mais resultado
+Meio: O que muda jogo é constância + escolha certa pro seu objetivo.
+Rodapé: Rotina enxuta = mais adesão.
+
+SLIDE 4 — CUSTO DO ERRO
+Topo (alerta): Você paga 2x quando faz [erro comum]
+Meio: 1) compra coisa que não precisa
+2) gasta pra corrigir irritação/efeito rebote
+Rodapé: Prevenção + orientação certa custa menos.
+
+SLIDE 5 — DESNECESSÁRIO #2/#3 + BENEFÍCIO EXTRA
+Topo (didático): Você não precisa de [Y]
+Meio: Antes de extras, priorize: [pilar 1] + [pilar 2].
+Rodapé: E ainda: [benefício colateral].
+
+SLIDE 6 — FECHAMENTO + CTA
+Pergunta: Quer investir no que realmente importa?
+CTA: Salva pra usar como checklist.
+Comentário: Comenta “ROTINA” que eu te digo por onde começar.
+Direct (opcional): Me manda “AVALIAÇÃO” que eu te oriento nas prioridades.</div>
+      </section>
+
+      <section class="card">
+        <h2><span class="pip"></span>Elementos visuais</h2>
+        <ul class="list">
+          <li><b>Foto:</b> natural, rosto em destaque, cenário real (consultório/casa/necessaire).</li>
+          <li><b>Texto em 2 camadas:</b> faixa superior (tese) + texto grande (explicação) com contorno.</li>
+          <li><b>Ritmo por cor:</b>
+            <ul class="list">
+              <li><b>Laranja</b> = alerta/polêmica (custo do erro).</li>
+              <li><b>Azul</b> = didático (princípio/explicação).</li>
+              <li><b>Escuro/neutro</b> = abertura/afirmação direta.</li>
+            </ul>
+          </li>
+          <li><b>Legibilidade:</b> 1 ideia por bloco; evite parágrafos.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="pip"></span>Copy e ganchos</h2>
+        <p><b>Ganchos (Slide 1) — escolha 1:</b></p>
+        <ul class="list">
+          <li>“Desinfluenciando você a comprar (por uma profissional de Estética)”</li>
+          <li>“Você não precisa de metade do que te vendem pra [objetivo]”</li>
+          <li>“Pare de gastar com [categoria]: o que realmente dá resultado”</li>
+          <li>“Se você tem [dor], isso aqui pode estar te fazendo gastar à toa”</li>
+        </ul>
+        <div class="divider"></div>
+        <p><b>Frases prontas (miolo):</b></p>
+        <ul class="list">
+          <li>“Se já tem [ingrediente/pilar], você não precisa duplicar função.”</li>
+          <li>“O que dá resultado é repetição do básico, não uma prateleira lotada.”</li>
+          <li>“Comprar sem avaliar seu caso = pagar duas vezes.”</li>
+          <li>“Rotina enxuta te faz continuar. Consistência ganha.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2><span class="pip"></span>CTA</h2>
+        <ul class="list">
+          <li><b>CTA principal (alto desempenho):</b> “Salva pra usar como checklist na próxima compra.”</li>
+          <li><b>CTA comentário:</b> “Comenta ‘ROTINA’ que eu te digo o 1º passo no seu caso.”</li>
+          <li><b>CTA direct:</b> “Me manda ‘AVALIAÇÃO’ no direct pra eu te orientar prioridades.”</li>
+          <li><b>CTA agenda (soft):</b> “Quer um plano enxuto pro seu caso? Link na bio.”</li>
+        </ul>
+      </section>
+
+      <section class="card span-2">
+        <h2><span class="pip"></span>Checklist (criação rápida e reproduzível)</h2>
+        <div class="split">
+          <div>
+            <p><b>1) Planejamento (5 min)</b></p>
+            <ul class="list">
+              <li>Tema: [skincare/acne/melasma/pós-laser/corporal/etc.]</li>
+              <li>Persona: [iniciante / compra demais / pele sensível / pós-procedimento]</li>
+              <li>Pilar que você vai defender: [avaliação / constância / proteção / hábitos / protocolo]</li>
+              <li>3 itens “desnecessários/mal usados”: [X], [Y], [Z]</li>
+              <li>1 prioridade esquecida: [prioridade]</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>2) Execução (25–40 min)</b></p>
+            <ul class="list">
+              <li>Fotos: 6 selfies (varie ângulos, mantenha fundo simples).</li>
+              <li>Texto: 12–25 palavras por slide, 1 ideia por slide.</li>
+              <li>Caixa de topo: alternar cores (neutro → azul → laranja → azul → neutro).</li>
+              <li>Revisão: cortar jargões; trocar “ativos” por “ingredientes” se público iniciante.</li>
+              <li>Último slide: pergunta + CTA duplo (salvar + comentar).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <p><b>Checklist final antes de postar</b></p>
+        <ul class="list">
+          <li>O Slide 1 explica em 2s o que vai acontecer?</li>
+          <li>Os “desnecessários” estão claros e sem ataques a marcas?</li>
+          <li>Existe substituição/alternativa (pilar) em cada quebra de crença?</li>
+          <li>Tem um slide racional (custo/risco) pra firmar a tese?</li>
+          <li>CTA pede uma ação simples (salvar/comentar) e dá palavra-chave?</li>
+        </ul>
+      </section>
+
+      <section class="card span-2">
+        <h2><span class="pip"></span>Variações</h2>
+        <div class="split">
+          <div>
+            <p><b>Variação por tema (troque X/Y/Z)</b></p>
+            <ul class="list">
+              <li><b>Acne:</b> “Você não precisa de 3 secativos diferentes” → prioridade: limpeza gentil + tratamento consistente + protetor.</li>
+              <li><b>Melasma:</b> “Você não precisa trocar clareador todo mês” → prioridade: fotoproteção + constância + avaliação.</li>
+              <li><b>Pós-procedimento:</b> “Você não precisa ‘esfoliar pra renovar’” → prioridade: barreira cutânea + orientação.</li>
+              <li><b>Corporal/celulite:</b> “Você não precisa de 5 cremes” → prioridade: protocolo + hábitos + consistência.</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>Variação de título (3 modelos)</b></p>
+            <ul class="list">
+              <li>“DESINFLUENCIANDO você a comprar (Estética)”</li>
+              <li>“PARE DE GASTAR com [categoria] que você não precisa”</li>
+              <li>“Você não precisa de [X] se você já faz [Y]”</li>
+            </ul>
+            <div class="divider"></div>
+            <p><b>Variação de CTA (dependendo do objetivo)</b></p>
+            <ul class="list">
+              <li><b>Engajamento:</b> “Comenta ‘CHECKLIST’ que eu mando os pilares.”</li>
+              <li><b>Leads:</b> “Me chama no direct com ‘PLANO’.”</li>
+              <li><b>Autoridade:</b> “Quer que eu faça um ‘desinfluenciando’ do seu nécessaire? Comenta ‘NECESSAIRE’.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    const btn = document.getElementById('copyBtn');
+    const script = document.getElementById('scriptText');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1600);
+    }
+
+    btn.addEventListener('click', async () => {
+      try {
+        const text = script.innerText.trim();
+        await navigator.clipboard.writeText(text);
+        showToast('Roteiro copiado.');
+      } catch (e) {
+        // fallback
+        const range = document.createRange();
+        range.selectNodeContents(script);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+        showToast('Roteiro copiado (modo compatível).');
+      }
+    });
+  </script>
+</body>
+</html>
