@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 19 • Estética • Carrossel reproduzível</title>
+  <style>
+    :root{
+      --bg0:#0a0d14;
+      --bg1:#0e1320;
+      --card:#0f1626;
+      --card2:#0c1220;
+      --text:#eaf0ff;
+      --muted:#a8b3cf;
+      --line:rgba(255,255,255,.10);
+      --soft:rgba(255,255,255,.06);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --r16: 16px;
+      --r22: 22px;
+      --g1: linear-gradient(90deg, #15d08a, #2aa3ff, #ff9f1a);
+      --g2: linear-gradient(135deg, rgba(21,208,138,.95), rgba(42,163,255,.75), rgba(255,159,26,.75));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background:
+        radial-gradient(1100px 480px at 16% -6%, rgba(42,163,255,.22), transparent 60%),
+        radial-gradient(900px 500px at 86% 10%, rgba(21,208,138,.18), transparent 62%),
+        radial-gradient(900px 520px at 80% 96%, rgba(255,159,26,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      font-family:var(--sans);
+      line-height:1.45;
+    }
+    a{ color: #9ad7ff; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .wrap{ max-width:1100px; margin:0 auto; padding:22px 18px 46px; }
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      box-shadow: var(--shadow);
+      border-radius: var(--r22);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(900px 200px at 20% 0%, rgba(42,163,255,.18), transparent 55%),
+                  radial-gradient(760px 200px at 80% 0%, rgba(21,208,138,.16), transparent 55%),
+                  radial-gradient(880px 220px at 50% 120%, rgba(255,159,26,.12), transparent 58%);
+      pointer-events:none;
+      filter:saturate(1.15);
+    }
+    header > *{ position:relative; }
+
+    .toprow{ display:flex; gap:12px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; }
+
+    .badge{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size:12px;
+    }
+    .dot{
+      width:9px;height:9px;border-radius:99px;
+      background: var(--g2);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+    }
+
+    h1{
+      margin:10px 0 6px;
+      font-size: clamp(20px, 3.2vw, 30px);
+      letter-spacing:-.02em;
+      line-height:1.15;
+    }
+    .subtitle{ color: var(--muted); margin:0; font-size:14px; }
+
+    .head-actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:600;
+      cursor:pointer;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{ background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.16); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      border: none;
+      background: var(--g1);
+      color: #06121a;
+      box-shadow: 0 10px 30px rgba(42,163,255,.12);
+    }
+    .btn.primary:hover{ filter: brightness(1.03); }
+
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    @media (max-width: 880px){ .grid{ grid-template-columns:1fr; } }
+
+    .card{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border-radius: var(--r16);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      color: var(--muted);
+    }
+
+    .kpis{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .kpi{
+      border:1px solid var(--soft);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding:12px;
+      min-height:86px;
+    }
+    .kpi .label{ font-size:12px; color: var(--muted); }
+    .kpi .value{ margin-top:6px; font-size:15px; font-weight:700; }
+
+    .section{ margin-top:14px; }
+    .section-title{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin: 0 0 10px;
+    }
+    .section-title h3{
+      margin:0;
+      font-size:16px;
+      letter-spacing:-.01em;
+    }
+    .chip{
+      font-size:12px;
+      color: #06121a;
+      background: var(--g1);
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .list{ margin:0; padding-left:18px; color: var(--text); }
+    .list li{ margin: 8px 0; color: var(--text); }
+    .muted{ color: var(--muted); }
+
+    .hr{ height:1px; background: var(--line); margin:14px 0; }
+
+    .script{
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.14));
+      border-radius: var(--r16);
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .script:before{
+      content:"";
+      position:absolute;
+      left:-40px;
+      top:-40px;
+      width:240px;
+      height:240px;
+      background: radial-gradient(circle at 40% 40%, rgba(42,163,255,.18), transparent 62%);
+      pointer-events:none;
+    }
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      color: #eaf0ff;
+      font-family: var(--mono);
+      font-size: 12.6px;
+      line-height: 1.5;
+    }
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 880px){ .two{ grid-template-columns:1fr; } }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(135deg, rgba(21,208,138,.10), rgba(42,163,255,.08), rgba(255,159,26,.07));
+      border-radius: var(--r16);
+      padding: 14px;
+    }
+    .callout strong{ color:#ffffff; }
+
+    .footer{
+      margin-top:18px;
+      color: var(--muted);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="badge"><span class="dot"></span><span><strong>Nicho:</strong> Estética</span><span>•</span><span><strong>Dia:</strong> 19</span><span>•</span><span><strong>Formato:</strong> Carrossel</span></div>
+        <div class="head-actions">
+          <a class="btn" href="https://www.instagram.com/p/DXQDUwkEYSi/" target="_blank" rel="noopener noreferrer">Abrir post original</a>
+          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        </div>
+      </div>
+      <h1>Identifique seu tipo de olheira (e o que funciona em cada uma)</h1>
+      <p class="subtitle">Modelo reproduzível: diagnóstico simples → categorias → conduta prática → limite honesto → CTA de salvamento/seguidores.</p>
+
+      <div class="grid">
+        <div class="card">
+          <h2>Resumo</h2>
+          <ul class="list">
+            <li><strong>Promessa:</strong> ajudar a pessoa a se identificar em um tipo de <strong>[queixa]</strong> e entender <strong>o que costuma funcionar</strong> em cada caso.</li>
+            <li><strong>Por que performa:</strong> gera autoidentificação ("é meu caso"), é fácil de salvar e reduz frustração com a frase-chave: <strong>"nem tudo resolve com cosmético"</strong>.</li>
+            <li><strong>Estratégia:</strong> repetição de padrão visual + rótulos claros + microchecklist por categoria.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout">
+            <strong>Use com qualquer tema de Estética:</strong> acne (tipos), manchas (tipos), poros (causas), queda capilar (padrões), celulite (graus), flacidez (origens), melasma (padrões), rosácea (gatilhos).
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Metadados (calendário)</h2>
+          <div class="kpis">
+            <div class="kpi"><div class="label">Pilar</div><div class="value">Passo a passo</div></div>
+            <div class="kpi"><div class="label">Objetivo</div><div class="value">Ensinar + salvar + seguir</div></div>
+            <div class="kpi"><div class="label">Duração</div><div class="value">6–9 slides</div></div>
+            <div class="kpi"><div class="label">Gatilho central</div><div class="value">Autoidentificação</div></div>
+          </div>
+          <div class="hr"></div>
+          <div class="muted" style="font-size:13px">
+            <strong>Link:</strong> <a href="https://www.instagram.com/p/DXQDUwkEYSi/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DXQDUwkEYSi/</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="section">
+      <div class="section-title">
+        <h3>Estrutura (reproduzível)</h3>
+        <span class="chip">Diagnóstico → Ação → Limite → CTA</span>
+      </div>
+      <div class="card">
+        <ol class="list">
+          <li><strong>Slide 1 (Capa):</strong> promessa + tema + credencial (autoridade) + microgancho.</li>
+          <li><strong>Slides 2–5 (Categorias):</strong> 1 tipo por slide com o mesmo bloco: <em>como parece</em> → <em>quando piora</em> → <em>o que ajuda</em> → <em>erro comum/alerta</em>.</li>
+          <li><strong>Slide 6 (Limites):</strong> quando cosmético/rotina não resolve + sinais de alerta + próxima ação segura.</li>
+          <li><strong>Slide 7 (Resumo rápido) – opcional:</strong> “Se é X, tende a ser Y” em formato checklist.</li>
+          <li><strong>Slide 8 (CTA):</strong> pedir <strong>salvar</strong> + <strong>seguir</strong> + pergunta para comentários (coleta de temas).</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <h3>Slides sugeridos (1..8)</h3>
+        <span class="chip">Modelo de 8 slides</span>
+      </div>
+      <div class="card">
+        <ol class="list">
+          <li><strong>Capa:</strong> “Como identificar seu tipo de <span class="muted">[QUEIXA]</span> (por <span class="muted">[CREDENCIAL]</span>)” + “e o que fazer em cada caso”.</li>
+          <li><strong>Tipo 1:</strong> <span class="muted">[NOME DO TIPO]</span> — sinais + gatilhos + condutas.</li>
+          <li><strong>Tipo 2:</strong> <span class="muted">[NOME DO TIPO]</span> — sinais + gatilhos + condutas.</li>
+          <li><strong>Tipo 3:</strong> <span class="muted">[NOME DO TIPO]</span> — sinais + gatilhos + condutas.</li>
+          <li><strong>Tipo 4 / Mistos:</strong> combinação + como priorizar a estratégia.</li>
+          <li><strong>Limites:</strong> “Quando <span class="muted">[produto/rotina]</span> não resolve” + “procure avaliação”.</li>
+          <li><strong>Checklist:</strong> 4 bullets de identificação rápida.</li>
+          <li><strong>CTA:</strong> salvar + seguir + comentar o próximo tema.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <h3>Roteiro (texto copiável)</h3>
+        <span class="chip">Pronto para adaptar</span>
+      </div>
+      <div class="script" id="scriptBlock">
+<pre>CARROSSEL — TEMPLATE (substitua os campos entre colchetes)
+
+SLIDE 1 — CAPA
+Título: Como identificar seu tipo de [QUEIXA]
+Sub: (por [CREDENCIAL])
+Linha extra (opcional): e o que fazer em cada caso
+
+SLIDE 2 — TIPO/CATEGORIA 1: [NOME DO TIPO 1]
+• Como parece: [cor/forma/textura em 1 frase]
+• Costuma piorar com: [gatilho 1], [gatilho 2], [gatilho 3]
+• O que costuma ajudar:
+  - [ativo/hábito/procedimento leve 1]
+  - [ativo/hábito/procedimento leve 2]
+• Evite (erro comum): [erro 1]
+
+SLIDE 3 — TIPO/CATEGORIA 2: [NOME DO TIPO 2]
+• Como parece: [descrição]
+• Costuma piorar com: [gatilhos]
+• O que costuma ajudar:
+  - [1]
+  - [2]
+• Evite: [erro]
+
+SLIDE 4 — TIPO/CATEGORIA 3: [NOME DO TIPO 3]
+• Como parece: [descrição]
+• Costuma piorar com: [gatilhos]
+• O que costuma ajudar:
+  - [1]
+  - [2]
+• Atenção: [alerta curto: uso/gestante/pele sensível/sol]
+
+SLIDE 5 — TIPO 4 / MISTO: [NOME DO TIPO 4 OU “MISTO”]
+• Geralmente é uma combinação de: [tipo X] + [tipo Y]
+• Estratégia prática: trate 1º [prioridade] e 2º [segunda prioridade]
+• O que costuma ajudar:
+  - [1]
+  - [2]
+
+SLIDE 6 — QUANDO ROTINA/COSMÉTICO NÃO RESOLVE
+Título: Quando [cosmético/rotina] não resolve
+• Se você tem: [sinal 1], [sinal 2], [sinal 3]
+→ vale avaliação individual.
+• Possíveis abordagens (dependem do caso): [procedimento 1], [procedimento 2], [procedimento 3]
+Nota de segurança: sem promessas; cada pele/caso responde diferente.
+
+SLIDE 7 — CHECKLIST RÁPIDO (SALVÁVEL)
+• Se aparece como [característica A] → pode ser [tipo A]
+• Se piora com [gatilho B] → pode ser [tipo B]
+• Se melhora com [teste/conduta C] → sugere [tipo C]
+• Se é misto → combine abordagens e ajuste expectativas
+
+SLIDE 8 — CTA
+• Salve este guia para consultar na sua rotina
+• Me siga para mais conteúdos práticos sobre [tema guarda-chuva]
+• Comente “GUIA” que eu trago o de [tema sugerido 1] ou [tema sugerido 2]</pre>
+      </div>
+      <div class="footer">
+        <div><strong>Dica:</strong> mantenha 40–60 palavras por slide. Uma ideia principal por bloco.</div>
+        <div><strong>CTA duplo:</strong> 1 conversão (seguir) + 1 ação (salvar/comentar).</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <h3>Elementos visuais (UX e design)</h3>
+        <span class="chip">High-tech + clean</span>
+      </div>
+      <div class="two">
+        <div class="card">
+          <h2>Layout por slide (padrão)</h2>
+          <ul class="list">
+            <li><strong>Topo:</strong> Título grande do tipo (ex.: “Vascular”, “Pigmentar”, “Inflamatório”).</li>
+            <li><strong>Centro:</strong> faixa com 1–3 imagens (exemplo visual/recorte/ilustração).</li>
+            <li><strong>Abaixo:</strong> 2–4 linhas de diagnóstico (como parece + quando piora).</li>
+            <li><strong>Rodapé:</strong> “O que ajuda:” em bullets curtos (ativos/condutas). </li>
+            <li><strong>Assinatura discreta:</strong> @ e credencial (consistência).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Diretrizes rápidas</h2>
+          <ul class="list">
+            <li><strong>Repetição:</strong> o mesmo template em todos os slides de categoria.</li>
+            <li><strong>Contraste:</strong> texto sempre legível; evite sobrepor em fotos sem overlay.</li>
+            <li><strong>Prova visual:</strong> use exemplos reais (com consentimento) ou diagrama/ilustração.</li>
+            <li><strong>Slide “limite”:</strong> destaque com uma tarja/label para gerar atenção e credibilidade.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <h3>Copy e ganchos (substituíveis)</h3>
+        <span class="chip">Alto impacto</span>
+      </div>
+      <div class="two">
+        <div class="card">
+          <h2>Ganchos de capa</h2>
+          <ul class="list">
+            <li>“Você não tem <strong>um</strong> tipo de [queixa]. Você pode ter <strong>4</strong>.”</li>
+            <li>“Antes de tratar [queixa], identifique isto (evita gastar errado).”</li>
+            <li>“Guia rápido: qual é o seu tipo de [queixa]?”</li>
+            <li>“O que funciona para [tipo A] não é o melhor para [tipo B].”</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Frases de retenção (slides 2–6)</h2>
+          <ul class="list">
+            <li>“Se piora com [gatilho], presta atenção nesse tipo.”</li>
+            <li>“Esse é o tipo que costuma confundir com [tipo X].”</li>
+            <li>“Aqui vai o erro que mais atrasa resultado: [erro].”</li>
+            <li><strong>Realismo (credibilidade):</strong> “Em alguns casos, cosmético sozinho não dá conta.”</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <h3>CTA (modelos prontos)</h3>
+        <span class="chip">Escolha 1 + 1</span>
+      </div>
+      <div class="card">
+        <ul class="list">
+          <li><strong>Conversão (seguir):</strong> “Me siga para mais guias práticos de [pele/corpo/cabelos] com embasamento.”</li>
+          <li><strong>Salvar:</strong> “Salve este post para consultar quando for montar sua rotina.”</li>
+          <li><strong>Comentário:</strong> “Comente ‘GUIA’ que eu faço a versão de [tema].”</li>
+          <li><strong>Pesquisa de pauta:</strong> “Qual queixa você quer que eu ‘classifique’ no próximo carrossel?”</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <h3>Checklist de criação (produção)</h3>
+        <span class="chip">Publicável</span>
+      </div>
+      <div class="two">
+        <div class="card">
+          <h2>Checklist editorial</h2>
+          <ul class="list">
+            <li>[ ] A capa promete um benefício claro em 1 frase?</li>
+            <li>[ ] Há 3–5 categorias que o público reconhece sem termos complexos?</li>
+            <li>[ ] Cada slide tem: <strong>sinal</strong> + <strong>gatilho</strong> + <strong>o que ajuda</strong>?</li>
+            <li>[ ] Existe 1 slide de <strong>limite/segurança</strong> (sem prometer resultado)?</li>
+            <li>[ ] CTA duplo: <strong>salvar</strong> + <strong>seguir/comentar</strong>?</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Checklist visual</h2>
+          <ul class="list">
+            <li>[ ] Tipografia consistente (título grande, corpo curto).</li>
+            <li>[ ] Margens e respiro (sem “texto parede”).</li>
+            <li>[ ] Imagem/ilustração em todos os slides de categoria.</li>
+            <li>[ ] Sinalização visual para “O que ajuda” (bullets/ícones mínimos).</li>
+            <li>[ ] Revisão de legibilidade em tela pequena (mobile).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <h3>Variações (mesmo impacto, outro tema)</h3>
+        <span class="chip">Substituições inteligentes</span>
+      </div>
+      <div class="card">
+        <ul class="list">
+          <li><strong>Troque “tipos” por “causas”</strong>: “Por que seu [problema] acontece (4 causas comuns) e o que fazer”.</li>
+          <li><strong>Troque “categorias” por “níveis/estágios”</strong>: “Grau 1–4 de [celulite/flacidez] e abordagem em cada um”.</li>
+          <li><strong>Troque “produtos indicados” por “hábitos indicados”</strong> (para conteúdo mais amplo e menos dependente de marcas).</li>
+          <li><strong>Slide 6 alternativo (Objeção):</strong> “Por que você não vê resultado com [ativo] (3 motivos)”.</li>
+          <li><strong>CTA alternativo (captura):</strong> “Comente ‘LISTA’ para eu te mandar os ativos por tipo” (use DM/automação).</li>
+          <li><strong>Modelo para temas comuns:</strong>
+            <br><span class="muted">• Acne:</span> comedonal / inflamatória / hormonal / sensível
+            <br><span class="muted">• Manchas:</span> pós-inflamatória / melasma / fotoenvelhecimento / mista
+            <br><span class="muted">• Poros:</span> oleosidade / fotoenvelhecimento / desidratação / hábito (limpeza/agressão)
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const block = document.getElementById('scriptBlock');
+      btn.addEventListener('click', async () => {
+        const text = block.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = old, 1400);
+        }catch(e){
+          const range = document.createRange();
+          range.selectNodeContents(block);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          document.execCommand('copy');
+          sel.removeAllRanges();
+          const old = btn.textContent;
+          btn.textContent = 'Roteiro copiado';
+          setTimeout(()=> btn.textContent = old, 1400);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
