@@ -3,455 +3,557 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Roteiro Reproduzível — Dia 1</title>
+  <title>Roteiro Reels — Dia 1</title>
   <style>
     :root{
-      --bg0:#070A12;
-      --bg1:#0B1020;
-      --card:#0E1730CC;
-      --stroke:#223057;
-      --text:#EAF0FF;
-      --muted:#A9B6D6;
-      --muted2:#7E8AAF;
-      --shadow: 0 18px 45px rgba(0,0,0,.45);
-      --r:18px;
-      --g1: linear-gradient(135deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
-      --g2: linear-gradient(135deg,rgba(34,197,94,.18),rgba(56,189,248,.14),rgba(251,146,60,.12));
-      --g3: linear-gradient(135deg,#16a34a 0%, #0284c7 55%, #f97316 100%);
+      --bg0:#06070b;
+      --bg1:#0b1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --border:rgba(255,255,255,.12);
+      --text:#e9eeff;
+      --muted:rgba(233,238,255,.72);
+      --muted2:rgba(233,238,255,.56);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --g1:linear-gradient(90deg,#22c55e 0%,#38bdf8 45%,#f59e0b 100%);
+      --g2:linear-gradient(135deg,rgba(34,197,94,.22),rgba(56,189,248,.18),rgba(245,158,11,.18));
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
-      color:var(--text);
       font-family:var(--sans);
+      color:var(--text);
       background:
-        radial-gradient(1200px 600px at 15% 20%, rgba(56,189,248,.12), transparent 60%),
-        radial-gradient(1000px 700px at 85% 35%, rgba(34,197,94,.10), transparent 62%),
-        radial-gradient(900px 650px at 55% 95%, rgba(251,146,60,.10), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
+        radial-gradient(1200px 800px at 20% 10%, rgba(56,189,248,.18), transparent 55%),
+        radial-gradient(900px 700px at 80% 20%, rgba(245,158,11,.14), transparent 52%),
+        radial-gradient(900px 700px at 60% 90%, rgba(34,197,94,.14), transparent 52%),
+        linear-gradient(180deg,var(--bg0),var(--bg1));
       min-height:100vh;
     }
-    a{color:#93c5fd; text-decoration:none}
-    a:hover{text-decoration:underline}
 
-    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 50px}
+    a{color:inherit}
 
-    header{
-      border:1px solid rgba(34,48,87,.65);
-      background: linear-gradient(180deg, rgba(14,23,48,.72), rgba(14,23,48,.45));
-      box-shadow: var(--shadow);
-      border-radius: calc(var(--r) + 6px);
-      overflow:hidden;
-      position:relative;
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px;}
+
+    .header{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:14px;
+      align-items:stretch;
+      margin-bottom:18px;
     }
-    header:before{
+
+    @media (max-width: 900px){
+      .header{grid-template-columns:1fr;}
+    }
+
+    .hero{
+      padding:18px 18px 16px;
+      border:1px solid var(--border);
+      border-radius:var(--radius2);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero:before{
       content:"";
       position:absolute;
-      inset:0;
+      inset:-2px;
       background: var(--g2);
+      filter: blur(0px);
+      opacity:.85;
       pointer-events:none;
+      mask: linear-gradient(#000, transparent 85%);
     }
-    .head{
-      position:relative;
-      padding:22px 22px 18px;
+
+    .hero > *{position:relative; z-index:1;}
+
+    .meta{
       display:flex;
-      gap:16px;
       flex-wrap:wrap;
-      align-items:flex-start;
-      justify-content:space-between;
-    }
-    .badge{
-      display:inline-flex;
       gap:10px;
-      flex-wrap:wrap;
       align-items:center;
-      font-family:var(--mono);
-      color:var(--muted);
-      font-size:12px;
-      letter-spacing:.2px;
+      margin-bottom:10px;
     }
+
     .pill{
-      border:1px solid rgba(126,138,175,.35);
-      background: rgba(7,10,18,.35);
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.3px;
       padding:6px 10px;
+      border:1px solid var(--border);
       border-radius:999px;
+      background:rgba(0,0,0,.25);
+      color:var(--muted);
     }
-    h1{
-      margin:10px 0 6px;
+
+    .title{
       font-size:22px;
       line-height:1.2;
-      letter-spacing:-.02em;
+      margin:0 0 8px;
+      letter-spacing:-.2px;
     }
-    .sub{
+
+    .subtitle{
       margin:0;
       color:var(--muted);
-      max-width:72ch;
       font-size:14px;
       line-height:1.55;
+      max-width:72ch;
     }
-    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+
+    .actions{
+      padding:18px;
+      border:1px solid var(--border);
+      border-radius:var(--radius2);
+      background:rgba(255,255,255,.05);
+      box-shadow: var(--shadow);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
     .btn{
-      cursor:pointer;
-      border:1px solid rgba(34,48,87,.7);
-      background: rgba(7,10,18,.35);
+      appearance:none;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.25);
       color:var(--text);
       padding:10px 12px;
       border-radius:12px;
       font-weight:600;
-      font-size:13px;
-      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      text-decoration:none;
     }
-    .btn:hover{border-color: rgba(147,197,253,.55); background: rgba(14,23,48,.55)}
-    .btn:active{transform: translateY(1px)}
-    .btnPrimary{
-      border:0;
-      background: var(--g3);
-      box-shadow: 0 14px 35px rgba(2,132,199,.18);
-    }
-    .btnPrimary:hover{filter:saturate(1.05) brightness(1.02)}
 
-    .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px}
-    @media (min-width: 900px){
-      .grid{grid-template-columns: 1.05fr .95fr}
+    .btn:hover{border-color:rgba(255,255,255,.28); background:rgba(0,0,0,.35)}
+    .btn:active{transform:translateY(1px)}
+
+    .btnPrimary{
+      border-color:rgba(56,189,248,.45);
+      background:linear-gradient(180deg, rgba(56,189,248,.18), rgba(0,0,0,.25));
+    }
+
+    .btnPrimary .tag{
+      background: var(--g1);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-family:var(--mono);
+      font-size:12px;
+    }
+
+    .small{
+      color:var(--muted2);
+      font-size:12px;
+      line-height:1.45;
+      margin:0;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr;}
     }
 
     .card{
-      border:1px solid rgba(34,48,87,.65);
-      background: linear-gradient(180deg, rgba(14,23,48,.62), rgba(14,23,48,.38));
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:rgba(255,255,255,.05);
+      box-shadow: 0 12px 40px rgba(0,0,0,.45);
       overflow:hidden;
-      position:relative;
     }
-    .card:before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: radial-gradient(600px 220px at 20% 0%, rgba(56,189,248,.10), transparent 60%),
-                  radial-gradient(520px 240px at 85% 10%, rgba(34,197,94,.08), transparent 60%);
-      pointer-events:none;
+
+    .card .hd{
+      padding:14px 16px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
     }
-    .cardInner{position:relative; padding:18px 18px 16px}
+
     .card h2{
-      margin:0 0 10px;
+      margin:0;
       font-size:14px;
-      color:#DCE7FF;
-      letter-spacing:.02em;
-      text-transform:uppercase;
-      font-weight:800;
+      letter-spacing:.2px;
     }
-    .card p, .card li{color:var(--muted); font-size:14px; line-height:1.55}
-    .card ul{margin:10px 0 0; padding-left:18px}
-    .card li{margin:6px 0}
+
+    .badge{
+      font-family:var(--mono);
+      font-size:11px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--muted);
+      background:rgba(0,0,0,.22);
+      white-space:nowrap;
+    }
+
+    .card .bd{padding:14px 16px 16px;}
+
+    ul,ol{margin:10px 0 0 18px; padding:0; color:var(--muted);}
+    li{margin:7px 0;}
+
+    .k{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(233,238,255,.86);
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.12);
+      padding:2px 6px;
+      border-radius:8px;
+    }
+
+    .script{
+      font-family:var(--mono);
+      font-size:12.6px;
+      line-height:1.6;
+      color:rgba(233,238,255,.82);
+      background:rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:12px 12px;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      margin-top:10px;
+    }
 
     .hr{
       height:1px;
-      background: linear-gradient(90deg, transparent, rgba(147,197,253,.35), rgba(34,197,94,.22), rgba(251,146,60,.22), transparent);
-      margin:14px 0;
-      border:0;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+      margin:12px 0;
     }
 
-    .code{
-      font-family:var(--mono);
-      background: rgba(7,10,18,.35);
-      border:1px solid rgba(34,48,87,.55);
-      border-radius: 14px;
-      padding:14px;
-      overflow:auto;
-      color:#D7E4FF;
-      line-height:1.5;
-      font-size:12.5px;
-      white-space:pre-wrap;
+    .twoCol{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
     }
 
-    .kpi{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
-    .chip{
-      border:1px solid rgba(126,138,175,.35);
-      background: rgba(7,10,18,.30);
-      padding:8px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--muted);
-    }
-    .chip strong{color:var(--text); font-weight:800}
-
-    .twoCol{display:grid; grid-template-columns:1fr; gap:12px}
-    @media (min-width: 900px){
-      .twoCol{grid-template-columns:1fr 1fr}
+    @media (max-width: 720px){
+      .twoCol{grid-template-columns:1fr;}
     }
 
-    .toast{
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%);
-      background: rgba(14,23,48,.92);
-      border: 1px solid rgba(147,197,253,.35);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-      font-size: 13px;
-      opacity: 0;
-      pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(34,197,94,.10), rgba(56,189,248,.08), rgba(245,158,11,.08));
+      border-radius:14px;
+      padding:12px;
+      color:rgba(233,238,255,.82);
     }
-    .toast.show{opacity:1; transform: translateX(-50%) translateY(-4px)}
 
-    .mutedSmall{color:var(--muted2); font-size:12px; line-height:1.55}
-    .highlight{
-      display:inline-block;
-      padding:2px 8px;
-      border-radius:999px;
+    .callout strong{
       background: var(--g1);
-      color:#06101b;
-      font-weight:900;
-      letter-spacing:.2px;
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .footer{
+      margin-top:16px;
+      color:var(--muted2);
       font-size:12px;
-      vertical-align:middle;
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="head">
-        <div>
-          <div class="badge">
-            <span class="pill">Nicho: <strong style="color:var(--text)">Neutro</strong></span>
-            <span class="pill">Dia: <strong style="color:var(--text)">1</strong></span>
-            <span class="pill">Pilar: <strong style="color:var(--text)">Passo a passo</strong></span>
-            <span class="pill">Formato: <strong style="color:var(--text)">Reels</strong></span>
-          </div>
-          <h1>“Bom vs Melhor”: 7 upgrades rápidos que dão resultado</h1>
-          <p class="sub">Template universal para qualquer tema: você valida o que a pessoa já faz (bom) e entrega uma troca simples (melhor), repetindo em 5–7 blocos com ritmo rápido. Ideal para aumentar <span class="highlight">retenção</span>, <span class="highlight">salvamentos</span> e <span class="highlight">compartilhamentos</span>.</p>
-          <p class="mutedSmall" style="margin:10px 0 0">Post original: <a href="https://www.instagram.com/p/DN4A_0jAQWI/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DN4A_0jAQWI/</a></p>
+    <div class="header">
+      <section class="hero">
+        <div class="meta">
+          <span class="pill">Nicho: Neutro</span>
+          <span class="pill">Dia: 1</span>
+          <span class="pill">Formato: Reels</span>
+          <span class="pill">Pilar: Passo a passo</span>
         </div>
-        <div class="actions">
-          <button class="btn btnPrimary" id="copyBtn">Copiar roteiro</button>
-          <a class="btn" href="https://www.instagram.com/p/DN4A_0jAQWI/" target="_blank" rel="noopener noreferrer">Abrir post</a>
+        <h1 class="title">Funciona… mas tem um jeito melhor (upgrade rápido)</h1>
+        <p class="subtitle">
+          Template universal para Reels de comparação: mostre o jeito comum (ok) e, em seguida, o jeito “upgrade” (melhor) — com benefício direto e repetição em blocos.
+        </p>
+        <div class="hr"></div>
+        <p class="small">
+          Post original: <a href="https://www.instagram.com/p/DN4A_0jAQWI/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DN4A_0jAQWI/</a>
+        </p>
+      </section>
+
+      <aside class="actions">
+        <a class="btn" href="https://www.instagram.com/p/DN4A_0jAQWI/" target="_blank" rel="noopener noreferrer">
+          <span>Abrir post original</span>
+          <span class="badge">link</span>
+        </a>
+        <button class="btn btnPrimary" id="copyBtn" type="button">
+          <span>Copiar roteiro</span>
+          <span class="tag">CTRL/CMD + C</span>
+        </button>
+        <p class="small" id="copyStatus">Copia o texto do bloco “Roteiro (pronto para gravar)”.</p>
+        <div class="callout">
+          <strong>Regra de ouro:</strong> não ataque o “comum”. Diga “funciona, mas…” e entregue um upgrade simples.
         </div>
-      </div>
-    </header>
+      </aside>
+    </div>
 
     <div class="grid">
       <section class="card">
-        <div class="cardInner">
+        <div class="hd">
           <h2>Resumo</h2>
-          <p><strong>Ideia central:</strong> “Você está fazendo certo… mas existe um jeito melhor” (contraste + surpresa). A repetição cria um “loop mental” e mantém a pessoa assistindo até o final para ver as próximas trocas.</p>
-          <div class="kpi">
-            <span class="chip"><strong>Duração:</strong> 12–22s</span>
-            <span class="chip"><strong>Blocos:</strong> 5–7</span>
-            <span class="chip"><strong>Cadência:</strong> 0,8–1,6s por bloco</span>
-            <span class="chip"><strong>Entrega:</strong> “troque X por Y”</span>
-          </div>
-          <hr class="hr" />
-          <p><strong>Quando usar:</strong> quando você quer ensinar melhorias rápidas, quebrar “o básico” e posicionar sua visão como upgrade (sem parecer aula longa).</p>
+          <span class="badge">O que é + por que retém</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><span class="k">Mecânica</span>: comparação rápida <span class="k">Comum</span> vs <span class="k">Upgrade</span>.</li>
+            <li><span class="k">Gatilho</span>: a virada do “MAS” cria curiosidade e mantém atenção.</li>
+            <li><span class="k">Valor</span>: várias ideias em poucos segundos (sensação de abundância).</li>
+            <li><span class="k">Aplicação</span>: serve para qualquer tema (processos, ferramentas, hábitos, design, conteúdo, vendas, estudo, treino).</li>
+          </ul>
         </div>
       </section>
 
       <section class="card">
-        <div class="cardInner">
-          <h2>Metadados (para calendário)</h2>
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <span class="badge">15–25s</span>
+        </div>
+        <div class="bd">
+          <ol>
+            <li><span class="k">Hook</span> (1–2s): “Isso funciona… mas isso funciona melhor.”</li>
+            <li><span class="k">Promessa</span> (1s): “Trocas pequenas que mudam o resultado.”</li>
+            <li><span class="k">Blocos</span> (5–7x): Comum → “MAS” → Upgrade → Benefício (2–3 palavras).</li>
+            <li><span class="k">Fecho</span> (2s): CTA de salvar + comentar um “insumo”.</li>
+          </ol>
+          <div class="hr"></div>
+          <div class="twoCol">
+            <div>
+              <p class="small"><span class="k">Ritmo</span>: frases curtas, 1 ideia por frase, cortes no “MAS”.</p>
+            </div>
+            <div>
+              <p class="small"><span class="k">Quantidade</span>: 5–7 comparações = sensação de “lista premium”.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Roteiro (pronto para gravar)</h2>
+          <span class="badge">Template universal</span>
+        </div>
+        <div class="bd">
+          <p class="small">Preencha os colchetes conforme seu tema. Mantenha cada bloco em 1 tomada para facilitar os cortes.</p>
+          <div class="script" id="scriptText">HOOK (1–2s)
+“Isso aqui funciona… mas isso aqui funciona melhor.”
+
+PROMESSA (1s)
+“São trocas pequenas que deixam [RESULTADO DESEJADO] sem complicar.”
+
+BLOCO 1
+“[JEITO COMUM 1] é bom pra [BENEFÍCIO BÁSICO]…
+MAS [JEITO UPGRADE 1] fica [EFEITO 1], [EFEITO 2], [EFEITO 3].”
+
+BLOCO 2
+“[JEITO COMUM 2] funciona e é [ELOGIO CURTO]…
+MAS [JEITO UPGRADE 2] deixa [EFEITO 1], [EFEITO 2], [EFEITO 3].”
+
+BLOCO 3
+“[JEITO COMUM 3] é o seguro…
+MAS [JEITO UPGRADE 3] te dá [EFEITO 1], [EFEITO 2], [EFEITO 3].”
+
+BLOCO 4
+“[JEITO COMUM 4] é ok quando [CONTEXTO]…
+MAS [JEITO UPGRADE 4] fica [EFEITO 1], [EFEITO 2], [EFEITO 3].”
+
+BLOCO 5
+“[JEITO COMUM 5] é ‘o clássico’…
+MAS [JEITO UPGRADE 5] entrega [EFEITO 1], [EFEITO 2], [EFEITO 3].”
+
+(OPCIONAL) BLOCO 6–7
+Repita o padrão com variações.
+
+FECHO + CTA (2s)
+“Quer que eu faça isso no seu caso? Comenta ‘UPGRADE’ + [INSUMO: tema/objetivo/nível].
+E salva pra usar depois.”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="badge">Edição + tela</span>
+        </div>
+        <div class="bd">
           <ul>
-            <li><strong>Título:</strong> “Bom vs Melhor”: 7 upgrades rápidos que dão resultado</li>
-            <li><strong>Instrução curta:</strong> Grave 5–7 comparações curtas no formato “X é bom… mas Y é melhor”. Mantenha ritmo acelerado, texto na tela (✅ vs ⭐) e CTA para salvar/comentar.</li>
-            <li><strong>Pilar:</strong> Passo a passo</li>
-            <li><strong>Formato:</strong> Reels</li>
+            <li><span class="k">Tela dividida</span> (opcional): esquerda “COMUM”, direita “UPGRADE”.</li>
+            <li><span class="k">Texto na tela</span> sempre acompanhando a fala (6–8 palavras por tela).</li>
+            <li><span class="k">Corte no “MAS”</span>: jump cut + zoom leve para marcar a virada.</li>
+            <li><span class="k">SFX</span> sutil no “MAS” (pop/woosh leve).</li>
+            <li><span class="k">B-roll</span>: exemplo do comum vs exemplo do upgrade (antes/depois, tela, gesto, item).</li>
+            <li><span class="k">Fundo limpo</span>: use cenário neutro para o texto/itens aparecerem.</li>
           </ul>
-          <hr class="hr" />
-          <p class="mutedSmall"><strong>Nota:</strong> este roteiro é neutro. Substitua “X/Y” por escolhas do seu tema (ex.: ferramentas, hábitos, abordagens, formatos, scripts, rotinas, equipamentos, estilos, processos).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <span class="badge">Frases prontas</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div>
+              <p class="small"><span class="k">Hooks (1–2s)</span></p>
+              <ul>
+                <li>“Isso funciona… mas tem um jeito melhor.”</li>
+                <li>“O comum resolve. O estratégico eleva.”</li>
+                <li>“Você não precisa mudar tudo: só mudar o par.”</li>
+                <li>“O erro não é fazer X. É fazer X com Y.”</li>
+              </ul>
+            </div>
+            <div>
+              <p class="small"><span class="k">Efeitos (escolha 3)</span></p>
+              <ul>
+                <li>mais claro / mais direto / mais rápido</li>
+                <li>mais profissional / mais confiável</li>
+                <li>mais moderno / mais limpo</li>
+                <li>mais consistente / mais previsível</li>
+                <li>menos retrabalho / menos ruído</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="small"><span class="k">Modelo de texto na tela</span></p>
+          <ul>
+            <li>“Funciona: [COMUM]”</li>
+            <li>“MAS…”</li>
+            <li>“Melhor: [UPGRADE]”</li>
+            <li>“Efeito: [3 palavras]”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA</h2>
+          <span class="badge">Escolha 1</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li>“Comenta <span class="k">UPGRADE</span> + [seu objetivo] que eu te mando uma versão melhor.”</li>
+            <li>“Salva pra usar quando você for fazer [tarefa].”</li>
+            <li>“Qual você vai testar hoje? Comenta 1, 2, 3…”</li>
+            <li>“Me diz seu [insumo] (ex.: ferramenta, etapa, nível, prazo) que eu sugiro o ‘par’ ideal.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="small"><span class="k">Dica</span>: peça um insumo fácil de responder (1 palavra). Isso aumenta comentário e te dá pauta para continuação.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Checklist de criação</h2>
+          <span class="badge">Do zero ao post</span>
+        </div>
+        <div class="bd">
+          <ol>
+            <li>Defina o <span class="k">resultado</span>: “deixar [processo/rotina/conteúdo] mais ____”.</li>
+            <li>Liste 5–7 <span class="k">jeitos comuns</span> que a audiência já faz (sem julgar).</li>
+            <li>Para cada um, crie 1 <span class="k">upgrade</span> simples (troca pequena, grande efeito).</li>
+            <li>Escolha 3 <span class="k">efeitos</span> fixos (ex.: “mais claro, mais rápido, mais profissional”).</li>
+            <li>Escreva 5–7 blocos no padrão: “Funciona… MAS… fica [3 efeitos]”.</li>
+            <li>Grave em pé (9:16), 1 bloco por tomada, olhando pra câmera.</li>
+            <li>Edite com cortes no “MAS”, texto na tela, e (opcional) tela dividida.</li>
+            <li>Escolha título/capa: “O jeito comum vs o jeito melhor de [tema]”.</li>
+            <li>Inclua CTA: salvar + comentar <span class="k">UPGRADE</span> + insumo.</li>
+            <li>Publique e responda comentários com 1 upgrade extra (vira continuação).</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="hd">
+          <h2>Variações</h2>
+          <span class="badge">Reaproveite o DNA</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div>
+              <p class="small"><span class="k">Variação A — “3 níveis”</span></p>
+              <ul>
+                <li>Comum (nível 1) → Melhor (nível 2) → Elite (nível 3).</li>
+                <li>Use: “ok / bom / excelente” com 1 frase cada.</li>
+              </ul>
+            </div>
+            <div>
+              <p class="small"><span class="k">Variação B — “Antes / Depois”</span></p>
+              <ul>
+                <li>Mostre na prática o upgrade (tela, cena, resultado).</li>
+                <li>O texto na tela vira: “Antes: ___ | Depois: ___”.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="twoCol">
+            <div>
+              <p class="small"><span class="k">Variação C — “Erro não é X, é X com Y”</span></p>
+              <ul>
+                <li>Troque o “funciona, mas…” por “o problema é a combinação”.</li>
+                <li>Boa para temas com confusão comum (ferramentas, etapas, mensagens).</li>
+              </ul>
+            </div>
+            <div>
+              <p class="small"><span class="k">Variação D — “Checklist de upgrades”</span></p>
+              <ul>
+                <li>Mesma lógica, porém em formato de lista: “Se você faz X, testa Y”.</li>
+                <li>Final: “Quer a versão pro seu caso? Comenta [insumo]”.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="footer">UX note: se quiser aumentar retenção, coloque o melhor upgrade no bloco 3 ou 4 (meio do vídeo) e deixe um “extra” para o final.</p>
         </div>
       </section>
     </div>
-
-    <section class="card" style="margin-top:14px">
-      <div class="cardInner">
-        <h2>Estrutura</h2>
-        <div class="twoCol">
-          <div>
-            <p><strong>Sequência (simples e reproduzível):</strong></p>
-            <ul>
-              <li><strong>Hook (1–2s):</strong> “Tá bom… mas dá pra ficar muito melhor com uma troca.”</li>
-              <li><strong>Contexto (0,5–1s):</strong> “7 upgrades rápidos em [tema].”</li>
-              <li><strong>Blocos 1–7 (10–18s):</strong> repetir padrão “bom vs melhor”.</li>
-              <li><strong>Fechamento (1–2s):</strong> CTA de salvar + comentário com palavra-chave.</li>
-              <li><strong>Loop (opcional):</strong> última frase conecta ao hook (“Quer mais trocas assim?”).</li>
-            </ul>
-          </div>
-          <div>
-            <p><strong>Bloco padrão (1 upgrade):</strong></p>
-            <ul>
-              <li><strong>Validação:</strong> “X é bom/funciona…”</li>
-              <li><strong>Virada:</strong> “mas Y é melhor porque…”</li>
-              <li><strong>Efeito percebido:</strong> 2–3 adjetivos/benefícios curtos</li>
-              <li><strong>Remove objeção:</strong> “sem complicar / sem gastar mais / sem parecer forçado”</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px">
-      <div class="cardInner">
-        <h2>Roteiro (script pronto + campos para preencher)</h2>
-        <div class="code" id="script">
-HOOK (escolha 1):
-1) “Você tá fazendo certo… mas não do jeito mais eficiente.”
-2) “Isso é bom. Mas isso aqui é melhor.”
-3) “Quer melhorar [RESULTADO] com trocas simples?”
-
-PROMESSA (1 linha):
-“Em 20 segundos: 7 upgrades rápidos em [TEMA], sem complicar.”
-
-BLOCOS (repita 5–7x):
-1) “[X] é bom… MAS [Y] é melhor: fica [BENEFÍCIO 1], [BENEFÍCIO 2] e [BENEFÍCIO 3].”
-2) “[X] funciona… MAS troca por [Y] e fica [BENEFÍCIO 1], sem [OBJEÇÃO].”
-3) “Se você quer [OBJETIVO], faz [Y] em vez de [X].”
-
-LISTA SUGERIDA (exemplo neutro — adapte ao seu tema):
-1) “Fazer do jeito ‘padrão’ é bom… MAS fazer com um checklist é melhor: mais rápido, consistente e sem retrabalho.”
-2) “Começar por ‘tudo ao mesmo tempo’ é bom… MAS começar pelo essencial é melhor: mais claro, leve e sustentável.”
-3) “Usar só uma fonte é bom… MAS combinar 2 referências é melhor: mais completo, mais seguro e mais confiável.”
-4) “Executar sem medir é bom… MAS medir 1 métrica-chave é melhor: você ajusta rápido, melhora e escala.”
-5) “Resolver no improviso é bom… MAS ter um template é melhor: padroniza, acelera e reduz erros.”
-6) “Fazer sozinho é bom… MAS pedir feedback cedo é melhor: economiza tempo, melhora qualidade e evita surpresa.”
-7) “Entregar ‘ok’ é bom… MAS entregar com 1 detalhe extra é melhor: mais profissional, memorável e compartilhável.”
-
-FECHAMENTO + LOOP:
-“Quer que eu faça uma versão disso pra [SEU CONTEXTO]? Comenta ‘UPGRADE’. E salva pra usar depois.”
-        </div>
-        <p class="mutedSmall" style="margin:10px 0 0"><strong>Dica de preenchimento rápido:</strong> escolha um objetivo (ex.: mais claro, mais rápido, mais profissional, mais barato, mais consistente) e mantenha os benefícios sempre no mesmo tom.</p>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px">
-      <div class="cardInner">
-        <h2>Elementos visuais</h2>
-        <ul>
-          <li><strong>Formato:</strong> talking head + texto na tela, ou só texto + b-roll do tema.</li>
-          <li><strong>Layout fixo:</strong> linha 1 “X ✅ (bom)”; linha 2 “Y ⭐ (melhor)”; linha 3 (rápida) “Efeito: [3 palavras]”.</li>
-          <li><strong>Destaque do “MAS”:</strong> 3–5 frames com a palavra “MAS” grande.</li>
-          <li><strong>Ritmo:</strong> jump cuts + zoom sutil (2–4%) para manter energia.</li>
-          <li><strong>Paleta:</strong> use 1 cor para “✅ bom” e outra para “⭐ melhor” (consistente).</li>
-          <li><strong>Legenda na tela:</strong> sincronize apenas palavras-chave (X, Y, “MAS”, 2 adjetivos).</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px">
-      <div class="cardInner">
-        <h2>Copy e ganchos</h2>
-        <div class="twoCol">
-          <div>
-            <p><strong>Hooks (copiar/colar):</strong></p>
-            <ul>
-              <li>“Tá certo… mas dá pra ficar melhor com uma troca.”</li>
-              <li>“Se você faz [X], tenta [Y] hoje.”</li>
-              <li>“Isso é bom. Isso aqui é melhor. Vou te mostrar 7.”</li>
-              <li>“Pare de [X]. Faça [Y].” (mais provocativo)</li>
-            </ul>
-          </div>
-          <div>
-            <p><strong>Adjetivos/efeitos (escolha 2–3 por bloco):</strong></p>
-            <ul>
-              <li>mais claro, mais rápido, mais leve</li>
-              <li>mais profissional, mais consistente, mais confiável</li>
-              <li>mais simples, mais direto, mais escalável</li>
-              <li>sem retrabalho, sem custo extra, sem “parecer complicado”</li>
-            </ul>
-          </div>
-        </div>
-        <hr class="hr" />
-        <p><strong>Legenda (modelo curto):</strong> “✅ Bom vs ⭐ Melhor (pra [OBJETIVO]). Salva pra consultar. Quer uma lista pro seu caso? Comenta ‘UPGRADE’ + seu contexto.”</p>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px">
-      <div class="cardInner">
-        <h2>CTA</h2>
-        <ul>
-          <li><strong>Salvar:</strong> “Salva pra usar quando você for fazer [ação do tema].”</li>
-          <li><strong>Comentário com palavra-chave:</strong> “Comenta ‘UPGRADE’ que eu mando mais 10 ideias.”</li>
-          <li><strong>Engajamento rápido:</strong> “Qual upgrade você vai testar hoje: 1, 2, 3, 4, 5, 6 ou 7?”</li>
-          <li><strong>Personalização:</strong> “Quer versão pro seu cenário? Me diz: [3 opções de contexto].”</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px">
-      <div class="cardInner">
-        <h2>Checklist (criação e gravação)</h2>
-        <ul>
-          <li><strong>1) Objetivo:</strong> defina 1 resultado (ex.: mais rápido, mais claro, mais elegante, mais barato).</li>
-          <li><strong>2) Lista do “bom”:</strong> anote 5–7 escolhas comuns do seu tema (o que todo mundo já faz).</li>
-          <li><strong>3) O “melhor”:</strong> para cada item, crie 1 upgrade com <em>uma única troca</em> (sem mudar tudo).</li>
-          <li><strong>4) Escreva no template:</strong> “X é bom… mas Y é melhor: [2–3 benefícios].”</li>
-          <li><strong>5) Remova objeção:</strong> adicione 1 frase padrão (“sem complicar / sem gastar mais / sem parecer forçado”).</li>
-          <li><strong>6) Ritmo:</strong> grave em cortes rápidos (12–22s total).</li>
-          <li><strong>7) Texto na tela:</strong> padrão fixo “✅ vs ⭐” com 1 palavra por linha (evite parágrafos).</li>
-          <li><strong>8) Final:</strong> CTA de “salvar + comentar palavra-chave”.</li>
-          <li><strong>9) Legenda:</strong> repita os 7 upgrades em lista (aumenta salvamentos).</li>
-          <li><strong>10) Revisão:</strong> assista sem som: dá pra entender só pelo texto? Se não, simplifique.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="card" style="margin-top:14px">
-      <div class="cardInner">
-        <h2>Variações</h2>
-        <ul>
-          <li><strong>Variação A (Mito vs Verdade):</strong> “Parece melhor fazer X… mas na prática Y dá mais resultado.”</li>
-          <li><strong>Variação B (Antes/Depois):</strong> mostre 1 exemplo visual por bloco (antes = ✅, depois = ⭐).</li>
-          <li><strong>Variação C (Ranking):</strong> “Do ok ao uau” (nível 1 a 7) mantendo a mesma lógica.</li>
-          <li><strong>Variação D (Para perfis diferentes):</strong> “Se você é [tipo 1], faça Y1; se é [tipo 2], faça Y2.”</li>
-          <li><strong>Variação E (Série):</strong> “Parte 1/3” com o mesmo template (perfeito para consistência semanal).</li>
-        </ul>
-      </div>
-    </section>
-
-    <div class="toast" id="toast">Roteiro copiado.</div>
   </div>
 
   <script>
-    const btn = document.getElementById('copyBtn');
-    const scriptEl = document.getElementById('script');
-    const toast = document.getElementById('toast');
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const status = document.getElementById('copyStatus');
+      const script = document.getElementById('scriptText');
 
-    function showToast(){
-      toast.classList.add('show');
-      clearTimeout(window.__t);
-      window.__t = setTimeout(()=>toast.classList.remove('show'), 1400);
-    }
-
-    async function copyText(text){
-      try{
-        if (navigator.clipboard && window.isSecureContext) {
+      async function copy(){
+        const text = script.innerText.trim();
+        try{
           await navigator.clipboard.writeText(text);
-        } else {
+          status.textContent = 'Copiado. Cole no seu editor/Notion e preencha os colchetes.';
+        }catch(e){
           const ta = document.createElement('textarea');
           ta.value = text;
-          ta.style.position = 'fixed';
-          ta.style.left = '-9999px';
-          ta.style.top = '0';
           document.body.appendChild(ta);
-          ta.focus();
           ta.select();
           document.execCommand('copy');
           document.body.removeChild(ta);
+          status.textContent = 'Copiado (modo compatível).';
         }
-        showToast();
-      } catch(e){
-        alert('Não foi possível copiar automaticamente. Selecione e copie manualmente.');
       }
-    }
 
-    btn.addEventListener('click', ()=>{
-      const text = scriptEl.innerText.trim();
-      copyText(text);
-    });
+      btn.addEventListener('click', copy);
+    })();
   </script>
 </body>
 </html>
