@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 3 — Estética | Roteiro reproduzível</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:rgba(255,255,255,0.06);
+      --card2:rgba(255,255,255,0.08);
+      --border:rgba(255,255,255,0.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,0.72);
+      --muted2:rgba(234,240,255,0.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --g1: linear-gradient(90deg,#3DFFB6 0%, #4AA3FF 45%, #FFB24A 100%);
+      --g2: radial-gradient(900px 380px at 10% 0%, rgba(61,255,182,.23), rgba(0,0,0,0)),
+            radial-gradient(900px 380px at 90% 10%, rgba(74,163,255,.22), rgba(0,0,0,0)),
+            radial-gradient(900px 380px at 50% 100%, rgba(255,178,74,.14), rgba(0,0,0,0));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 60px;
+    }
+
+    header{
+      padding:20px;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity:.14;
+      filter: blur(14px);
+      z-index:0;
+    }
+
+    header > *{position:relative; z-index:1;}
+
+    .topline{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:10px;
+    }
+
+    .chips{display:flex; gap:10px; flex-wrap:wrap;}
+    .chip{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      letter-spacing:.3px;
+      color:var(--muted);
+    }
+
+    h1{
+      margin:8px 0 6px;
+      font-size: clamp(18px, 2.2vw, 26px);
+      line-height:1.15;
+    }
+
+    .sub{
+      color:var(--muted);
+      margin:0;
+      font-size:14px;
+      line-height:1.45;
+    }
+
+    a{color:#9ED3FF; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+    }
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr;}
+    }
+
+    .card{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,0.09);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .card .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      color: rgba(234,240,255,0.86);
+    }
+
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      color: rgba(234,240,255,0.72);
+      border:1px solid rgba(255,255,255,0.14);
+      border-radius:999px;
+      padding:6px 10px;
+      background: rgba(0,0,0,0.16);
+      white-space:nowrap;
+    }
+
+    .card .bd{padding:16px;}
+
+    .kvs{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 560px){
+      .kvs{grid-template-columns:1fr;}
+    }
+
+    .kv{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.16);
+    }
+    .kv .k{font-size:12px; color:var(--muted2); margin-bottom:6px;}
+    .kv .v{font-size:13px; color:var(--text); line-height:1.35;}
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,0.10);
+      margin:14px 0;
+    }
+
+    ul{margin:10px 0 0 18px; color:var(--muted);}
+    li{margin:7px 0;}
+
+    .callout{
+      border:1px solid rgba(255,255,255,0.14);
+      background: linear-gradient(180deg, rgba(0,0,0,0.14), rgba(0,0,0,0.24));
+      border-radius: 16px;
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .callout:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g1);
+      opacity: .18;
+      filter: blur(18px);
+      z-index:0;
+    }
+    .callout > *{position:relative; z-index:1;}
+    .callout .t{font-size:13px; color:rgba(234,240,255,0.9); margin:0 0 6px; font-weight:600;}
+    .callout .p{margin:0; color:var(--muted); font-size:13px; line-height:1.5;}
+
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+      font-family:var(--mono);
+      font-size:12.8px;
+      line-height:1.5;
+      color: rgba(234,240,255,0.90);
+      background: rgba(0,0,0,0.22);
+      border:1px solid rgba(255,255,255,0.12);
+      padding:14px;
+      border-radius: 16px;
+    }
+
+    .btns{display:flex; gap:10px; flex-wrap:wrap;}
+    button{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,0.14);
+      color:rgba(234,240,255,0.92);
+      background: rgba(0,0,0,0.20);
+      border-radius: 12px;
+      padding:10px 12px;
+      font-weight:600;
+      letter-spacing:.2px;
+    }
+    button.primary{
+      border:0;
+      background: var(--g1);
+      color: #081018;
+    }
+    button:hover{filter:brightness(1.06)}
+
+    .footnote{
+      margin-top:10px;
+      color:var(--muted2);
+      font-size:12px;
+      line-height:1.45;
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 860px){
+      .twoCol{grid-template-columns:1fr;}
+    }
+
+    .mini{
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding:14px;
+    }
+
+    .mini h3{margin:0 0 10px; font-size:14px; color:rgba(234,240,255,0.88)}
+    .mini p{margin:0; color:var(--muted); font-size:13px; line-height:1.55}
+
+    .checklist{margin:10px 0 0; padding:0; list-style:none;}
+    .checklist li{
+      margin:8px 0;
+      padding:10px 10px;
+      border:1px dashed rgba(255,255,255,0.16);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.14);
+      color: var(--muted);
+    }
+
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chips">
+          <div class="chip">Nicho: <strong>Estética</strong></div>
+          <div class="chip">Dia: <strong>3</strong></div>
+          <div class="chip">Formato: <strong>Reels</strong></div>
+          <div class="chip">Pilar: <strong>Passo a passo</strong></div>
+        </div>
+        <div class="chip">Post original: <a href="https://www.instagram.com/p/DXP0IonBW79/" target="_blank" rel="noreferrer">abrir</a></div>
+      </div>
+      <h1>Reel de estética: roteiro pronto (hook + 3 pontos + CTA)</h1>
+      <p class="sub">Este post original não tem transcrição disponível. Abaixo está uma ficha <strong>reproduzível</strong> (preenchível) para você gravar um Reel com a mesma lógica de retenção: <strong>hook</strong> → <strong>contexto</strong> → <strong>3 pontos</strong> → <strong>fechamento</strong> → <strong>CTA único</strong>.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="badge">20–35s • cortes por frase</span>
+        </div>
+        <div class="bd">
+          <div class="callout">
+            <p class="t">Ideia central</p>
+            <p class="p">Escolha <strong>1 dor específica</strong> do público de estética (ex.: ardor no pós, manchas, acne inflamada, efeito rebote, sensibilidade) e entregue <strong>3 correções práticas</strong> (o que parar + o que fazer no lugar), finalizando com <strong>CTA único</strong>.</p>
+          </div>
+
+          <div class="kvs">
+            <div class="kv">
+              <div class="k">Tema (macro)</div>
+              <div class="v">[procedimento / skincare / pós-procedimento / ativos / hábitos]</div>
+            </div>
+            <div class="kv">
+              <div class="k">Ponto específico (micro)</div>
+              <div class="v">[um erro ou passo único: “pós de peeling”, “uso de ácidos”, “protetor no pós”, etc.]</div>
+            </div>
+            <div class="kv">
+              <div class="k">Promessa em 1 frase</div>
+              <div class="v">“Em 30s, você vai entender como <strong>[resultado]</strong> sem <strong>[dor/erro]</strong>.”</div>
+            </div>
+            <div class="kv">
+              <div class="k">Regra de ouro</div>
+              <div class="v"><strong>1 Reel = 1 objetivo</strong> (salvar OU comentar OU direct OU agendar).</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Insumos para preencher (rápido)</h2>
+          <span class="badge">copiar/colar</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Público:</strong> [gestante / acne adulta / pele sensível / pós-laser…]</li>
+            <li><strong>Dor exata:</strong> [“minha pele arde e descama muito”]</li>
+            <li><strong>Erro #1:</strong> [ ]</li>
+            <li><strong>Erro #2:</strong> [ ]</li>
+            <li><strong>Erro #3:</strong> [ ]</li>
+            <li><strong>Troca prática:</strong> “Em vez de X, faça Y.”</li>
+            <li><strong>CTA único:</strong> [SALVAR] ou [COMENTAR “PELE”] ou [DIRECT “AGENDA”]</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="footnote">Se você colar a fala/texto do vídeo original, dá para transformar isto num roteiro 100% fiel (hook + viradas + CTA exatos).</p>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura (sequência replicável)</h2>
+          <span class="badge">0–2s → 30s</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="mini">
+              <h3>Versão padrão (alta retenção)</h3>
+              <p>
+                1) <strong>Hook</strong> (0–2s)<br/>
+                2) <strong>Contexto</strong> (2–5s)<br/>
+                3) <strong>3 pontos</strong> (5–25s)<br/>
+                4) <strong>Fechamento/autoridade</strong> (25–30s)<br/>
+                5) <strong>CTA</strong> (últimos 2–5s)
+              </p>
+            </div>
+            <div class="mini">
+              <h3>Regra de edição</h3>
+              <p>
+                Cortes a cada <strong>0,5–1,5s</strong> (ou por frase).<br/>
+                Legenda em <strong>blocos curtos</strong>.<br/>
+                Destaques visuais para: <strong>NÃO</strong>, <strong>TROQUE POR</strong>, <strong>FAÇA ISSO</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Roteiro (pronto para gravar)</h2>
+          <div class="btns">
+            <button class="primary" onclick="copyScript()">Copiar roteiro</button>
+            <button onclick="selectScript()">Selecionar</button>
+          </div>
+        </div>
+        <div class="bd">
+<pre id="script">[CENA: você em quadro médio, fundo clean/consultório. Legendas grandes.]
+
+0–2s (HOOK)
+“Se você está fazendo [PROCEDIMENTO/SKINCARE] e mesmo assim [DOR/PIORA], para aqui.”
+(TELA: “Você pode estar errando no [PÓS/ROTINA]”)
+
+2–5s (CONTEXTO)
+“Isso acontece porque [motivo simples e direto em 1 frase].”
+(TELA: “Não é falta de produto. É ajuste de rotina.”)
+
+5–25s (3 PONTOS — entregue sem enrolar)
+Erro #1: [ERRO 1 em 1 frase]
+Troque por: [ação prática curta]
+
+Erro #2: [ERRO 2 em 1 frase]
+Troque por: [ação prática curta]
+
+Erro #3: [ERRO 3 em 1 frase]
+Troque por: [ação prática curta]
+
+25–30s (FECHAMENTO / AUTORIDADE)
+“No consultório eu vejo isso o tempo todo — pequenos ajustes mudam o resultado em [prazo/expectativa realista].”
+
+30–35s (CTA ÚNICO)
+“Salva esse vídeo pra consultar no seu [pós/rotina].
+E comenta ‘[PALAVRA-CHAVE]’ que eu te mando um passo a passo base.”
+
+[TELA FINAL 2s]
+“Quer uma avaliação? Direct: ‘AGENDA’ | Link na bio”</pre>
+          <p class="footnote"><span class="muted">Dica:</span> se o seu objetivo for agendamento, remova “comenta” e use apenas 1 CTA (ex.: “Me chama no direct com ‘AGENDA’”).</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <span class="badge">b-roll + overlays</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Abertura:</strong> você apontando para o texto “Você está piorando seu resultado…”</li>
+            <li><strong>B-roll:</strong> bancada, luvas, textura de produto, toalha, protetor solar, close de pele (sem expor paciente).</li>
+            <li><strong>Overlays:</strong> “X” no erro e “✓” na troca.</li>
+            <li><strong>Degradê sutil</strong> em boxes para destacar “Erro #1/2/3”.</li>
+            <li><strong>Som:</strong> música baixa + voz clara. Pausas curtas antes do item #2 e #3.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos (biblioteca rápida)</h2>
+          <span class="badge">escolha 1</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="mini">
+              <h3>Hooks (0–2s)</h3>
+              <p>
+                1) “Pare de fazer isso no pós do [procedimento].”<br/>
+                2) “3 erros que inflamam a pele depois de [X].”<br/>
+                3) “Não é ‘purga’. Pode ser irritação.”<br/>
+                4) “Esse detalhe muda o resultado do [X].”
+              </p>
+            </div>
+            <div class="mini">
+              <h3>Viradas/contrastes</h3>
+              <p>
+                “Não é [X], é [Y].”<br/>
+                “Quanto mais você faz, pior pode ficar.”<br/>
+                “O problema não é o produto — é a combinação/ordem.”
+              </p>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="mini">
+            <h3>Texto na tela (sequência pronta)</h3>
+            <p>
+              Tela 1: “Você está piorando seu resultado em [tema]”<br/>
+              Tela 2: “Erro #1: [frase curta]”<br/>
+              Tela 3: “Erro #2: [frase curta]”<br/>
+              Tela 4: “Erro #3: [frase curta]”<br/>
+              Tela 5: “Troque por: [ação]”<br/>
+              Tela final: “Salva + comenta ‘[palavra]’”
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>CTA (escolha 1)</h2>
+          <span class="badge">1 ação principal</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Salvar:</strong> “Salva pra consultar no seu pós.”</li>
+            <li><strong>Comentar palavra-chave:</strong> “Comenta ‘PELE’ que te mando a orientação base.”</li>
+            <li><strong>Direct:</strong> “Me chama no direct com ‘AGENDA’.”</li>
+            <li><strong>Agendar:</strong> “Link na bio pra avaliação.”</li>
+          </ul>
+          <p class="footnote">Mantenha o CTA coerente com o conteúdo: se você ensinou um ajuste rápido, <strong>salvar</strong> costuma performar melhor.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Checklist de criação (reproduzível)</h2>
+          <span class="badge">pré • gravação • edição</span>
+        </div>
+        <div class="bd">
+          <div class="twoCol">
+            <div class="mini">
+              <h3>Antes de gravar</h3>
+              <ul class="checklist">
+                <li>[ ] Definir 1 dor específica (ex.: “ardor no pós”, “rebote”, “mancha”).</li>
+                <li>[ ] Escrever 1 promessa em 1 frase (resultado + sem dor/erro).</li>
+                <li>[ ] Escolher ângulo: erro comum, mito vs verdade ou checklist.</li>
+                <li>[ ] Listar 3 pontos (erro/causa/troca) em frases curtas.</li>
+                <li>[ ] Definir 1 CTA único (salvar/comentar/direct/agendar).</li>
+              </ul>
+            </div>
+            <div class="mini">
+              <h3>Gravação + edição</h3>
+              <ul class="checklist">
+                <li>[ ] Gravar em luz frontal (ring) e áudio limpo.</li>
+                <li>[ ] Cortar por frase (0,5–1,5s) e remover pausas longas.</li>
+                <li>[ ] Legendas em blocos (2–6 palavras) com palavras-chave em CAIXA ALTA.</li>
+                <li>[ ] Inserir “X” e “✓” nos momentos de erro/troca.</li>
+                <li>[ ] Tela final por 2s com CTA e palavra-chave.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Variações (para testar em sequência)</h2>
+          <span class="badge">A/B rápido</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Variação 1 (Mito vs Verdade):</strong> “Isso não é purga — é irritação” + 2 sinais + 1 ação.</li>
+            <li><strong>Variação 2 (Checklist):</strong> “Pós de [X] em 3 passos” (passo 1/2/3) + salvar.</li>
+            <li><strong>Variação 3 (Objeção):</strong> “Dá pra usar [ativo] no pós?” (depende de 2 critérios) + direct para avaliação.</li>
+            <li><strong>Variação 4 (Prova):</strong> “O que mais melhora resultado é rotina: antes/depois explicado” (sem promessas irreais).</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="callout">
+            <p class="t">Para ficar 100% fiel ao post original</p>
+            <p class="p">Cole aqui a transcrição (fala) ou o texto na tela + descrição das cenas. Aí eu converto em roteiro final com hook exato, viradas e CTA específicos daquele vídeo.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    function copyScript(){
+      const el = document.getElementById('script');
+      const text = el.innerText;
+      navigator.clipboard.writeText(text).then(()=>{
+        const btn = document.querySelector('button.primary');
+        const old = btn.innerText;
+        btn.innerText = 'Copiado!';
+        setTimeout(()=>btn.innerText = old, 1200);
+      }).catch(()=>{
+        selectScript();
+        alert('Não foi possível copiar automaticamente. Selecione o texto e copie.');
+      });
+    }
+    function selectScript(){
+      const el = document.getElementById('script');
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  </script>
+</body>
+</html>
