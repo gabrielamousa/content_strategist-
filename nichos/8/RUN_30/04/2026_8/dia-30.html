@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Roteiro Reproduzível — Carrossel (Experimento do time)</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:#0E1630;
+    --card2:#0B132B;
+    --line:rgba(255,255,255,.10);
+    --muted:rgba(255,255,255,.72);
+    --text:rgba(255,255,255,.92);
+    --soft:rgba(255,255,255,.06);
+    --g1: linear-gradient(90deg, #00E887 0%, #35A7FF 52%, #FF8A00 100%);
+    --g2: linear-gradient(135deg, rgba(0,232,135,.22) 0%, rgba(53,167,255,.18) 50%, rgba(255,138,0,.20) 100%);
+    --shadow: 0 18px 50px rgba(0,0,0,.45);
+    --radius: 18px;
+    --radius2: 14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: var(--sans);
+    background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(53,167,255,.18), transparent 60%),
+      radial-gradient(1000px 550px at 90% 10%, rgba(0,232,135,.14), transparent 55%),
+      radial-gradient(900px 700px at 60% 110%, rgba(255,138,0,.12), transparent 60%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    color: var(--text);
+  }
+  a{color:inherit}
+  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px}
+  header{
+    position:relative;
+    border:1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute; inset:0;
+    background: var(--g2);
+    opacity:.85;
+    pointer-events:none;
+    mask-image: radial-gradient(900px 240px at 10% 0%, #000 0%, transparent 70%);
+  }
+  .head-inner{position:relative; padding:22px 22px 18px; display:flex; gap:18px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap}
+  .kpis{display:flex; gap:10px; flex-wrap:wrap}
+  .pill{
+    font-family: var(--mono);
+    font-size:12px;
+    letter-spacing:.2px;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(0,0,0,.18);
+    color: rgba(255,255,255,.86);
+    white-space:nowrap;
+  }
+  .title{
+    margin:8px 0 0;
+    font-weight:800;
+    font-size: clamp(20px, 2.2vw, 28px);
+    line-height:1.1;
+    letter-spacing: -0.02em;
+  }
+  .sub{
+    margin:10px 0 0;
+    color: var(--muted);
+    line-height:1.5;
+    max-width: 72ch;
+  }
+  .head-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .btn{
+    appearance:none;
+    border:1px solid var(--line);
+    background: rgba(0,0,0,.22);
+    color: rgba(255,255,255,.92);
+    border-radius: 12px;
+    padding:10px 12px;
+    font-weight:700;
+    cursor:pointer;
+    transition: transform .12s ease, border-color .12s ease, background .12s ease;
+  }
+  .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.18); background: rgba(0,0,0,.30)}
+  .btn.primary{
+    border-color: rgba(255,255,255,.18);
+    background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+  }
+  .btn.primary .spark{
+    display:inline-block;
+    width:10px; height:10px;
+    margin-right:8px;
+    background: var(--g1);
+    border-radius: 3px;
+    vertical-align: -1px;
+  }
+  .grid{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  @media(min-width: 980px){
+    .grid{grid-template-columns: 1fr 1fr}
+    .span2{grid-column: 1 / -1}
+  }
+  section.card{
+    border:1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+    border-radius: var(--radius);
+    box-shadow: 0 16px 45px rgba(0,0,0,.35);
+    padding: 18px 18px 16px;
+    position:relative;
+    overflow:hidden;
+  }
+  section.card:before{
+    content:"";
+    position:absolute;
+    inset:-1px;
+    background: var(--g2);
+    opacity:.35;
+    pointer-events:none;
+    mask-image: radial-gradient(520px 220px at 15% 0%, #000 0%, transparent 70%);
+  }
+  .card > *{position:relative}
+  h2{
+    margin:0 0 10px;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: rgba(255,255,255,.84);
+  }
+  .hr{
+    height:1px;
+    background: linear-gradient(90deg, rgba(0,232,135,.35), rgba(53,167,255,.25), rgba(255,138,0,.28));
+    opacity:.65;
+    margin: 10px 0 14px;
+    border-radius: 2px;
+  }
+  ul{margin:0; padding-left:18px; color: var(--muted); line-height:1.55}
+  li{margin: 6px 0}
+  .callout{
+    border:1px solid var(--line);
+    background: rgba(0,0,0,.18);
+    border-radius: var(--radius2);
+    padding: 12px;
+    color: rgba(255,255,255,.86);
+  }
+  .callout strong{color: rgba(255,255,255,.93)}
+  .two{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  @media(min-width: 720px){
+    .two{grid-template-columns: 1fr 1fr}
+  }
+  .kbd{
+    font-family: var(--mono);
+    font-size: 12px;
+    border:1px solid var(--line);
+    background: rgba(255,255,255,.06);
+    padding: 2px 8px;
+    border-radius: 8px;
+    color: rgba(255,255,255,.86);
+  }
+  pre{
+    margin:0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border:1px solid var(--line);
+    background: rgba(0,0,0,.22);
+    border-radius: var(--radius2);
+    padding: 14px;
+    color: rgba(255,255,255,.86);
+    line-height:1.55;
+  }
+  .muted{color: var(--muted)}
+  .mini{font-size: 13px; color: rgba(255,255,255,.74); line-height:1.55}
+  .tagrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .tag{
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 8px;
+    background: rgba(0,0,0,.18);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: rgba(255,255,255,.80);
+  }
+  footer{
+    margin-top: 16px;
+    color: rgba(255,255,255,.58);
+    font-size: 12px;
+    text-align:center;
+  }
+  .toast{
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,.65);
+    border: 1px solid rgba(255,255,255,.14);
+    padding: 10px 12px;
+    border-radius: 12px;
+    color: rgba(255,255,255,.9);
+    font-size: 13px;
+    display:none;
+    max-width: min(680px, calc(100% - 24px));
+    box-shadow: 0 18px 40px rgba(0,0,0,.55);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-inner">
+        <div>
+          <div class="kpis">
+            <span class="pill">Nicho: Marketing e Posicionamento</span>
+            <span class="pill">Dia: 30</span>
+            <span class="pill">Formato: Carrossel (6–10 slides)</span>
+            <span class="pill">Pilar: Bastidores</span>
+          </div>
+          <h1 class="title">Mesmo tema, 6 ângulos: qual ideia venceria no seu perfil?</h1>
+          <p class="sub">Template reproduzível para criar um carrossel de alta retenção usando o efeito “playlist”: você mantém o layout fixo (tabs + box de metadados) e troca apenas a abordagem/ângulo em cada slide. Finaliza com votação para explodir comentários.</p>
+          <div class="tagrow">
+            <span class="tag">hook + promessa</span>
+            <span class="tag">padrão + variação</span>
+            <span class="tag">votação A/B/C</span>
+            <span class="tag">bastidores/autoridade</span>
+          </div>
+        </div>
+        <div class="head-actions">
+          <a class="btn" href="https://www.instagram.com/p/DW_v9VJgHR2/" target="_blank" rel="noopener">Abrir post original</a>
+          <button class="btn primary" id="copyBtn" type="button"><span class="spark"></span>Copiar roteiro</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card span2">
+        <h2>Resumo</h2>
+        <div class="hr"></div>
+        <div class="two">
+          <div class="callout">
+            <strong>Ideia central:</strong> “Dei a mesma tarefa para pessoas com chapéus diferentes e comparei as respostas.”
+            <div class="mini" style="margin-top:8px">Você ganha retenção por repetição (layout) e novidade (insight/visual por slide). Fecha com pergunta comparativa para aumentar comentários.</div>
+          </div>
+          <div class="callout">
+            <strong>Quando usar:</strong> quando você quer mostrar repertório, processo, time, ou ensinar variações do mesmo conceito sem parecer “aula longa”.
+            <div class="mini" style="margin-top:8px"><span class="kbd">Objetivo</span>: alcance + comentários + salvamentos.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura</h2>
+        <div class="hr"></div>
+        <ul>
+          <li><strong>Slide 1 (Capa):</strong> bastidor + experimento + promessa + indicação de swipe (→).</li>
+          <li><strong>Slides 2–(N-1):</strong> 1 variação por “persona” (mesmo tema, ângulos diferentes). Layout fixo, muda o miolo.</li>
+          <li><strong>Último slide:</strong> votação (A/B/C…) + pergunta de baixa fricção + CTA.</li>
+        </ul>
+        <div class="callout" style="margin-top:12px">
+          <strong>Regra de ouro:</strong> mantenha <em>componentes fixos</em> (tabs + box “Tema/Persona/Função”) e troque apenas <em>headline + exemplo visual</em>.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Slides sugeridos (1..8)</h2>
+        <div class="hr"></div>
+        <ul>
+          <li><strong>1:</strong> Capa (experimento + promessa + “resultado →”).</li>
+          <li><strong>2:</strong> Persona A (ex.: Estratégia).</li>
+          <li><strong>3:</strong> Persona B (ex.: Storytelling).</li>
+          <li><strong>4:</strong> Persona C (ex.: Dados/Prova).</li>
+          <li><strong>5:</strong> Persona D (ex.: Design/Percepção).</li>
+          <li><strong>6:</strong> Persona E (ex.: Objeções/Compra).</li>
+          <li><strong>7:</strong> Persona F (ex.: Processo/Passo a passo).</li>
+          <li><strong>8:</strong> Final (votação + comentário + gancho de continuidade).</li>
+        </ul>
+        <div class="mini" style="margin-top:10px">Ajuste para 6 a 10 slides: aumente/diminua o número de personas, mantendo a lógica.</div>
+      </section>
+
+      <section class="card span2">
+        <h2>Roteiro</h2>
+        <div class="hr"></div>
+        <pre id="roteiro">ROTEIRO (TEMPLATE COPIÁVEL)
+
+[CONFIGURAÇÃO RÁPIDA]
+Tema central (1 frase): _______________________________
+Objetivo do post: ( ) alcance  ( ) autoridade  ( ) lead  ( ) venda  ( ) aquecer
+Quantidade de personas (5–7): ______
+Critério de variação (escolha 1):
+- ( ) Estratégia  ( ) Storytelling  ( ) Dados/Prova  ( ) Design/Percepção  ( ) Objeções  ( ) Passo a passo  ( ) Humor  ( ) Trend
+
+SLIDE 1 — CAPA (HOOK + PROMESSA)
+Topo (branding): [SUA MARCA]
+Linha 1 (H2): “Pedi pra [MEU TIME / 6 PERFIS / 6 ‘VERSÕES MINHAS’]”
+Linha 2 (H1): “criar [1 ideia / 1 abordagem / 1 anúncio / 1 post]”
+Linha 3 (apoio): “com o mesmo tema: [TEMA]”
+Rodapé: “e esse foi o resultado →”
+
+SLIDE 2 — PERSONA A (ÂNGULO 1)
+Tabs (fixo): A | B | C | D | E | F  (A destacado)
+Headline (1 frase memorável): “________________________________________”
+Sub (1 linha opcional): “________________________________________”
+Exemplo visual: [print / mini-mock / metáfora visual]
+Box fixo (canto): Tema: [TEMA] | Persona: [NOME] | Chapéu: [FUNÇÃO]
+
+SLIDE 3 — PERSONA B (ÂNGULO 2)
+Repete layout.
+Headline: “________________________________________”
+Exemplo visual: _______________________________
+Box: Tema | Persona | Chapéu
+
+SLIDE 4 — PERSONA C (ÂNGULO 3)
+Headline: “________________________________________”
+
+SLIDE 5 — PERSONA D (ÂNGULO 4)
+Headline: “________________________________________”
+
+SLIDE 6 — PERSONA E (ÂNGULO 5)
+Headline: “________________________________________”
+
+SLIDE 7 — PERSONA F (ÂNGULO 6)
+Headline: “________________________________________”
+
+SLIDE 8 — FECHAMENTO (VOTAÇÃO + CTA)
+Texto apoio: “Agora eu quero sua opinião:”
+H1: “Qual ficou melhor?”
+Barra: A | B | C | D | E | F
+CTA 1 (baixo atrito): “Comenta só a letra.”
+CTA 2 (qualificador): “Se quiser, comenta a letra + seu nicho.”
+Gancho de continuidade (opcional): “Se bater [X] comentários, eu transformo a vencedora em roteiro pronto.”</pre>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais</h2>
+        <div class="hr"></div>
+        <ul>
+          <li><strong>Fundo:</strong> escuro e limpo (com respiro). Use 1 cor de destaque fixa (degradê verde/azul/laranja para seleção).</li>
+          <li><strong>Tabs no topo:</strong> A | B | C… com o selecionado destacado (isso cria “progressão”).</li>
+          <li><strong>Box fixo:</strong> “Tema / Persona / Chapéu” sempre no mesmo canto.</li>
+          <li><strong>Miolo variável:</strong> imagem tipo pôster/print + frase curta grande (H1).</li>
+          <li><strong>Micro pistas:</strong> seta (→), cursor, “label” inclinado; ajudam a induzir swipe.</li>
+        </ul>
+        <div class="callout" style="margin-top:12px">
+          <strong>Dica de consistência:</strong> escolha 1 grid e não negocie: mesma margem, mesma posição de tabs, mesma posição do box. A variação entra na frase e no exemplo.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos</h2>
+        <div class="hr"></div>
+        <div class="two">
+          <div>
+            <div class="callout"><strong>Fórmulas de capa</strong><div class="mini" style="margin-top:8px">
+              1) “Pedi pra [X pessoas] criarem [1 coisa] sobre [tema] — olha o que saiu”
+              <br/>2) “O mesmo tema, [N] abordagens: qual você usaria?”
+              <br/>3) “Teste rápido: como [profissões] resolveriam [problema]?”
+            </div></div>
+            <div class="callout" style="margin-top:10px"><strong>Headline de cada slide (esqueleto)</strong><div class="mini" style="margin-top:8px">
+              “Se eu tivesse que explicar [tema] em 1 frase: ______.”
+              <br/>“O erro aqui não é [X]. É [Y].”
+              <br/>“A forma mais simples de [resultado] é [princípio].”
+              <br/>“Você não precisa de [coisa popular]. Precisa de [coisa essencial].”
+            </div></div>
+          </div>
+          <div>
+            <div class="callout"><strong>Ângulos universais (para não faltar variação)</strong><div class="mini" style="margin-top:8px">
+              • Estratégia (prioridade, foco, posicionamento)
+              <br/>• Storytelling (caso, metáfora, contraste)
+              <br/>• Dados/Prova (número, antes/depois, benchmark)
+              <br/>• Objeção ("mas e se..." / "isso não funciona porque...")
+              <br/>• Passo a passo (1–2–3)
+              <br/>• Provocação (opinião forte bem defendida)
+            </div></div>
+            <div class="callout" style="margin-top:10px"><strong>Regras de retenção</strong><div class="mini" style="margin-top:8px">
+              • 1 ideia por slide (sem parágrafo)
+              <br/>• Repetição do layout = conforto
+              <br/>• Variação do miolo = novidade
+              <br/>• Final com escolha (voto) = comentários
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>CTA</h2>
+        <div class="hr"></div>
+        <ul>
+          <li><strong>CTA principal (votação):</strong> “Qual ficou melhor: A, B, C, D…? Comenta a letra.”</li>
+          <li><strong>CTA com recompensa:</strong> “Se a vencedora tiver mais votos, eu posto o roteiro completo amanhã. Comenta a letra.”</li>
+          <li><strong>CTA que gera insight (qualifica comentários):</strong> “Comenta a letra + seu nicho, que eu digo qual funciona melhor no seu caso.”</li>
+          <li><strong>CTA para lead leve (DM):</strong> “Quer o template no Canva? Comenta ‘TEMPLATE’.”</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Checklist</h2>
+        <div class="hr"></div>
+        <div class="two">
+          <div class="callout">
+            <strong>Checklist de criação (conteúdo)</strong>
+            <ul style="margin-top:8px">
+              <li>Definir <strong>tema central</strong> em 1 frase.</li>
+              <li>Escolher <strong>5–7 personas/chapéus</strong> (ou “6 versões minhas”).</li>
+              <li>Escrever <strong>1 headline memorável</strong> por persona (máx. 12 palavras).</li>
+              <li>Amarrar tudo com o mesmo <strong>critério</strong> (ex.: posicionamento, promessa, objeção).</li>
+              <li>Fechar com <strong>pergunta comparativa</strong> + voto.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Checklist de design (consistência)</strong>
+            <ul style="margin-top:8px">
+              <li>Layout fixo: <strong>tabs no topo</strong> + <strong>box</strong> no canto.</li>
+              <li>1 destaque fixo (degradê) para seleção/ênfase.</li>
+              <li>Excelente contraste (texto grande + respiro).</li>
+              <li>Elemento de swipe: seta (→) na capa.</li>
+              <li>Exportar em 1080×1350, margem segura para UI.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span2">
+        <h2>Variações</h2>
+        <div class="hr"></div>
+        <div class="two">
+          <div class="callout">
+            <strong>Substituições que mantêm o mesmo impacto</strong>
+            <ul style="margin-top:8px">
+              <li><strong>Time</strong> → “clientes”, “alunos”, “especialistas convidados”, “IA vs humano”, “eu em fases diferentes”.</li>
+              <li><strong>Tema</strong> → dor/objeção específica do seu público (ex.: “não tenho tempo”, “ninguém me vê”).</li>
+              <li><strong>Votação</strong> → ranking (“top 3”), duelo (“A vs B”), “qual você salvaria?”.</li>
+              <li><strong>Tabs com nomes</strong> → tabs com chapéus: Estratégia | Copy | Design | Dados | Vendas | Operação.</li>
+            </ul>
+          </div>
+          <div class="callout">
+            <strong>Adaptações por objetivo (rápido)</strong>
+            <ul style="margin-top:8px">
+              <li><strong>Autoridade:</strong> use personas como áreas (Estratégia/Copy/CRM) e adicione 1 dado por slide.</li>
+              <li><strong>Venda:</strong> personas viram “objeções” (Preço/Tempo/Confiança/Complexidade) + resposta curta por slide.</li>
+              <li><strong>Lead:</strong> no final, CTA: “Comenta ‘MAPA’ para receber a planilha/template”.</li>
+              <li><strong>Educativo:</strong> personas viram “níveis” (iniciante/intermediário/avançado) do mesmo tema.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      Feito para ser reutilizado: troque o tema, mantenha o experimento. Layout fixo + miolo variável = retenção.
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado para a área de transferência.</div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const pre = document.getElementById('roteiro');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=>{ toast.style.display = 'none'; }, 2200);
+    }
+
+    btn.addEventListener('click', async () => {
+      const text = pre.innerText;
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Roteiro copiado para a área de transferência.');
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try{ document.execCommand('copy'); showToast('Roteiro copiado (modo compatibilidade).'); }
+        catch(err){ showToast('Não foi possível copiar automaticamente. Selecione e copie manualmente.'); }
+        document.body.removeChild(ta);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
