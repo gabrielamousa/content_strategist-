@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dia 8 — Finanças e Negócios — Quanto rende R$ X por mês?</title>
+  <style>
+    :root{
+      --bg:#070A0F;
+      --panel:#0B1220;
+      --panel2:#0A1020;
+      --text:#EAF0FF;
+      --muted:#A7B3D1;
+      --line:rgba(255,255,255,.10);
+      --shadow: 0 16px 50px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --g1: linear-gradient(90deg, #22C55E 0%, #3B82F6 45%, #F97316 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.18), rgba(59,130,246,.14), rgba(249,115,22,.12));
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(59,130,246,.22), transparent 60%),
+        radial-gradient(900px 500px at 100% 0%, rgba(34,197,94,.18), transparent 55%),
+        radial-gradient(900px 600px at 60% 110%, rgba(249,115,22,.14), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    a{color:inherit}
+    .wrap{max-width:1080px;margin:0 auto;padding:28px 18px 56px}
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: var(--g2);
+      opacity:.8;
+      filter: blur(18px);
+      z-index:0;
+    }
+    header > *{position:relative;z-index:1}
+
+    .toprow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .chips{display:flex;gap:10px;flex-wrap:wrap}
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius:999px;
+      padding:6px 10px;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .title{
+      margin:12px 0 8px;
+      font-size:22px;
+      letter-spacing:-.3px;
+    }
+    .subtitle{margin:0;color:var(--muted);font-size:13.5px}
+    .link{
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding:8px 10px;
+      border-radius:12px;
+      text-decoration:none;
+      color:var(--text);
+      font-size:13px;
+      white-space:nowrap;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background: var(--g1);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+    }
+
+    .grid{display:grid;grid-template-columns: 1.15fr .85fr;gap:14px;margin-top:14px}
+    @media (max-width: 920px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card.tight{padding:14px}
+    .card:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(700px 240px at 20% 0%, rgba(59,130,246,.10), transparent 55%),
+                  radial-gradient(700px 240px at 90% 20%, rgba(34,197,94,.08), transparent 55%),
+                  radial-gradient(700px 240px at 60% 120%, rgba(249,115,22,.06), transparent 55%);
+      pointer-events:none;
+    }
+    .card > *{position:relative;z-index:1}
+
+    h2{
+      margin:0 0 10px;
+      font-size:14px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:var(--muted);
+      display:flex;align-items:center;gap:10px;
+    }
+    .bar{height:10px;flex:1;border-radius:999px;background: rgba(255,255,255,.06);overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+    .bar > i{display:block;height:100%;width:55%;background: var(--g1)}
+
+    .p{color:var(--text);margin:0 0 10px;font-size:14.5px}
+    .muted{color:var(--muted)}
+    ul{margin:10px 0 0 18px;color:var(--text)}
+    li{margin:6px 0;color:var(--text)}
+    .note{color:var(--muted);font-size:12.5px;margin-top:10px}
+
+    .kbd{font-family:var(--mono);font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.03);color:var(--text)}
+    .hl{background: var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700}
+
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:13.5px;
+      cursor:pointer;
+    }
+    button.primary{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border-color: rgba(255,255,255,.18);
+    }
+    button:hover{filter:brightness(1.06)}
+
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 760px){.two{grid-template-columns:1fr}}
+
+    .script{
+      font-family:var(--mono);
+      font-size:12.5px;
+      line-height:1.55;
+      color:#DCE7FF;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius2);
+      padding:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .tag{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:12px;
+      margin-right:8px;
+      margin-top:8px;
+    }
+    .tag i{width:8px;height:8px;border-radius:50%;background: var(--g1);display:inline-block}
+
+    .footer{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:12.5px;
+      text-align:left;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="toprow">
+        <div class="chips">
+          <span class="chip">Nicho: <strong style="color:var(--text);font-weight:600">Finanças e Negócios</strong></span>
+          <span class="chip">Dia: <strong style="color:var(--text);font-weight:600">8</strong></span>
+          <span class="chip">Formato: <strong style="color:var(--text);font-weight:600">Carrossel</strong></span>
+          <span class="chip">Pilar: <strong style="color:var(--text);font-weight:600">Passo a passo</strong></span>
+        </div>
+        <a class="link" href="https://www.instagram.com/p/DXaMZ1QAG2d/" target="_blank" rel="noreferrer">
+          <span class="dot"></span>
+          Post original
+          <span style="opacity:.8">↗</span>
+        </a>
+      </div>
+      <h1 class="title">Quanto rende <span class="hl">R$ X</span> por mês? (simulação em ativos)</h1>
+      <p class="subtitle">Modelo reproduzível de carrossel com curiosidade + comparação numérica + CTA por palavra‑chave para DM.</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo <span class="bar"><i></i></span></h2>
+        <p class="p">Você pega um <strong>valor símbolo</strong> (ex.: prêmio, venda de carro, reserva, caixa da empresa) e converte em <strong>renda mensal estimada</strong> em diferentes classes (baixo risco, renda recorrente e variável). Entrega rápida, altamente compartilhável e ótima para gerar <strong>leads por DM</strong>.</p>
+        <div>
+          <span class="tag"><i></i> Hook por pergunta</span>
+          <span class="tag"><i></i> Comparação em lista</span>
+          <span class="tag"><i></i> Números em R$/mês</span>
+          <span class="tag"><i></i> Disclaimer curto</span>
+          <span class="tag"><i></i> CTA com palavra‑chave</span>
+        </div>
+      </section>
+
+      <aside class="card tight">
+        <h2>Metadados p/ calendário <span class="bar"><i style="width:42%"></i></span></h2>
+        <p class="p"><strong>Título:</strong> Quanto rende R$ X por mês? (simulação em ativos)</p>
+        <p class="p"><strong>Instrução curta:</strong> Monte um carrossel comparando o mesmo valor em 4–7 ativos, mostrando R$/mês + premissas e finalize com CTA por palavra‑chave para DM.</p>
+        <p class="p"><strong>Pilar:</strong> Passo a passo</p>
+        <p class="p"><strong>Formato:</strong> carrossel</p>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Estrutura <span class="bar"><i style="width:62%"></i></span></h2>
+      <div class="two">
+        <div>
+          <p class="p"><strong>Versão recomendada (6 slides)</strong> — melhor retenção e clareza:</p>
+          <ul>
+            <li><strong>Slide 1:</strong> Hook + promessa (renda mensal) + valor símbolo</li>
+            <li><strong>Slide 2:</strong> Premissas (taxas, horizonte, impostos, risco) em 3 bullets</li>
+            <li><strong>Slide 3:</strong> Baixo risco (Poupança vs Tesouro Selic) com R$/mês</li>
+            <li><strong>Slide 4:</strong> Renda recorrente (FIIs) com 2 exemplos + nota de oscilação</li>
+            <li><strong>Slide 5:</strong> Variável (ações/dividendos) com 2 exemplos + alerta de volatilidade</li>
+            <li><strong>Slide 6:</strong> Resumo ("depende do perfil") + CTA por palavra‑chave</li>
+          </ul>
+        </div>
+        <div>
+          <p class="p"><strong>Versão fiel (2 slides)</strong> — rápida, direta:</p>
+          <ul>
+            <li><strong>Slide 1:</strong> Pergunta + lista de ativos + R$/mês</li>
+            <li><strong>Slide 2:</strong> Fechamento + CTA comentário (palavra‑chave) para DM</li>
+          </ul>
+          <p class="note">Dica: se usar 2 slides, limite a lista a ~5–6 linhas e inclua disclaimer curto no rodapé.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Roteiro <span class="bar"><i style="width:70%"></i></span></h2>
+      <p class="p muted">Texto-base para copiar e adaptar (substitua os campos entre colchetes).</p>
+
+      <div class="btns">
+        <button class="primary" onclick="copyScript()">Copiar roteiro</button>
+        <button onclick="togglePremissas()">Alternar bloco de premissas</button>
+      </div>
+
+      <div id="script" class="script" style="margin-top:12px">CARROSSEL (6 SLIDES) — MODELO “QUANTO RENDERIA X INVESTIDO?”
+
+[SLIDE 1 — HOOK]
+Quanto renderia R$ [VALOR] investido?
+Em média, isso daria aproximadamente R$ [FAIXA] por mês (dependendo do ativo e do risco).
+
+[SLIDE 2 — PREMISSAS]
+Premissas da simulação (resumo):
+- Período: [30 dias / 12 meses] (renda média mensal)
+- Taxas/benchmarks: [CDI/Selic/IPCA] em [DATA]
+- Impostos/taxas: [considerados / não considerados] (ex.: IR, taxa de custódia, corretagem)
+
+[SLIDE 3 — BAIXO RISCO]
+Baixo risco (previsibilidade maior):
+- Poupança: ~R$ [X] / mês
+- Tesouro Selic / CDB 100% CDI: ~R$ [Y] / mês
+
+[SLIDE 4 — RENDA RECORRENTE]
+Renda recorrente (oscilação no preço):
+- FII [EXEMPLO 1]: ~R$ [X] / mês (dividendos)
+- FII [EXEMPLO 2]: ~R$ [Y] / mês (dividendos)
+*Dividendos e cota podem variar.
+
+[SLIDE 5 — VARIÁVEL]
+Variável (potencial maior, volatilidade maior):
+- Ação [EXEMPLO 1] (dividendos): ~R$ [X] / mês (média)
+- Ação [EXEMPLO 2] (dividendos): ~R$ [Y] / mês (média)
+*Ações podem cair no curto prazo. Não é indicação.
+
+[SLIDE 6 — FECHAMENTO + CTA]
+Moral: o “melhor” depende de 3 coisas:
+1) Seu objetivo (renda agora vs crescer patrimônio)
+2) Seu prazo
+3) Seu apetite a risco
+
+Quer que eu simule pro seu caso (com seu valor e perfil)?
+Comenta [PALAVRA-CHAVE] que eu te chamo no direct.</div>
+
+      <p class="note">Sugestão de palavra‑chave: <span class="kbd">RENDA</span>, <span class="kbd">SIMULAÇÃO</span>, <span class="kbd">CARTEIRA</span>, <span class="kbd">CAIXA</span>.</p>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Slides sugeridos (1..6) <span class="bar"><i style="width:58%"></i></span></h2>
+      <ol style="margin:10px 0 0 18px">
+        <li><strong>Hook:</strong> “Quanto renderia R$ X investido?” + 1 linha de promessa (“em R$/mês”).</li>
+        <li><strong>Premissas:</strong> 3 bullets (período, taxa base, impostos/taxas/risco).</li>
+        <li><strong>Baixo risco:</strong> 2 linhas (Poupança vs Tesouro/CDB) com números.</li>
+        <li><strong>Renda recorrente:</strong> 2 FIIs + observação curta sobre variação.</li>
+        <li><strong>Variável:</strong> 2 ações/ETFs + alerta de volatilidade (1 linha).</li>
+        <li><strong>Resumo:</strong> “depende do perfil” + CTA por palavra‑chave.</li>
+      </ol>
+      <p class="note">Se quiser 8 slides: separe “Tesouro vs CDB”, adicione “LCI/LCA” e crie um slide só de “erros de interpretação” (confundir renda com rentabilidade).</p>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Elementos visuais <span class="bar"><i style="width:66%"></i></span></h2>
+      <div class="two">
+        <div>
+          <p class="p"><strong>Identidade (reproduzível)</strong></p>
+          <ul>
+            <li>Fundo escuro (#070A0F) + texto branco + muito respiro</li>
+            <li>Card central com borda suave e sombra leve</li>
+            <li>Destaques pontuais (títulos, números-chave) em degradê verde→azul→laranja</li>
+            <li>Lista escaneável (1 linha por ativo) + números alinhados</li>
+          </ul>
+        </div>
+        <div>
+          <p class="p"><strong>Composição por slide</strong></p>
+          <ul>
+            <li><strong>Topo:</strong> pergunta/título</li>
+            <li><strong>Meio:</strong> lista comparativa</li>
+            <li><strong>Rodapé:</strong> disclaimer curto em fonte menor (quando houver)</li>
+            <li><strong>Opcional:</strong> imagem temática em faixa inferior (prêmio, meta, caixa, etc.)</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">Tipografia: sans serif moderna; números podem ter peso maior (sem exagerar) para guiar o olhar.</p>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Copy e ganchos <span class="bar"><i style="width:74%"></i></span></h2>
+      <div class="two">
+        <div>
+          <p class="p"><strong>Ganchos prontos (escolha 1)</strong></p>
+          <ul>
+            <li>“Quanto rende por mês ter R$ [X] aplicado?”</li>
+            <li>“Transformei R$ [X] em renda mensal (em 5 opções).”</li>
+            <li>“R$ [X] no banco vs investido: olha a diferença no mês.”</li>
+            <li>“Se você tivesse R$ [X] hoje, onde colocaria? Fiz as contas.”</li>
+          </ul>
+        </div>
+        <div>
+          <p class="p"><strong>Regras de copy (para não travar)</strong></p>
+          <ul>
+            <li>Fale em <strong>R$/mês</strong> (aproxima da vida real)</li>
+            <li>Use <strong>faixas</strong> quando necessário (ex.: “~R$ 2.000 a 2.800/mês”)</li>
+            <li>Inclua 1 linha de <strong>premissa</strong> para credibilidade</li>
+            <li>Evite promessa absoluta: use “~”, “em média”, “pode variar”</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>CTA <span class="bar"><i style="width:52%"></i></span></h2>
+      <p class="p"><strong>CTA principal (comentário → DM):</strong><br>
+        “Comenta <span class="kbd">SIMULAÇÃO</span> que eu te chamo no direct e monto uma conta com o seu valor e seu perfil.”
+      </p>
+      <p class="p"><strong>Variações por objetivo:</strong></p>
+      <ul>
+        <li><strong>Captação de leads:</strong> “Comenta <span class="kbd">PLANILHA</span> que eu te mando o modelo.”</li>
+        <li><strong>Consultoria:</strong> “Comenta <span class="kbd">CARTEIRA</span> que eu te explico o que faz sentido pro seu momento.”</li>
+        <li><strong>PJ (caixa):</strong> “Comenta <span class="kbd">CAIXA</span> que eu te mando opções para o caixa da empresa.”</li>
+      </ul>
+      <p class="note">Boas práticas: peça 1 ação só; palavra‑chave em caixa alta; prometa um próximo passo específico (ex.: “monto a simulação”).</p>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Checklist <span class="bar"><i style="width:60%"></i></span></h2>
+      <div class="two">
+        <div>
+          <p class="p"><strong>Checklist de criação (conteúdo)</strong></p>
+          <ul>
+            <li>Definir <strong>VALOR símbolo</strong> (alto o suficiente para gerar curiosidade)</li>
+            <li>Definir <strong>período</strong> (mês) e <strong>benchmark</strong> (CDI/Selic/IPCA)</li>
+            <li>Escolher 4–7 opções (baixo risco, renda, variável)</li>
+            <li>Converter para <strong>R$/mês</strong> (usar ~ e faixas se preciso)</li>
+            <li>Adicionar <strong>disclaimer</strong> curto (variação, impostos, não recomendação)</li>
+            <li>Fechar com <strong>CTA por palavra‑chave</strong></li>
+          </ul>
+        </div>
+        <div>
+          <p class="p"><strong>Checklist de criação (design)</strong></p>
+          <ul>
+            <li>Fundo escuro + alto contraste + respiro</li>
+            <li>Hierarquia: título grande → lista → nota pequena</li>
+            <li>Destaque visual leve nos números (peso/cor/degradê)</li>
+            <li>Não passar de ~6 linhas por slide (texto puro)</li>
+            <li>Consistência de alinhamento (coluna única)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>Variações <span class="bar"><i style="width:48%"></i></span></h2>
+      <div class="two">
+        <div>
+          <p class="p"><strong>Variação 1 — Pessoa Física (meta de renda)</strong></p>
+          <ul>
+            <li>Valor: “R$ 100 mil / R$ 500 mil / R$ 1 milhão”</li>
+            <li>CTA: <span class="kbd">RENDA</span> (simulação por perfil)</li>
+          </ul>
+          <p class="p"><strong>Variação 2 — PJ (caixa da empresa)</strong></p>
+          <ul>
+            <li>Ângulo: “dinheiro parado no caixa vs aplicação de curto prazo”</li>
+            <li>Incluir: liquidez, risco, prazo, tributação</li>
+            <li>CTA: <span class="kbd">CAIXA</span></li>
+          </ul>
+        </div>
+        <div>
+          <p class="p"><strong>Variação 3 — Mito vs realidade (quebra de expectativa)</strong></p>
+          <ul>
+            <li>Hook: “R$ [X] não te dá ‘aposentadoria’ (dependendo do ativo)”</li>
+            <li>Slide extra: “3 erros ao olhar só R$/mês”</li>
+            <li>CTA: <span class="kbd">ERROS</span> (checklist)</li>
+          </ul>
+          <p class="note">Se quiser transformar em prova/autoridade: mostre “como eu calculo” + print de planilha (sem dados sensíveis).</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">UX/Nota: mantenha o conteúdo como simulação educacional; evite recomendação individualizada pública; direcione para avaliação no direct.</div>
+  </div>
+
+  <script>
+    function copyScript(){
+      const el = document.getElementById('script');
+      const text = el.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btns = document.getElementsByClassName('primary');
+        if(btns && btns[0]){
+          const old = btns[0].innerText;
+          btns[0].innerText = 'Roteiro copiado';
+          setTimeout(()=>btns[0].innerText = old, 1200);
+        }
+      });
+    }
+
+    function togglePremissas(){
+      const el = document.getElementById('script');
+      const t = el.innerText;
+      const blockStart = "[SLIDE 2 — PREMISSAS]";
+      const idx = t.indexOf(blockStart);
+      if(idx === -1) return;
+
+      const lines = t.split('\n');
+      const out = [];
+      let skip = false;
+      for(let i=0;i<lines.length;i++){
+        const line = lines[i];
+        if(line.trim() === "[SLIDE 2 — PREMISSAS]"){ skip = !skip; continue; }
+        if(skip){
+          if(line.trim().startsWith("[SLIDE 3")){ skip = false; out.push(line); }
+          continue;
+        }
+        out.push(line);
+      }
+      el.innerText = out.join('\n');
+    }
+  </script>
+</body>
+</html>
