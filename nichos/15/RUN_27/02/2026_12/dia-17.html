@@ -1,672 +1,445 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dia 17 — Carrossel narrativo (template neutro)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dia 17 — A regra simples que protege seu valor (e seu caixa)</title>
   <style>
     :root{
-      --bg:#070A12;
-      --panel:#0B1020;
-      --card:#0E1630;
-      --stroke:rgba(255,255,255,.08);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.68);
-      --muted2:rgba(255,255,255,.55);
-      --shadow: 0 18px 50px rgba(0,0,0,.55);
-      --r12:12px;
-      --r16:16px;
-      --r20:20px;
-      --g1: linear-gradient(90deg, #37FF8B 0%, #3B82F6 45%, #F59E0B 100%);
-      --g2: linear-gradient(135deg, rgba(55,255,139,.16), rgba(59,130,246,.14), rgba(245,158,11,.12));
-      --accent:#8B5CF6;
-      --ok:#37FF8B;
-      --warn:#F59E0B;
-      --info:#3B82F6;
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.08);
+      --stroke: rgba(255,255,255,0.12);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,0.72);
+      --muted2: rgba(234,240,255,0.60);
+      --shadow: 0 18px 40px rgba(0,0,0,0.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --g1: linear-gradient(90deg,#22C55E 0%, #38BDF8 45%, #FB923C 100%);
+      --g2: radial-gradient(900px 500px at 15% -10%, rgba(56,189,248,0.25), transparent 60%),
+            radial-gradient(900px 500px at 95% 10%, rgba(34,197,94,0.20), transparent 60%),
+            radial-gradient(900px 520px at 55% 110%, rgba(251,146,60,0.20), transparent 55%);
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family:var(--sans);
-      color:var(--text);
-      background:
-        radial-gradient(900px 500px at 12% 8%, rgba(59,130,246,.18), transparent 55%),
-        radial-gradient(850px 520px at 88% 20%, rgba(245,158,11,.14), transparent 58%),
-        radial-gradient(900px 520px at 50% 90%, rgba(55,255,139,.12), transparent 55%),
-        var(--bg);
-      line-height:1.35;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
     }
-    a{color:#A7C7FF; text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
-
-    header{
-      background:var(--g2);
-      border:1px solid var(--stroke);
-      border-radius:var(--r20);
-      box-shadow:var(--shadow);
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 40px}
+    .top{
+      display:flex; gap:16px; align-items:stretch; justify-content:space-between; flex-wrap:wrap;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      position:relative;
       overflow:hidden;
     }
-    .hdr{
-      display:flex;
-      gap:16px;
-      align-items:flex-start;
-      justify-content:space-between;
-      padding:18px 18px 14px;
+    .top:before{
+      content:"";
+      position:absolute; inset:-1px;
+      background: linear-gradient(90deg, rgba(34,197,94,0.18), rgba(56,189,248,0.18), rgba(251,146,60,0.18));
+      filter: blur(20px);
+      opacity:0.65;
+      pointer-events:none;
     }
+    .top > *{position:relative}
     .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--stroke);
-      border-radius:999px;
-      padding:8px 12px;
-      color:var(--muted);
-      font-size:13px;
-      white-space:nowrap;
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .2px;
+      width: fit-content;
     }
-    .dot{
-      width:10px;height:10px;border-radius:50%;
-      background:var(--g1);
-      box-shadow:0 0 0 6px rgba(55,255,139,.08);
+    .dot{width:10px;height:10px;border-radius:50%; background: var(--g1)}
+    .title{
+      margin:12px 0 6px;
+      font-size: 24px;
+      line-height: 1.15;
+      letter-spacing: -0.4px;
     }
-    h1{
-      margin:8px 0 6px;
-      font-weight:800;
-      letter-spacing:-0.02em;
-      font-size: clamp(20px, 3.2vw, 34px);
+    .subtitle{margin:0; color: var(--muted); line-height:1.45; max-width: 72ch}
+    .topRight{
+      display:flex; flex-direction:column; gap:10px; min-width: 260px; flex: 1 1 280px; align-items:flex-end; justify-content:space-between;
     }
-    .sub{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      max-width:72ch;
-    }
-    .topline{
-      display:flex;
-      flex-wrap:wrap;
-      align-items:center;
-      gap:10px;
-      padding:0 18px 18px;
-      border-top:1px solid var(--stroke);
-      background:rgba(0,0,0,.18);
-    }
-    .kpi{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      padding:12px 0 0;
-    }
-    .chip{
-      font-size:12px;
-      color:var(--muted);
-      padding:7px 10px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.03);
-    }
-    .chip strong{color:var(--text)}
-
-    .grid{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:14px;
-    }
-    @media (min-width: 980px){
-      .grid{grid-template-columns: 1.15fr .85fr; align-items:start}
-    }
-
-    .card{
-      border:1px solid var(--stroke);
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border-radius:var(--r16);
-      box-shadow:var(--shadow);
+    .linkBox{
+      width:100%;
+      background: rgba(0,0,0,0.20);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius2);
+      padding: 12px;
+      color: var(--muted);
+      font-size: 13px;
       overflow:hidden;
     }
-    .card .hd{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      padding:14px 14px 10px;
-      border-bottom:1px solid var(--stroke);
-      background:rgba(0,0,0,.18);
-    }
-    .card h2{
-      margin:0;
-      font-size:14px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      color:rgba(255,255,255,.78);
-    }
-    .card .bd{padding:14px}
-    .muted{color:var(--muted)}
-    .muted2{color:var(--muted2)}
-
-    .callout{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      background:rgba(255,255,255,.03);
-      padding:12px 12px;
-    }
-    .hl{
-      background:var(--g1);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-      font-weight:900;
-    }
-
-    ul{margin:10px 0 0; padding-left:18px}
-    li{margin:7px 0; color:var(--muted)}
-    li strong{color:var(--text)}
-
-    .btns{display:flex; flex-wrap:wrap; gap:10px}
+    .linkBox .k{color: rgba(234,240,255,0.88); font-size: 12px; text-transform: uppercase; letter-spacing: .14em}
+    .linkBox .v{display:block; margin-top:8px; font-family: var(--mono); font-size: 12px; opacity: .95; white-space: nowrap; overflow:hidden; text-overflow: ellipsis}
+    .btnRow{display:flex; gap:10px; width:100%; justify-content:flex-end; flex-wrap:wrap}
     button{
+      appearance:none; border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
       cursor:pointer;
-      border-radius:12px;
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.04);
-      color:var(--text);
-      padding:10px 12px;
-      font-weight:700;
+      font-weight: 600;
+      letter-spacing: .2px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
     }
-    button:hover{background:rgba(255,255,255,.07)}
+    button:hover{transform: translateY(-1px); background: rgba(255,255,255,0.085); border-color: rgba(255,255,255,0.18)}
     .primary{
-      background:linear-gradient(90deg, rgba(55,255,139,.14), rgba(59,130,246,.12), rgba(245,158,11,.12));
-      border-color:rgba(255,255,255,.14);
+      background: linear-gradient(90deg, rgba(34,197,94,0.22), rgba(56,189,248,0.22), rgba(251,146,60,0.22));
+      border-color: rgba(255,255,255,0.20);
     }
-
-    pre{
-      margin:0;
-      padding:14px;
-      background:rgba(0,0,0,.35);
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      overflow:auto;
-      color:rgba(255,255,255,.88);
-      font-family:var(--mono);
-      font-size:12.5px;
-      line-height:1.45;
-      white-space:pre-wrap;
-    }
-
-    .two{
+    .grid{
       display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+      margin-top: 14px;
     }
-    @media (min-width: 980px){
-      .two{grid-template-columns:1fr 1fr}
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr}
+      .topRight{align-items:stretch}
+      .btnRow{justify-content:flex-start}
     }
-
-    .foot{
-      margin-top:14px;
-      color:var(--muted2);
-      font-size:12px;
-      padding:0 4px;
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
     }
-
-    .slide{
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      background:rgba(255,255,255,.03);
-      padding:12px;
+    .card:after{
+      content:"";
+      position:absolute;
+      inset:auto -40px -50px auto;
+      width: 220px; height: 220px;
+      background: var(--g1);
+      filter: blur(55px);
+      opacity: 0.10;
+      transform: rotate(12deg);
+      pointer-events:none;
     }
-    .slide .t{
-      font-weight:900;
-      letter-spacing:-0.01em;
-      margin:0 0 6px;
+    .h{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom: 10px;
     }
-    .slide .d{
-      margin:0;
-      color:var(--muted);
-      font-size:13px;
+    .h .t{
+      font-size: 13px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(234,240,255,0.78);
     }
     .pill{
+      font-size: 12px;
+      color: rgba(234,240,255,0.75);
+      border: 1px solid var(--stroke);
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.18);
+      white-space: nowrap;
+    }
+    ul{margin:10px 0 0 18px; padding:0; color: var(--muted); line-height:1.55}
+    li{margin:6px 0}
+    .kpi{
+      display:grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 620px){
+      .kpi{grid-template-columns:1fr}
+    }
+    .mini{
+      background: rgba(0,0,0,0.18);
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .mini .a{font-size:12px; color: var(--muted2); text-transform: uppercase; letter-spacing: .14em}
+    .mini .b{margin-top:6px; font-size: 14px; color: rgba(234,240,255,0.90); line-height:1.35}
+    .script{
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 10px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: rgba(234,240,255,0.90);
+      white-space: pre-wrap;
+    }
+    .hr{height:1px; background: rgba(255,255,255,0.10); margin: 12px 0}
+    .twoCol{display:grid; grid-template-columns: 1fr 1fr; gap: 12px}
+    @media (max-width: 820px){
+      .twoCol{grid-template-columns: 1fr}
+    }
+    .tag{
       display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:rgba(255,255,255,.82);
-      background:rgba(0,0,0,.22);
-      border:1px solid var(--stroke);
-      margin-bottom:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: rgba(234,240,255,0.78);
+      font-size: 12px;
+      margin: 6px 6px 0 0;
     }
-    .pill .bar{width:18px;height:8px;border-radius:99px;background:var(--g1)}
-
-    .toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
-      background:rgba(0,0,0,.72); border:1px solid var(--stroke);
-      padding:10px 12px; border-radius:999px; color:rgba(255,255,255,.9);
-      display:none; z-index:99; font-size:13px;
-    }
+    .tag i{display:inline-block; width:8px; height:8px; border-radius:50%; background: var(--g1)}
+    .footerNote{margin-top: 12px; color: var(--muted2); font-size: 12.5px; line-height: 1.5}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="hdr">
-        <div>
-          <div class="badge"><span class="dot"></span><span><strong>Nicho:</strong> Neutro</span><span>•</span><span><strong>Dia:</strong> 17</span></div>
-          <h1><span class="hl">Carrossel narrativo</span> que vira tese + prova + ação</h1>
-          <p class="sub">Template neutro para qualquer área: abre com referência/contexto, valida a dor, quebra expectativa, cria frase memorável, entrega ações e fecha com CTA claro.</p>
-        </div>
-        <div class="btns">
-          <button class="primary" id="copyBtn">Copiar roteiro</button>
-          <button onclick="window.open('https://www.instagram.com/p/DHlEjCXN-Xy/','_blank')">Abrir post original</button>
-        </div>
+    <header class="top">
+      <div>
+        <div class="badge"><span class="dot"></span><span><strong>Nicho:</strong> Neutro</span><span style="opacity:.55">|</span><span><strong>Dia:</strong> 17</span></div>
+        <h1 class="title">A regra simples que protege seu valor (e seu caixa)</h1>
+        <p class="subtitle">Roteiro reproduzível para qualquer área: use um <strong>alerta direto</strong>, revele uma <strong>regra SE/ENTÃO</strong>, prove com <strong>exemplo numérico</strong> e feche com <strong>reframing</strong> + CTA de comentário/salvamento.</p>
       </div>
-      <div class="topline">
-        <div class="kpi">
-          <span class="chip"><strong>Pilar:</strong> Passo a passo</span>
-          <span class="chip"><strong>Formato:</strong> Carrossel</span>
-          <span class="chip"><strong>Macroestrutura:</strong> Narrativa → Tese → Prova → Solução → Convite</span>
-          <span class="chip"><strong>Slides:</strong> 7–10 (sugestão: 9)</span>
-          <span class="chip"><strong>Link:</strong> <a href="https://www.instagram.com/p/DHlEjCXN-Xy/" target="_blank" rel="noopener noreferrer">instagram.com/p/DHlEjCXN-Xy/</a></span>
+      <div class="topRight">
+        <div class="linkBox">
+          <div class="k">Post original</div>
+          <a class="v" href="https://www.instagram.com/p/DXo6TyPFTLP/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/p/DXo6TyPFTLP/</a>
+        </div>
+        <div class="btnRow">
+          <button class="primary" id="copyBtn">Copiar roteiro</button>
+          <button id="copyHooksBtn">Copiar ganchos</button>
         </div>
       </div>
     </header>
 
     <section class="grid">
-      <div class="card">
-        <div class="hd"><h2>Resumo</h2></div>
-        <div class="bd">
-          <div class="callout">
-            <div class="muted2" style="margin-bottom:6px">O que este post faz (reproduzível):</div>
-            <div style="font-size:15px">
-              Você pega um <span class="hl">fenômeno familiar</span> (tendência, notícia, cena do dia a dia), mostra a consequência real, apresenta um <span class="hl">culpado não óbvio</span>, define uma tese curta e entrega uma lista de ações práticas + microcompromisso.
-            </div>
-          </div>
-          <div class="two" style="margin-top:12px">
-            <div class="callout">
-              <div style="font-weight:800; margin-bottom:6px">Quando usar</div>
-              <ul>
-                <li>Quando você quer <strong>ensinar</strong> algo sem virar aula longa.</li>
-                <li>Quando existe um <strong>vilão óbvio</strong> no seu nicho e você quer reposicionar a causa.</li>
-                <li>Quando você precisa de <strong>salvamentos e compartilhamentos</strong>.</li>
-              </ul>
-            </div>
-            <div class="callout">
-              <div style="font-weight:800; margin-bottom:6px">Resultado esperado</div>
-              <ul>
-                <li><strong>Retenção</strong> (curiosidade + progressão lógica).</li>
-                <li><strong>Autoridade</strong> (conceito + explicação simples).</li>
-                <li><strong>Ação</strong> (lista objetiva + 1º passo).</li>
-              </ul>
-            </div>
-          </div>
+      <article class="card" id="cardResumo">
+        <div class="h">
+          <div class="t">Resumo</div>
+          <div class="pill">Pilar: Erro comum • Formato: Reels</div>
         </div>
-      </div>
+        <ul>
+          <li><strong>Ideia central:</strong> pequenas decisões “inocentes” (ceder, baratear, aceitar condições ruins) corroem valor percebido e lucro.</li>
+          <li><strong>Mecanismo de retenção:</strong> acusação + bastidor/autoridade + regra simples + números + tensão moral + contraste aspiracional.</li>
+          <li><strong>Resultado esperado:</strong> mais salvamentos (“vou usar essa regra”) e comentários (“no meu caso é diferente…”).</li>
+        </ul>
+        <div class="kpi">
+          <div class="mini"><div class="a">Duração</div><div class="b">30–45s</div></div>
+          <div class="mini"><div class="a">Cortes</div><div class="b">a cada 1–2 frases</div></div>
+          <div class="mini"><div class="a">Entrega</div><div class="b">rápida + pausas estratégicas</div></div>
+        </div>
+        <p class="footerNote">Troque “permutas” por qualquer decisão recorrente do seu contexto: descontos, escopo aberto, reunião grátis, prazo impossível, “só dessa vez”, etc.</p>
+      </article>
 
-      <aside class="card">
-        <div class="hd"><h2>Ficha neutra (preencha)</h2></div>
-        <div class="bd">
-          <pre id="ficha">TEMA (1 linha): __________________________________________
-PÚBLICO (quem): __________________________________________
-CONTEXTO POP / REFERÊNCIA (tendência, notícia, meme): __________________
-DOR PRINCIPAL (1 frase): __________________________________
-VILÃO ÓBVIO (o que as pessoas culpam): ______________________
-FATOR NÃO ÓBVIO (sua tese): _________________________________
-FRASE-PLACA (curta e memorável): “__________________________”
-CONCEITO (sua lente/abordagem): _____________________________
-3 PONTOS DE EXPLICAÇÃO (sem jargão):
-  1) __________________  2) __________________  3) __________________
-3–5 AÇÕES PRÁTICAS (checklist):
-  1) __________________  2) __________________  3) __________________
-  4) __________________  5) __________________
-MICROAÇÃO (primeiro passo em 5 min): _______________________
-CTA (salvar/comentar/DM): __________________________________</pre>
-          <div class="foot">Dica: quanto mais específico o “vilão óbvio” e o “fator não óbvio”, mais forte a quebra de expectativa.</div>
+      <aside class="card" id="cardEstrutura">
+        <div class="h"><div class="t">Estrutura (sequência)</div><div class="pill">0–45s</div></div>
+        <ul>
+          <li><strong>0–2s</strong> — Hook acusatório/alerta</li>
+          <li><strong>2–6s</strong> — Contexto/autoridade (1–2 frases)</li>
+          <li><strong>6–12s</strong> — Regra SE/ENTÃO (heurística memorizável)</li>
+          <li><strong>12–20s</strong> — Exemplo numérico (até 3 números)</li>
+          <li><strong>20–30s</strong> — Reframing (não é sobre X; é sobre Y)</li>
+          <li><strong>30–40s</strong> — Consequência (dor) + contraste aspiracional</li>
+          <li><strong>40–45s</strong> — CTA (comentário + salvar)</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="twoCol">
+          <div>
+            <div class="tag"><i></i>Regra simples</div>
+            <div class="tag"><i></i>Números</div>
+            <div class="tag"><i></i>Polarização controlada</div>
+          </div>
+          <div>
+            <div class="tag"><i></i>Texto na tela</div>
+            <div class="tag"><i></i>Zoom-in leve</div>
+            <div class="tag"><i></i>Pausa pós-frase polêmica</div>
+          </div>
         </div>
       </aside>
     </section>
 
-    <section class="card" style="margin-top:14px">
-      <div class="hd"><h2>Estrutura (sequência lógica)</h2></div>
-      <div class="bd">
-        <div class="two">
-          <div class="callout">
-            <div style="font-weight:900">Linha de raciocínio</div>
-            <ul>
-              <li><strong>A) Contexto</strong> (algo que já está no radar)</li>
-              <li><strong>B) Dor real</strong> (impacto no cotidiano)</li>
-              <li><strong>C) Diagnóstico</strong> (por que acontece)</li>
-              <li><strong>D) Quebra de expectativa</strong> (não é só X; é Y)</li>
-              <li><strong>E) Frase-placa</strong> (síntese compartilhável)</li>
-              <li><strong>F) Conceito</strong> (nome + 3 sinais)</li>
-              <li><strong>G) Ações</strong> (lista aplicável)</li>
-              <li><strong>H) Microação</strong> (comece por…)</li>
-              <li><strong>I) CTA</strong> (salve/comente/compartilhe/DM)</li>
-            </ul>
-          </div>
-          <div class="callout">
-            <div style="font-weight:900">Regras de ouro</div>
-            <ul>
-              <li><strong>1 ideia por slide</strong> (sem misturar tópicos).</li>
-              <li><strong>1 palavra-chave em destaque</strong> por slide (no máximo 2).</li>
-              <li><strong>1 slide</strong> pode ter parágrafo maior (o “diagnóstico”).</li>
-              <li>Alterne <strong>slides densos</strong> (explica) e <strong>slides respiro</strong> (frase grande).</li>
-              <li>Feche com <strong>microcompromisso</strong> (5 minutos) para reduzir barreira.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+    <section class="card" id="cardRoteiro" style="margin-top:14px;">
+      <div class="h"><div class="t">Roteiro (plug-and-play)</div><div class="pill">Substitua [X] pelos seus termos</div></div>
+      <div class="script" id="roteiroTexto">[HOOK | 0–2s]
+“Se você faz [COMPORTAMENTO COMUM], você tá sabotando seu valor.”
+
+[CONTEXTO/AUTORIDADE | 2–6s]
+“Eu vejo isso direto na prática: [1 prova curta: atendo/negocio/reviso/entrego X por semana].”
+
+[REGRA SE/ENTÃO | 6–12s]
+“Minha regra é simples:
+SE o retorno/valor percebido for MAIOR do que o custo da minha entrega, eu considero.
+SE for MENOR, eu pago/recuso/reestruturo.”
+
+[EXEMPLO NUMÉRICO | 12–20s]
+“Exemplo rápido:
+Meu [SERVIÇO/ENTREGA] vale R$[A].
+A proposta/condição oferece algo que eu avalio em R$[B].
+Se R$[B] &gt; R$[A], ok.
+Se R$[B] &lt; R$[A], eu não troco meu trabalho por isso.”
+
+[REFRAMING | 20–30s]
+“E sim, isso pode soar ‘rígido’.
+Mas não é sobre ser chato. É sobre tratar [SEU TRABALHO/PROJETO] como empresa, não como favor.”
+
+[CONSEQUÊNCIA + CONTRASTE | 30–40s]
+“Porque o destino de quem aceita qualquer coisa é: muito movimento, pouco caixa.
+Eu prefiro menos ‘sim’ e mais margem — com regras claras.”
+
+[CTA | 40–45s]
+“Quer que eu te ajude a criar uma regra assim pro seu caso?
+Comenta ‘REGRA’ e diz qual é o [COMPORTAMENTO] que mais te trava. E salva isso pra usar antes de responder propostas.”</div>
+      <p class="footerNote">Dica: grave como se estivesse dando um “puxão de orelha útil”. Energia alta, frases curtas, e pausa de 0,3–0,5s depois do hook.</p>
     </section>
 
-    <section class="card" style="margin-top:14px">
-      <div class="hd"><h2>Slides sugeridos (1..9)</h2></div>
-      <div class="bd">
-        <div class="two">
-          <div class="slide">
-            <div class="pill"><span class="bar"></span>Slide 1 — Capa (Hook)</div>
-            <p class="t">“[Referência] traz um alerta: <span class="hl">[ideia forte]</span>”</p>
-            <p class="d">Texto pequeno + palavra-chave gigante + micro-CTA: “Vem entender →”.</p>
-          </div>
-          <div class="slide">
-            <div class="pill"><span class="bar"></span>Slide 2 — Validação</div>
-            <p class="t">“Se você já sentiu [sintoma], isso é por causa de [situação].”</p>
-            <p class="d">Cena cotidiana + frase final: “Isso já é real.”</p>
-          </div>
-          <div class="slide">
-            <div class="pill"><span class="bar"></span>Slide 3 — Diagnóstico</div>
-            <p class="t">“Mais [X]… menos [Y].”</p>
-            <p class="d">Um parágrafo (6–8 linhas) explicando o fenômeno de forma simples.</p>
-          </div>
-          <div class="slide">
-            <div class="pill"><span class="bar"></span>Slide 4 — Quebra de expectativa</div>
-            <p class="t">“E não é só culpa de <span class="hl">[vilão óbvio]</span>.”</p>
-            <p class="d">Liste 2–4 causas alternativas (processo, ambiente, decisão, hábito, estrutura, contexto).</p>
-          </div>
-          <div class="slide">
-            <div class="pill"><span class="bar"></span>Slide 5 — Frase-placa</div>
-            <p class="t"><span class="hl">“Menos _____. Mais _____.”</span></p>
-            <p class="d">Slide de respiro: alta memorização e compartilhamento.</p>
-          </div>
-          <div class="slide">
-            <div class="pill"><span class="bar"></span>Slide 6 — Tese + conceito</div>
-            <p class="t">“O que muda é: <span class="hl">[sua tese]</span>.”</p>
-            <p class="d">Nomeie seu conceito + 3 sinais/pilares em bullets.</p>
-          </div>
-          <div class="slide">
-            <div class="pill"><span class="bar"></span>Slide 7 — Ações práticas</div>
-            <p class="t">“Faça isso para melhorar <span class="hl">[resultado]</span>:”</p>
-            <p class="d">3–5 bullets ultra práticos (verbos no imperativo; sem teoria).</p>
-          </div>
-          <div class="slide">
-            <div class="pill"><span class="bar"></span>Slide 8 — Microação (5 min)</div>
-            <p class="t">“Comece por: <span class="hl">[1 passo]</span>.”</p>
-            <p class="d">Pequena vitória para destravar: “Hoje ainda, faça…”.</p>
-          </div>
-          <div class="slide">
-            <div class="pill"><span class="bar"></span>Slide 9 — CTA</div>
-            <p class="t">“Quer que eu adapte isso ao seu caso?”</p>
-            <p class="d">CTA simples de engajamento + opcional de conversão (DM/página/link).</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <section class="grid" style="margin-top:14px;">
+      <article class="card" id="cardVisuais">
+        <div class="h"><div class="t">Elementos visuais</div><div class="pill">High-tech, limpo</div></div>
+        <ul>
+          <li><strong>Texto na tela (1–4 palavras):</strong> “Você tá sabotando seu valor”, “REGRA SE/ENTÃO”, “R$A x R$B”, “Muito movimento, pouco caixa”.</li>
+          <li><strong>Enquadramento:</strong> close/medium close, fundo escuro ou neutro, luz lateral suave.</li>
+          <li><strong>Edição:</strong> jump cuts; cortes a cada 1–2 frases; zoom-in leve no hook, na regra e na consequência.</li>
+          <li><strong>Inserções:</strong> um card com os números (R$A / R$B) por 1–2s.</li>
+          <li><strong>SFX:</strong> whoosh discreto ao entrar na regra e no exemplo (opcional).</li>
+        </ul>
+      </article>
 
-    <section class="grid" style="margin-top:14px">
-      <div class="card">
-        <div class="hd"><h2>Roteiro (texto copiável — neutro)</h2></div>
-        <div class="bd">
-          <pre id="roteiro">CARROSSEL (9 SLIDES) — TEMPLATE NEUTRO
-
-SLIDE 1 (CAPA)
-Linha pequena: “O(a) [referência/assunto] revela um alerta”
-Linha grande: “A/O [ideia forte do tema]”
-Micro-CTA: “Vem entender →”
-
-SLIDE 2 (VALIDAÇÃO)
-“Talvez você esteja percebendo [sintoma 1] e [sintoma 2].
-Isso costuma aparecer quando [situação cotidiana].
-Isso já é real.”
-
-SLIDE 3 (DIAGNÓSTICO)
-“Nos últimos tempos, a gente tem mais [pressão/estímulo/velocidade]…
-e menos [clareza/pausa/qualidade/consistência].
-O problema é que [efeito 1] vira rotina.
-E quando vira rotina, [efeito 2] parece ‘normal’ — mas custa caro.”
-
-SLIDE 4 (QUEBRA DE EXPECTATIVA)
-“E não é só culpa de [vilão óbvio].
-Muitas vezes o que pesa mesmo é:
-— [causa alternativa 1]
-— [causa alternativa 2]
-— [causa alternativa 3]
-(às vezes até [causa alternativa 4]).”
-
-SLIDE 5 (FRASE-PLACA)
-“Menos [o que te drena].
-Mais [o que te sustenta].”
-
-SLIDE 6 (TESE + CONCEITO)
-“O que muda o jogo é: [sua tese em 1 frase].
-Minha lente pra isso: [nome do conceito].
-Na prática, você percebe quando:
-— [sinal 1]
-— [sinal 2]
-— [sinal 3]”
-
-SLIDE 7 (AÇÕES PRÁTICAS)
-“3 a 5 ajustes que ajudam de verdade:
-— [ação 1: verbo + específico]
-— [ação 2: verbo + específico]
-— [ação 3: verbo + específico]
-— [ação 4: opcional]
-— [ação 5: opcional]”
-
-SLIDE 8 (MICROAÇÃO)
-“Você não precisa mudar tudo.
-Comece por: [microação de 5 minutos].
-Depois, avance para: [próximo passo simples].”
-
-SLIDE 9 (CTA)
-“Qual parte disso mais acontece com você: [opção A] ou [opção B]?
-Comente aqui.
-Salve pra revisar depois e compartilhe com alguém que precisa ver isso.”
-
-CTA OPCIONAL (conversão leve)
-“Se quiser, me mande ‘[PALAVRA-CHAVE]’ no direct que eu te sugiro 1 ajuste pro seu caso.”</pre>
-          <div class="foot">Dica de copy: mantenha a frase-placa no Slide 5 com no máximo 6–8 palavras no total.</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="hd"><h2>Elementos visuais (direção de arte)</h2></div>
-        <div class="bd">
-          <div class="callout">
-            <div style="font-weight:900; margin-bottom:6px">Look &amp; feel (high-tech limpo)</div>
-            <ul>
-              <li><strong>Fundo:</strong> foto/visual relacionado ao tema, escurecido (overlay 50–70%).</li>
-              <li><strong>Destaques:</strong> 1 palavra por slide em cor quente OU em gradiente (consistente).</li>
-              <li><strong>Tipografia:</strong> sans condensada e pesada para títulos; mesma família no corpo.</li>
-              <li><strong>Ritmo:</strong> alternar “texto” vs “frase grande” para retenção.</li>
-            </ul>
-          </div>
-          <div class="callout" style="margin-top:12px">
-            <div style="font-weight:900; margin-bottom:6px">Layout recomendado</div>
-            <ul>
-              <li>Formato: <strong>1080×1350 (4:5)</strong>.</li>
-              <li>Margens: <strong>8–10%</strong> de respiro.</li>
-              <li>Hierarquia: <strong>H1</strong> (1–6 palavras) → <strong>H2</strong> (1–2 linhas) → bullets.</li>
-              <li>Consistência: mesmas margens, mesma posição de CTA, mesmo estilo de destaque.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="grid" style="margin-top:14px">
-      <div class="card">
-        <div class="hd"><h2>Copy e ganchos (biblioteca)</h2></div>
-        <div class="bd">
-          <div class="two">
-            <div class="callout">
-              <div style="font-weight:900; margin-bottom:6px">Ganchos de capa</div>
-              <ul>
-                <li>“[Referência] nos trouxe um alerta: <strong>[ideia forte]</strong>”</li>
-                <li>“O que ninguém te conta sobre <strong>[tema]</strong>”</li>
-                <li>“Se você está fazendo <strong>[hábito comum]</strong>, leia isso”</li>
-                <li>“Isso parece normal, mas está te custando <strong>[custo]</strong>”</li>
-              </ul>
+      <article class="card" id="cardCopy">
+        <div class="h"><div class="t">Copy e ganchos</div><div class="pill">Escolha 1 + adapte</div></div>
+        <div class="twoCol">
+          <div>
+            <div class="mini">
+              <div class="a">Hooks (abre forte)</div>
+              <div class="b" id="hooksTexto" style="white-space:pre-line">1) “Se você faz [X], você tá destruindo seu posicionamento.”
+2) “Vou soar rude: se você aceita [X], você tá barato demais.”
+3) “O jeito mais rápido de ter ‘visibilidade’ e continuar sem dinheiro é [X].”
+4) “Você não tem um problema de demanda. Você tem um problema de regra.”</div>
             </div>
-            <div class="callout">
-              <div style="font-weight:900; margin-bottom:6px">Pontes (Slide 2)</div>
-              <ul>
-                <li>“Se você já sentiu [sintoma], não é só você.”</li>
-                <li>“Isso aparece quando [contexto].”</li>
-                <li>“E pior: dá a sensação de que ‘é assim mesmo’.”</li>
-              </ul>
-            </div>
-            <div class="callout">
-              <div style="font-weight:900; margin-bottom:6px">Quebras de expectativa (Slide 4)</div>
-              <ul>
-                <li>“E não é só culpa de [vilão óbvio].”</li>
-                <li>“O problema não é [X]. É <strong>[Y]</strong>.”</li>
-                <li>“O que está te travando não é falta de [coisa]. É excesso de [coisa].”</li>
-              </ul>
-            </div>
-            <div class="callout">
-              <div style="font-weight:900; margin-bottom:6px">Frases-placa (Slide 5)</div>
-              <ul>
-                <li>“Menos [ruído]. Mais [clareza].”</li>
-                <li>“Menos [pressa]. Mais [processo].”</li>
-                <li>“Menos [acúmulo]. Mais [intenção].”</li>
-                <li>“Menos [reação]. Mais [decisão].”</li>
-              </ul>
+          </div>
+          <div>
+            <div class="mini">
+              <div class="a">Legenda curta (modelo)</div>
+              <div class="b" style="white-space:pre-line">A regra que me poupa tempo e protege meu caixa:
+
+SE o valor percebido &gt; meu custo de entrega → eu considero.
+SE o valor percebido &lt; meu custo de entrega → eu pago/recuso.
+
+Salvar pra usar antes de responder qualquer proposta.</div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="card">
-        <div class="hd"><h2>CTA (modelos prontos)</h2></div>
-        <div class="bd">
-          <div class="callout">
-            <div style="font-weight:900; margin-bottom:6px">Engajamento (70%)</div>
-            <ul>
-              <li>“Comente: hoje você está mais em [A] ou [B]?”</li>
-              <li>“Qual parte pegou mais: [ponto 1], [ponto 2] ou [ponto 3]?”</li>
-              <li>“Salve para revisar quando você for [momento de uso].”</li>
-              <li>“Compartilhe com alguém que sempre fala sobre [dor].”</li>
-            </ul>
-          </div>
-          <div class="callout" style="margin-top:12px">
-            <div style="font-weight:900; margin-bottom:6px">Conversão leve (30%)</div>
-            <ul>
-              <li>“Quer uma sugestão pro seu caso? Me mande ‘<strong>[PALAVRA-CHAVE]</strong>’ no direct.”</li>
-              <li>“Se você estiver em [situação], eu posso te indicar o 1º ajuste. DM: ‘<strong>[PALAVRA]</strong>’.”</li>
-              <li>“Quer o checklist em PDF? Comente ‘<strong>CHECKLIST</strong>’.”</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+        <div class="hr"></div>
+        <ul>
+          <li><strong>Redução de resistência:</strong> “Nada contra quem faz [X], mas entenda o custo disso no longo prazo.”</li>
+          <li><strong>Inimigo comum:</strong> “muito trabalho, pouca margem” / “visibilidade sem caixa”.</li>
+          <li><strong>Frase-memória:</strong> “Regras claras compram sua paz.”</li>
+        </ul>
+      </article>
     </section>
 
-    <section class="card" style="margin-top:14px">
-      <div class="hd"><h2>Checklist de criação (produção rápida)</h2></div>
-      <div class="bd">
-        <div class="two">
-          <div class="callout">
-            <div style="font-weight:900; margin-bottom:6px">Antes do Canva</div>
-            <ul>
-              <li>Defina <strong>tema</strong> e <strong>dor</strong> em 1 frase cada.</li>
-              <li>Liste: <strong>vilão óbvio</strong> + <strong>causa não óbvia</strong>.</li>
-              <li>Escreva a <strong>frase-placa</strong> (Slide 5) antes de todo o resto.</li>
-              <li>Separe <strong>3–5 ações</strong> (verbos + específico).</li>
-              <li>Escolha <strong>1 microação</strong> (5 min) para o Slide 8.</li>
-            </ul>
-          </div>
-          <div class="callout">
-            <div style="font-weight:900; margin-bottom:6px">Design e revisão</div>
-            <ul>
-              <li>Garanta legibilidade: overlay escuro + contraste forte.</li>
-              <li>Padronize: margens, posição do texto, estilo de destaque.</li>
-              <li>Corte: cada slide deve responder “qual é a 1 ideia aqui?”</li>
-              <li>Teste de leitura: alguém entende em <strong>3 segundos</strong> o Slide 1?</li>
-              <li>Finalize com CTA único (evite 3 CTAs no mesmo slide).</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+    <section class="grid" style="margin-top:14px;">
+      <article class="card" id="cardCTA">
+        <div class="h"><div class="t">CTA</div><div class="pill">1 primário + 1 secundário</div></div>
+        <ul>
+          <li><strong>CTA primário (comentário):</strong> “Comenta ‘REGRA’ e me diz qual [X] você mais aceita sem perceber.”</li>
+          <li><strong>CTA secundário (salvar):</strong> “Salva pra consultar antes de dizer sim.”</li>
+          <li><strong>CTA opcional (DM):</strong> “Se quiser, me manda ‘REGRA’ no direct que eu te envio um template.”</li>
+        </ul>
+      </article>
+
+      <article class="card" id="cardChecklist">
+        <div class="h"><div class="t">Checklist de criação</div><div class="pill">Pré • Roteiro • Edição • Post</div></div>
+        <ul>
+          <li><strong>Pré:</strong> escolher 1 comportamento comum que parece inocente e custa caro (desconto automático, escopo aberto, urgência falsa, reunião grátis, prazo impossível).</li>
+          <li><strong>Pré:</strong> definir a regra em SE/ENTÃO (curta, binária e aplicável hoje).</li>
+          <li><strong>Pré:</strong> separar 1 exemplo numérico (máx. 3 números).</li>
+          <li><strong>Roteiro:</strong> hook (1 frase) + autoridade (1–2 frases) + regra + exemplo + reframing + consequência + CTA.</li>
+          <li><strong>Edição:</strong> cortes rápidos; palavras-chave na tela (não legenda inteira); zoom-in leve na regra e na consequência.</li>
+          <li><strong>Post:</strong> legenda repetindo a regra; fixar comentário com pergunta (“qual seu mínimo para [Y]?”); hashtags mínimas e específicas.</li>
+        </ul>
+      </article>
     </section>
 
-    <section class="card" style="margin-top:14px">
-      <div class="hd"><h2>Variações (para reutilizar sem repetir)</h2></div>
-      <div class="bd">
-        <div class="two">
-          <div class="callout">
-            <div style="font-weight:900; margin-bottom:6px">Variação A — “Mito vs Verdade” dentro do mesmo esqueleto</div>
-            <ul>
-              <li>Slide 4 vira: “Mito: é por causa de X. Verdade: é por causa de Y.”</li>
-              <li>Slide 6 traz: “3 sinais de que é Y (não X).”</li>
-            </ul>
-          </div>
-          <div class="callout">
-            <div style="font-weight:900; margin-bottom:6px">Variação B — “Checklist” (mais salvável)</div>
-            <ul>
-              <li>Slide 3 encurta diagnóstico (3 linhas).</li>
-              <li>Slides 6 e 7 viram um checklist numerado (5–7 itens).</li>
-            </ul>
-          </div>
-          <div class="callout">
-            <div style="font-weight:900; margin-bottom:6px">Variação C — “Prova” (mais autoridade)</div>
-            <ul>
-              <li>Slide 3 inclui um dado simples: “Estudos mostram…/Em X casos…” (sem exagero).</li>
-              <li>Slide 7 inclui um mini caso: “Antes → Depois (1 linha).”</li>
-            </ul>
-          </div>
-          <div class="callout">
-            <div style="font-weight:900; margin-bottom:6px">Variação D — “Erro comum” (mais direto)</div>
-            <ul>
-              <li>Slide 1: “O erro silencioso em [tema]”</li>
-              <li>Slide 4: “O erro não é X. É Y.”</li>
-            </ul>
-          </div>
+    <section class="card" id="cardVariacoes" style="margin-top:14px;">
+      <div class="h"><div class="t">Variações (3 ideias neutras)</div><div class="pill">Mesma lógica, outro “X”</div></div>
+      <div class="twoCol">
+        <div class="mini">
+          <div class="a">Variação 1 — “reunião grátis”</div>
+          <div class="b" style="white-space:pre-line">Hook: “Reunião grátis sem filtro é o jeito mais rápido de lotar agenda e esvaziar o caixa.”
+Regra: “SE há chance real + critério mínimo, eu marco. SE não, eu recuso/qualifico antes.”
+Exemplo: “30min x 10 reuniões/semana = 5h que viram zero se não há triagem.”</div>
         </div>
-        <div class="foot">Como evitar repetição: troque a referência (Slide 1), o vilão óbvio (Slide 4) e as ações (Slide 7). Mantenha o esqueleto.</div>
+        <div class="mini">
+          <div class="a">Variação 2 — “desconto por insegurança”</div>
+          <div class="b" style="white-space:pre-line">Hook: “Se você dá desconto antes de ouvir ‘não’, você tá treinando o cliente a te desvalorizar.”
+Regra: “SE existe troca real (prazo, escopo, volume), desconto faz sentido. SE não, o preço é o preço.”
+Exemplo: “R$2.000 vira R$1.600 sem contrapartida = margem evaporando.”</div>
+        </div>
       </div>
+      <div class="twoCol" style="margin-top:12px;">
+        <div class="mini">
+          <div class="a">Variação 3 — “escopo aberto”</div>
+          <div class="b" style="white-space:pre-line">Hook: “Escopo aberto parece ‘bom atendimento’… até virar retrabalho infinito.”
+Regra: “SE mudou objetivo, muda escopo e valor. SE é ajuste previsto, ok.”
+Exemplo: “+3 rodadas fora do combinado = +X horas não pagas.”</div>
+        </div>
+        <div class="mini">
+          <div class="a">Bônus — frase de identidade</div>
+          <div class="b" style="white-space:pre-line">“Eu não tomo decisões no impulso. Eu sigo regra.
+Regra boa não te prende — te dá liberdade.”</div>
+        </div>
+      </div>
+      <p class="footerNote">Para aumentar comentários, deixe uma “brecha” deliberada: “No seu caso pode mudar — mas você precisa ter um critério, não um feeling.”</p>
     </section>
-
-    <div class="toast" id="toast">Roteiro copiado para a área de transferência.</div>
   </div>
 
   <script>
-    const copyBtn = document.getElementById('copyBtn');
-    const roteiro = document.getElementById('roteiro');
-    const toast = document.getElementById('toast');
-
-    function showToast(msg){
-      toast.textContent = msg;
-      toast.style.display = 'block';
-      clearTimeout(window.__t);
-      window.__t = setTimeout(()=> toast.style.display='none', 1800);
-    }
-
-    async function copyText(){
-      const text = roteiro.innerText.trim();
-      try{
-        await navigator.clipboard.writeText(text);
-        showToast('Roteiro copiado para a área de transferência.');
-      }catch(e){
-        // Fallback
+    function copyText(text){
+      const t = (text || "").trim();
+      if(!t) return;
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(t);
+      } else {
         const ta = document.createElement('textarea');
-        ta.value = text;
+        ta.value = t;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        ta.style.top = '0';
         document.body.appendChild(ta);
+        ta.focus();
         ta.select();
-        document.execCommand('copy');
-        ta.remove();
-        showToast('Roteiro copiado (modo compatibilidade).');
+        try{ document.execCommand('copy'); } catch(e){}
+        document.body.removeChild(ta);
       }
     }
 
-    copyBtn.addEventListener('click', copyText);
+    const copyBtn = document.getElementById('copyBtn');
+    const copyHooksBtn = document.getElementById('copyHooksBtn');
+
+    copyBtn.addEventListener('click', () => {
+      const roteiro = document.getElementById('roteiroTexto').innerText;
+      copyText(roteiro);
+      copyBtn.textContent = 'Copiado!';
+      setTimeout(()=>copyBtn.textContent='Copiar roteiro', 1200);
+    });
+
+    copyHooksBtn.addEventListener('click', () => {
+      const hooks = document.getElementById('hooksTexto').innerText;
+      copyText(hooks);
+      copyHooksBtn.textContent = 'Copiado!';
+      setTimeout(()=>copyHooksBtn.textContent='Copiar ganchos', 1200);
+    });
   </script>
 </body>
 </html>
