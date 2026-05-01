@@ -1,453 +1,417 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dia 3 — Roteiro Reproduzível (Nicho Neutro)</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Dia 3 — Carrossel manifesto (neutro)</title>
 <style>
   :root{
-    --bg0:#05070c;
-    --bg1:#070b14;
-    --card:rgba(255,255,255,.06);
-    --card2:rgba(255,255,255,.08);
-    --stroke:rgba(255,255,255,.10);
-    --text:#eaf0ff;
-    --muted:rgba(234,240,255,.72);
-    --muted2:rgba(234,240,255,.58);
-    --shadow: 0 18px 50px rgba(0,0,0,.55);
-    --radius:18px;
-    --radius2:14px;
-    --g1: linear-gradient(90deg,#20e3b2 0%,#2cccff 45%,#ffb347 100%);
-    --g2: linear-gradient(135deg,#20e3b2 0%,#2cccff 55%,#ff7a18 100%);
-    --g3: radial-gradient(1200px 600px at 20% 10%, rgba(44,204,255,.18), transparent 60%),
-          radial-gradient(900px 500px at 80% 20%, rgba(32,227,178,.14), transparent 55%),
-          radial-gradient(900px 520px at 65% 90%, rgba(255,122,24,.12), transparent 60%);
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.08);
+    --stroke: rgba(255,255,255,.12);
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,.72);
+    --muted2: rgba(234,240,255,.56);
+    --shadow: 0 14px 40px rgba(0,0,0,.45);
+    --r: 18px;
+    --g1: linear-gradient(90deg,#22c55e 0%, #38bdf8 50%, #fb923c 100%);
+    --g2: radial-gradient(800px 400px at 20% 10%, rgba(56,189,248,.22), transparent 60%),
+          radial-gradient(700px 340px at 70% 0%, rgba(34,197,94,.18), transparent 62%),
+          radial-gradient(700px 340px at 70% 70%, rgba(251,146,60,.16), transparent 62%);
   }
   *{box-sizing:border-box}
   body{
     margin:0;
-    font-family:var(--sans);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     color:var(--text);
-    background: var(--g3), linear-gradient(180deg,var(--bg0),var(--bg1));
+    background: var(--g2), linear-gradient(180deg,var(--bg0),var(--bg1));
   }
-  a{color:inherit; text-decoration:none}
-  .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 56px}
-  header{
+  a{color:inherit}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+  .header{
     border:1px solid var(--stroke);
-    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+    border-radius: calc(var(--r) + 6px);
     box-shadow: var(--shadow);
-    border-radius: var(--radius);
+    padding:18px 18px 16px;
+    position:relative;
     overflow:hidden;
   }
-  .topbar{
-    padding:18px 18px 14px;
-    display:flex;
-    gap:14px;
-    align-items:flex-start;
-    justify-content:space-between;
-    flex-wrap:wrap;
+  .header:before{
+    content:"";
+    position:absolute;inset:-2px;
+    background: var(--g1);
+    opacity:.12;
+    filter: blur(24px);
   }
-  .badge{
-    display:inline-flex;
-    gap:10px;
-    align-items:center;
-    padding:8px 12px;
-    border:1px solid var(--stroke);
-    background:rgba(0,0,0,.25);
-    border-radius:999px;
+  .header-inner{position:relative;display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+  .kicker{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
     color:var(--muted);
     font-size:13px;
   }
-  .dot{
-    width:10px; height:10px; border-radius:99px;
-    background: var(--g1);
-    box-shadow: 0 0 0 4px rgba(255,255,255,.04);
-  }
-  h1{
-    margin:10px 0 6px;
-    font-size: clamp(20px, 3.2vw, 32px);
-    letter-spacing:-.02em;
-    line-height:1.15;
-  }
-  .sub{
-    color:var(--muted);
-    margin:0;
-    line-height:1.45;
-    max-width:76ch;
-  }
-  .actions{display:flex; gap:10px; flex-wrap:wrap}
-  .btn{
+  .pill{
     border:1px solid var(--stroke);
-    background:rgba(255,255,255,.06);
-    color:var(--text);
-    padding:10px 12px;
-    border-radius: 12px;
-    font-size:14px;
-    cursor:pointer;
-    transition: transform .06s ease, background .2s ease, border-color .2s ease;
+    background: rgba(255,255,255,.06);
+    padding:6px 10px;border-radius:999px;
+    backdrop-filter: blur(10px);
   }
-  .btn:hover{background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.16)}
-  .btn:active{transform: translateY(1px)}
-  .btn.primary{
-    background: linear-gradient(180deg, rgba(44,204,255,.22), rgba(32,227,178,.12));
-    border-color: rgba(44,204,255,.28);
-  }
-  .linkpill{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:10px 12px;
-    border-top:1px solid var(--stroke);
+  h1{margin:10px 0 8px;font-size:22px;letter-spacing:.2px}
+  .sub{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+  .link{
+    display:inline-flex;gap:8px;align-items:center;
+    padding:9px 12px;border-radius:12px;
+    border:1px solid var(--stroke);
     background: rgba(0,0,0,.18);
-    justify-content:space-between;
-    flex-wrap:wrap;
-  }
-  .linkpill code{
-    font-family:var(--mono);
-    font-size:12px;
+    text-decoration:none;
     color:var(--muted);
-    padding:6px 10px;
-    background: rgba(255,255,255,.05);
-    border:1px solid var(--stroke);
-    border-radius:999px;
-    overflow-wrap:anywhere;
+    transition: transform .15s ease, background .15s ease;
+    white-space:nowrap;
   }
-  .grid{
-    display:grid;
-    grid-template-columns: 1fr;
-    gap:14px;
-    margin-top:16px;
-  }
-  @media (min-width: 940px){
-    .grid{grid-template-columns: 1.05fr .95fr}
-  }
+  .link:hover{transform: translateY(-1px);background: rgba(0,0,0,.28)}
+
+  .grid{display:grid;grid-template-columns: 1.2fr .8fr;gap:14px;margin-top:14px}
+  @media (max-width: 920px){.grid{grid-template-columns:1fr}}
+
   .card{
     border:1px solid var(--stroke);
     background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    border-radius: var(--r);
     box-shadow: var(--shadow);
-    border-radius: var(--radius);
     padding:16px;
+    position:relative;
+    overflow:hidden;
   }
-  .card h2{
-    margin:0 0 10px;
-    font-size:16px;
-    letter-spacing:-.01em;
-    display:flex;
-    align-items:center;
-    gap:10px;
+  .card .title{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-bottom:10px
   }
-  .chip{
-    font-size:12px;
-    padding:4px 10px;
-    border:1px solid var(--stroke);
-    border-radius:999px;
-    color:var(--muted);
-    background: rgba(0,0,0,.18);
-  }
-  .hr{
-    height:1px; background:rgba(255,255,255,.08); margin:12px 0;
-  }
-  .kpi{
-    display:grid;
-    grid-template-columns: repeat(2, minmax(0,1fr));
-    gap:10px;
-  }
-  .kpi .mini{
-    padding:12px;
-    border-radius: var(--radius2);
-    border:1px solid var(--stroke);
-    background: rgba(0,0,0,.16);
-  }
-  .mini .t{font-size:12px; color:var(--muted2); margin:0 0 6px}
-  .mini .v{margin:0; font-size:14px; color:var(--text); line-height:1.25}
-  ul{margin:0; padding-left:18px; color:var(--muted); line-height:1.55}
-  li{margin:6px 0}
-  .note{
-    font-size:13px;
-    color:var(--muted);
-    padding:10px 12px;
-    border:1px dashed rgba(255,255,255,.18);
-    border-radius: var(--radius2);
-    background: rgba(0,0,0,.14);
-  }
-  .highlight{
+  .card h2{font-size:15px;margin:0;letter-spacing:.2px}
+  .badge{
+    font-size:12px;color:rgba(0,0,0,.82);
+    padding:5px 10px;border-radius:999px;
     background: var(--g1);
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    font-weight:800;
+    border:1px solid rgba(255,255,255,.22);
   }
-  .script{
-    font-family: var(--mono);
-    font-size: 12.8px;
-    line-height: 1.65;
-    color: rgba(234,240,255,.86);
-    background: rgba(0,0,0,.22);
+  .p{color:var(--muted);font-size:14px;line-height:1.6;margin:0}
+  .list{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+  .li{
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.16);
+    border-radius: 14px;
+    padding:10px 10px;
+    display:flex;gap:10px;align-items:flex-start;
+  }
+  .dot{
+    width:10px;height:10px;border-radius:50%;
+    background: var(--g1);
+    box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+    margin-top:4px;flex:0 0 10px
+  }
+  .li b{color:var(--text)}
+  .mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12.5px;
+    color: rgba(234,240,255,.78);
+  }
+  .hr{height:1px;background: rgba(255,255,255,.10);margin:12px 0}
+
+  .scriptbox{
+    background: rgba(0,0,0,.24);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 16px;
+    padding: 12px;
+  }
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    line-height:1.55;
+  }
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .btn{
+    cursor:pointer;
     border:1px solid var(--stroke);
-    border-radius: var(--radius);
-    padding:14px;
-    white-space: pre-wrap;
-    overflow:auto;
+    background: rgba(255,255,255,.08);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius: 14px;
+    font-weight:600;
+    letter-spacing:.2px;
+    transition: transform .15s ease, background .15s ease;
   }
-  .two{
-    display:grid;
-    grid-template-columns: 1fr;
-    gap:12px;
+  .btn:hover{transform: translateY(-1px);background: rgba(255,255,255,.11)}
+  .btn.primary{
+    border:1px solid rgba(255,255,255,.22);
+    background: var(--g1);
+    color: rgba(0,0,0,.86);
   }
-  @media (min-width: 940px){
-    .two{grid-template-columns: 1fr 1fr}
-  }
-  .footer{
-    margin-top:16px;
-    color:var(--muted2);
-    font-size:12px;
-  }
+  .note{font-size:12px;color:var(--muted2);margin:8px 0 0}
+
+  .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width: 700px){.twoCol{grid-template-columns:1fr}}
+
+  .mini{font-size:12px;color:var(--muted2)}
+  .kbd{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px; padding:2px 6px; border-radius:8px; border:1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.20)}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="topbar">
+    <header class="header">
+      <div class="header-inner">
         <div>
-          <div class="badge"><span class="dot"></span> Nicho: <strong>Neutro</strong> · Dia: <strong>3</strong> · Formato: <strong>Carrossel</strong> · Pilar: <strong>Passo a passo</strong></div>
-          <h1>Carrossel pronto: <span class="highlight">gancho → tese → prova → solução</span> (9 slides)</h1>
-          <p class="sub">Modelo neutro para qualquer assunto: comece com um fenômeno conhecido, prove que já acontece, quebre a expectativa, entregue ações práticas e feche com microcompromisso + CTA.</p>
+          <div class="kicker">
+            <span class="pill"><b>Nicho:</b> Neutro</span>
+            <span class="pill"><b>Dia:</b> 3</span>
+            <span class="pill"><b>Formato:</b> Carrossel</span>
+            <span class="pill"><b>Pilar:</b> Desejo</span>
+          </div>
+          <h1>Carrossel manifesto: 5 frases que destravam ação</h1>
+          <p class="sub">Modelo minimalista, alto respiro e frases-curtas para gerar identificação e decisão. Progressão: validação → ação → medo → identidade → visão.</p>
         </div>
-        <div class="actions">
-          <button class="btn primary" id="copyBtn">Copiar roteiro</button>
-          <a class="btn" href="https://www.instagram.com/p/DHlEjCXN-Xy/" target="_blank" rel="noreferrer">Abrir post original</a>
-        </div>
-      </div>
-      <div class="linkpill">
-        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-          <span class="chip">URL do post original</span>
-          <code>https://www.instagram.com/p/DHlEjCXN-Xy/</code>
-        </div>
-        <span class="chip">Use como template e só troque o tema</span>
+        <a class="link" href="https://www.instagram.com/p/DWyq1vQjpQc/" target="_blank" rel="noreferrer">Abrir post original →</a>
       </div>
     </header>
 
-    <div class="grid">
-      <section class="card">
-        <h2>Resumo <span class="chip">o que este post faz</span></h2>
-        <ul>
-          <li><strong>Promessa:</strong> explicar um problema/tendência atual com uma lente diferente e prática.</li>
-          <li><strong>Arquitetura do conteúdo:</strong> narrativa curta + diagnóstico + causa não óbvia + conceito + lista acionável + microação.</li>
-          <li><strong>Por que funciona:</strong> referência familiar, curiosidade progressiva, frase-placa compartilhável e utilidade imediata.</li>
-        </ul>
-        <div class="hr"></div>
-        <div class="kpi">
-          <div class="mini"><p class="t">Objetivo</p><p class="v">Compartilhamentos + salvamentos</p></div>
-          <div class="mini"><p class="t">Tempo de produção</p><p class="v">30–70 min (com template)</p></div>
-          <div class="mini"><p class="t">Slides ideais</p><p class="v">7–10 (recomendado 9)</p></div>
-          <div class="mini"><p class="t">Regra de ouro</p><p class="v">1 ideia principal por slide</p></div>
+    <section class="grid">
+      <article class="card">
+        <div class="title">
+          <h2>Resumo</h2>
+          <span class="badge">Reproduzível em qualquer tema</span>
         </div>
-      </section>
-
-      <section class="card">
-        <h2>Estrutura <span class="chip">sequência lógica</span></h2>
-        <ul>
-          <li><strong>1) Gancho + contexto pop:</strong> fenômeno conhecido + alerta + “vem entender”.</li>
-          <li><strong>2) Validação:</strong> “isso já está acontecendo” no dia a dia.</li>
-          <li><strong>3) Diagnóstico:</strong> amplie o problema com contraste (mais X, menos Y).</li>
-          <li><strong>4) Quebra de expectativa:</strong> o culpado não é só o “vilão óbvio”.</li>
-          <li><strong>5) Frase-placa:</strong> síntese memorável (alto compartilhamento).</li>
-          <li><strong>6) Conceito + lente:</strong> nomeie a ideia e dê 3 pontos.</li>
-          <li><strong>7) Ações práticas:</strong> 3–5 sugestões aplicáveis.</li>
-          <li><strong>8) Microação:</strong> comece pequeno (um primeiro passo).</li>
-          <li><strong>9) CTA:</strong> pedir comentário/salvar/compartilhar (e opcional DM).</li>
+        <p class="p">Carrossel em 5–7 slides com “frase-manifesto”: pouca informação e muita emoção. Cada slide traz 1 ideia, com quebras de linha poéticas e um “sussurro” (texto secundário) que adiciona nuance.</p>
+        <ul class="list">
+          <li class="li"><span class="dot"></span><div><b>Objetivo:</b> fazer a pessoa se sentir vista e dar um próximo passo simples.</div></li>
+          <li class="li"><span class="dot"></span><div><b>Quando usar:</b> reengajar audiência, iniciar séries, aquecer para oferta, fortalecer posicionamento.</div></li>
+          <li class="li"><span class="dot"></span><div><b>Tom:</b> íntimo + firme (acolhe e puxa pra ação).</div></li>
         </ul>
-        <div class="hr"></div>
-        <div class="note"><strong>Como neutralizar para qualquer nicho:</strong> substitua “arquitetura influencia” por “<em>o sistema/processo/ambiente influencia</em>”. Troque “casa/cômodo” por “rotina/ferramenta/etapa/canal”.</div>
-      </section>
-    </div>
+      </article>
 
-    <section class="card">
-      <h2>Slides sugeridos (1..9) <span class="chip">template pronto</span></h2>
-      <div class="two">
-        <div>
-          <ul>
-            <li><strong>Slide 1 — Capa (Hook):</strong> “O(a) [referência/assunto] traz um alerta: <strong>[ideia forte]</strong>” + “Vem entender →”.</li>
-            <li><strong>Slide 2 — Isso já é real:</strong> 2–3 linhas com uma cena comum do público + “Isso já está no seu dia a dia.”</li>
-            <li><strong>Slide 3 — Diagnóstico:</strong> 5–8 linhas, sem jargão. Use “mais… / menos…”.</li>
-            <li><strong>Slide 4 — Quebra:</strong> “E não é só culpa de [vilão óbvio].” + 2–4 causas alternativas.</li>
-            <li><strong>Slide 5 — Frase-placa:</strong> “Menos ______, mais ______.” (texto gigante).</li>
+      <aside class="card">
+        <div class="title">
+          <h2>Parâmetros rápidos</h2>
+        </div>
+        <ul class="list">
+          <li class="li"><span class="dot"></span><div><b>Slides:</b> 5 (ideal) ou 6–7 (se necessário)</div></li>
+          <li class="li"><span class="dot"></span><div><b>Texto por slide:</b> 10–18 palavras</div></li>
+          <li class="li"><span class="dot"></span><div><b>Estrutura:</b> sentimento → decisão → coragem → identidade → visão</div></li>
+          <li class="li"><span class="dot"></span><div><b>CTA:</b> leve (salvar/comentar/DM) na legenda ou slide final</div></li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="title"><h2>Estrutura</h2></div>
+      <div class="twoCol">
+        <div class="scriptbox">
+          <div class="mini">Função (slide → intenção)</div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li class="li"><span class="dot"></span><div><b>1. Gancho/validação:</b> tira culpa/julgamento; cria identificação imediata.</div></li>
+            <li class="li"><span class="dot"></span><div><b>2. Ação simples:</b> um passo executável agora (sem tutorial).</div></li>
+            <li class="li"><span class="dot"></span><div><b>3. Desarme do medo:</b> normaliza erro/imperfeição; reduz risco percebido.</div></li>
+            <li class="li"><span class="dot"></span><div><b>4. Reenquadramento identitário:</b> transforma traço em força/assinatura.</div></li>
+            <li class="li"><span class="dot"></span><div><b>5. Fechamento/visão:</b> afirma capacidade + futuro desejado.</div></li>
           </ul>
         </div>
-        <div>
-          <ul>
-            <li><strong>Slide 6 — Conceito:</strong> “O que resolve é ______.” + “Minha lente: [conceito].” + 3 bullets.</li>
-            <li><strong>Slide 7 — Ações:</strong> 4 bullets curtos começando com verbo (Ajuste/Reduza/Crie/Padronize).</li>
-            <li><strong>Slide 8 — Microação:</strong> “Comece por: ______ (em 10 minutos/hoje).”</li>
-            <li><strong>Slide 9 — CTA:</strong> pergunta específica + “Salve e compartilhe” (e opcional “me mande ‘PALAVRA’ no direct”).</li>
+        <div class="scriptbox">
+          <div class="mini">Regras de escrita</div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li class="li"><span class="dot"></span><div><b>1 ideia por slide</b> (sem bullets, sem didatismo).</div></li>
+            <li class="li"><span class="dot"></span><div><b>Quebras poéticas</b>: 3–6 linhas curtas.</div></li>
+            <li class="li"><span class="dot"></span><div><b>Palavra-âncora</b> na última linha para impacto.</div></li>
+            <li class="li"><span class="dot"></span><div><b>Vocabulário</b> simples e direto: “você”, “pra”, “agora”.</div></li>
+            <li class="li"><span class="dot"></span><div><b>Camada extra</b>: “sussurro” manuscrito opcional (não essencial).</div></li>
           </ul>
         </div>
       </div>
     </section>
 
-    <section class="card">
-      <h2>Roteiro <span class="chip">preencha os campos e publique</span></h2>
-      <div class="note">Dica de uso: escreva primeiro a <strong>tese em 1 frase</strong>. Depois preencha os slides 7 e 8 (ações + primeiro passo). Só então volte para a capa.</div>
-      <div class="hr"></div>
-      <div class="script" id="scriptText">TEMA (o que você vai abordar): ______________________________
-PÚBLICO (para quem é): ______________________________
-FENÔMENO/REFERÊNCIA (notícia, trend, “todo mundo falando”): ______________________________
-DOR PRINCIPAL (efeito na vida/resultado): ______________________________
-VILÃO ÓBVIO (o que todo mundo culpa): ______________________________
-Tese (1 frase, direta): “__________________________________________”
-Conceito/Lente (nome do seu método/visão): ______________________________
+    <section class="card" style="margin-top:14px">
+      <div class="title">
+        <h2>Roteiro (template preenchível)</h2>
+        <span class="badge">copie e edite</span>
+      </div>
+      <div class="scriptbox" id="roteiroBox">
+<pre id="roteiroText" class="mono">TEMA: {tema em 2–4 palavras}
+PESSOA: {para quem é}
+PROMESSA EMOCIONAL: {o que ela sente ao final}
 
-SLIDE 1 — CAPA (Hook)
-Linha pequena: “O(a) [FENÔMENO] traz um alerta:”
-Título grande: “[IDEIA FORTE EM 2–6 PALAVRAS]”
-Micro-CTA: “Vem entender →”
+SLIDE 1 — validação (gancho)
+"não é {rótulo/julgamento}
+se pra você é
+{valor real}"
+(sussurro: "{reforço curto}")
 
-SLIDE 2 — VALIDAÇÃO (vida real)
-Texto (2–3 linhas): “Você já percebeu que ____________________________?”
-Fecho: “Isso já está acontecendo.”
+SLIDE 2 — ação simples (decisão)
+"{verbo de ação}
+o que você
+se {prometeu/decidiu}"
+(sussurro: "{puxão de responsabilidade}" )
 
-SLIDE 3 — DIAGNÓSTICO (ampliação)
-Parágrafo (5–8 linhas):
-“Quanto mais __________________, menos __________________.
-E o custo aparece em __________________ (tempo/energia/dinheiro/clareza/relacionamento).
-O problema não é ‘falta de força de vontade’ — é o jeito como __________________ foi organizado.”
+SLIDE 3 — medo/objeção (coragem)
+"o mundo não vai acabar
+se você
+{errar/mudar/tentar de novo}"
+(sussurro: "{normalização do erro}" )
 
-SLIDE 4 — QUEBRA DE EXPECTATIVA (culpado não óbvio)
-Abertura: “E não é só culpa de [VILÃO ÓBVIO].”
-Bullets (2–4):
-— “____________________________”
-— “____________________________”
-— “____________________________”
+SLIDE 4 — identidade (potência)
+"a sua {característica/traço}
+é o seu {força/assinatura}"
+(sussurro: "{não se diminua}" )
 
-SLIDE 5 — FRASE-PLACA (memorável)
-Frase grande: “Menos __________________, mais __________________.”
-Complemento (1 linha): “Quando você muda ______, muda ______.”
+SLIDE 5 — visão (fechamento)
+"você é capaz
+de {resultado possível}
+a vida que você {quer/imagina/sonha}"
+(sussurro: "{próximo passo curto}" )
 
-SLIDE 6 — TESE + CONCEITO (sua lente)
-Headline: “[TESE EM 1 FRASE]”
-Sub: “Minha lente para resolver: [CONCEITO].”
-3 bullets:
-— “____________________________”
-— “____________________________”
-— “____________________________”
+LEGENDA (2–5 linhas)
+1) Reforce a validação do Slide 1
+2) Faça 1 pergunta simples
+3) CTA leve (salvar/comentar/DM)
 
-SLIDE 7 — AÇÕES PRÁTICAS (aplicável hoje)
-4 ações (com verbo no início):
-— “Ajuste ______________________________.”
-— “Reduza ______________________________.”
-— “Crie ______________________________.”
-— “Padronize ______________________________.”
-Fecho: “Isso é [benefício/resultado].”
-
-SLIDE 8 — MICROAÇÃO (primeiro passo)
-Texto: “Você não precisa mudar tudo.”
-Comece por: “Hoje, faça ______________________________ (em 10 min).”
-
-SLIDE 9 — CTA
-Pergunta (específica): “Qual parte de __________________ mais te atrapalha hoje?”
-CTA: “Comente, salve para aplicar e compartilhe com alguém que precisa.”
-Opcional (DM): “Se quiser, me mande ‘__________’ no direct que eu te envio um exemplo.”</div>
+CTA SUGERIDO
+"Salva pra reler quando bater dúvida."</pre>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyBtn">Copiar roteiro</button>
+        <button class="btn" id="copyLegendaBtn">Copiar legenda + CTAs</button>
+      </div>
+      <p class="note">Dica de execução: escreva primeiro as 5 frases sem “sussurro”. Depois adicione os sussurros apenas onde aumentar a emoção sem explicar demais.</p>
     </section>
 
-    <div class="grid">
-      <section class="card">
-        <h2>Elementos visuais <span class="chip">design high-tech</span></h2>
-        <ul>
-          <li><strong>Fundo:</strong> foto/print relacionado ao tema com filtro escuro.</li>
-          <li><strong>Overlay:</strong> degradê preto (50–70%) atrás do texto para legibilidade.</li>
-          <li><strong>Paleta:</strong> base escura + texto branco + destaque em degradê (verde → azul → laranja).</li>
-          <li><strong>Tipografia:</strong> manchete condensada/bold; corpo semibold/regular.</li>
-          <li><strong>Ritmo:</strong> alternar “slide respiro” (poucas palavras) com “slide explicação”.</li>
-          <li><strong>Destaque:</strong> 1 palavra-chave por slide (no máximo 2).</li>
-        </ul>
-      </section>
-
-      <section class="card">
-        <h2>Copy e ganchos <span class="chip">modelos prontos</span></h2>
-        <ul>
-          <li><strong>Gancho capa:</strong> “O(a) [assunto do momento] revela um alerta: ______.”</li>
-          <li><strong>Curiosidade:</strong> “O problema não é o que você pensa.”</li>
-          <li><strong>Contraste:</strong> “Mais ______. Menos ______.”</li>
-          <li><strong>Quebra:</strong> “Não é só [vilão óbvio]. É também ______.”</li>
-          <li><strong>Frase-placa:</strong> “Você não precisa de mais ______; precisa de ______.”</li>
-          <li><strong>Concretude (ações):</strong> “Aqui estão 4 ajustes que dão resultado em 7 dias.”</li>
-        </ul>
-      </section>
-    </div>
-
-    <div class="grid">
-      <section class="card">
-        <h2>CTA <span class="chip">engajamento e conversão</span></h2>
-        <ul>
-          <li><strong>Engajamento (padrão):</strong> “Comente: qual parte de ______ mais pesa pra você hoje?”</li>
-          <li><strong>Salvar:</strong> “Salve para usar como checklist na próxima vez que ______.”</li>
-          <li><strong>Compartilhar:</strong> “Manda pra alguém que vive dizendo ‘preciso resolver isso’.”</li>
-          <li><strong>Conversão leve (DM):</strong> “Se quiser, me mande ‘PALAVRA’ no direct que eu te envio um exemplo aplicado ao seu caso.”</li>
-          <li><strong>Conversão direta:</strong> “Quer ajuda para aplicar? Link na bio / formulário.”</li>
-        </ul>
-        <div class="note">Recomendação: 70% CTAs de engajamento, 30% CTAs de conversão (rotacionando por semana).</div>
-      </section>
-
-      <section class="card">
-        <h2>Checklist <span class="chip">criação e revisão</span></h2>
-        <ul>
-          <li><strong>Roteiro:</strong> tese em 1 frase escrita? (sim/não)</li>
-          <li><strong>Clareza:</strong> cada slide tem 1 ideia principal? (sim/não)</li>
-          <li><strong>Prova:</strong> slide 2 valida com exemplo real? (sim/não)</li>
-          <li><strong>Virada:</strong> slide 4 quebra o “vilão óbvio”? (sim/não)</li>
-          <li><strong>Compartilhável:</strong> slide 5 é uma frase curta e forte? (sim/não)</li>
-          <li><strong>Utilidade:</strong> slide 7 tem 3–5 ações com verbos? (sim/não)</li>
-          <li><strong>Microação:</strong> slide 8 tem 1 passo simples (10–15 min)? (sim/não)</li>
-          <li><strong>CTA:</strong> pergunta específica + salvar/compartilhar? (sim/não)</li>
-          <li><strong>Design:</strong> contraste ok, margens 8–10%, 1 destaque por slide? (sim/não)</li>
-          <li><strong>Formato:</strong> 1080×1350, textos não encostam na borda? (sim/não)</li>
-        </ul>
-      </section>
-    </div>
-
-    <section class="card">
-      <h2>Variações <span class="chip">para não repetir igual</span></h2>
-      <ul>
-        <li><strong>Variação A (sem referência pop):</strong> comece com um dado/estatística ou “sintoma comum”.</li>
-        <li><strong>Variação B (mais prova):</strong> no slide 6, troque “3 bullets” por “mini-estudo de caso em 3 linhas”.</li>
-        <li><strong>Variação C (mito vs verdade):</strong> slide 4 vira “Mito: ____ / Verdade: ____”.</li>
-        <li><strong>Variação D (checklist):</strong> slide 7 vira checklist marcável (5 itens) e o CTA pede “salvar”.</li>
-        <li><strong>Variação E (mais autoridade):</strong> inclua no slide 6 “o que eu observo em [X atendimentos/projetos/testes]”.</li>
+    <section class="card" style="margin-top:14px">
+      <div class="title"><h2>Slides sugeridos (1..5)</h2></div>
+      <ul class="list">
+        <li class="li"><span class="dot"></span><div><b>Slide 1 (gancho):</b> frase que anula julgamento externo + resgata um valor interno.</div></li>
+        <li class="li"><span class="dot"></span><div><b>Slide 2 (ação):</b> um verbo forte + compromisso pessoal (sem explicar “como”).</div></li>
+        <li class="li"><span class="dot"></span><div><b>Slide 3 (medo):</b> “não vai acontecer X se você fizer Y” (reduz catastrofização).</div></li>
+        <li class="li"><span class="dot"></span><div><b>Slide 4 (identidade):</b> “seu traço = sua força” (assinatura/estilo/potência).</div></li>
+        <li class="li"><span class="dot"></span><div><b>Slide 5 (visão):</b> capacidade + futuro desejado + leve chamada para salvar/compartilhar.</div></li>
       </ul>
-      <div class="footer">Identidade sugerida: fundo escuro + cards com borda suave + destaques em degradê (verde/azul/laranja) + tipografia de manchete. Copie o roteiro, troque os campos e publique.</div>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <article class="card">
+        <div class="title"><h2>Elementos visuais</h2></div>
+        <ul class="list">
+          <li class="li"><span class="dot"></span><div><b>Estética:</b> minimalista/editorial, zero fotos, foco em tipografia.</div></li>
+          <li class="li"><span class="dot"></span><div><b>Grid:</b> margem ampla; texto principal alinhado à esquerda; muito respiro.</div></li>
+          <li class="li"><span class="dot"></span><div><b>Consistência:</b> mesma posição do “sussurro” (alto à direita) e assinatura (rodapé).</div></li>
+          <li class="li"><span class="dot"></span><div><b>Tipografia:</b> 1 fonte principal (serif/editorial) + 1 manuscrita (secundária).</div></li>
+          <li class="li"><span class="dot"></span><div><b>Cores:</b> 1 cor para principal (alto contraste) + 1 pastel para sussurro + 1 cor quente para assinatura.</div></li>
+        </ul>
+      </article>
+
+      <aside class="card">
+        <div class="title"><h2>Copy e ganchos</h2></div>
+        <div class="scriptbox">
+          <div class="mini">Fórmulas rápidas</div>
+          <div class="hr"></div>
+<pre class="mono">1) "não é {julgamento}
+se pra você é {valor}"
+
+2) "para de {padrão}
+começa a {ação}"
+
+3) "você não vai {catástrofe}
+se você {tentativa}"
+
+4) "o seu {traço}
+é o seu {diferencial}"
+
+5) "você é capaz
+de {resultado}"
+</pre>
+        </div>
+        <p class="note">Palavras-âncora que funcionam: <span class="kbd">importante</span> <span class="kbd">agora</span> <span class="kbd">de novo</span> <span class="kbd">assinatura</span> <span class="kbd">capaz</span>.</p>
+      </aside>
+    </section>
+
+    <section class="grid" style="margin-top:14px">
+      <article class="card">
+        <div class="title"><h2>CTA</h2><span class="badge">leve e coerente</span></div>
+        <ul class="list">
+          <li class="li"><span class="dot"></span><div><b>Salvar:</b> “Salva pra reler quando bater a dúvida.”</div></li>
+          <li class="li"><span class="dot"></span><div><b>Comentário guiado:</b> “Qual slide você precisava ler hoje: 1, 2, 3, 4 ou 5?”</div></li>
+          <li class="li"><span class="dot"></span><div><b>Compartilhar:</b> “Envia pra alguém que tá se diminuindo pra caber.”</div></li>
+          <li class="li"><span class="dot"></span><div><b>DM (conversão sutil):</b> “Se você quer ajuda pra aplicar isso no seu contexto, me chama com a palavra <b>{PALAVRA}</b>.”</div></li>
+        </ul>
+      </article>
+
+      <aside class="card">
+        <div class="title"><h2>Checklist de criação</h2></div>
+        <ul class="list">
+          <li class="li"><span class="dot"></span><div><b>Texto:</b> 5 frases; cada uma com 3–6 linhas curtas; 10–18 palavras.</div></li>
+          <li class="li"><span class="dot"></span><div><b>Progressão:</b> validação → ação → medo → identidade → visão (sem pular etapa).</div></li>
+          <li class="li"><span class="dot"></span><div><b>Design:</b> alto contraste, margens largas, repetição de posições.</div></li>
+          <li class="li"><span class="dot"></span><div><b>Sussurro:</b> opcional; 2–5 palavras; não repetir o texto principal.</div></li>
+          <li class="li"><span class="dot"></span><div><b>Assinatura:</b> pequena e discreta no rodapé (consistência de série).</div></li>
+          <li class="li"><span class="dot"></span><div><b>Legenda:</b> 2–5 linhas + 1 CTA leve.</div></li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <div class="title"><h2>Variações</h2><span class="badge">sem perder o formato</span></div>
+      <ul class="list">
+        <li class="li"><span class="dot"></span><div><b>Variação A (6 slides):</b> inserir um Slide 3b “você tem permissão pra recomeçar” antes do reenquadramento identitário.</div></li>
+        <li class="li"><span class="dot"></span><div><b>Variação B (tema com decisão difícil):</b> trocar o Slide 2 por “escolha o próximo passo, não o perfeito”.</div></li>
+        <li class="li"><span class="dot"></span><div><b>Variação C (mais firme):</b> usar verbos curtos: “assume”, “faz”, “corta”, “volta”, “continua”.</div></li>
+        <li class="li"><span class="dot"></span><div><b>Variação D (mais suave):</b> adicionar acolhimento: “respira”, “tá tudo bem”, “vai no seu tempo”.</div></li>
+        <li class="li"><span class="dot"></span><div><b>Variação E (série semanal):</b> manter o layout idêntico e mudar apenas as palavras-âncora (1 por slide).</div></li>
+      </ul>
     </section>
   </div>
 
 <script>
-  (function(){
-    const btn = document.getElementById('copyBtn');
-    const el = document.getElementById('scriptText');
-    function copyText(){
-      const text = el.innerText;
-      if (navigator.clipboard && navigator.clipboard.writeText){
-        return navigator.clipboard.writeText(text);
-      }
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      return Promise.resolve();
+  function copyToClipboard(text){
+    if(navigator.clipboard && window.isSecureContext){
+      return navigator.clipboard.writeText(text);
     }
-    btn.addEventListener('click', async function(){
-      const prev = btn.textContent;
-      try{
-        await copyText();
-        btn.textContent = 'Roteiro copiado';
-      }catch(e){
-        btn.textContent = 'Falha ao copiar';
-      }
-      setTimeout(()=> btn.textContent = prev, 1400);
-    });
-  })();
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try{ document.execCommand('copy'); } finally { document.body.removeChild(ta); }
+    return Promise.resolve();
+  }
+
+  const roteiro = document.getElementById('roteiroText').innerText;
+
+  const legendaPack = [
+    'LEGENDA (modelo)\n',
+    'Não é {julgamento} se pra você é {valor}.\n',
+    'Qual slide pegou mais em você hoje: 1, 2, 3, 4 ou 5?\n',
+    '\nCTA (escolha 1):\n',
+    '- Salva pra reler quando bater a dúvida.\n',
+    '- Comenta \"{1..5}\" que eu te mando uma variação desse roteiro no seu tema.\n',
+    '- Se quiser ajuda pra aplicar isso no seu contexto, me chama no DM com a palavra {PALAVRA}.\n'
+  ].join('');
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    await copyToClipboard(roteiro);
+    const btn = document.getElementById('copyBtn');
+    const old = btn.innerText;
+    btn.innerText = 'Copiado!';
+    setTimeout(()=>btn.innerText=old, 1200);
+  });
+
+  document.getElementById('copyLegendaBtn').addEventListener('click', async () => {
+    await copyToClipboard(legendaPack);
+    const btn = document.getElementById('copyLegendaBtn');
+    const old = btn.innerText;
+    btn.innerText = 'Copiado!';
+    setTimeout(()=>btn.innerText=old, 1200);
+  });
 </script>
 </body>
 </html>
