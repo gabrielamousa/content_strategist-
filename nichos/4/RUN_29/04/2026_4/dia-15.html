@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dia 15 — Finanças e Negócios — Desafio dos 600 depósitos</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:#0C1326;
+    --card2:#0A1022;
+    --text:#EAF0FF;
+    --muted:#A9B3D0;
+    --line:rgba(255,255,255,.10);
+    --line2:rgba(255,255,255,.16);
+
+    --g1: linear-gradient(135deg, #2EE59D 0%, #3AA9FF 50%, #FFB84D 100%);
+    --g2: linear-gradient(135deg, rgba(46,229,157,.18) 0%, rgba(58,169,255,.16) 45%, rgba(255,184,77,.14) 100%);
+    --accent:#69E6C4;
+    --warn:#FFB84D;
+    --info:#3AA9FF;
+    --ok:#2EE59D;
+
+    --shadow: 0 14px 40px rgba(0,0,0,.45);
+    --radius: 18px;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    background: radial-gradient(1000px 600px at 18% 10%, rgba(58,169,255,.14), transparent 55%),
+                radial-gradient(900px 520px at 80% 12%, rgba(46,229,157,.12), transparent 60%),
+                radial-gradient(900px 520px at 60% 92%, rgba(255,184,77,.10), transparent 60%),
+                linear-gradient(180deg, var(--bg0), var(--bg1));
+    color:var(--text);
+  }
+
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+
+  header{
+    border:1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border-radius: var(--radius);
+    padding:22px;
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: var(--g2);
+    filter: blur(18px);
+    opacity:.85;
+    z-index:0;
+  }
+
+  header .content{position:relative; z-index:1; display:flex; gap:18px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap}
+
+  .pillRow{display:flex; gap:10px; flex-wrap:wrap}
+  .pill{
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    font-size:12px;
+    color:var(--muted);
+    background: rgba(10,16,34,.45);
+    backdrop-filter: blur(6px);
+  }
+  .pill strong{color:var(--text); font-weight:650}
+
+  h1{font-size:22px; line-height:1.15; margin:10px 0 6px}
+  .sub{color:var(--muted); font-size:13px; line-height:1.5; max-width:80ch}
+
+  .link{
+    display:inline-flex; gap:8px; align-items:center;
+    color:var(--text);
+    text-decoration:none;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px 12px;
+    background: rgba(12,19,38,.55);
+  }
+  .link:hover{border-color:var(--line2)}
+
+  .grid{display:grid; grid-template-columns: 1.2fr .8fr; gap:16px; margin-top:16px}
+  @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+
+  .card{
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card .hd{
+    padding:16px 16px 12px;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    border-bottom:1px solid var(--line);
+    background: rgba(10,16,34,.35);
+  }
+  .card .hd h2{margin:0; font-size:14px; letter-spacing:.2px}
+  .tag{
+    font-size:12px;
+    color:var(--muted);
+    border:1px solid var(--line);
+    padding:6px 10px;
+    border-radius:999px;
+    background: rgba(12,19,38,.45);
+  }
+  .card .bd{padding:16px}
+
+  .kpi{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:10px;
+  }
+  @media (max-width: 560px){.kpi{grid-template-columns:1fr}}
+  .kpi .box{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:12px;
+    background: rgba(12,19,38,.38);
+  }
+  .kpi .box .t{font-size:12px;color:var(--muted)}
+  .kpi .box .v{font-size:14px;margin-top:6px;line-height:1.35}
+  .kpi .box .v strong{background: var(--g1); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+  .list{margin:0; padding-left: 18px; color:var(--text)}
+  .list li{margin:10px 0; color:var(--text)}
+  .list li span{color:var(--muted)}
+
+  .hr{height:1px;background:var(--line); margin:14px 0}
+
+  .script{
+    border:1px solid var(--line);
+    background: rgba(7,10,18,.45);
+    border-radius: 16px;
+    padding:14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size:12.5px;
+    line-height:1.6;
+    white-space:pre-wrap;
+  }
+
+  .btnRow{display:flex; gap:10px; flex-wrap:wrap}
+  button{
+    border:1px solid var(--line);
+    background: rgba(12,19,38,.55);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius: 12px;
+    cursor:pointer;
+  }
+  button:hover{border-color:var(--line2)}
+
+  .note{font-size:12px; color:var(--muted); line-height:1.5}
+
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media (max-width: 820px){.cols{grid-template-columns:1fr}}
+
+  .chip{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background: rgba(12,19,38,.45);
+    font-size:12px;
+    color:var(--muted);
+    margin:6px 6px 0 0;
+  }
+
+  .gradLine{
+    height:2px;
+    background: var(--g1);
+    opacity:.9;
+    border-radius:99px;
+  }
+
+  .footer{margin-top:16px; color:var(--muted); font-size:12px}
+  a{color:#D9E7FF}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="content">
+        <div>
+          <div class="pillRow">
+            <div class="pill"><strong>Nicho</strong>: Finanças e Negócios</div>
+            <div class="pill"><strong>Dia</strong>: 15</div>
+            <div class="pill"><strong>Formato</strong>: Reels</div>
+            <div class="pill"><strong>Pilar</strong>: Passo a passo</div>
+          </div>
+          <h1>Desafio dos 600 depósitos: junte R$90 mil sem sofrimento</h1>
+          <div class="sub">Objetivo do post: transformar uma meta grande em um jogo simples (micro-depósitos/ações + rastreio visual), com CTA de comentário para envio de tabela/planilha no direct.</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
+          <a class="link" href="https://www.instagram.com/p/DXSlnGqgBZ0/" target="_blank" rel="noreferrer">
+            <span style="width:10px;height:10px;border-radius:99px;background:var(--g1);display:inline-block"></span>
+            <span>Ver post original</span>
+          </a>
+          <div class="note" style="text-align:right; max-width:36ch;">Dica: mantenha a promessa numérica no texto grande dos 2 primeiros segundos.</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <span class="tag">O que torna reproduzível</span>
+        </div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="box">
+              <div class="t">Promessa</div>
+              <div class="v"><strong>Meta grande</strong> + prazo/começo</div>
+            </div>
+            <div class="box">
+              <div class="t">Mecanismo</div>
+              <div class="v"><strong>Método nomeado</strong> (desafio)</div>
+            </div>
+            <div class="box">
+              <div class="t">Prova</div>
+              <div class="v"><strong>Tabela/planilha</strong> na tela</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <ul class="list">
+            <li><strong>Gancho:</strong> número aspiracional + “começando em [PERÍODO]”.</li>
+            <li><strong>Retenção:</strong> regra ultra simples + 2–3 exemplos com números pequenos.</li>
+            <li><strong>Conversão:</strong> “comenta [PALAVRA]” para receber o link no direct.</li>
+            <li><strong>Monetização (opcional):</strong> tabela vira porta de entrada para planner/mentoria.</li>
+          </ul>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="hd">
+          <h2>Metadados (para calendário)</h2>
+          <span class="tag">pronto para colar</span>
+        </div>
+        <div class="bd">
+          <div class="script" id="metaBlock">titulo: Desafio dos 600 depósitos: junte R$90 mil sem sofrimento
+instrucao_curta: Grave um Reel curto com meta + prazo + método nomeado e mostre a tabela/checklist com 2–3 exemplos. Feche pedindo a palavra-chave nos comentários para enviar o link no direct.
+pilar: Passo a passo
+formato: reels</div>
+          <div class="btnRow" style="margin-top:10px;">
+            <button onclick="copyText('metaBlock')">Copiar metadados</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:16px;">
+      <div class="hd">
+        <h2>Estrutura (sequência vencedora)</h2>
+        <span class="tag">35–45s</span>
+      </div>
+      <div class="bd">
+        <div class="gradLine"></div>
+        <ol class="list" style="padding-left:20px;">
+          <li><strong>Hook (0–2s):</strong> “Guarda comigo R$ [META] começando em [PERÍODO].”</li>
+          <li><strong>Contexto (2–5s):</strong> “É um jeito simples de bater meta grande com micro-ações.”</li>
+          <li><strong>Nome do método (5–7s):</strong> “Desafio dos [N] depósitos/ações.”</li>
+          <li><strong>Ferramenta (7–10s):</strong> mostra tabela/checklist (tela/gráfico/impressa).</li>
+          <li><strong>Como funciona (10–28s):</strong> regra + 2–3 exemplos numéricos (sem conta complicada).</li>
+          <li><strong>Resultado (28–33s):</strong> “No final você chega em R$ [META].”</li>
+          <li><strong>CTA (33–45s):</strong> comentário com palavra-chave + follow + (opcional) bônus/planner.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px;">
+      <div class="hd">
+        <h2>Roteiro (reproduzível + editável)</h2>
+        <span class="tag">com texto na tela</span>
+      </div>
+      <div class="bd">
+        <div class="btnRow" style="margin-bottom:10px;">
+          <button onclick="copyText('scriptBlock')">Copiar roteiro</button>
+          <button onclick="copyText('shotlistBlock')">Copiar shotlist</button>
+        </div>
+        <div class="cols">
+          <div>
+            <div class="note" style="margin-bottom:8px;">Roteiro (fala + on-screen). Substitua os campos entre colchetes.</div>
+            <div class="script" id="scriptBlock">[0–2s | Close no rosto | TEXTO GRANDE]
+“Guarda comigo R$ [META] começando em [PERÍODO].”
+
+[2–5s | Corte rápido | TEXTO]
+“Se você odeia ‘fazer conta’, isso aqui resolve.”
+
+[5–7s | Mostra o nome | TEXTO]
+“É o Desafio dos [N] depósitos/ações.”
+
+[7–10s | Mostra a tabela/planilha | TEXTO]
+“Você só precisa dessa tabela/checklist pra ir marcando.”
+
+[10–18s | Screen/print da tabela | TEXTO]
+“Regra: cada vez que você deposita R$ X, você marca o X.”
+“Exemplo: depositou R$ 1? Marca o 1.”
+
+[18–24s | B-roll marcando | TEXTO]
+“Depositou R$ 2? Marca o 2.”
+“Depositou R$ 5? Marca o 5.”
+
+[24–30s | Mostra ‘parte 1/parte 2’ da tabela | TEXTO]
+“Você só repete isso até completar os [N] quadradinhos.”
+
+[30–33s | Volta pro rosto | TEXTO]
+“No final: R$ [META] acumulados, sem complicar.”
+
+[33–45s | Tela final + gesto apontando | TEXTO CTA]
+“Quer a tabela pronta? Comenta ‘[PALAVRA]’ que eu te mando no direct.”
+“E me segue pra mais estratégias simples de finanças/negócios.”</div>
+          </div>
+          <div>
+            <div class="note" style="margin-bottom:8px;">Shotlist (o que filmar) — pensado para cortes a cada 1–2s.</div>
+            <div class="script" id="shotlistBlock">1) Close (rosto) + texto grande: R$ [META] + [PERÍODO]
+2) Corte para celular/desktop com a tabela aberta
+3) Zoom na coluna “1 / 2 / 5” (ou valores escolhidos)
+4) Mão marcando/clicando um quadradinho (efeito “pop/click”)
+5) Mostra ‘Parte 1 / Parte 2’ da tabela (se houver)
+6) Tela final: palavra-chave + promessa do envio no direct
+7) Opcional: mini card “bônus: planner/planilha completa”</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px;">
+      <div class="hd">
+        <h2>Elementos visuais (UX de retenção)</h2>
+        <span class="tag">high-tech + simples</span>
+      </div>
+      <div class="bd">
+        <ul class="list">
+          <li><strong>Texto inicial gigante:</strong> “R$ [META] começando em [PERÍODO]”.</li>
+          <li><strong>Objeto central:</strong> tabela/checklist (print, planilha, Notion, papel).</li>
+          <li><strong>Contraste:</strong> “R$ 90.000” vs “depósitos de R$ 1, R$ 2, R$ 5”.</li>
+          <li><strong>Destaque visual:</strong> círculo/marker nos exemplos (1, 2, 5).</li>
+          <li><strong>Cadência:</strong> jump cuts + troca de cena 1–2s.</li>
+          <li><strong>Tela final:</strong> CTA com a palavra-chave em destaque.</li>
+        </ul>
+        <div style="margin-top:10px;">
+          <span class="chip">fundo escuro</span>
+          <span class="chip">texto branco + números em degradê</span>
+          <span class="chip">b-roll marcando quadradinhos</span>
+          <span class="chip">efeitos sonoros discretos</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px;">
+      <div class="hd">
+        <h2>Copy e ganchos (prontos)</h2>
+        <span class="tag">3 modelos</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <div class="note">Hooks (0–2s)</div>
+            <ul class="list">
+              <li><strong>Meta + prazo:</strong> “Guarda comigo R$ [META] começando em [PERÍODO].”</li>
+              <li><strong>Método nomeado:</strong> “O método mais fácil pra chegar em R$ [META]: Desafio dos [N].”</li>
+              <li><strong>Curiosidade matemática:</strong> “Isso aqui vira R$ [META] com depósitos pequenos.”</li>
+            </ul>
+          </div>
+          <div>
+            <div class="note">Linhas de retenção (meio do vídeo)</div>
+            <ul class="list">
+              <li>“Você não precisa ‘se motivar’. Só marcar quadradinhos.”</li>
+              <li>“Sem conta ao vivo. Só regra simples.”</li>
+              <li>“Se você falhar um dia, só volta no próximo.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="note">Legenda sugerida (curta e direta):</div>
+        <div class="script" id="captionBlock">Meta grande assusta. Por isso eu transformo em jogo.
+
+Desafio dos [N] depósitos/ações:
+1) você faz micro-depósitos (ou micro-ações)
+2) marca na tabela
+3) repete até completar
+
+Quer a tabela pronta? Comenta “[PALAVRA]” que eu te mando no direct.</div>
+        <div class="btnRow" style="margin-top:10px;">
+          <button onclick="copyText('captionBlock')">Copiar legenda</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px;">
+      <div class="hd">
+        <h2>CTA</h2>
+        <span class="tag">engajamento + lead</span>
+      </div>
+      <div class="bd">
+        <ul class="list">
+          <li><strong>Primário:</strong> “Comenta ‘<strong>[PALAVRA]</strong>’ que eu mando o link no direct.”</li>
+          <li><strong>Secundário:</strong> “Me segue pra mais estratégias simples de [finanças/negócios].”</li>
+          <li><strong>Qualificação (opcional):</strong> “Se sua meta é [X], comenta ‘[PALAVRA]’.”</li>
+          <li><strong>Upsell natural (opcional):</strong> “No link tem a versão completa (Planner/Planilha Pro).”</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px;">
+      <div class="hd">
+        <h2>Checklist de criação (do zero ao post)</h2>
+        <span class="tag">executável</span>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div>
+            <div class="note">Antes de gravar</div>
+            <ul class="list">
+              <li>Definir <strong>[META]</strong> com número específico (ex.: R$ 30.000 / R$ 90.000).</li>
+              <li>Definir <strong>[PERÍODO]</strong> (ex.: “a partir de janeiro”, “em 2026”).</li>
+              <li>Criar o <strong>método com nome</strong>: “Desafio dos [N] depósitos/ações”.</li>
+              <li>Preparar a <strong>ferramenta visual</strong>: tabela/checklist/planilha (print pronto).</li>
+              <li>Escolher <strong>[PALAVRA]</strong> (curta, 1 palavra: “desafio”, “tabela”, “planilha”).</li>
+              <li>Definir o que será enviado no direct: link, PDF, Google Sheets, Notion, etc.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="note">Gravação + edição</div>
+            <ul class="list">
+              <li>Gravar em pé (9:16), luz frontal e enquadramento fechado nos 2s iniciais.</li>
+              <li>Cortes a cada <strong>1–2s</strong> (tirar pausas).</li>
+              <li>Texto grande sempre que falar <strong>número</strong> (META e exemplos).</li>
+              <li>Inserir b-roll: mão marcando quadradinhos / zoom na planilha.</li>
+              <li>Tela final com CTA + palavra-chave por <strong>2–3s</strong>.</li>
+              <li>Fixar comentário: “Comenta [PALAVRA] que eu envio”.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="note">Checklist de publicação</div>
+        <ul class="list">
+          <li>Legenda com 3 linhas + CTA final (sem textão).</li>
+          <li>Hashtags mínimas (3–6) e específicas do tema.</li>
+          <li>Responder comentários com a palavra-chave nas primeiras 2 horas.</li>
+          <li>Automatizar envio no direct (se tiver ferramenta) ou enviar manualmente o link.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px;">
+      <div class="hd">
+        <h2>Variações (mesma estrutura, outros temas)</h2>
+        <span class="tag">3 ideias prontas</span>
+      </div>
+      <div class="bd">
+        <ul class="list">
+          <li><strong>Finanças pessoal — Reserva:</strong> “Desafio dos 180 depósitos pra montar R$ [META] de reserva.”</li>
+          <li><strong>Dívidas — Quitação:</strong> “Desafio dos [N] pagamentos: cada extra entra na tabela e você enxerga o fim.”</li>
+          <li><strong>Negócios — Prospecção:</strong> “Desafio das 300 abordagens: 1 contato = 1 quadradinho (KPI visual).”</li>
+        </ul>
+        <div class="hr"></div>
+        <div class="note">Trocas rápidas para adaptar:</div>
+        <div>
+          <span class="chip">depósitos → ações (calls, leads, propostas)</span>
+          <span class="chip">meta dinheiro → meta KPI (reuniões, vendas)</span>
+          <span class="chip">tabela financeira → checklist de execução</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">Identidade visual sugerida: fundo escuro, cards com borda suave, números em degradê (verde/azul/laranja) e linguagem direta (frases curtas).</div>
+  </div>
+
+<script>
+  function copyText(id){
+    const el = document.getElementById(id);
+    const text = el ? el.innerText : '';
+    if(!text) return;
+    navigator.clipboard.writeText(text);
+  }
+</script>
+</body>
+</html>
