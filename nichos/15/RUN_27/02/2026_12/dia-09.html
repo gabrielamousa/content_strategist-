@@ -1,496 +1,640 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dia 9 — Roteiro Reels (Nicho Neutro)</title>
-<style>
-  :root{
-    --bg:#070A12;
-    --panel:#0B1020;
-    --card:#0E1630;
-    --stroke:rgba(255,255,255,.10);
-    --stroke2:rgba(255,255,255,.14);
-    --text:rgba(255,255,255,.92);
-    --muted:rgba(255,255,255,.68);
-    --muted2:rgba(255,255,255,.56);
-    --shadow: 0 18px 50px rgba(0,0,0,.45);
-    --r:18px;
-    --r2:14px;
-    --g1: linear-gradient(90deg, #28e07a 0%, #28c9ff 48%, #ff9d2e 100%);
-    --g2: radial-gradient(1200px 600px at 15% -10%, rgba(40,224,122,.25), transparent 55%),
-          radial-gradient(900px 600px at 95% 10%, rgba(40,201,255,.20), transparent 50%),
-          radial-gradient(800px 600px at 60% 110%, rgba(255,157,46,.18), transparent 55%);
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family:var(--sans);
-    color:var(--text);
-    background: var(--g2), var(--bg);
-    line-height:1.45;
-  }
-  a{color:inherit}
-  .wrap{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
-  header{
-    background: linear-gradient(180deg, rgba(14,22,48,.78), rgba(11,16,32,.36));
-    border:1px solid var(--stroke);
-    border-radius: calc(var(--r) + 6px);
-    box-shadow: var(--shadow);
-    padding:22px 20px;
-    position:relative;
-    overflow:hidden;
-  }
-  header:before{
-    content:"";
-    position:absolute;
-    inset:-2px;
-    background: var(--g1);
-    opacity:.14;
-    filter: blur(24px);
-    pointer-events:none;
-  }
-  .toprow{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;position:relative}
-  .badge{
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    padding:8px 12px;
-    border-radius:999px;
-    border:1px solid var(--stroke2);
-    background: rgba(255,255,255,.04);
-    color: var(--muted);
-    font-size:13px;
-  }
-  .badge b{color:var(--text)}
-  h1{margin:10px 0 6px;font-size:24px;letter-spacing:.2px}
-  .sub{color:var(--muted);margin:0;max-width:70ch}
-  .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-  .chip{
-    font-family:var(--mono);
-    font-size:12px;
-    padding:7px 10px;
-    border-radius:999px;
-    border:1px solid var(--stroke);
-    background: rgba(255,255,255,.03);
-    color:var(--muted);
-  }
-  .chip .k{color:rgba(255,255,255,.85)}
-  .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-top:14px}
-  @media (max-width: 920px){.grid{grid-template-columns:1fr}}
-  .card{
-    background: linear-gradient(180deg, rgba(14,22,48,.80), rgba(11,16,32,.55));
-    border:1px solid var(--stroke);
-    border-radius: var(--r);
-    box-shadow: var(--shadow);
-    padding:16px;
-    overflow:hidden;
-    position:relative;
-  }
-  .card:after{
-    content:"";
-    position:absolute;
-    top:-160px;right:-160px;
-    width:320px;height:320px;
-    background: var(--g1);
-    opacity:.08;
-    filter: blur(28px);
-    transform: rotate(12deg);
-    pointer-events:none;
-  }
-  .card h2{margin:0 0 10px;font-size:16px;letter-spacing:.2px}
-  .card p{margin:0 0 10px;color:var(--muted)}
-  .list{margin:0;padding-left:18px;color:var(--muted)}
-  .list li{margin:8px 0}
-  .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
-  .callout{
-    border:1px solid rgba(40,201,255,.22);
-    background: rgba(40,201,255,.06);
-    border-radius: var(--r2);
-    padding:12px;
-    color: var(--muted);
-  }
-  .callout b{color:var(--text)}
-  .btnrow{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-  button{
-    appearance:none;
-    border:1px solid var(--stroke2);
-    background: rgba(255,255,255,.04);
-    color:var(--text);
-    border-radius: 12px;
-    padding:10px 12px;
-    cursor:pointer;
-    font-weight:600;
-  }
-  button.primary{
-    border:0;
-    background: var(--g1);
-    color:#071018;
-  }
-  button:active{transform: translateY(1px)}
-  .section{margin-top:14px}
-  details{
-    border:1px solid var(--stroke);
-    border-radius: var(--r);
-    background: rgba(255,255,255,.02);
-    overflow:hidden;
-  }
-  summary{
-    list-style:none;
-    cursor:pointer;
-    padding:14px 16px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-  }
-  summary::-webkit-details-marker{display:none}
-  .sumleft{display:flex;flex-direction:column;gap:2px}
-  .sumtitle{font-weight:700}
-  .sumdesc{color:var(--muted);font-size:13px}
-  .chev{color:var(--muted);font-family:var(--mono)}
-  details[open] .chev{transform: rotate(90deg)}
-  .content{padding:0 16px 16px}
-  .kbd{
-    font-family:var(--mono);
-    font-size:12px;
-    padding:2px 6px;
-    border-radius:8px;
-    border:1px solid var(--stroke);
-    background: rgba(255,255,255,.03);
-    color:var(--muted);
-  }
-  pre{
-    margin:0;
-    white-space:pre-wrap;
-    word-wrap:break-word;
-    font-family:var(--mono);
-    font-size:12.5px;
-    color:rgba(255,255,255,.86);
-    background: rgba(0,0,0,.22);
-    border:1px solid rgba(255,255,255,.10);
-    border-radius: var(--r2);
-    padding:12px;
-  }
-  .columns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media (max-width: 820px){.columns{grid-template-columns:1fr}}
-  .mini{font-size:13px;color:var(--muted)}
-  footer{margin-top:18px;color:var(--muted2);font-size:12px}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 9 — Roteiro Reels (Nicho Neutro)</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:rgba(255,255,255,.06);
+      --panel2:rgba(255,255,255,.04);
+      --border:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.58);
+      --shadow: 0 14px 45px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:12px;
+      --g1: linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+      --g2: linear-gradient(135deg, rgba(34,197,94,.20), rgba(56,189,248,.18), rgba(251,146,60,.16));
+      --accent:#7dd3fc;
+      --ok:#22c55e;
+      --warn:#fb923c;
+      --chip: rgba(255,255,255,.08);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(56,189,248,.12), transparent 55%),
+        radial-gradient(900px 500px at 85% 20%, rgba(34,197,94,.10), transparent 55%),
+        radial-gradient(900px 650px at 60% 90%, rgba(251,146,60,.10), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      line-height:1.35;
+    }
+
+    a{ color: #93c5fd; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .wrap{ max-width:1100px; margin:0 auto; padding:28px 18px 56px; }
+
+    header{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border-radius: calc(var(--radius) + 6px);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: var(--g2);
+      opacity:.9;
+      filter: blur(18px);
+      z-index:0;
+    }
+    header .inner{ position:relative; z-index:1; }
+
+    .topline{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom: 10px;
+    }
+
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+    .chip{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.22);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      backdrop-filter: blur(8px);
+    }
+    .chip strong{ color:var(--text); font-weight:600; }
+
+    h1{
+      margin: 8px 0 6px;
+      font-size: 22px;
+      letter-spacing: .2px;
+    }
+    .subtitle{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 72ch;
+    }
+
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 14px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      transition: transform .06s ease, border-color .2s ease, background .2s ease;
+      user-select:none;
+    }
+    .btn:hover{ border-color: rgba(255,255,255,.22); background: rgba(0,0,0,.35); }
+    .btn:active{ transform: translateY(1px); }
+    .btn .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: var(--g1);
+    }
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(0,0,0,.25));
+      border-color: rgba(255,255,255,.20);
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 900px){
+      .grid{ grid-template-columns: 1.1fr .9fr; align-items:start; }
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card .hd{
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:end;
+    }
+
+    .card .hd h2{
+      margin:0;
+      font-size: 15px;
+      color: rgba(255,255,255,.86);
+      letter-spacing:.2px;
+    }
+
+    .card .hd .tag{
+      font-size:12px;
+      color: var(--muted2);
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 5px 9px;
+      border-radius: 999px;
+      white-space:nowrap;
+    }
+
+    .card .bd{ padding: 14px 16px 16px; }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .mini{
+      border:1px solid rgba(255,255,255,.09);
+      background: rgba(0,0,0,.20);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .mini .t{ font-size:12px; color:var(--muted2); margin-bottom:4px; }
+    .mini .v{ font-size:13px; color:var(--text); }
+
+    ul{ margin: 10px 0 0; padding-left: 18px; color: var(--muted); }
+    li{ margin: 7px 0; }
+
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.08);
+      margin: 12px 0;
+    }
+
+    .script{
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: rgba(255,255,255,.88);
+      background: rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 12px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    .grad{
+      background: var(--g1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 900px){
+      .cols{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .checklist{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 720px){
+      .checklist{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .box{
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .box h3{
+      margin:0 0 8px;
+      font-size: 13px;
+      color: rgba(255,255,255,.86);
+    }
+
+    .muted{ color: var(--muted); }
+
+    .hooklist .item{
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.09);
+      background: rgba(0,0,0,.18);
+      margin: 8px 0;
+    }
+    .hooklist .item .k{ font-size: 12px; color: var(--muted2); margin-bottom: 3px; }
+    .hooklist .item .v{ font-size: 13px; color: rgba(255,255,255,.9); }
+
+    .cta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .footer-note{
+      margin-top: 14px;
+      color: var(--muted2);
+      font-size: 12px;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.9);
+      padding: 10px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(10px);
+      display:none;
+      z-index: 50;
+      box-shadow: 0 10px 30px rgba(0,0,0,.5);
+      font-size: 13px;
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="toprow">
-        <div>
-          <div class="badge"><b>Nicho:</b> Neutro <span style="opacity:.5">•</span> <b>Dia:</b> 9</div>
-          <h1>Reel “sem drama”: dor + passo a passo + prova final</h1>
-          <p class="sub">Template neutro para qualquer área: abra com uma dor específica, entregue um passo a passo visual rápido, empilhe benefícios e feche com prova numérica + CTA de salvar/compartilhar.</p>
-          <div class="meta">
-            <div class="chip"><span class="k">Pilar</span>: Passo a passo</div>
-            <div class="chip"><span class="k">Formato</span>: reels</div>
-            <div class="chip"><span class="k">Post original</span>: <a href="https://www.instagram.com/p/DVzIpI9geZr/" target="_blank" rel="noreferrer">abrir link</a></div>
+      <div class="inner">
+        <div class="topline">
+          <div class="chips">
+            <div class="chip"><strong>Nicho:</strong> Neutro</div>
+            <div class="chip"><strong>Dia:</strong> 9</div>
+            <div class="chip"><strong>Formato:</strong> Reels</div>
+            <div class="chip"><strong>Pilar:</strong> Dor</div>
           </div>
+          <div class="chip"><strong>Original:</strong> <a href="https://www.instagram.com/p/DW_bgU7ANug/" target="_blank" rel="noreferrer">ver post</a></div>
         </div>
-        <div class="btnrow">
-          <button class="primary" id="copyBtn">Copiar roteiro</button>
-          <button id="copyHooksBtn">Copiar ganchos</button>
+        <h1><span class="grad">Pressa e comparação</span>: o padrão que trava seu progresso</h1>
+        <p class="subtitle">Roteiro neutro (45–60s) para qualquer área: use um caso real/“pessoa que atendi”, traga números, nomeie a emoção, amplie para um padrão e entregue um reenquadramento simples (processo &gt; pressa).</p>
+        <div class="actions">
+          <button class="btn primary" id="copyBtn"><span class="dot"></span>Copiar roteiro</button>
+          <a class="btn" href="#roteiro"><span class="dot"></span>Ir para o roteiro</a>
         </div>
       </div>
     </header>
 
     <div class="grid">
-      <div class="card">
-        <h2>Resumo</h2>
-        <p><b>O que você vai criar:</b> um Reel de 45–60s com execução em tempo real (mãos na massa), cortes rápidos e textos grandes na tela.</p>
-        <ul class="list">
-          <li><b>Promessa:</b> resolver uma dor comum em poucos passos, sem enrolação.</li>
-          <li><b>Ritmo:</b> algo mudando na tela a cada 0,5–1,5s.</li>
-          <li><b>Credibilidade:</b> fecha com 1–2 números/indicadores (tempo, custo, resultado, antes/depois, % de melhora).</li>
-          <li><b>Ação:</b> CTA leve e compartilhável (salvar + enviar + comentar).</li>
-        </ul>
+      <section class="card">
+        <div class="hd">
+          <h2>Resumo</h2>
+          <div class="tag">O que é / por que funciona</div>
+        </div>
+        <div class="bd">
+          <p class="muted"><strong>Ideia central:</strong> uma micro-história com <em>nome + números + emoção</em> vira espelho para quem está com pressa e se comparando. Em vez de “dar dicas”, você nomeia a dor e oferece um reenquadramento simples: <strong>processo consistente</strong>.</p>
+          <div class="kpi">
+            <div class="mini">
+              <div class="t">Duração sugerida</div>
+              <div class="v">45–60s</div>
+            </div>
+            <div class="mini">
+              <div class="t">Estrutura</div>
+              <div class="v">Caso → Dor → Padrão → Consequência → Reenquadramento → Pergunta</div>
+            </div>
+            <div class="mini">
+              <div class="t">Impacto</div>
+              <div class="v">Alta identificação + retenção por curiosidade</div>
+            </div>
+            <div class="mini">
+              <div class="t">Promessa</div>
+              <div class="v">Clareza e direção (sem prometer resultado específico)</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <ul>
+            <li><strong>Gatilhos:</strong> “história real”, especificidade numérica, tensão emocional, vulnerabilidade controlada, conflito simples (pressa vs. processo).</li>
+            <li><strong>Quando usar:</strong> toda vez que você quiser gerar comentários e identificação sem depender de nicho técnico.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Estrutura</h2>
+          <div class="tag">Sequência reproduzível</div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>0–3s (Hook):</strong> caso real + nome próprio.</li>
+            <li><strong>3–10s (Dor visível):</strong> sinais observáveis (ansiedade, pressa, comparação).</li>
+            <li><strong>10–20s (Padrão):</strong> “pula etapas / troca estratégia / muitos planos”.</li>
+            <li><strong>20–30s (Consequência):</strong> travamento, perda de clareza, frustração.</li>
+            <li><strong>30–45s (Escalada):</strong> isso é comum em “muita gente hoje”.</li>
+            <li><strong>45–55s (Reenquadramento):</strong> processo, construção, consistência com uma frase-âncora.</li>
+            <li><strong>55–60s (CTA):</strong> pergunta direta + convite ao posicionamento.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" id="roteiro" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Roteiro</h2>
+        <div class="tag">Texto base (substitua os colchetes)</div>
+      </div>
+      <div class="bd">
+        <div class="script" id="scriptText">[0–3s | HOOK]
+“Acabei de falar com o(a) [NOME].”
+“[IDADE] anos.”
+“[NÚMERO 1: renda/resultado/meta/tempo].”
+“E mesmo assim… [EMOÇÃO FORTE: ansioso(a)/travado(a)/frustrado(a)].”
+
+[3–10s | DOR OBSERVÁVEL]
+“Dava pra ver a pressa.”
+“A comparação.”
+“A sensação de que tudo já devia ter acontecido.”
+
+[10–20s | PADRÃO]
+“E aí a pessoa faz o que muita gente faz:”
+“começa uma coisa, depois outra, depois outra…”
+“[Exemplos neutros: muda de plano / muda de rotina / muda de estratégia / troca de foco].”
+
+[20–30s | CONSEQUÊNCIA]
+“Só que isso não acelera.”
+“Isso embaralha.”
+“Você não aprofunda, não mede, não aprende o que funciona.”
+“E aí vem a culpa: ‘tá vendo? eu não consigo’.”
+
+[30–45s | ESCALADA (FENÔMENO)
+“Eu vejo isso em muita gente hoje.”
+“Não é falta de capacidade.”
+“É falta de processo — porque a gente foi treinado(a) a querer o ‘pra ontem’.”
+
+[45–55s | REENQUADRAMENTO]
+“Progresso real parece lento no começo.”
+“Mas ele é acumulativo.”
+“Menos comparação.”
+“Mais: um plano simples, repetido, por tempo suficiente pra dar prova.”
+
+[55–60s | CTA]
+“Você também sente essa pressa?”
+“O que mais te acelera por dentro hoje: [opção A], [opção B] ou [opção C]?”
+“Me conta nos comentários.”</div>
+        <p class="footer-note">Dica de neutralidade: se não puder usar “caso real”, troque por “uma conversa que eu tive hoje” ou “uma situação comum que eu vejo direto”.</p>
+      </div>
+    </section>
+
+    <div class="cols" style="margin-top:14px;">
+      <section class="card">
+        <div class="hd">
+          <h2>Elementos visuais</h2>
+          <div class="tag">Edição simples, high-retention</div>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><strong>Cortes:</strong> a cada 1,5–3s (jump cuts nas respirações).</li>
+            <li><strong>Zoom leve:</strong> quando falar <em>nome</em>, <em>números</em> e a frase-âncora.</li>
+            <li><strong>Legenda na tela:</strong> 3–7 palavras por “batida”.</li>
+            <li><strong>Destaques em cor:</strong> 3 palavras fixas (ex.: <span class="grad">PRESSA</span>, <span class="grad">COMPARAÇÃO</span>, <span class="grad">PROCESSO</span>).</li>
+            <li><strong>Áudio:</strong> voz em primeiro plano, trilha baixa e constante.</li>
+            <li><strong>B-roll opcional:</strong> agenda, lista de tarefas, tela com muitas abas, cronômetro (reforça “pressa”).</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="box">
+            <h3>Texto na tela (blocos prontos)</h3>
+            <ul>
+              <li>“Falei com [NOME] agora.”</li>
+              <li>“[IDADE] anos.”</li>
+              <li>“[NÚMERO 1].”</li>
+              <li>“E tá no limite.”</li>
+              <li>“Pressa + comparação = ansiedade”</li>
+              <li>“Muitos planos. Pouca profundidade.”</li>
+              <li>“Quem não observa o processo, não evolui.”</li>
+              <li>“Você concorda?”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Copy e ganchos</h2>
+          <div class="tag">Modelos prontos</div>
+        </div>
+        <div class="bd">
+          <div class="hooklist">
+            <div class="item">
+              <div class="k">Hook 1 (bastidor)</div>
+              <div class="v">“Acabei de falar com o(a) [nome] e isso me preocupou…”</div>
+            </div>
+            <div class="item">
+              <div class="k">Hook 2 (número + emoção)</div>
+              <div class="v">“[idade] anos, [número]… e ainda assim se sente atrás.”</div>
+            </div>
+            <div class="item">
+              <div class="k">Hook 3 (direto ao ponto)</div>
+              <div class="v">“Se você está com pressa pra [resultado], escuta isso.”</div>
+            </div>
+            <div class="item">
+              <div class="k">Hook 4 (padrão geracional)</div>
+              <div class="v">“Tem um padrão silencioso travando gente boa: pressa + comparação.”</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="box">
+            <h3>Frases-âncora (reenquadramento)</h3>
+            <ul>
+              <li>“Progresso de verdade é acumulativo.”</li>
+              <li>“Pressa te dá movimento. Processo te dá direção.”</li>
+              <li>“Consistência não é glamourosa—mas ela funciona.”</li>
+              <li>“Trocar de plano toda semana é um jeito de evitar a parte difícil: repetir.”</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>CTA</h2>
+        <div class="tag">Comentários (alto engajamento)</div>
+      </div>
+      <div class="bd">
+        <p class="muted">Escolha 1 CTA principal e 1 pergunta extra (para comentário fixado).</p>
+        <div class="cta">
+          <div class="pill"><strong>Principal:</strong> “Você também sente essa pressa? Comenta aqui.”</div>
+          <div class="pill"><strong>Variação:</strong> “Qual área mais te dá ansiedade hoje: [A], [B] ou [C]?”</div>
+          <div class="pill"><strong>Variação:</strong> “Comenta ‘EU’ se você se comparou essa semana.”</div>
+          <div class="pill"><strong>Variação:</strong> “O que você está tentando acelerar demais?”</div>
+        </div>
         <div class="hr"></div>
-        <div class="callout"><b>Use para qualquer tema:</b> receita/como fazer, tutorial de ferramenta, checklist de organização, mini-processo de vendas, setup de rotina, estudo, treino, design, edição, finanças, etc.</div>
+        <div class="box">
+          <h3>Comentário fixado (modelo)</h3>
+          <div class="script">Qual foi a última coisa que você começou e abandonou rápido por ansiedade? (Sem julgamentos — só pra identificar o padrão.)</div>
+        </div>
       </div>
+    </section>
 
-      <div class="card">
-        <h2>Parâmetros rápidos (para gravar hoje)</h2>
-        <ul class="list">
-          <li><b>Dor escolhida (1):</b> __________________________</li>
-          <li><b>Promessa (1):</b> __________________________</li>
-          <li><b>Processo em 4–6 passos:</b> __________________________</li>
-          <li><b>Benefícios (3–5):</b> __________________________</li>
-          <li><b>Prova numérica (1–2):</b> __________________________</li>
-          <li><b>Uso/Aplicação (3 situações):</b> __________________________</li>
-        </ul>
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Checklist</h2>
+        <div class="tag">Criação → gravação → edição → publicação</div>
       </div>
-    </div>
-
-    <div class="section">
-      <details open>
-        <summary>
-          <div class="sumleft">
-            <div class="sumtitle">Estrutura (sequência que tende a reter)</div>
-            <div class="sumdesc">0–2s hook • 2–4s posicionamento • 4–30s execução • 30–38s aplicações • 38–50s prova + CTA</div>
+      <div class="bd">
+        <div class="checklist">
+          <div class="box">
+            <h3>Pré-roteiro</h3>
+            <ul>
+              <li>[ ] Defina o “personagem” (cliente/aluno/amigo/"uma pessoa que conversei hoje").</li>
+              <li>[ ] Escolha <strong>1 nome</strong> (ou altere por privacidade) e <strong>2 números</strong> (idade + um indicador: tempo, meta, resultados, quantidade, etc.).</li>
+              <li>[ ] Escolha <strong>1 emoção</strong> e <strong>1 antagonista</strong> (pressa/comparação/perfeccionismo).</li>
+              <li>[ ] Escreva a <strong>frase-âncora</strong> (processo &gt; pressa) com 8–12 palavras.</li>
+            </ul>
           </div>
-          <div class="chev">›</div>
-        </summary>
-        <div class="content">
-          <ol class="list">
-            <li><b>Hook dor + promessa (0–2s):</b> fala o problema como a pessoa pensa e promete alívio rápido.</li>
-            <li><b>Posicionamento simples (2–4s):</b> quem você é + o que entrega + “sem [objeção]”.</li>
-            <li><b>Execução sem mistério (4–22s):</b> lista curta + passo a passo visual (cortes rápidos).</li>
-            <li><b>Benefícios empilhados (10–18s):</b> 3–5 benefícios curtos, 1 por linha/tela.</li>
-            <li><b>Aplicação prática e escala (18–30s):</b> como usar no dia + como fazer em lote / deixar pronto.</li>
-            <li><b>Fechamento com prova (38–45s):</b> 1–2 números/indicadores + “vale a pena?”</li>
-            <li><b>CTA (45–60s):</b> salvar + enviar + comentar (com humor/identificação).</li>
-          </ol>
-        </div>
-      </details>
-    </div>
-
-    <div class="section">
-      <details open>
-        <summary>
-          <div class="sumleft">
-            <div class="sumtitle">Roteiro (texto reproduzível)</div>
-            <div class="sumdesc">Copie e preencha os campos. Dica: mantenha frases de 1 linha por take.</div>
+          <div class="box">
+            <h3>Roteiro</h3>
+            <ul>
+              <li>[ ] Hook em 1–2 frases (≤ 3s).</li>
+              <li>[ ] Dor com sinais observáveis (não “conceito”).</li>
+              <li>[ ] Padrão com exemplos concretos (troca, pula, abandona, reinicia).</li>
+              <li>[ ] Consequência clara (travamento/perda de clareza/culpa).</li>
+              <li>[ ] Generalize sem atacar (“muita gente hoje”).</li>
+              <li>[ ] Reenquadre com “processo” + 1 ação simples (repetir um plano por tempo suficiente).</li>
+              <li>[ ] CTA com pergunta fechada ou escolha A/B/C.</li>
+            </ul>
           </div>
-          <div class="chev">›</div>
-        </summary>
-        <div class="content">
-          <pre id="scriptText">[CENA 0 — 0,5s | teaser do resultado]
-(Mostre o “final pronto” por 1 frame: antes/depois, tela final, produto pronto, planilha, setup concluído)
-TEXTO NA TELA: “Resultado em X minutos”
-
-[CENA 1 — 0–2s | HOOK]
-FALA: “Se você [DOR ESPECÍFICA] e ainda [OBSTÁCULO], seus problemas acabam: olha isso.”
-TEXTO NA TELA: “[DOR]?” + “Resolve em X passos”
-
-[CENA 2 — 2–4s | POSICIONAMENTO]
-FALA: “Eu sou [NOME] e aqui eu te ajudo a [RESULTADO] sem [OBJEÇÃO].”
-TEXTO NA TELA: “[RESULTADO] sem [OBJEÇÃO]”
-
-[CENA 3 — 4–10s | SETUP RÁPIDO]
-FALA: “Não tem mistério: você só precisa de [ITEM 1], [ITEM 2] e [ITEM 3].”
-AÇÃO: Mostrar itens/etapas em cortes rápidos.
-TEXTO NA TELA: “3 itens • 5 min” (ajuste)
-
-[CENA 4 — 10–22s | PASSO A PASSO]
-FALA (curta, em frases picadas):
-“Passo 1: [AÇÃO].”
-“Passo 2: [AÇÃO].”
-“Passo 3: [AÇÃO].”
-“Passo 4: [AÇÃO].”
-AÇÃO: Close das mãos + jump cuts (sempre algo mudando).
-TEXTO NA TELA: “Passo 1/2/3/4”
-
-[CENA 5 — 22–28s | BENEFÍCIOS EMPILHADOS]
-FALA: “O melhor: fica [BENEFÍCIO 1], [BENEFÍCIO 2], [BENEFÍCIO 3] e [BENEFÍCIO 4].”
-TEXTO NA TELA (um por vez, grande): “+ [benefício]”
-
-[CENA 6 — 28–38s | APLICAÇÃO + ESCALA]
-FALA: “Pra sua rotina, você usa isso em: [SITUAÇÃO 1], [SITUAÇÃO 2] e [SITUAÇÃO 3].”
-FALA: “E se quiser ganhar tempo: faz [N] de uma vez e deixa [COMO ARMAZENAR/ORGANIZAR].”
-AÇÃO: Mostre ‘em lote’ / porções / pastas / checklists / atalhos.
-
-[CENA 7 — 38–48s | PROVA/INDICADOR]
-FALA: “No final dá: [NÚMERO 1] e [NÚMERO 2]. Vale a pena?”
-TEXTO NA TELA: “[N1] • [N2]”
-
-[CENA 8 — 48–60s | CTA]
-FALA: “Se isso te ajuda, salva pra fazer depois e manda pra quem precisa ver isso (nem que seja você).”
-FALA (opcional): “Quer a versão de [VARIAÇÃO]? Comenta ‘QUERO’.”
-TEXTO NA TELA: “SALVA + ENVIA” + “Comenta: QUERO”</pre>
-          <div class="hr"></div>
-          <p class="mini"><span class="kbd">Regra de ouro</span>: o vídeo não é sobre explicar, é sobre <b>mostrar</b>. Se precisar contextualizar, faça em texto na tela enquanto a execução acontece.</p>
-        </div>
-      </details>
-    </div>
-
-    <div class="section">
-      <details>
-        <summary>
-          <div class="sumleft">
-            <div class="sumtitle">Elementos visuais (edição e captação)</div>
-            <div class="sumdesc">Padrões que aumentam retenção: cortes rápidos, close, payoff, texto grande.</div>
+          <div class="box">
+            <h3>Edição</h3>
+            <ul>
+              <li>[ ] Corte a cada 1,5–3s.</li>
+              <li>[ ] Legenda grande (3–7 palavras) e sem poluição.</li>
+              <li>[ ] Destaque 3 palavras em cor (PRESSA / COMPARAÇÃO / PROCESSO).</li>
+              <li>[ ] Zoom-in leve nos números e na frase-âncora.</li>
+              <li>[ ] Trilha baixa e constante.</li>
+            </ul>
           </div>
-          <div class="chev">›</div>
-        </summary>
-        <div class="content">
-          <div class="columns">
-            <div>
-              <h2 style="margin-top:0">Captação</h2>
-              <ul class="list">
-                <li><b>Plano detalhe</b> (mãos/teclado/tela/processo) como plano principal.</li>
-                <li><b>Payoff no começo</b>: 0,5s do resultado final antes do hook.</li>
-                <li><b>Iluminação</b>: fonte lateral suave; fundo limpo.</li>
-                <li><b>Áudio</b>: voz clara + música baixa; capture sons do processo quando fizer sentido.</li>
-              </ul>
-            </div>
-            <div>
-              <h2 style="margin-top:0">Edição</h2>
-              <ul class="list">
-                <li><b>Jump cuts</b> para remover pausas.</li>
-                <li><b>Cortes a cada 0,5–1,5s</b> durante a execução.</li>
-                <li><b>Textos grandes</b> com palavras-chave (1 ideia por tela).</li>
-                <li><b>Tela dividida</b> (opcional): lista de itens à esquerda e execução à direita em trechos.</li>
-              </ul>
-            </div>
+          <div class="box">
+            <h3>Publicação</h3>
+            <ul>
+              <li>[ ] Legenda repete a pergunta final (facilita comentários).</li>
+              <li>[ ] Fixe um comentário com pergunta extra.</li>
+              <li>[ ] Responda comentários com mini-audios/threads (primeira hora).</li>
+              <li>[ ] (Opcional) Stories: enquete “pressa ou processo?” no mesmo dia.</li>
+            </ul>
           </div>
         </div>
-      </details>
-    </div>
+      </div>
+    </section>
 
-    <div class="section">
-      <details open>
-        <summary>
-          <div class="sumleft">
-            <div class="sumtitle">Copy e ganchos (neutros, adaptáveis)</div>
-            <div class="sumdesc">Modelos prontos para trocar as variáveis e manter a estrutura vencedora.</div>
+    <section class="card" style="margin-top:14px;">
+      <div class="hd">
+        <h2>Variações</h2>
+        <div class="tag">Para repetir sem cansar</div>
+      </div>
+      <div class="bd">
+        <div class="cols">
+          <div class="box">
+            <h3>Variação 1 — Sem “caso real”</h3>
+            <div class="script">“Tem uma frase que eu ouço toda semana: ‘eu estou atrasado(a)’.
+E o problema quase nunca é falta de capacidade…
+é pressa + comparação.
+Hoje, escolhe um processo simples e repete por 30 dias.
+Qual processo você vai escolher?”</div>
           </div>
-          <div class="chev">›</div>
-        </summary>
-        <div class="content">
-          <div class="columns">
-            <div>
-              <h2 style="margin-top:0">Hooks (0–2s)</h2>
-              <pre id="hooksText">1) “Tá sofrendo com [DOR]? Faz isso em [X] passos.”
-2) “Se você [SITUAÇÃO] e ainda [OBSTÁCULO], olha isso.”
-3) “Você não precisa de [COISA DIFÍCIL]. Precisa de [SOLUÇÃO SIMPLES].”
-4) “O jeito mais fácil de [RESULTADO] sem [OBJEÇÃO].”
-5) “Pare de [ERRO COMUM]. Faz assim:”</pre>
-            </div>
-            <div>
-              <h2 style="margin-top:0">Linhas de autoridade simples (2–4s)</h2>
-              <pre>“Eu sou [NOME] e aqui eu te ajudo a [RESULTADO] sem [OBJEÇÃO].”
-“Meu foco aqui é: [PROMESSA DO PERFIL].”
-“Conteúdo direto, sem enrolação: bora.”</pre>
-            </div>
+          <div class="box">
+            <h3>Variação 2 — Lista rápida (mais dinâmica)</h3>
+            <div class="script">“3 sinais de que a pressa está te travando:
+1) você muda de plano toda semana;
+2) você mede tudo pelo resultado imediato;
+3) você se compara com pessoas em fases diferentes.
+Qual desses te pegou?”</div>
           </div>
-          <div class="hr"></div>
-          <h2>Benefícios empilhados (10–14s)</h2>
-          <pre>“Fica [BENEFÍCIO 1], [BENEFÍCIO 2], [BENEFÍCIO 3] e [BENEFÍCIO 4].”
-“Serve pra [SITUAÇÃO A], [SITUAÇÃO B] e [SITUAÇÃO C].”
-“E o melhor: dá pra repetir e adaptar com [VARIÁVEL].”</pre>
-          <div class="hr"></div>
-          <h2>Fechamento com prova (38–45s)</h2>
-          <pre>“No final dá [NÚMERO 1] + [NÚMERO 2]. Vale a pena?”
-“Tempo total: [X min]. Custo estimado: [R$ / $ / baixo-médio-alto].”
-“Antes vs depois: [INDICADOR].”</pre>
+          <div class="box">
+            <h3>Variação 3 — Vulnerabilidade do narrador</h3>
+            <div class="script">“Eu já caí nessa: querer encurtar caminho.
+E toda vez que eu tento acelerar demais, eu perco o básico: consistência.
+Se você está se cobrando por ‘já era pra estar lá’… respira.
+Qual cobrança você quer soltar hoje?”</div>
+          </div>
+          <div class="box">
+            <h3>Variação 4 — Polarização leve</h3>
+            <div class="script">“Opinião impopular: pressa é um tipo de procrastinação.
+Porque parece ação, mas evita repetição.
+Você concorda ou discorda? Por quê?”</div>
+          </div>
         </div>
-      </details>
-    </div>
+      </div>
+    </section>
 
-    <div class="section">
-      <details>
-        <summary>
-          <div class="sumleft">
-            <div class="sumtitle">CTA (salvar, enviar, comentar)</div>
-            <div class="sumdesc">CTAs curtos, com leve humor e baixa pressão.</div>
-          </div>
-          <div class="chev">›</div>
-        </summary>
-        <div class="content">
-          <ul class="list">
-            <li><b>Salvar:</b> “Salva pra fazer quando bater a correria.”</li>
-            <li><b>Compartilhar:</b> “Manda pra quem vive reclamando de [DOR] (nem que seja você).”</li>
-            <li><b>Comentário por variação:</b> “Quer a versão de [VARIAÇÃO]? Comenta ‘QUERO’.”</li>
-            <li><b>Comentário por diagnóstico:</b> “Qual parte te trava mais: [opção A] ou [opção B]?”</li>
-          </ul>
-        </div>
-      </details>
-    </div>
-
-    <div class="section">
-      <details open>
-        <summary>
-          <div class="sumleft">
-            <div class="sumtitle">Checklist de criação (do zero ao postado)</div>
-            <div class="sumdesc">Checklist neutro para replicar em qualquer nicho.</div>
-          </div>
-          <div class="chev">›</div>
-        </summary>
-        <div class="content">
-          <div class="columns">
-            <div>
-              <h2 style="margin-top:0">Pré-roteiro</h2>
-              <ul class="list">
-                <li>[ ] Escolhi <b>1 dor</b> específica (não genérica).</li>
-                <li>[ ] Defini <b>1 promessa</b> concreta (tempo/etapas/resultado).</li>
-                <li>[ ] Desenhei o processo em <b>4–6 passos</b> visualizáveis.</li>
-                <li>[ ] Separei <b>1 prova</b>: número, indicador, antes/depois, print, medição.</li>
-                <li>[ ] Listei <b>3 aplicações</b> do resultado (onde usar).</li>
-              </ul>
-            </div>
-            <div>
-              <h2 style="margin-top:0">Gravação/Edição</h2>
-              <ul class="list">
-                <li>[ ] Gravei 0,5s do <b>resultado final</b> para abrir.</li>
-                <li>[ ] Usei <b>close-ups</b> e cortes rápidos na execução.</li>
-                <li>[ ] Texto na tela: <b>1 ideia por take</b>, fonte grande.</li>
-                <li>[ ] Removi pausas (jump cuts) e mantive o vídeo em <b>45–60s</b>.</li>
-                <li>[ ] Final: porção/resultado pronto + <b>números</b> + CTA.</li>
-              </ul>
-            </div>
-          </div>
-          <div class="hr"></div>
-          <h2>Checklist de publicação</h2>
-          <ul class="list">
-            <li>[ ] Primeira linha da legenda repete o <b>hook</b>.</li>
-            <li>[ ] Legenda tem <b>passo a passo</b> em bullets (para quem assiste sem som).</li>
-            <li>[ ] Incluí <b>CTA único</b> (salvar/enviar/comentar) + pergunta final.</li>
-            <li>[ ] Capa com 3–6 palavras: <b>[DOR] → [PROMESSA]</b>.</li>
-          </ul>
-        </div>
-      </details>
-    </div>
-
-    <div class="section">
-      <details>
-        <summary>
-          <div class="sumleft">
-            <div class="sumtitle">Variações (para repostar sem ficar repetitivo)</div>
-            <div class="sumdesc">Mesma espinha dorsal, mudando ângulo, prova e formato do passo a passo.</div>
-          </div>
-          <div class="chev">›</div>
-        </summary>
-        <div class="content">
-          <ul class="list">
-            <li><b>Variação 1 — “3 erros e o jeito certo”:</b> Hook com erro comum, depois mostra o passo a passo correto e fecha com prova.</li>
-            <li><b>Variação 2 — “Ferramenta/atalho”:</b> Mostra um recurso que corta tempo pela metade (prova: minutos economizados).</li>
-            <li><b>Variação 3 — “Antes/depois”:</b> Abre com comparação e só depois ensina o processo.</li>
-            <li><b>Variação 4 — “Setup em lote”:</b> foco total em organização/produção em massa (prova: N entregas/semana, N arquivos, N porções).</li>
-            <li><b>Variação 5 — “Desafio 24h”:</b> “Hoje eu vou [resultado] usando só [restrição]” e mostra o processo.</li>
-          </ul>
-        </div>
-      </details>
-    </div>
-
-    <footer>
-      <div>Observação: este documento é um template neutro (não é orientação técnica/profissional específica). Ajuste termos, métricas e promessas à sua área e ao seu público.</div>
-    </footer>
   </div>
 
-<script>
-  function copyTextFrom(elId, btn){
-    const el = document.getElementById(elId);
-    const txt = el ? el.innerText : "";
-    if(!txt) return;
-    navigator.clipboard.writeText(txt).then(()=>{
-      const original = btn.innerText;
-      btn.innerText = "Copiado!";
-      setTimeout(()=>btn.innerText = original, 900);
-    });
-  }
-  document.getElementById('copyBtn').addEventListener('click', function(){
-    copyTextFrom('scriptText', this);
-  });
-  document.getElementById('copyHooksBtn').addEventListener('click', function(){
-    copyTextFrom('hooksText', this);
-  });
-</script>
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=> toast.style.display='none', 1600);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = textEl.innerText.trim();
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado (fallback).');
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
