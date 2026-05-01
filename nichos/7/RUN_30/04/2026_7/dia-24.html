@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Roteiro reproduzível — Viral: vale o hype?</title>
+<style>
+:root{
+  --bg:#0b0f14;
+  --panel:#0f1621;
+  --card:#0e1520;
+  --stroke:rgba(255,255,255,.10);
+  --stroke2:rgba(255,255,255,.14);
+  --text:rgba(255,255,255,.92);
+  --muted:rgba(255,255,255,.70);
+  --muted2:rgba(255,255,255,.58);
+  --shadow: 0 14px 40px rgba(0,0,0,.45);
+  --r:18px;
+  --r2:14px;
+  --g1: linear-gradient(90deg, #37d67a 0%, #2f8bff 45%, #ff8a1f 100%);
+  --g2: radial-gradient(900px 500px at 20% -10%, rgba(47,139,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 80% 0%, rgba(55,214,122,.18), transparent 60%),
+        radial-gradient(900px 500px at 40% 110%, rgba(255,138,31,.14), transparent 60%);
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--text);
+  background: var(--g2), var(--bg);
+}
+.container{max-width:1100px; margin:0 auto; padding:28px 18px 56px;}
+.header{
+  border:1px solid var(--stroke);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border-radius: calc(var(--r) + 6px);
+  box-shadow: var(--shadow);
+  padding:18px 18px 16px;
+  position:relative;
+  overflow:hidden;
+}
+.header:before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background: var(--g1);
+  opacity:.10;
+  filter: blur(14px);
+  z-index:0;
+}
+.header > *{position:relative; z-index:1;}
+.toprow{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+.badges{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+.badge{
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  padding:8px 10px;
+  border-radius:999px;
+  font-size:13px;
+  letter-spacing:.2px;
+}
+.badge strong{color:var(--text); font-weight:650}
+.h1{margin:12px 0 6px; font-size:22px; line-height:1.2; letter-spacing:-.2px;}
+.sub{margin:0; color:var(--muted); font-size:14px; line-height:1.5;}
+.link{color:rgba(255,255,255,.9); text-decoration:none; border-bottom:1px dashed rgba(255,255,255,.25)}
+.link:hover{border-bottom-color:rgba(255,255,255,.55)}
+.grid{display:grid; grid-template-columns: 1.08fr .92fr; gap:14px; margin-top:14px;}
+@media (max-width: 980px){.grid{grid-template-columns:1fr;}}
+.card{
+  border:1px solid var(--stroke);
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+  border-radius: var(--r);
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+.card .head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  padding:14px 14px 10px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.kicker{font-size:12px; text-transform:uppercase; letter-spacing:.14em; color:var(--muted2)}
+.title{margin:4px 0 0; font-size:16px; letter-spacing:-.1px}
+.pill{
+  font-size:12px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.86);
+  white-space:nowrap;
+}
+.pill.grad{border-color:transparent; background: var(--g1); color:#091018; font-weight:700;}
+.content{padding:14px}
+.content p{margin:0 0 10px; color:var(--muted); line-height:1.55; font-size:14px}
+.content ul{margin:0; padding-left:18px; color:var(--muted); line-height:1.6; font-size:14px}
+.content li{margin:6px 0}
+.hr{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+.small{font-size:12px; color:var(--muted2); line-height:1.55}
+textarea{
+  width:100%;
+  min-height: 420px;
+  background: rgba(10,14,20,.55);
+  color: rgba(255,255,255,.92);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius: var(--r);
+  padding:14px;
+  font-family: var(--mono);
+  font-size:12.6px;
+  line-height:1.45;
+  outline:none;
+  resize: vertical;
+}
+.actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; align-items:center;}
+button{
+  appearance:none;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.92);
+  padding:10px 12px;
+  border-radius: 12px;
+  cursor:pointer;
+  font-weight:650;
+  letter-spacing:.2px;
+}
+button.primary{border-color:transparent; background: var(--g1); color:#081018;}
+button:hover{filter:brightness(1.07)}
+.note{font-size:12px; color:var(--muted2)}
+.section{margin-top:14px}
+.two{display:grid; gap:14px; grid-template-columns: 1fr 1fr;}
+@media (max-width: 980px){.two{grid-template-columns:1fr;}}
+.codebox{
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(10,14,20,.35);
+  border-radius: var(--r);
+  padding:12px;
+}
+.tag{
+  display:inline-block;
+  padding:6px 9px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.82);
+  font-size:12px;
+  margin:0 6px 6px 0;
+}
+.footer{margin-top:14px; color:var(--muted2); font-size:12px}
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="toprow">
+        <div class="badges">
+          <div class="badge"><strong>Nicho</strong>: Estética</div>
+          <div class="badge"><strong>Dia</strong>: 24</div>
+          <div class="badge"><strong>Formato</strong>: Carrossel</div>
+          <div class="badge"><strong>Pilar</strong>: Prova</div>
+        </div>
+        <div class="badge">Post original: <a class="link" href="https://www.instagram.com/p/DWHVHN8EZQy/" target="_blank" rel="noopener noreferrer">abrir</a></div>
+      </div>
+      <div class="h1">Viral na estética: vale o hype? (veredito técnico)</div>
+      <p class="sub">Roteiro reproduzível para avaliar itens/temas “virais” com curadoria + critérios técnicos + veredito objetivo, mantendo linguagem simples e CTA para interação.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="kicker">Resumo</div>
+            <div class="title">O que este carrossel faz (e por que funciona)</div>
+          </div>
+          <div class="pill grad">Modelo de série</div>
+        </div>
+        <div class="content">
+          <p><b>Promessa:</b> transformar hype em decisão segura (“vale / depende / não vale”).</p>
+          <p><b>Mecanismo:</b> repetição de estrutura + selo de veredito + 1 critério técnico por item (autoridade sem ficar técnico demais).</p>
+          <p><b>Entrega:</b> utilidade imediata (como usar/para quem) + honestidade (ressalva) + conversão (salvar/parte 2/DM).</p>
+          <div class="hr"></div>
+          <p class="small"><b>Use para:</b> produtos, procedimentos, ativos, aparelhos, hábitos, “tendências” e até condutas do dia a dia (ex.: “banho quente piora ressecamento?”).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="kicker">Copiar e colar</div>
+            <div class="title">Roteiro mestre (editável)</div>
+          </div>
+          <div class="pill">8 slides (recomendado)</div>
+        </div>
+        <div class="content">
+          <textarea id="roteiro" spellcheck="false">CARROSSEL — “VIRAL: VALE O HYPE?” (template)
+
+[CONFIG]
+- Tema/Categoria: ______________________________
+- Público principal: ____________________________
+- Itens a avaliar (3–5): ________________________
+- Critérios fixos (use os mesmos em todos):
+  1) Segurança/indicação
+  2) Eficácia (mecanismo/evidência)
+  3) Custo-benefício/experiência
+- Selo possível: VALE / DEPENDE / NÃO VALE
+
+SLIDE 1 — CAPA (Hook + Autoridade)
+Título: “________ VIRAIS: quais VALEM o hype?”
+Subtítulo: “Avaliação técnica por __________ (sua credencial)”
+Microcopy (opcional): “sem terrorismo, sem milagre”
+Visual: você + cenário (clínica/prateleira/bancada) + selo grande “VALE O HYPE?”
+
+SLIDE 2 — CONTEXTO (nivelar a conversa)
+Título: “Antes de escolher: 3 critérios rápidos”
+Bullets (curtos):
+- “Pra quem indica (e quem evita)”
+- “O que dá resultado de verdade”
+- “Onde o dinheiro faz diferença”
+Rodapé: “Agora sim: os virais do momento ⟶”
+
+SLIDE 3 — ITEM 1 (um por slide)
+Selo: [VALE/DEPENDE/NÃO VALE]
+Nome do item: ______________________________
+Preço/medida (se fizer sentido): R$ ___ | ___ ml/g/sessão
+Texto (4 linhas máx):
+- “Funciona porque __________ (1 critério técnico).”
+- “Você percebe __________ (benefício).”
+- “Indico pra __________ (perfil).”
+- “Atenção se __________ (ressalva).”
+Fecho: “Veredito: __________.”
+
+SLIDE 4 — ITEM 2 (repete estrutura)
+Selo: [VALE/DEPENDE/NÃO VALE]
+Nome:
+Preço/medida:
+Texto:
+Fecho:
+
+SLIDE 5 — ITEM 3 (repete estrutura)
+Selo: [VALE/DEPENDE/NÃO VALE]
+Nome:
+Preço/medida:
+Texto:
+Fecho:
+
+SLIDE 6 — ITEM 4 (opcional) OU “BÔNUS: como escolher”
+Comparativo rápido:
+- “Se seu objetivo é A → melhor: X”
+- “Se seu objetivo é B → melhor: Y”
+- “Se seu objetivo é C → evite/repense: Z”
+
+SLIDE 7 — ERROS/RESSALVAS (opcional, aumenta confiança)
+Título: “O que faz parecer que ‘não funciona’”
+3 bullets:
+- “Expectativa errada (tempo/resultado)”
+- “Uso fora da indicação”
+- “Combinação errada com ________”
+
+SLIDE 8 — CTA (conversão)
+Título: “Quer a PARTE 2?”
+CTAs:
+- “Comenta ‘PARTE 2’ + a categoria que você quer”
+- “Salva pra consultar antes de comprar/agendar”
+- “Me segue pra escolher com segurança”
+Extra (opcional): “Quer um plano do seu caso? Me chama no direct com: objetivo + rotina + sensibilidade.”</textarea>
+          <div class="actions">
+            <button class="primary" id="copyBtn">Copiar roteiro</button>
+            <button id="selectBtn">Selecionar texto</button>
+            <span class="note" id="status"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section two">
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="kicker">Estrutura</div>
+            <div class="title">Sequência recomendada (reproduzível)</div>
+          </div>
+          <div class="pill">6–8 slides</div>
+        </div>
+        <div class="content">
+          <ul>
+            <li><b>1. Capa:</b> promessa + “por uma especialista” + pergunta (“vale o hype?”).</li>
+            <li><b>2. Critérios:</b> 2–3 regras simples (segurança, eficácia, custo-benefício).</li>
+            <li><b>3–6. Avaliações:</b> 1 item por slide, sempre com o mesmo bloco (selo + nome + justificativa + ressalva).</li>
+            <li><b>7. Guia de escolha (opcional):</b> “se seu objetivo é A/B/C”.</li>
+            <li><b>8. CTA:</b> salvar + comentar palavra-chave + seguir/DM.</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="small"><b>Regra de ouro:</b> o leitor precisa entender o veredito em <b>1 segundo</b> e o “por quê” em <b>5 segundos</b>.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="kicker">Slides sugeridos (1..N)</div>
+            <div class="title">Mapa pronto (8 slides)</div>
+          </div>
+          <div class="pill grad">Carrossel</div>
+        </div>
+        <div class="content">
+          <div class="codebox">
+            <div class="tag">Slide 1 — Capa (Hook + Autoridade)</div>
+            <div class="tag">Slide 2 — Critérios/Contexto</div>
+            <div class="tag">Slide 3 — Item 1 (veredito + por quê)</div>
+            <div class="tag">Slide 4 — Item 2</div>
+            <div class="tag">Slide 5 — Item 3</div>
+            <div class="tag">Slide 6 — Item 4 ou Bônus (comparativo)</div>
+            <div class="tag">Slide 7 — Erros comuns / ressalvas</div>
+            <div class="tag">Slide 8 — CTA (salvar + comentar + seguir)</div>
+          </div>
+          <div class="hr"></div>
+          <p class="small"><b>Dica:</b> se for só 6 slides, remova os slides 6 e 7 e mantenha o CTA forte no final.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section two">
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="kicker">Roteiro</div>
+            <div class="title">Texto por slide (modelo com prompts)</div>
+          </div>
+          <div class="pill">curto + escaneável</div>
+        </div>
+        <div class="content">
+          <p><b>Slide 1 (Capa):</b> “<b>[CATEGORIA]</b> VIRAL: <b>vale o hype?</b>” + “por <b>[CREDENCIAL]</b>”.</p>
+          <p><b>Slide 2 (Critérios):</b> “Eu avalio por: <b>1)</b> indicação/segurança <b>2)</b> resultado real <b>3)</b> custo-benefício”.</p>
+          <p><b>Slides 3–6 (Itens):</b> sempre na ordem: <b>selo</b> → <b>nome</b> → <b>1 motivo técnico</b> → <b>benefício</b> → <b>para quem</b> → <b>ressalva</b>.</p>
+          <p><b>Slide 7 (Erros):</b> 3 bullets para “não culpar o produto/procedimento” e orientar uso correto.</p>
+          <p><b>Slide 8 (CTA):</b> “Comenta <b>PARTE 2</b> + seu tema” + “<b>Salva</b> pra consultar” + “<b>Segue</b> pra escolher com segurança”.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="kicker">Elementos visuais</div>
+            <div class="title">Design kit (para replicar rápido)</div>
+          </div>
+          <div class="pill grad">High-tech clean</div>
+        </div>
+        <div class="content">
+          <ul>
+            <li><b>Fundo:</b> foto real (clínica/prateleira/bancada). Reduza brilho e aplique leve desfoque para o texto “sentar”.</li>
+            <li><b>Cards:</b> caixas claras/semipermeáveis com cantos arredondados (boa leitura no mobile).</li>
+            <li><b>Selo inclinado:</b> “VALE / DEPENDE / NÃO VALE” em alto contraste; repita em todos os itens.</li>
+            <li><b>Destaque:</b> use 1 cor por intenção (verde = aprovado, laranja = atenção, azul = técnico/neutral).</li>
+            <li><b>Recorte:</b> produto/ícone grande (60–70% do slide) + texto ancorado no terço inferior.</li>
+            <li><b>Tipografia:</b> no máximo 2 pesos (Regular + Bold). Caixa alta só no hook/selo.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section two">
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="kicker">Copy e ganchos</div>
+            <div class="title">Frases prontas (substituíveis)</div>
+          </div>
+          <div class="pill">alta retenção</div>
+        </div>
+        <div class="content">
+          <p><b>Ganchos de capa (escolha 1):</b></p>
+          <ul>
+            <li>“[X] viral: <b>vale o hype</b> ou é marketing?”</li>
+            <li>“Antes de gastar com [X], veja isso.”</li>
+            <li>“3 [X] virais: o que eu <b>recomendo</b> e o que eu <b>evito</b>.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p><b>Ganchos por item (1 linha):</b></p>
+          <ul>
+            <li>“O detalhe que ninguém diz: ________.”</li>
+            <li>“Funciona, mas só se ________.”</li>
+            <li>“Se você tem ________, atenção: ________.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="small"><b>Regra:</b> 1 termo técnico no máximo por slide (ex.: “barreira cutânea”, “oclusão”, “contraindicação”). Traduza na mesma frase.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="kicker">CTA</div>
+            <div class="title">Chamadas fortes (sem pedir “curte” vazio)</div>
+          </div>
+          <div class="pill grad">conversão</div>
+        </div>
+        <div class="content">
+          <ul>
+            <li><b>Salvar:</b> “Salva pra consultar antes de comprar/agendar.”</li>
+            <li><b>Comentar:</b> “Comenta <b>PARTE 2</b> + [tema] que eu avalio os próximos.”</li>
+            <li><b>Seguir:</b> “Me segue pra escolher procedimentos e produtos com segurança.”</li>
+            <li><b>Direct:</b> “Quer indicação por objetivo? Me chama no direct com: idade + queixa + rotina + sensibilidade.”</li>
+            <li><b>Agenda (soft):</b> “Se quiser plano personalizado, link na bio pra avaliação.”</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="small"><b>Atalho de engajamento:</b> peça uma palavra + variável: “Comenta ‘HYPE’ + seu tipo de pele”.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section two">
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="kicker">Checklist</div>
+            <div class="title">Criação + revisão antes de postar</div>
+          </div>
+          <div class="pill">controle de qualidade</div>
+        </div>
+        <div class="content">
+          <ul>
+            <li>[ ] Capa promete <b>resultado/decisão</b> (não só tema) e tem “por uma especialista”.</li>
+            <li>[ ] Slide 2 define <b>critérios</b> (2–3) e prepara o leitor para os vereditos.</li>
+            <li>[ ] Em cada item: <b>selo</b> aparece antes do texto (1 segundo).</li>
+            <li>[ ] Texto por item em <b>4–6 linhas</b>, com respiro e linguagem simples.</li>
+            <li>[ ] Inclui <b>para quem</b> + <b>ressalva honesta</b> (aumenta confiança).</li>
+            <li>[ ] Preço/medida/tempo de sessão (se aplicável) visível e coerente.</li>
+            <li>[ ] Padrão visual consistente: mesmos cards, mesma posição do selo, mesma hierarquia.</li>
+            <li>[ ] Último slide com <b>2 CTAs</b> no máximo (ex.: salvar + comentar).</li>
+            <li>[ ] Legível no celular: teste em 25% de zoom.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head">
+          <div>
+            <div class="kicker">Variações</div>
+            <div class="title">Adaptações para outros temas (mesmo impacto)</div>
+          </div>
+          <div class="pill grad">substituições</div>
+        </div>
+        <div class="content">
+          <p><b>Troca 1 — “Produto” → “Procedimento”</b></p>
+          <ul>
+            <li>Preço/medida vira: “R$ ___ / sessão • nº de sessões • downtime”.</li>
+            <li>Critério técnico vira: “indicações/contraindicações + expectativa real”.</li>
+          </ul>
+          <div class="hr"></div>
+          <p><b>Troca 2 — “Vale o hype” → outras promessas</b></p>
+          <ul>
+            <li>“Funciona mesmo?” / “É seguro?” / “Pra quem vale o investimento?”</li>
+            <li>“O que eu faria no seu lugar com R$ ___” (custo-benefício).</li>
+          </ul>
+          <div class="hr"></div>
+          <p><b>Troca 3 — Estrutura alternativa (para mais retenção)</b></p>
+          <ul>
+            <li>Slide 2 vira “Ranking” (Top 1/2/3) mantendo os critérios no rodapé.</li>
+            <li>Inserir “Mito rápido” no slide 7: “Mito: ____ / Verdade: ____”.</li>
+          </ul>
+          <div class="hr"></div>
+          <p class="small"><b>Temas que encaixam fácil:</b> limpeza de pele, peeling, microagulhamento, skinbooster, drenagem, celulite, flacidez, olheiras, acne, melasma, barreira cutânea, pós-procedimento, home care, aparelhos em casa.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Identidade recomendada: fundo escuro + cards suaves + destaques em degradê (verde/azul/laranja) + linguagem objetiva + veredito consistente.</div>
+  </div>
+
+<script>
+(function(){
+  const ta = document.getElementById('roteiro');
+  const status = document.getElementById('status');
+  const copyBtn = document.getElementById('copyBtn');
+  const selectBtn = document.getElementById('selectBtn');
+
+  function setStatus(msg){
+    status.textContent = msg;
+    clearTimeout(window.__st);
+    window.__st = setTimeout(()=> status.textContent = '', 1800);
+  }
+
+  selectBtn.addEventListener('click', ()=>{
+    ta.focus();
+    ta.select();
+    setStatus('Texto selecionado.');
+  });
+
+  copyBtn.addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(ta.value);
+      setStatus('Roteiro copiado.');
+    }catch(e){
+      ta.focus();
+      ta.select();
+      document.execCommand('copy');
+      setStatus('Roteiro copiado (modo compatibilidade).');
+    }
+  });
+})();
+</script>
+</body>
+</html>
