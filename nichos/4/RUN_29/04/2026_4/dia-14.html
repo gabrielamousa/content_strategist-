@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 14 — Regra 50-30-20</title>
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1630cc;
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --good:#35F2A3;
+      --blue:#4FA7FF;
+      --orange:#FF9F43;
+      --shadow: 0 18px 60px rgba(0,0,0,.5);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1100px 650px at 15% 10%, rgba(79,167,255,.16), transparent 55%),
+        radial-gradient(900px 520px at 85% 25%, rgba(53,242,163,.14), transparent 55%),
+        radial-gradient(800px 520px at 55% 90%, rgba(255,159,67,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+
+    header{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: calc(var(--radius) + 6px);
+      padding:18px 18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background: linear-gradient(90deg, rgba(53,242,163,.18), rgba(79,167,255,.18), rgba(255,159,67,.18));
+      filter: blur(18px);
+      opacity:.55;
+      z-index:0;
+    }
+    header > *{position:relative;z-index:1}
+    .topline{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+    .chiprow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .chip{
+      font-size:12px;
+      letter-spacing:.3px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(14,22,48,.55);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .chip strong{color:var(--text);font-weight:650}
+    h1{
+      margin:10px 0 6px;
+      font-size:26px;
+      line-height:1.16;
+      letter-spacing:-.3px;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size:14px;
+      line-height:1.45;
+    }
+    .link{
+      display:inline-flex;gap:8px;align-items:center;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.45);
+      text-decoration:none;
+      color: var(--muted);
+      width: fit-content;
+    }
+    .link:hover{border-color:var(--stroke2);color:var(--text)}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 960px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(14,22,48,.55);
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: 0 10px 34px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      color: var(--muted);
+      letter-spacing:.8px;
+      text-transform:uppercase;
+    }
+    .card p, .card li{color: var(--muted);line-height:1.55}
+    .card strong{color: var(--text)}
+
+    .hl{
+      padding:2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      white-space:nowrap;
+    }
+    .hl.g{background: linear-gradient(90deg, rgba(53,242,163,.18), rgba(53,242,163,.06));}
+    .hl.b{background: linear-gradient(90deg, rgba(79,167,255,.18), rgba(79,167,255,.06));}
+    .hl.o{background: linear-gradient(90deg, rgba(255,159,67,.18), rgba(255,159,67,.06));}
+
+    .two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width:700px){.two{grid-template-columns:1fr}}
+
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-size:12px;
+      color: rgba(234,240,255,.78);
+      background: rgba(7,10,18,.55);
+      border: 1px solid var(--stroke);
+      padding: 10px 12px;
+      border-radius: 14px;
+      white-space: pre-wrap;
+      line-height: 1.55;
+    }
+
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    button{
+      appearance:none;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight:650;
+    }
+    button:hover{border-color:var(--stroke2)}
+    .ghost{background: rgba(7,10,18,.35); color: var(--muted)}
+
+    ul{margin:8px 0 0 18px;padding:0}
+    .small{font-size:13px;color:var(--muted2)}
+    .divider{height:1px;background:var(--stroke);margin:12px 0}
+
+    .taglist{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .tag{
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(7,10,18,.35);
+      color: var(--muted);
+    }
+
+    .toast{
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      background: rgba(14,22,48,.92);
+      border: 1px solid var(--stroke2);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: .2s ease;
+      pointer-events: none;
+      max-width: 92vw;
+    }
+    .toast.show{opacity:1;transform: translateY(0)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="topline">
+        <div class="chiprow">
+          <span class="chip"><strong>Nicho</strong>: Finanças e Negócios</span>
+          <span class="chip"><strong>Dia</strong>: 14</span>
+          <span class="chip"><strong>Formato</strong>: Reels</span>
+          <span class="chip"><strong>Pilar</strong>: Passo a passo</span>
+        </div>
+        <div class="chiprow">
+          <span class="chip">Identidade: dark · high-tech · degradê</span>
+        </div>
+      </div>
+      <h1>Regra 50-30-20: organize seu dinheiro em 3 partes</h1>
+      <p class="sub">Molde reproduzível para ensinar um framework simples com números grandes, exemplos do dia a dia e CTA de salvar/compartilhar.</p>
+      <a class="link" href="https://www.instagram.com/p/C_6WFQkvIfs/" target="_blank" rel="noopener noreferrer">Abrir post original → https://www.instagram.com/p/C_6WFQkvIfs/</a>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Resumo</h2>
+        <p>
+          Conteúdo “framework pronto”: apresenta uma regra memorável <span class="hl b">(50/30/20)</span>, explica em 3 blocos escaneáveis
+          e destrava a ação com <span class="hl g">baixo atrito</span> (sem planilha/app). Funciona porque combina <strong>nome + promessa + simplicidade</strong>
+          e fecha com <span class="hl o">CTA social</span> (seguir + salvar/compartilhar + marcar).
+        </p>
+        <div class="divider"></div>
+        <p class="small"><strong>Objetivo do Reels:</strong> levar a pessoa a aplicar hoje a divisão do salário (ou adaptar a regra para o negócio) e salvar para usar todo mês.</p>
+        <div class="taglist">
+          <span class="tag">Hook em 1–2s</span>
+          <span class="tag">Números grandes</span>
+          <span class="tag">Exemplos concretos</span>
+          <span class="tag">Listas curtas</span>
+          <span class="tag">Benefício final resumido</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estrutura (sequência reproduzível)</h2>
+        <ul>
+          <li><strong>0–2s:</strong> Hook com nome memorável (<span class="hl b">“regra X-Y-Z”</span>).</li>
+          <li><strong>2–6s:</strong> Promessa + “funciona assim” (3 partes).</li>
+          <li><strong>6–18s:</strong> Parte 1 (maior %) + 4–6 exemplos.</li>
+          <li><strong>18–30s:</strong> Parte 2 + 4–6 exemplos.</li>
+          <li><strong>30–42s:</strong> Parte 3 + <strong>prioridade #1</strong> (ex.: reserva) + 2–3 objetivos.</li>
+          <li><strong>42–50s:</strong> Fechamento: 1 frase de benefício.</li>
+          <li><strong>50–60s:</strong> CTA: seguir + salvar + enviar/marcar.</li>
+        </ul>
+        <div class="divider"></div>
+        <p class="small"><strong>Regra de edição:</strong> troca de bloco a cada 8–12s + texto grande com percentuais + legendas completas.</p>
+      </section>
+
+      <section class="card">
+        <h2>Roteiro (pronto para gravar)</h2>
+        <div class="btnrow">
+          <button id="copyBtn">Copiar roteiro</button>
+          <button class="ghost" id="selectBtn">Selecionar texto</button>
+        </div>
+        <div id="roteiro" class="kbd" role="textbox" aria-label="Roteiro">
+[HOOK — 0–2s]
+“Conheça a regra do 50-30-20. É o jeito mais simples de organizar seu salário em 3 partes.”
+
+[SETUP — 2–6s]
+“Funciona assim: 50% essencial, 30% não essencial e 20% futuro.”
+
+[BLOCO 1 — 6–18s | 50% ESSENCIAL]
+“50% vai para o que mantém sua vida funcionando.”
+“Moradia, alimentação, transporte, saúde, contas básicas e educação.”
+
+[BLOCO 2 — 18–30s | 30% NÃO ESSENCIAL]
+“30% vai para escolhas — o que melhora seu mês, mas não é obrigatório.”
+“Lazer, viagem, delivery, shopping, assinaturas tipo Netflix e hobbies.”
+
+[BLOCO 3 — 30–42s | 20% FUTURO]
+“20% é o que te tira do aperto no longo prazo.”
+“Prioridade #1: reserva de emergência. Depois: quitar dívidas, investir e metas maiores.”
+
+[FECHO — 42–50s]
+“Se você usar isso por 2–3 meses, suas decisões ficam mais fáceis e você para de ‘adivinhar’ pra onde o dinheiro foi.”
+
+[CTA — 50–60s]
+“Salva pra aplicar no próximo salário. Me segue pra mais regras simples e manda pra alguém que vive no aperto todo mês.”
+        </div>
+        <div class="divider"></div>
+        <p class="small"><strong>Dica de performance:</strong> repita “50/30/20” pelo menos 3x ao longo do vídeo (ancoragem).</p>
+      </section>
+
+      <section class="card">
+        <h2>Elementos visuais (high-tech + clareza)</h2>
+        <div class="two">
+          <div>
+            <p><strong>Texto na tela (base):</strong></p>
+            <ul>
+              <li><span class="hl b">REGRA 50-30-20</span></li>
+              <li><span class="hl g">50% = ESSENCIAL</span> (moradia • alimentação • transporte • saúde)</li>
+              <li><span class="hl o">30% = NÃO ESSENCIAL</span> (lazer • assinaturas • viagens • delivery)</li>
+              <li><span class="hl b">20% = FUTURO</span> (reserva • metas • investimentos)</li>
+              <li>Fecho: “Salve e envie”</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>B-roll/ícones sugeridos:</strong></p>
+            <ul>
+              <li>Casa, prato, ônibus/carro, cruz/saúde</li>
+              <li>Sacola, controle de videogame, avião, “play” (streaming)</li>
+              <li>Cofrinho, gráfico subindo, escudo (reserva)</li>
+              <li>Pop/whoosh leve na troca de bloco</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <p class="small"><strong>Checklist visual:</strong> números grandes + contraste alto + legendas 100% + cortes secos por frase.</p>
+      </section>
+
+      <section class="card">
+        <h2>Copy e ganchos (modelos)</h2>
+        <p><strong>Hooks (1–2s):</strong></p>
+        <ul>
+          <li>“Se você ganha R$ [X], divide assim: 50/30/20.”</li>
+          <li>“A regra mais simples pra parar de estourar o orçamento.”</li>
+          <li>“3 números que organizam seu mês sem planilha.”</li>
+        </ul>
+        <div class="divider"></div>
+        <p><strong>Linhas de retenção (meio do vídeo):</strong></p>
+        <ul>
+          <li>“E aqui vai o erro que quase todo mundo comete no ‘30%’…”</li>
+          <li>“Se você só fizer UMA coisa no ‘20%’, faz isso:”</li>
+          <li>“Isso vale mesmo se você ganha pouco — olha como adaptar:”</li>
+        </ul>
+        <div class="divider"></div>
+        <p><strong>Legenda sugerida (caption curta):</strong></p>
+        <p class="kbd">Regra 50-30-20 pra organizar o mês:
+50% essencial | 30% não essencial | 20% futuro.
+
+Salva pra usar no próximo salário e envia pra alguém que precisa de um norte.
+
+#financas #educacaofinanceira #orçamento #investimentos #negocios</p>
+      </section>
+
+      <section class="card">
+        <h2>CTA (escolha 1 primário + 1 social)</h2>
+        <ul>
+          <li><strong>Primário (conversão):</strong> “Salva pra aplicar no próximo salário.”</li>
+          <li><strong>Social (alcance):</strong> “Envia pra alguém que sempre fecha o mês no susto.”</li>
+          <li><strong>Relacionamento:</strong> “Comenta ‘REGRA’ que eu te mando um exemplo com números.”</li>
+        </ul>
+        <div class="divider"></div>
+        <p class="small"><strong>Regra:</strong> não usar 3 CTAs longos; use 1 curto + 1 social (ou 1 curto + comentário).</p>
+      </section>
+
+      <section class="card">
+        <h2>Checklist de criação (produção → edição → publicação)</h2>
+        <ul>
+          <li><strong>Defina o alvo:</strong> pessoa física (salário) ou negócio (faturamento/caixa).</li>
+          <li><strong>Nome:</strong> “Regra X-Y-Z” curto e memorável.</li>
+          <li><strong>Roteiro:</strong> 3 blocos, 4–6 exemplos por bloco, 1 prioridade #1 no último.</li>
+          <li><strong>Gravação:</strong> energia alta no hook, pausas curtas entre listas.</li>
+          <li><strong>Tela:</strong> percentuais grandes + rótulos (ESSENCIAL / NÃO ESSENCIAL / FUTURO).</li>
+          <li><strong>Edição:</strong> jump cuts por frase, zoom sutil no “prioridade #1”, SFX leve opcional.</li>
+          <li><strong>Acessibilidade:</strong> legendas completas (muitos assistem sem áudio).</li>
+          <li><strong>Revisão final:</strong> dá pra entender <strong>sem áudio</strong> em 5s?</li>
+          <li><strong>Postagem:</strong> capa com “50-30-20” + 1 linha de benefício.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Variações (mesmo molde, novos temas)</h2>
+        <ul>
+          <li><strong>Negócios (faturamento):</strong> “60/30/10: operação, crescimento, caixa/lucro” (ajuste conforme realidade).</li>
+          <li><strong>Marketing:</strong> “50/30/20: aquisição, retenção, marca” (exemplos: tráfego, CRM, conteúdo).</li>
+          <li><strong>Gestão de tempo:</strong> “50/30/20: operacional, estratégico, melhoria/aprendizado.”</li>
+          <li><strong>Anti-dívida:</strong> “50/20/30: essencial, futuro, dívida (temporário)” com foco em saída.</li>
+        </ul>
+        <div class="divider"></div>
+        <p class="small"><strong>Como escolher:</strong> a variação ideal é a que seu público consegue aplicar em 24h (sem ferramentas).</p>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Roteiro copiado.</div>
+
+  <script>
+    const copyBtn = document.getElementById('copyBtn');
+    const selectBtn = document.getElementById('selectBtn');
+    const roteiroEl = document.getElementById('roteiro');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), 1600);
+    }
+
+    function getRoteiroText(){
+      return roteiroEl.innerText.trim();
+    }
+
+    copyBtn.addEventListener('click', async ()=>{
+      const text = getRoteiroText();
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Roteiro copiado.');
+      }catch(e){
+        // Fallback
+        const range = document.createRange();
+        range.selectNodeContents(roteiroEl);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+        showToast('Roteiro copiado (fallback).');
+      }
+    });
+
+    selectBtn.addEventListener('click', ()=>{
+      const range = document.createRange();
+      range.selectNodeContents(roteiroEl);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      showToast('Texto selecionado.');
+    });
+  </script>
+</body>
+</html>
