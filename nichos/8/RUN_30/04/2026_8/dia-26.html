@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Roteiro reproduzível — Curadoria por nichos</title>
+<style>
+  :root{
+    --bg0:#070A12;
+    --bg1:#0B1020;
+    --card:#0E1630cc;
+    --card2:#0C1328cc;
+    --stroke:rgba(255,255,255,.10);
+    --stroke2:rgba(255,255,255,.14);
+    --text:#EAF0FF;
+    --muted:#AAB6D6;
+    --muted2:#7F8BB2;
+    --shadow: 0 18px 55px rgba(0,0,0,.55);
+    --radius:18px;
+    --radius2:14px;
+    --g1: linear-gradient(90deg,#22c55e 0%, #38bdf8 45%, #fb923c 100%);
+    --g2: linear-gradient(135deg, rgba(34,197,94,.20), rgba(56,189,248,.18), rgba(251,146,60,.15));
+    --ok:#22c55e;
+    --warn:#fb923c;
+    --info:#38bdf8;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--text);
+    background:
+      radial-gradient(1000px 650px at 15% 10%, rgba(56,189,248,.18), transparent 55%),
+      radial-gradient(900px 620px at 85% 20%, rgba(34,197,94,.14), transparent 55%),
+      radial-gradient(900px 620px at 70% 85%, rgba(251,146,60,.12), transparent 55%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh;
+  }
+  a{color:inherit}
+  .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 44px}
+  header{
+    background:var(--g2);
+    border:1px solid var(--stroke);
+    border-radius:22px;
+    padding:18px 18px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: radial-gradient(700px 220px at 30% 0%, rgba(56,189,248,.22), transparent 55%),
+                radial-gradient(650px 220px at 80% 10%, rgba(34,197,94,.18), transparent 55%),
+                radial-gradient(650px 220px at 70% 90%, rgba(251,146,60,.16), transparent 60%);
+    filter: blur(8px);
+    opacity:.8;
+    pointer-events:none;
+  }
+  .head-grid{position:relative; display:grid; gap:14px; grid-template-columns: 1.2fr .8fr; align-items:start}
+  @media (max-width: 860px){ .head-grid{grid-template-columns:1fr} }
+  .kicker{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+  h1{margin:.25rem 0 .35rem; font-size:28px; line-height:1.15}
+  .sub{margin:0; color:var(--muted); font-size:14px; line-height:1.5}
+  .meta{
+    display:grid; gap:10px;
+    padding:14px;
+    border:1px solid var(--stroke);
+    border-radius:18px;
+    background:rgba(7,10,18,.25);
+  }
+  .meta-row{display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+  .pill{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background:rgba(255,255,255,.04);
+    font-size:12px;
+    color:var(--muted);
+  }
+  .dot{width:9px; height:9px; border-radius:10px; background:var(--g1)}
+  .btn{
+    appearance:none; border:1px solid var(--stroke2);
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+    border-radius:14px;
+    padding:10px 12px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .btn:hover{background:rgba(255,255,255,.10)}
+  .btn-primary{
+    border:1px solid transparent;
+    background:var(--g1);
+    color:#061018;
+  }
+  .btn-primary:hover{filter:saturate(1.1) brightness(1.05)}
+  .link{
+    color:var(--muted);
+    text-decoration:none;
+    border-bottom:1px dashed rgba(170,182,214,.35);
+  }
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px}
+  @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+  .card{
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+    border-radius:var(--radius);
+    padding:16px;
+    box-shadow: 0 14px 40px rgba(0,0,0,.35);
+  }
+  .card h2{margin:0 0 10px; font-size:16px; display:flex; align-items:center; gap:10px}
+  .bar{height:10px; width:46px; border-radius:999px; background:var(--g1); display:inline-block}
+  .card p, .card li{color:var(--muted); line-height:1.6; font-size:14px}
+  .card ul{margin:10px 0 0; padding-left:18px}
+  .card li{margin:7px 0}
+  .muted{color:var(--muted2)}
+  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+  .kbd{display:inline-block; padding:1px 7px; border-radius:9px; border:1px solid var(--stroke); background:rgba(255,255,255,.05); color:var(--text); font-size:12px}
+  .callout{
+    margin-top:14px;
+    border:1px solid var(--stroke);
+    background:rgba(56,189,248,.06);
+    border-radius:16px;
+    padding:12px 12px;
+  }
+  .split{display:grid; gap:14px; grid-template-columns:1.1fr .9fr}
+  @media (max-width: 980px){ .split{grid-template-columns:1fr} }
+  textarea{
+    width:100%; min-height:390px; resize:vertical;
+    padding:12px 12px;
+    border-radius:16px;
+    border:1px solid var(--stroke);
+    background:rgba(0,0,0,.20);
+    color:var(--text);
+    line-height:1.5;
+    font-size:13px;
+    outline:none;
+  }
+  textarea:focus{border-color:rgba(56,189,248,.42); box-shadow:0 0 0 3px rgba(56,189,248,.13)}
+  .tiny{font-size:12px; color:var(--muted2)}
+  .hr{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
+  .tag{
+    display:inline-flex; align-items:center;
+    padding:6px 10px; border-radius:999px;
+    border:1px solid var(--stroke);
+    background:rgba(34,197,94,.07);
+    color:var(--text);
+    font-size:12px;
+    gap:8px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-grid">
+        <div>
+          <div class="kicker">Nicho: Marketing e Posicionamento • Dia 26 • Formato: Carrossel</div>
+          <h1>Curadoria por nichos: referências que eu recomendo</h1>
+          <p class="sub">Objetivo: gerar <span class="mono">salvamentos</span>, <span class="mono">compartilhamentos</span> e <span class="mono">comentários</span> com uma lista consultável (curadoria) e reforçar autoridade (“radar do mercado”).</p>
+          <div class="callout">
+            <div class="tiny">Post original: <a class="link" href="https://www.instagram.com/p/DXsKS1ZFky9/" target="_blank" rel="noreferrer">https://www.instagram.com/p/DXsKS1ZFky9/</a></div>
+          </div>
+        </div>
+        <div class="meta">
+          <div class="meta-row">
+            <span class="pill"><span class="dot"></span>Pilar: <b>Autoridade</b></span>
+            <span class="pill"><span class="dot"></span>Modelo: <b>Curadoria por categoria</b></span>
+          </div>
+          <div class="meta-row">
+            <button class="btn btn-primary" id="copyBtn">Copiar roteiro</button>
+            <a class="btn" href="#roteiro">Ir para o roteiro</a>
+          </div>
+          <div class="tiny">Dica de retenção: padrão repetível (1 nicho + 2 itens + microprova) = leitura rápida + completude.</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="resumo">
+        <h2><span class="bar"></span>Resumo</h2>
+        <ul>
+          <li><b>Promessa:</b> “Eu já filtrei; aqui estão referências por categoria.”</li>
+          <li><b>Por que funciona:</b> utilidade imediata (lista salvável) + curiosidade social (“tenho ciúmes de compartilhar”).</li>
+          <li><b>Quando usar:</b> para crescer alcance via compartilhamentos e consolidar posicionamento sem “aula longa”.</li>
+          <li><b>Quantidade de slides:</b> ideal <b>7–10</b> (capa + 5–8 categorias + fechamento).</li>
+        </ul>
+      </section>
+
+      <section class="card" id="estrutura">
+        <h2><span class="bar"></span>Estrutura (macro)</h2>
+        <ul>
+          <li><b>Slide 1 (capa):</b> hook + personalidade + promessa do catálogo.</li>
+          <li><b>Slides 2..N-1 (repetição):</b> 1 categoria por slide + 2 recomendações + 2 microprovas.</li>
+          <li><b>Slide final:</b> fechamento + pergunta (comentário) + pedir salvar/mandar.</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="muted"><span class="tag"><span class="dot"></span>Regra replicável</span> <b>1 slide = 1 ideia central + 2 itens + 2 micro-provas</b>. Troque apenas “categoria” e “itens” para adaptar a qualquer tema.</p>
+      </section>
+
+      <section class="card" id="slides">
+        <h2><span class="bar"></span>Slides sugeridos (1..10)</h2>
+        <ul>
+          <li><b>1 — Capa:</b> “Referências que eu amo (e quase não queria compartilhar)” + “por nicho/tema”.</li>
+          <li><b>2 — Categoria A:</b> Nicho/tema 1 + Item 1 + Item 2.</li>
+          <li><b>3 — Categoria B:</b> Nicho/tema 2 + Item 1 + Item 2.</li>
+          <li><b>4 — Categoria C:</b> Nicho/tema 3 + Item 1 + Item 2.</li>
+          <li><b>5 — Categoria D:</b> Nicho/tema 4 + Item 1 + Item 2.</li>
+          <li><b>6 — Categoria E:</b> Nicho/tema 5 + Item 1 + Item 2.</li>
+          <li><b>7 — Categoria F:</b> Nicho/tema 6 + Item 1 + Item 2.</li>
+          <li><b>8 — Categoria G (opcional):</b> Nicho/tema 7 + Item 1 + Item 2.</li>
+          <li><b>9 — “Bônus” (opcional):</b> 3 menções rápidas / uma lista “menções honrosas”.</li>
+          <li><b>10 — Final:</b> pergunta + pedido de salvar + convite para marcar alguém.</li>
+        </ul>
+        <p class="tiny">Otimização: se tiver muita categoria, prefira 2 carrosséis (Parte 1 e Parte 2) para manter retenção.</p>
+      </section>
+
+      <section class="card" id="elementos-visuais">
+        <h2><span class="bar"></span>Elementos visuais</h2>
+        <ul>
+          <li><b>Fundo:</b> claro ou texturizado funciona bem; aqui, foque em <b>alto contraste</b> e leitura em 1s.</li>
+          <li><b>Componentes fixos:</b> rótulo “Categoria:” + título grande + 2 colunas (Item A/B) + @/nome em pílula + microtexto.</li>
+          <li><b>Provas visuais:</b> avatar/logo do recomendado em círculo; borda fina para padronizar.</li>
+          <li><b>Ritmo:</b> mesmos lugares para título, itens e microprova em todos os slides.</li>
+        </ul>
+        <div class="callout">
+          <div class="tiny"><b>Dica de reprodução rápida:</b> crie 1 slide modelo no Canva/Figma e apenas duplique trocando textos e avatares.</div>
+        </div>
+      </section>
+
+      <section class="card" id="copy-ganchos">
+        <h2><span class="bar"></span>Copy e ganchos</h2>
+        <ul>
+          <li><b>Gancho “ciúmes” (curiosidade social):</b> “Eu quase não queria compartilhar…”</li>
+          <li><b>Gancho de utilidade:</b> “Salva porque isso é lista de consulta.”</li>
+          <li><b>Gancho de velocidade:</b> “Se você consumir 1 conteúdo, já sai com 1 ideia aplicável.”</li>
+          <li><b>Microprova padrão (1 frase):</b> <span class="mono">**Adjetivo forte** + benefício + como entrega</span>.</li>
+        </ul>
+        <div class="hr"></div>
+        <p class="muted"><b>Banco de adjetivos curtos</b> (substituíveis): cirúrgico, prático, didático, honesto, afiado, estratégico, impecável, fora da curva, mão na massa.</p>
+      </section>
+
+      <section class="card" id="cta">
+        <h2><span class="bar"></span>CTA</h2>
+        <ul>
+          <li><b>Principal (comentário):</b> “Qual perfil/ferramenta você mais recomenda hoje? Quero atualizar minha lista.”</li>
+          <li><b>Secundário (salvar/compartilhar):</b> “Salva pra consultar depois” + “manda pra alguém do nicho/tema.”</li>
+          <li><b>Relacionamento (DM):</b> “Se quiser uma lista por nível (iniciante/avançado), me chama no direct com <span class="kbd">LISTA</span>.”</li>
+        </ul>
+      </section>
+
+      <section class="card" id="checklist">
+        <h2><span class="bar"></span>Checklist de criação</h2>
+        <ul>
+          <li><b>Defina o recorte:</b> “curadoria de <span class="mono">[tema]</span> por <span class="mono">[categorias]</span>”.</li>
+          <li><b>Escolha 5–8 categorias</b> (cada uma vira 1 slide).</li>
+          <li><b>Selecione 2 itens por categoria</b> (perfils, ferramentas, frameworks, cases, rotinas).</li>
+          <li><b>Escreva 1 microprova por item</b> (máx. 2 linhas; 1 expressão em negrito).</li>
+          <li><b>Padronize design</b> (mesma grade, mesmos tamanhos, mesmas cores).</li>
+          <li><b>Revisão final:</b> leitura em 1 segundo por slide (título) + 3 segundos (microtexto).</li>
+          <li><b>Legenda:</b> 3 linhas de contexto + reforço de salvar + pergunta final.</li>
+        </ul>
+      </section>
+
+      <section class="card" id="variacoes">
+        <h2><span class="bar"></span>Variações (adaptações com o mesmo impacto)</h2>
+        <ul>
+          <li><b>Em vez de perfis:</b> 2 <b>ferramentas</b> por categoria (ex.: pesquisa, copy, design, analytics).</li>
+          <li><b>Em vez de criadores:</b> 2 <b>frameworks</b> por categoria (ex.: posicionamento, diferenciação, oferta, narrativa).</li>
+          <li><b>Em vez de recomendações:</b> 2 <b>exemplos/cases</b> por categoria (o que copiar e por quê).</li>
+          <li><b>Para vender sem cara de venda:</b> slide bônus “Meu método para aplicar isso” + CTA “quer o template? comenta <span class="kbd">TEMPLATE</span>”.</li>
+          <li><b>Para comunidade:</b> faça “edição colaborativa”: “vou fixar os melhores comentários com indicações”.</li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card" id="roteiro" style="margin-top:14px">
+      <h2><span class="bar"></span>Roteiro (pronto para copiar e preencher)</h2>
+      <div class="split">
+        <div>
+          <p class="muted">Preencha os campos em <span class="mono">[colchetes]</span>. Use o mesmo bloco para todos os slides internos.</p>
+          <textarea id="roteiroTxt" spellcheck="false">TÍTULO DO CARROSSEL (capa)
+- Linha pequena (assinatura): [SEU NOME / @]
+- Título grande: Referências que eu amo (e quase não queria compartilhar)
+- Subtítulo: por nicho/tema — salva pra consultar
+- Linha extra (opcional): se você tá em [objetivo], isso encurta caminho
+
+SLIDE 2 — Categoria: [CATEGORIA 1]
+- Item A: [@perfil / ferramenta / framework / case]
+  Microprova: **[adjetivo forte]**. [benefício principal] + [como entrega].
+- Item B: [@perfil / ferramenta / framework / case]
+  Microprova: **[adjetivo forte]**. [benefício principal] + [como entrega].
+
+SLIDE 3 — Categoria: [CATEGORIA 2]
+- Item A: [..]
+  Microprova: **[..]**. [..]
+- Item B: [..]
+  Microprova: **[..]**. [..]
+
+SLIDE 4 — Categoria: [CATEGORIA 3]
+- Item A: [..]
+  Microprova: **[..]**. [..]
+- Item B: [..]
+  Microprova: **[..]**. [..]
+
+SLIDE 5 — Categoria: [CATEGORIA 4]
+- Item A: [..]
+  Microprova: **[..]**. [..]
+- Item B: [..]
+  Microprova: **[..]**. [..]
+
+SLIDE 6 — Categoria: [CATEGORIA 5]
+- Item A: [..]
+  Microprova: **[..]**. [..]
+- Item B: [..]
+  Microprova: **[..]**. [..]
+
+SLIDE 7 (opcional) — Categoria: [CATEGORIA 6]
+- Item A: [..]
+  Microprova: **[..]**. [..]
+- Item B: [..]
+  Microprova: **[..]**. [..]
+
+SLIDE 8 (opcional) — Menções honrosas
+- [item 1] — 3 palavras do porquê
+- [item 2] — 3 palavras do porquê
+- [item 3] — 3 palavras do porquê
+
+SLIDE FINAL — Fechamento + ação
+- Essas são algumas das minhas referências.
+- Agora quero as suas: qual [perfil/ferramenta/framework/case] você recomenda?
+- Salva este post pra consultar depois.
+- Manda pra alguém que tá em [tema].
+- (opcional) Quer uma lista por nível (iniciante/avançado)? Me chama no direct com “LISTA”.
+
+LEGENDA (modelo)
+1) Contexto (1–2 linhas): Eu organizei minhas referências favoritas por categoria pra você consultar rápido.
+2) Promessa: Se você acompanhar/aplicar 1 item daqui, já melhora [resultado].
+3) CTA: Comenta sua indicação + salva + compartilha com alguém do nicho.
+
+HASHTAGS (opcional)
+#marketing #posicionamento #brandingpessoal #estrategiadeconteudo #criacaodeconteudo</textarea>
+          <div class="meta-row" style="margin-top:10px">
+            <button class="btn btn-primary" id="copyBtn2">Copiar roteiro</button>
+            <span class="tiny" id="copyStatus">Dica: personalize o gancho da capa para parecer “humano”.</span>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="padding:14px">
+            <h2 style="margin:0 0 10px; font-size:15px"><span class="bar"></span>Opções de substituição (mesma estrutura)</h2>
+            <ul>
+              <li><b>Categoria</b> pode virar: etapa do funil, nível (iniciante/avançado), canal (IG/YT/Email), habilidade (copy/design/vendas), momento (lançamento/perpétuo).</li>
+              <li><b>Itens</b> podem ser: criadores, livros, ferramentas, prompts, templates, métricas, checklists, casos, rotinas.</li>
+              <li><b>Microprova</b> pode ser: benefício, diferencial, formato (ex.: “mostra bastidores”), resultado, “pra quem é”.</li>
+              <li><b>Gancho</b> pode ser: “ciúmes”, “eu uso isso”, “isso economiza tempo”, “isso evita erro”, “isso te dá clareza”.</li>
+            </ul>
+          </div>
+          <div class="card" style="padding:14px; margin-top:14px">
+            <h2 style="margin:0 0 10px; font-size:15px"><span class="bar"></span>Biblioteca de ganchos (capa)</h2>
+            <ul>
+              <li>“Meu radar de [tema] por nicho (salva isso)”</li>
+              <li>“As referências que eu uso pra [resultado] (sem enrolação)”</li>
+              <li>“Se eu tivesse que recomeçar em [tema], eu começava por aqui”</li>
+              <li>“O atalho: 10 referências para você parar de se sentir perdido(a) em [tema]”</li>
+            </ul>
+            <div class="hr"></div>
+            <p class="tiny">Escolha <b>1</b> gancho por carrossel. O resto vira contexto na legenda.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  function copyRoteiro(){
+    const el = document.getElementById('roteiroTxt');
+    const text = el.value;
+    navigator.clipboard.writeText(text).then(()=>{
+      const st = document.getElementById('copyStatus');
+      if(st) st.textContent = 'Copiado! Agora é só preencher os [colchetes].';
+    }).catch(()=>{
+      // fallback
+      el.focus();
+      el.select();
+      document.execCommand('copy');
+      const st = document.getElementById('copyStatus');
+      if(st) st.textContent = 'Copiado (modo compatibilidade).';
+    });
+  }
+  document.getElementById('copyBtn').addEventListener('click', copyRoteiro);
+  document.getElementById('copyBtn2').addEventListener('click', copyRoteiro);
+</script>
+</body>
+</html>
