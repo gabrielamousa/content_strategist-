@@ -1,390 +1,581 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dia 27 — Roteiro reproduzível (Carrossel)</title>
-<style>
-  :root{
-    --bg0:#070A12;
-    --bg1:#0B1020;
-    --card: rgba(255,255,255,.06);
-    --card2: rgba(255,255,255,.08);
-    --stroke: rgba(255,255,255,.12);
-    --text:#EAF0FF;
-    --muted: rgba(234,240,255,.72);
-    --muted2: rgba(234,240,255,.55);
-    --shadow: 0 18px 60px rgba(0,0,0,.45);
-    --r: 18px;
-    --g1: linear-gradient(90deg,#31F37C 0%, #00C2FF 45%, #FFB100 100%);
-    --g2: linear-gradient(135deg, rgba(49,243,124,.22), rgba(0,194,255,.18), rgba(255,177,0,.16));
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family: var(--sans);
-    color: var(--text);
-    background:
-      radial-gradient(1200px 700px at 20% -10%, rgba(0,194,255,.18), transparent 55%),
-      radial-gradient(900px 600px at 90% 10%, rgba(49,243,124,.14), transparent 55%),
-      radial-gradient(900px 600px at 70% 110%, rgba(255,177,0,.12), transparent 55%),
-      linear-gradient(180deg, var(--bg0), var(--bg1));
-    min-height:100vh;
-  }
-  a{color:inherit}
-  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 64px}
-  .header{
-    border:1px solid var(--stroke);
-    background: var(--g2);
-    border-radius: calc(var(--r) + 6px);
-    padding:18px;
-    box-shadow: var(--shadow);
-    position:relative;
-    overflow:hidden;
-  }
-  .chiprow{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
-  .chip{
-    border:1px solid var(--stroke);
-    background: rgba(0,0,0,.18);
-    backdrop-filter: blur(8px);
-    padding:8px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing:.2px;
-  }
-  .title{
-    margin:0;
-    font-size: 22px;
-    line-height:1.18;
-    letter-spacing: .2px;
-  }
-  .subtitle{margin:10px 0 0;color: var(--muted);font-size: 14px;line-height:1.4}
-  .toplinks{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-  .link{
-    display:inline-flex;gap:8px;align-items:center;
-    padding:10px 12px;border-radius:12px;
-    border:1px solid var(--stroke);
-    background: rgba(255,255,255,.05);
-    text-decoration:none;color: var(--text);
-    font-size: 13px;
-  }
-  .link small{color: var(--muted2)}
-  .btn{
-    cursor:pointer;
-    border:1px solid var(--stroke);
-    background: rgba(255,255,255,.08);
-    color: var(--text);
-    padding:10px 12px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 13px;
-  }
-  .btn:hover{background: rgba(255,255,255,.11)}
-  .grid{display:grid;grid-template-columns: 1fr;gap:14px;margin-top:14px}
-  @media (min-width: 920px){
-    .grid{grid-template-columns: 1fr 1fr}
-    .span2{grid-column: 1 / -1}
-  }
-  .card{
-    border:1px solid var(--stroke);
-    background: rgba(255,255,255,.05);
-    border-radius: var(--r);
-    padding:16px;
-    box-shadow: 0 10px 36px rgba(0,0,0,.28);
-  }
-  .card h2{
-    margin:0 0 10px;
-    font-size: 14px;
-    letter-spacing:.6px;
-    text-transform: uppercase;
-    color: rgba(234,240,255,.88);
-    display:flex;align-items:center;gap:10px
-  }
-  .bar{height:10px;width:44px;border-radius:10px;background: var(--g1);opacity:.95}
-  .card p,.card li{color: var(--muted);line-height:1.55;font-size: 14px}
-  .card ul{margin:10px 0 0;padding-left:18px}
-  .card ol{margin:10px 0 0;padding-left:18px}
-  .hr{height:1px;background: rgba(255,255,255,.10);margin:14px 0}
-  .k{font-family: var(--mono);font-size: 12px;color: rgba(234,240,255,.78)}
-  .pill{
-    display:inline-block;
-    padding:3px 8px;
-    border-radius: 999px;
-    background: rgba(0,194,255,.14);
-    border: 1px solid rgba(0,194,255,.22);
-    color: rgba(234,240,255,.9);
-    font-size: 12px;
-    margin-right:6px;
-  }
-  .pill.green{background: rgba(49,243,124,.12);border-color: rgba(49,243,124,.22)}
-  .pill.orange{background: rgba(255,177,0,.12);border-color: rgba(255,177,0,.22)}
-  .codebox{
-    border:1px solid var(--stroke);
-    background: rgba(0,0,0,.28);
-    border-radius: 14px;
-    padding:12px;
-    overflow:auto;
-  }
-  pre{margin:0;white-space:pre-wrap;word-wrap:break-word;font-family: var(--mono);font-size: 12.5px;line-height:1.55;color: rgba(234,240,255,.86)}
-  .note{font-size: 12.5px;color: var(--muted2)}
-  .toast{
-    position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
-    background: rgba(0,0,0,.65);
-    border:1px solid rgba(255,255,255,.14);
-    padding:10px 12px;border-radius: 12px;
-    color: rgba(234,240,255,.92);
-    font-size: 13px;
-    backdrop-filter: blur(10px);
-    display:none;
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dia 27 — Virais que valem o hype</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0C1222;
+      --card:rgba(255,255,255,0.06);
+      --card2:rgba(255,255,255,0.08);
+      --stroke:rgba(255,255,255,0.10);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,0.72);
+      --muted2:rgba(234,240,255,0.56);
+      --shadow:0 18px 60px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:22px;
+      --gradA:linear-gradient(135deg,#28F5A5 0%, #2D7CFF 45%, #FF7A18 100%);
+      --gradG:linear-gradient(135deg,rgba(40,245,165,.20),rgba(45,124,255,.16),rgba(255,122,24,.14));
+      --ok:#28F5A5;
+      --warn:#FF7A18;
+      --no:#FF3B6B;
+      --chip:rgba(255,255,255,0.10);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(45,124,255,.20), transparent 60%),
+        radial-gradient(700px 420px at 90% 20%, rgba(40,245,165,.18), transparent 55%),
+        radial-gradient(900px 520px at 50% 100%, rgba(255,122,24,.13), transparent 60%),
+        var(--bg);
+      line-height:1.45;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 56px}
+
+    .header{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border-radius:var(--radius2);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .headerTop{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      padding:18px 18px 10px;
+      background:var(--gradG);
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background:rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-size:13px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:var(--gradA);
+      box-shadow:0 0 0 3px rgba(255,255,255,0.06);
+    }
+    .hgroup{padding:2px 18px 18px}
+    .title{
+      margin:6px 0 8px;
+      font-size:26px;
+      letter-spacing:-0.02em;
+    }
+    .subtitle{margin:0; color:var(--muted); font-size:14px; max-width:80ch}
+
+    .metaRow{
+      display:flex; flex-wrap:wrap; gap:10px;
+      padding:0 18px 18px;
+      align-items:center;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,0.06);
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .chip b{color:var(--text); font-weight:650}
+
+    .actions{margin-left:auto; display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,0.06);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:650;
+      font-size:13px;
+      transition:transform .08s ease, background .15s ease, border-color .15s ease;
+      display:inline-flex; align-items:center; gap:10px;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,0.08)}
+    .btnPrimary{
+      background:linear-gradient(135deg, rgba(40,245,165,0.18), rgba(45,124,255,0.14), rgba(255,122,24,0.12));
+      border-color:rgba(255,255,255,0.16);
+    }
+    .ico{
+      width:18px;height:18px; display:inline-block;
+      background:var(--gradA);
+      -webkit-mask: var(--mask) center/contain no-repeat;
+      mask: var(--mask) center/contain no-repeat;
+    }
+    .icoCopy{ --mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm4 4H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 18H8V7h12v16z"/></svg>'); }
+    .icoLink{ --mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M3.9 12a5 5 0 0 1 5-5h4v2h-4a3 3 0 0 0 0 6h4v2h-4a5 5 0 0 1-5-5zm7.1 1h2v-2h-2v2zm4-6h4a5 5 0 0 1 0 10h-4v-2h4a3 3 0 0 0 0-6h-4V7z"/></svg>'); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .actions{margin-left:0}
+      .title{font-size:22px}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,0.05);
+      border-radius:var(--radius2);
+      box-shadow:0 12px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .cardHeader{
+      padding:14px 16px 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+    .cardHeader h2{margin:0; font-size:14px; letter-spacing:.02em; text-transform:uppercase; color:var(--muted)}
+    .pill{
+      font-size:12px; color:var(--text);
+      padding:7px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(0,0,0,0.22);
+      display:inline-flex; gap:8px; align-items:center;
+      white-space:nowrap;
+    }
+
+    .content{padding:14px 16px 16px}
+    .content p{margin:0 0 10px; color:var(--muted)}
+    .content ul{margin:0; padding-left:18px; color:var(--muted)}
+    .content li{margin:7px 0}
+    .kpi{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+      margin-top:12px;
+    }
+    @media (max-width: 560px){ .kpi{grid-template-columns:1fr} }
+    .kpi .box{
+      padding:12px; border-radius:16px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.05);
+    }
+    .kpi .label{font-size:12px; color:var(--muted2); margin-bottom:6px}
+    .kpi .val{font-weight:750; letter-spacing:-0.01em}
+
+    .hr{height:1px; background:rgba(255,255,255,0.10); margin:14px 0}
+
+    .script{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:13px;
+      color:rgba(234,240,255,0.88);
+      background:rgba(0,0,0,0.25);
+      border:1px solid rgba(255,255,255,0.10);
+      border-radius:16px;
+      padding:14px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .tag{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.06);
+      color:var(--muted);
+    }
+    .tag.ok{border-color:rgba(40,245,165,.35); color:rgba(40,245,165,.95)}
+    .tag.warn{border-color:rgba(255,122,24,.35); color:rgba(255,122,24,.95)}
+    .tag.no{border-color:rgba(255,59,107,.35); color:rgba(255,59,107,.95)}
+
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 820px){ .twoCol{grid-template-columns:1fr} }
+
+    .miniCard{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.05);
+      padding:12px;
+    }
+    .miniCard h3{margin:0 0 8px; font-size:13px; color:var(--text)}
+    .miniCard p{margin:0; color:var(--muted); font-size:13px}
+
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      padding:10px 12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(0,0,0,0.65);
+      color:var(--text);
+      font-size:13px;
+      display:none;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
-    <header class="header">
-      <div class="chiprow">
-        <div class="chip"><strong>Nicho:</strong>&nbsp;Neutro</div>
-        <div class="chip"><strong>Dia:</strong>&nbsp;27</div>
-        <div class="chip"><strong>Formato:</strong>&nbsp;Carrossel</div>
-        <div class="chip"><strong>Pilar:</strong>&nbsp;Passo a passo</div>
-      </div>
-      <h1 class="title">Como “provas em cadeia” transformam uma história em conclusão</h1>
-      <p class="subtitle">Template neutro para qualquer tema: narrativa investigativa + evidências em sequência + síntese inevitável + CTA por palavra‑chave. Use para ensinar, explicar, demonstrar processo, comparar versões ou desmontar um mito (sem sensacionalismo).</p>
-      <div class="toplinks">
-        <a class="link" href="https://www.instagram.com/p/DWEJgPJDmR2/" target="_blank" rel="noreferrer">
-          <span>Post original</span>
-          <small>(abrir no Instagram)</small>
-        </a>
-        <button class="btn" id="copyBtn">Copiar roteiro</button>
-        <span class="note">Copia o bloco “Roteiro (texto-base)” para colar no seu editor.</span>
-      </div>
-    </header>
 
-    <section class="grid">
-      <div class="card span2">
-        <h2><span class="bar"></span>Resumo</h2>
-        <p><span class="pill green">Ideia</span>Transformar um tema em uma “investigação guiada”: você apresenta uma versão comum (mito/explicação simples), introduz contexto mínimo e vai adicionando <strong>peças de evidência</strong> que eliminam hipóteses até sobrar uma conclusão robusta.</p>
-        <p><span class="pill">Quando usar</span>Explicação de conceitos, decisões, mudanças de mercado, estudos de caso, análises de produto, bastidores de projeto, comparativos, diagnósticos e “por que X acontece”.</p>
-        <p><span class="pill orange">Promessa</span>O leitor chega ao final porque cada slide resolve uma parte e abre uma pergunta lógica para o próximo.</p>
-      </div>
-
-      <div class="card">
-        <h2><span class="bar"></span>Estrutura (sequência neutra)</h2>
-        <ol>
-          <li><strong>Capa-impacto:</strong> promessa + conflito (o que será desmontado/explicado “peça por peça”).</li>
-          <li><strong>Robustez:</strong> escopo em números (tempo analisado, itens comparados, etapas, fontes, testes).</li>
-          <li><strong>Contexto:</strong> cenário + a “versão comum” (o que a maioria acredita/faz).</li>
-          <li><strong>Cadeia de evidências:</strong> 4–7 peças (cada uma fecha uma porta e abre outra).</li>
-          <li><strong>Reconstituição:</strong> “o que realmente explica” (modelo mental / passo a passo).</li>
-          <li><strong>Síntese inevitável:</strong> frase-martelo + 3 aprendizados práticos.</li>
-          <li><strong>CTA:</strong> palavra‑chave para receber guia/checklist/aula curta.</li>
-        </ol>
-      </div>
-
-      <div class="card">
-        <h2><span class="bar"></span>Elementos visuais (identidade do carrossel)</h2>
-        <ul>
-          <li><strong>Estilo:</strong> editorial minimalista (texto protagonista), alto contraste, respiro.</li>
-          <li><strong>Fundo:</strong> escuro liso ou levemente texturizado.</li>
-          <li><strong>Tipografia:</strong> Inter/Helvetica/Arial; títulos em caixa alta; corpo 2–4 linhas por slide.</li>
-          <li><strong>Ênfase:</strong> negrito para fatos; sublinhado para virada (“ou seja…”); números/datas como âncoras.</li>
-          <li><strong>Branding discreto:</strong> @ no rodapé + marca d’água bem leve (opcional).</li>
-          <li><strong>Regra:</strong> 1 ideia central por slide + 1 gancho (30–50% dos slides).</li>
-        </ul>
-      </div>
-
-      <div class="card span2">
-        <h2><span class="bar"></span>Slides sugeridos (1–15)</h2>
-        <p class="note">Ajuste para 12–20 slides. Se o tema for complexo, aumente só a seção de “evidências”.</p>
-        <div class="codebox">
-<pre id="slides">1) CAPA (promessa + conflito)
-   “O caso/tema [X] mostra como [MECANISMO] desmonta, peça por peça, [MITO/ERRO/VERSÃO COMUM].”
-
-2) ROBUSTEZ (escopo em números)
-   “[N] exemplos/itens analisados. [N] minutos/horas de teste. [N] fontes/etapas.”
-   “Pra explicar de forma simples por que [conclusão].”
-
-3) CONTEXTO (onde começa)
-   “Em [cenário], o objetivo era [objetivo].”
-   “A versão comum: [explicação rápida que a maioria aceita].”
-
-4) A PRIMEIRA FISSURA
-   “Só que tinha um problema: **[fato observável #1]**.”
-   “Isso já enfraquece [hipótese A] por um motivo…”
-
-5) REGRA/PRINCÍPIO (explica sem jargão)
-   “Em geral, quando [regra], acontece [efeito esperado].”
-   “Aqui ocorreu o contrário: **[contradição]**.”
-
-6) INFERÊNCIA (fecha 1 porta)
-   “Ou seja: [inferência curta].”
-   “Então [hipótese A] perde força.”
-
-7) EVIDÊNCIA #2 (reforço técnico/prático)
-   “Outro dado que pesa: **[fato #2]**.”
-   “Isso aponta para [hipótese B].”
-
-8) PERGUNTA-CLIQUE (gancho)
-   “A pergunta inevitável é: **como [X] aconteceu se [Y] era verdade?**”
-
-9) EVIDÊNCIA #3 (tempo/ordem/cronologia)
-   “A sequência também entrega: [etapa 1 → etapa 2 → etapa 3].”
-   “O detalhe é [intervalo/ordem], porque muda [consequência].”
-
-10) EVIDÊNCIA #4 (o que ‘fecha portas’)
-   “Com [documento/teste/métrica/critério] na mesa, sobra uma hipótese: **[conclusão parcial]**.”
-
-11) RECONSTITUIÇÃO (explica o ‘como’)
-   “Juntando as peças, o mecanismo é assim:”
-   “(1) [passo] → (2) [passo] → (3) [passo].”
-
-12) SÍNTESE (inevitável)
-   “Entre [evidências], cada uma eliminou uma saída, até sobrar: **[resultado]**.”
-
-13) APLICAÇÃO (3 lições)
-   “Na prática, isso te ensina 3 coisas:”
-   “1) [lição]  2) [lição]  3) [lição]”
-
-14) PRÉ-CTA (oferta)
-   “Quer um guia/checklist para [objetivo específico]?”
-
-15) CTA (palavra-chave)
-   “Comente **[PALAVRA]** que eu te envio (ou peça no direct com **[PALAVRA]**).”</pre>
+    <section class="header">
+      <div class="headerTop">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <span class="badge"><span class="dot"></span> Nicho: <b style="color:var(--text)">Neutro</b></span>
+          <span class="badge">Dia: <b style="color:var(--text)">27</b></span>
+          <span class="badge">Formato: <b style="color:var(--text)">Carrossel</b></span>
+          <span class="badge">Pilar: <b style="color:var(--text)">Mito vs Verdade</b></span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://www.instagram.com/p/DWHVHN8EZQy/" target="_blank" rel="noopener noreferrer"><span class="ico icoLink"></span> Abrir post original</a>
+          <button class="btn btnPrimary" id="copyBtn"><span class="ico icoCopy"></span> Copiar roteiro</button>
         </div>
       </div>
-
-      <div class="card">
-        <h2><span class="bar"></span>Copy e ganchos (biblioteca neutra)</h2>
-        <ul>
-          <li><strong>Conectores investigativos:</strong> “Acontece que…”, “O detalhe é…”, “Isso elimina…”, “Resta…”, “Quando você junta…”.</li>
-          <li><strong>Cliffhangers:</strong> “Mas tem um dado que muda tudo.” / “E aí a conta não fecha.” / “Só que isso cria outra pergunta.”</li>
-          <li><strong>Prova em números:</strong> “3 testes. 2 cenários. 1 padrão repetido.”</li>
-          <li><strong>Virada lógica:</strong> “Se [premissa], então [conclusão]. E foi exatamente o oposto.”</li>
-          <li><strong>Frase-martelo:</strong> “Não foi sorte. Foi método.” / “Não é opinião: é sequência.”</li>
-        </ul>
+      <div class="hgroup">
+        <h1 class="title">Virais que valem o hype: veredito rápido e honesto</h1>
+        <p class="subtitle">Template neutro para qualquer área: você pega 3–5 itens/ideias “virais”, aplica critérios simples (segurança/adequação, eficácia, custo-benefício) e entrega um veredito claro por slide.</p>
       </div>
-
-      <div class="card">
-        <h2><span class="bar"></span>CTA (modelos prontos)</h2>
-        <ul>
-          <li><strong>Baixo atrito:</strong> “Comente <span class="k">GUIA</span> e eu envio o checklist.”</li>
-          <li><strong>Direto ao ponto:</strong> “Comente <span class="k">PASSOS</span> para receber o passo a passo em PDF.”</li>
-          <li><strong>Segmentação:</strong> “Comente <span class="k">INICIANTE</span> ou <span class="k">AVANÇADO</span> e eu mando a versão certa.”</li>
-          <li><strong>Alternativa sem automação:</strong> “Me chame no direct com <span class="k">[PALAVRA]</span>.”</li>
-        </ul>
-        <div class="hr"></div>
-        <p class="note">Dica: combine CTA + benefício + tempo (“leva 2 minutos para aplicar”).</p>
-      </div>
-
-      <div class="card span2">
-        <h2><span class="bar"></span>Checklist de criação (produção rápida)</h2>
-        <ol>
-          <li><strong>Defina a conclusão:</strong> “No fim, quero que a pessoa entenda/aceite que ______.”</li>
-          <li><strong>Escolha a ‘versão comum’ (alvo):</strong> mito, erro frequente, interpretação superficial.</li>
-          <li><strong>Liste 4–7 evidências:</strong> dados, etapas, prints, métricas, regras, comparações, antes/depois.</li>
-          <li><strong>Para cada evidência:</strong> (a) fato observável (b) inferência (c) gancho.</li>
-          <li><strong>Escreva curto:</strong> 2–4 linhas por slide; 1 frase em negrito por slide.</li>
-          <li><strong>Adicione âncoras:</strong> números, datas, ordem, nomes de etapas (sem excesso).</li>
-          <li><strong>Fechamento:</strong> síntese inevitável + 3 lições práticas.</li>
-          <li><strong>CTA:</strong> uma palavra‑chave + uma entrega clara (checklist/guia/modelo).</li>
-          <li><strong>Revisão UX:</strong> contraste alto, respiro, consistência de títulos, alinhamento à esquerda.</li>
-        </ol>
-      </div>
-
-      <div class="card span2">
-        <h2><span class="bar"></span>Variações (para não enjoar o formato)</h2>
-        <ul>
-          <li><strong>Variação A — “Mito → teste → conclusão”:</strong> comece com “Todo mundo diz que X”, faça 3 testes e conclua.</li>
-          <li><strong>Variação B — “Linha do tempo”:</strong> troque evidências por etapas com horários/dias e mostre onde a versão quebra.</li>
-          <li><strong>Variação C — “Comparativo A vs B”:</strong> cada slide é um critério; no final, pontue e finalize com recomendação.</li>
-          <li><strong>Variação D — “Checklist investigativo”:</strong> em vez de contar um caso, ensine como a pessoa audita o próprio cenário.</li>
-          <li><strong>Variação E — “1 evidência por fonte”:</strong> cada tela cita uma fonte/experimento/resultado e fecha uma hipótese.</li>
-        </ul>
-      </div>
-
-      <div class="card span2">
-        <h2><span class="bar"></span>Roteiro (texto-base para copiar)</h2>
-        <div class="codebox">
-<pre id="roteiro">TÍTULO (CAPA)
-“O tema [X] mostra como [MECANISMO] desmonta, peça por peça, [MITO/ERRO/VERSÃO COMUM].”
-
-ABERTURA (ROBUSTEZ)
-“Eu analisei [N] exemplos/itens, em [tempo], usando [critério/fonte].”
-“E o padrão que aparece é este: [conclusão curta].”
-
-CONTEXTO
-“Cenário: [onde/para quê].”
-“A versão comum diz: [versão].”
-
-EVIDÊNCIA 1
-“Primeiro fato: **[fato observável]**.”
-“Isso enfraquece [hipótese A] porque [razão].”
-“Mas abre a pergunta: [gancho].”
-
-EVIDÊNCIA 2
-“Segundo fato: **[fato]**.”
-“Ou seja: [inferência].”
-“Então [o que deixa de ser provável].”
-
-EVIDÊNCIA 3 (CRONOLOGIA/ORDEM)
-“Quando você olha a sequência: [etapa → etapa → etapa].”
-“O detalhe é [ordem/tempo], porque [impacto].”
-
-EVIDÊNCIA 4 (FECHA PORTAS)
-“Com [métrica/teste/documento] na mesa, sobra: **[conclusão parcial]**.”
-
-RECONSTITUIÇÃO
-“Juntando as peças, o mecanismo é:”
-“(1) [passo] → (2) [passo] → (3) [passo].”
-
-SÍNTESE (FRASE-MARTELO)
-“Entre [evidências], cada uma fechou uma porta até restar: **[conclusão final]**.”
-
-3 APRENDIZADOS PRÁTICOS
-“1) [lição acionável]”
-“2) [lição acionável]”
-“3) [lição acionável]”
-
-PRÉ-CTA
-“Quer um [guia/checklist/modelo] para [objetivo]?”
-
-CTA
-“Comente **[PALAVRA]** que eu envio.”</pre>
-        </div>
+      <div class="metaRow">
+        <span class="chip"><b>Objetivo</b> curadoria + decisão rápida</span>
+        <span class="chip"><b>Promessa</b> “vale o hype?” com critério</span>
+        <span class="chip"><b>Duração</b> 30–60 min para montar</span>
+        <span class="chip"><b>Itens</b> 3–5 por carrossel</span>
       </div>
     </section>
+
+    <div class="grid">
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Resumo</h2>
+          <span class="pill">Série recomendada: “Vale o hype?”</span>
+        </div>
+        <div class="content">
+          <p><b>O que é:</b> um carrossel de curadoria que transforma tendência em decisão prática.</p>
+          <p><b>Quando usar:</b> sempre que sua audiência estiver confusa entre opções, modas, ferramentas, métodos ou “atalhos” populares.</p>
+          <div class="kpi">
+            <div class="box">
+              <div class="label">Retenção</div>
+              <div class="val">Selo repetido + veredito por slide</div>
+            </div>
+            <div class="box">
+              <div class="label">Autoridade</div>
+              <div class="val">Critérios + ressalva honesta</div>
+            </div>
+            <div class="box">
+              <div class="label">Ação</div>
+              <div class="val">Salvar + comentar “PARTE 2”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Estrutura (sequência)</h2>
+          <span class="pill">6–8 slides</span>
+        </div>
+        <div class="content">
+          <ul>
+            <li><b>Slide 1:</b> Capa com promessa + credencial (autoridade).</li>
+            <li><b>Slide 2:</b> Contexto da categoria (o que é, para quem, como avaliar).</li>
+            <li><b>Slides 3–6:</b> 3–5 itens (1 por slide) com <i>veredito</i> + justificativa curta.</li>
+            <li><b>Slide 7 (opcional):</b> Comparativo rápido “se seu objetivo é X, escolha Y”.</li>
+            <li><b>Slide 8:</b> Fechamento + CTA (seguir/salvar/comentar/DM).</li>
+          </ul>
+          <div class="hr"></div>
+          <p><b>Regra de ouro:</b> cada slide precisa responder em 5–7 segundos: “o que é”, “para quem”, “por quê” e “vale?”.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="cardHeader">
+          <h2>Roteiro (texto-base copiável)</h2>
+          <span class="pill">Preencha os colchetes</span>
+        </div>
+        <div class="content">
+          <div class="script" id="scriptText">CARROSSEL — “VIRAIS QUE VALEM O HYPE?” (TEMPLATE NEUTRO)
+
+[DEFINA ANTES]
+- Categoria: [ex.: ferramentas de produtividade / estratégias de marketing / suplementos / gadgets / métodos de estudo / rotinas de treino / aplicativos]
+- Público: [iniciante / intermediário / avançado / sem tempo / quer economizar / busca resultado rápido]
+- Critérios (3):
+  1) Adequação/segurança: [o que não pode falhar]
+  2) Eficácia: [qual evidência/indicador vale]
+  3) Custo-benefício: [tempo/dinheiro/esforço]
+- Itens virais: [Item 1], [Item 2], [Item 3] (+ [Item 4/5] se couber)
+
+SLIDE 1 — CAPA
+Título: “[CATEGORIA] VIRAIS que VALEM o hype”
+Subtítulo: “veredito por [sua credencial: quem testa/analisa/usa no dia a dia]”
+Microcopy: “critério > tendência”
+
+SLIDE 2 — CONTEXTO (NIVELAR)
+Título: “Antes de escolher…”
+Texto (2–3 linhas):
+“[Categoria] serve para [benefício principal].
+Pra avaliar sem achismo, olhe: [Critério 1], [Critério 2] e [Critério 3].”
+
+SLIDE 3 — ITEM 1
+Selo: [VALE / DEPENDE / NÃO VALE]
+Nome: “[Item 1]”
+Linha objetiva (tipo etiqueta): “R$ [ ] | [tempo/quantidade/complexidade]” (se fizer sentido)
+Justificativa (4 linhas máx.):
+“Vale porque [1 mecanismo/razão concreta].
+Você percebe [benefício prático].
+Melhor para [perfil].
+Atenção: [limite/ressalva].”
+Fecho: “Veredito: [frase curta reforçando].”
+
+SLIDE 4 — ITEM 2 (repete)
+Selo: [VALE / DEPENDE / NÃO VALE]
+Nome: “[Item 2]”
+Etiqueta: “[métrica]”
+Texto:
+“Funciona quando [condição].
+Entrega [benefício].
+Indico se você [perfil].
+Não é ideal se [ressalva].”
+
+SLIDE 5 — ITEM 3 (repete)
+Selo: [VALE / DEPENDE / NÃO VALE]
+Nome: “[Item 3]”
+Etiqueta: “[métrica]”
+Texto:
+“Ponto forte: [critério].
+Ponto fraco: [trade-off].
+Para [perfil].
+Dica de uso: [como aplicar em 1 frase].”
+
+SLIDE 6 — ITEM 4/5 (opcional)
+Selo + nome + etiqueta + justificativa curta.
+
+SLIDE 7 — COMPARATIVO (opcional, alta utilidade)
+Título: “Escolha rápida”
+“Se seu objetivo é [A] → [Item X].
+Se é [B] → [Item Y].
+Se é [C] → evite [Item Z] (ou use só se [condição]).”
+
+SLIDE 8 — FECHAMENTO + CTA
+Título: “Quer a parte 2?”
+CTA (escolha 2–3):
+- “Comenta ‘PARTE 2’ + sua categoria que eu avalio mais.”
+- “Salva pra consultar antes de comprar/decidir.”
+- “Me segue pra mais vereditos com critério.”
+- “Quer recomendação pro seu caso? Me chama no direct com: [objetivo + contexto].”</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Slides sugeridos (1..8)</h2>
+          <span class="pill">Conteúdo + intenção</span>
+        </div>
+        <div class="content">
+          <div class="twoCol">
+            <div class="miniCard">
+              <h3>Slide 1 — Capa</h3>
+              <p><span class="tag ok">HOOK</span> Promessa + “veredito” + credencial. Visual: você/ambiente + título grande.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Slide 2 — Contexto</h3>
+              <p><span class="tag">BASE</span> Definição simples + 3 critérios. Faz a pessoa confiar no método.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Slide 3 — Item 1</h3>
+              <p><span class="tag ok">VEREDITO</span> Selo + justificativa + “para quem” + ressalva.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Slide 4 — Item 2</h3>
+              <p><span class="tag warn">NUANCE</span> Use “DEPENDE” quando o viral for bom com condição.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Slide 5 — Item 3</h3>
+              <p><span class="tag ok">UTILIDADE</span> Inclua 1 dica de uso para virar conteúdo salvável.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Slide 6 — Item 4/5 (opcional)</h3>
+              <p><span class="tag">VARIEDADE</span> Mantém a curiosidade. Se ficar longo, corte e transforme em parte 2.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Slide 7 — Comparativo (opcional)</h3>
+              <p><span class="tag ok">DECISÃO</span> “Se A → X; se B → Y”. Aumenta compartilhamentos.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Slide 8 — CTA</h3>
+              <p><span class="tag">AÇÃO</span> Pedidos específicos: comentar palavra-chave + salvar + seguir.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Elementos visuais (identidade)</h2>
+          <span class="pill">Clean • high-tech</span>
+        </div>
+        <div class="content">
+          <ul>
+            <li><b>Fundo:</b> foto real contextual (mesa de trabalho, tela, ferramentas, prateleira, bastidor).</li>
+            <li><b>Cards:</b> caixas claras/semiclaras com borda suave; 1 ideia por card.</li>
+            <li><b>Selo de veredito (assinatura):</b> retângulo escuro inclinado com “VALE / DEPENDE / NÃO VALE”.</li>
+            <li><b>Destaques:</b> palavras-chave em degradê (verde → azul → laranja) para “VIRAL”, “VALE”, “CUIDADO”.</li>
+            <li><b>Etiqueta objetiva:</b> preço/tempo/complexidade/ROI (uma métrica simples por item).</li>
+            <li><b>Branding:</b> @perfil no topo em todos os slides.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="cardHeader">
+          <h2>Copy e ganchos (reproduzível)</h2>
+          <span class="pill">Pronto para adaptar</span>
+        </div>
+        <div class="content">
+          <div class="twoCol">
+            <div class="miniCard">
+              <h3>Ganchos de capa (escolha 1)</h3>
+              <p>
+                1) “O que realmente vale o hype em [categoria]”<br/>
+                2) “Pare de comprar/seguir tendência sem critério”<br/>
+                3) “3 virais que funcionam (e 1 que é cilada)”<br/>
+                4) “Veredito honesto: [categoria] viral”
+              </p>
+            </div>
+            <div class="miniCard">
+              <h3>Frases de autoridade (sem arrogância)</h3>
+              <p>
+                • “Critérios que eu uso no dia a dia: [1], [2], [3].”<br/>
+                • “Não é sobre ser contra tendência — é sobre adequação.”<br/>
+                • “Vou te poupar [tempo/dinheiro/energia] com um veredito direto.”
+              </p>
+            </div>
+            <div class="miniCard">
+              <h3>Justificativas curtas (modelos)</h3>
+              <p>
+                • “Vale porque reduz [dor] e aumenta [ganho] em [prazo].”<br/>
+                • “Depende: funciona se você tiver [condição].”<br/>
+                • “Não vale: o principal problema é [limite], então o resultado fica [fraco/inconsistente].”
+              </p>
+            </div>
+            <div class="miniCard">
+              <h3>Frases de ressalva (para credibilidade)</h3>
+              <p>
+                • “Se você está em [contexto], prefira [alternativa].”<br/>
+                • “Se o objetivo é [X], isso pode atrasar porque [razão].”<br/>
+                • “Não é milagre: precisa de [hábito/consistência/ajuste].”
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>CTA (chamadas fortes)</h2>
+          <span class="pill">Escolha 2–3</span>
+        </div>
+        <div class="content">
+          <ul>
+            <li><b>Salvar:</b> “Salva pra comparar antes de decidir.”</li>
+            <li><b>Comentário (palavra-chave):</b> “Comenta <b>PARTE 2</b> + sua categoria que eu avalio mais virais.”</li>
+            <li><b>Seguir:</b> “Me segue pra vereditos rápidos com critério.”</li>
+            <li><b>DM:</b> “Me chama no direct com: objetivo + orçamento/tempo + nível (iniciante/avançado).”</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Checklist de criação</h2>
+          <span class="pill">Antes de postar</span>
+        </div>
+        <div class="content">
+          <ul>
+            <li>[ ] O veredito aparece em <b>1 segundo</b> (selo grande e contrastado).</li>
+            <li>[ ] Capa promete <b>resultado/decisão</b> (não só “lista”).</li>
+            <li>[ ] Existe <b>1 critério explícito</b> por item (evitar opinião solta).</li>
+            <li>[ ] Texto por slide: <b>máx. 4–6 linhas</b> + bastante respiro.</li>
+            <li>[ ] Incluí <b>para quem é</b> e <b>quando não é</b> (ressalva honesta).</li>
+            <li>[ ] 1 métrica objetiva por item (preço/tempo/esforço/ROI/complexidade).</li>
+            <li>[ ] Último slide com <b>CTA específico</b> (comentar palavra-chave + salvar).</li>
+            <li>[ ] Consistência visual: mesma posição do selo, @perfil e etiquetas.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1/-1;">
+        <div class="cardHeader">
+          <h2>Variações (para repetir sem cansar)</h2>
+          <span class="pill">4 ideias</span>
+        </div>
+        <div class="content">
+          <div class="twoCol">
+            <div class="miniCard">
+              <h3>Variação 1 — “Vale / Depende / Não vale”</h3>
+              <p>Use 3 selos diferentes e distribua entre os itens. Aumenta curiosidade e credibilidade.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Variação 2 — “Top 3 por objetivo”</h3>
+              <p>Em vez de itens aleatórios, agrupe por objetivo: “se quer [A],…”.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Variação 3 — “Barato vs caro”</h3>
+              <p>Compare 2 opções populares e feche com “qual escolher em cada cenário”.</p>
+            </div>
+            <div class="miniCard">
+              <h3>Variação 4 — “Testei por 7 dias” (quando aplicável)</h3>
+              <p>Transforme em série com atualização: expectativa → uso → resultado → veredito.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
   </div>
 
   <div class="toast" id="toast">Roteiro copiado.</div>
 
-<script>
-  function showToast(msg){
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.style.display = 'block';
-    clearTimeout(window.__toastTimer);
-    window.__toastTimer = setTimeout(()=>{ t.style.display='none'; }, 1600);
-  }
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBtn');
+      const textEl = document.getElementById('scriptText');
+      const toast = document.getElementById('toast');
 
-  document.getElementById('copyBtn').addEventListener('click', async () => {
-    const text = document.getElementById('roteiro').innerText.trim();
-    try{
-      await navigator.clipboard.writeText(text);
-      showToast('Roteiro copiado.');
-    }catch(e){
-      // fallback
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      showToast('Roteiro copiado (modo compatibilidade).');
-    }
-  });
-</script>
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>{ toast.style.display='none'; }, 1800);
+      }
+
+      btn.addEventListener('click', async () => {
+        const text = textEl.innerText;
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Roteiro copiado.');
+        }catch(e){
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Roteiro copiado (modo compatível).');
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
